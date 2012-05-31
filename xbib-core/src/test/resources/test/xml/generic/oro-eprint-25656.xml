@@ -1,0 +1,19 @@
+<oai_dc:dc xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <dc:title>Improving the tokenisation of identifier names</dc:title>
+        <dc:creator>Butler, Simon</dc:creator>
+        <dc:creator>Wermelinger, Michel</dc:creator>
+        <dc:creator>Yu, Yijun</dc:creator>
+        <dc:creator>Sharp, Helen</dc:creator>
+        <dc:description>Identifier names are the main vehicle for semantic information during program comprehension. For tool-supported program comprehension tasks, including concept location and requirements traceability, identifier  names need to be tokenised into their semantic constituents. In this paper we present an approach to the automated tokenisation of identifier  names that improves on existing techniques in two ways. First, it improves the tokenisation accuracy for single-case identifier  names and for identifier  names containing digits, which existing techniques largely ignore. Second, performance gains over existing techniques are achieved using smaller oracles, making the approach easier to deploy.&#13;
+&#13;
+Accuracy was evaluated by comparing our algorithm to manual tokenizations of 28,000 identifier names drawn from 60 well-known open source Java projects totalling 16.5 MSLOC. Moreover, the projects were used to perform a study of identifier tokenisation features (single case, camel case, use of digits, etc.) per object-oriented construct (class names, method names, local variable names, etc.), thus providing an insight into naming conventions in industrial-scale object-oriented code. Our tokenisation tool and datasets are publicly available.</dc:description>
+        <dc:publisher>Springer Verlag</dc:publisher>
+        <dc:contributor>Mira, Mezini</dc:contributor>
+        <dc:date>2011</dc:date>
+        <dc:type>Conference Item</dc:type>
+        <dc:type>PeerReviewed</dc:type>
+        <dc:format>application/pdf</dc:format>
+        <dc:identifier>http://oro.open.ac.uk/25656/5/butler%2Decoop11.pdf</dc:identifier>
+        <dc:relation>http://dx.doi.org/10.1007/978-3-642-22655-7_7</dc:relation>
+        <dc:identifier>Butler, Simon; Wermelinger, Michel; Yu, Yijun and Sharp, Helen (2011). Improving the tokenisation of identifier names. In: 25th European Conference on Object-Oriented Programming, 25-29 Jul 2011, Lancaster, UK.</dc:identifier>
+        <dc:relation>http://oro.open.ac.uk/25656/</dc:relation></oai_dc:dc>

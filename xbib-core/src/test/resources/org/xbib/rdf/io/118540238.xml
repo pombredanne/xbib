@@ -1,0 +1,489 @@
+<rdf:RDF
+    xmlns:geopol="http://aims.fao.org/aos/geopolitical.owl#"
+    xmlns:gnd="http://d-nb.info/gnd/"
+    xmlns:rdaRelGr2="http://metadataregistry.org/uri/schema/RDARelationshipsGR2/"
+    xmlns:sg="http://d-nb.info/ddc-sg/"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:rdaGr2="http://RDVocab.info/ElementsGr2/"
+    xmlns:dnb="http://d-nb.info/"
+    xmlns:ddc="http://d-nb.info/ddc/class/"
+    xmlns:rdaFrbr="http://RDVocab.info/uri/schema/FRBRentitiesRDA/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:relationship="http://purl.org/vocab/relationship/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <rdf:Description rdf:about="http://d-nb.info/gnd/118540238">
+    <gnd:variantNameForThePerson>Gete, Volʹfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Yohan Wolfgang</gnd:foreName>
+      <gnd:surname>Gyot'e</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Jochan Volfgang</gnd:foreName>
+      <gnd:surname>G'ote</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Johann Wolfgang von</gnd:variantNameForThePerson>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/118617222"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Göte</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Juan Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, Johan Volfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gēte, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Yôhan Wolfgang</gnd:foreName>
+      <gnd:surname>Gête</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Juan W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Göte, Iogann V.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Wolfgango</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>J. Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Johann W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fun</gnd:prefixName>
+      <gnd:foreName>Yūhān Wulfgāng</gnd:foreName>
+      <gnd:surname>Gūta</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Koet'e, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>G'ote, ...</gnd:variantNameForThePerson>
+    <rdaGr2:placeOfResidence xml:lang="de">Weimar</rdaGr2:placeOfResidence>
+    <gnd:invalidIdentifierForThePerson>(DE-101c)310270162</gnd:invalidIdentifierForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Johan Wolfgang von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, J. W. v.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Iohan Wolphgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goet'e, ...</gnd:variantNameForThePerson>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4037215-7"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iohan Volp'gang</gnd:foreName>
+      <gnd:surname>Goet'e</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iohan Volfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iohan Wolphgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Jan Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gūta, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Y. W.</gnd:foreName>
+      <gnd:surname>Gêtê</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Göthe, J. W. von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iogann Vol'fgang</gnd:foreName>
+      <gnd:surname>Ge͏̈te</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Ioannes W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Wolfango</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Yohann Volfqanq</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gėtė, Johanas Volfgangas</gnd:variantNameForThePerson>
+    <gnd:preferredNameForThePerson>Goethe, Johann Wolfgang von</gnd:preferredNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johan Volfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Jean Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fôn</gnd:prefixName>
+      <gnd:foreName>Yôhân Wôlfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Ge͏̈te, Iogann Vol'fgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>v.</gnd:prefixName>
+      <gnd:foreName>Johann Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <rdaGr2:biographicalInformation xml:lang="de">Geheimrat; Italienreise 1786-1788 und 1790</rdaGr2:biographicalInformation>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/118795163"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>v.</gnd:prefixName>
+      <gnd:foreName>J. W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Johann W.</gnd:variantNameForThePerson>
+    <rdaGr2:placeOfDeath xml:lang="de">Weimar</rdaGr2:placeOfDeath>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iogann Volʹfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/118633252"/>
+    <foaf:page rdf:resource="http://de.wikipedia.org/wiki/Johann_Wolfgang_von_Goethe"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fon</gnd:prefixName>
+      <gnd:foreName>Jogann Vol'fgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>J. W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>G'ote, Jochan Volfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Joh. Wolfg. v.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gūta, Yūhān Wulfgāng fun</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iogann W.</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <relationship:spouseOf rdf:resource="http://d-nb.info/gnd/118628011"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>G'ote</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Iogann V.</gnd:foreName>
+      <gnd:surname>Göte</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <relationship:siblingOf rdf:resource="http://d-nb.info/gnd/11871791X"/>
+    <gnd:variantNameForThePerson>Goethe, Johann W. von</gnd:variantNameForThePerson>
+    <relationship:childOf rdf:resource="http://d-nb.info/gnd/118695940"/>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4029050-5"/>
+    <gnd:variantNameForThePerson>Goethe, Juan Wolfgang von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fūn</gnd:prefixName>
+      <gnd:foreName>Yūhān Vūlfġanġ</gnd:foreName>
+      <gnd:surname>Ġūtih</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gót</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>J. W.</gnd:foreName>
+      <gnd:surname>Göthe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gě'ṭe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Koet'e</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Jean Wolfgang von</gnd:variantNameForThePerson>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/118638076"/>
+    <gnd:variantNameForThePerson>Gkaite, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, Yohann Volfqanq</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Johann Wolfgang</gnd:foreName>
+      <gnd:surname>Göthe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/119277387"/>
+    <gnd:variantNameForThePerson>Gete, I. V.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Volfgango</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, J. V.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gě'ṭe, ...</gnd:variantNameForThePerson>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/118540254"/>
+    <gnd:invalidIdentifierForThePerson>(DE-588a)1014123208</gnd:invalidIdentifierForThePerson>
+    <gnd:variantNameForThePerson>Gkaite, Giochan B. phon</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Goethius</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>E͏̈han Vol'fhanh</gnd:foreName>
+      <gnd:surname>He͏̈te</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Johann Wolfgang v.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gūta</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>phon</gnd:prefixName>
+      <gnd:foreName>Giochan B.</gnd:foreName>
+      <gnd:surname>Gkaite</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>J. V.</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Göthe, Johann Wolfgang von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Wolfgang von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Volfgango</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johann Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <rdaGr2:gender rdf:resource="http://RDVocab.info/termList/gender/1002"/>
+    <rdaGr2:dateOfBirth>1749</rdaGr2:dateOfBirth>
+    <gnd:variantNameForThePerson>Goethe, J. Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goet'e, Iohan Volp'gang</gnd:variantNameForThePerson>
+    <rdaGr2:identifierForThePerson>(DE-588)118540238</rdaGr2:identifierForThePerson>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4041423-1"/>
+    <gnd:variantNameForThePerson>Gete, Jogann Vol'fgang fon</gnd:variantNameForThePerson>
+    <rdaGr2:dateOfDeath>1832</rdaGr2:dateOfDeath>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fūn</gnd:prefixName>
+      <gnd:foreName>Yūhān Wulfgāng</gnd:foreName>
+      <gnd:surname>Gūta</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Johann Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>v.</gnd:prefixName>
+      <gnd:foreName>Joh. Wolfg.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <relationship:childOf rdf:resource="http://d-nb.info/gnd/118540246"/>
+    <gnd:variantNameForThePerson>Goethe, J. W. von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, Iohan Volfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>phon</gnd:prefixName>
+      <gnd:foreName>Giochan Bolphnkannk</gnd:foreName>
+      <gnd:surname>Gkaite</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Juan W.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Hete, Johann-Vol'fhanh</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Volʹfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gkaite</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <rdaGr2:professionOrOccupation xml:lang="de">Theaterleiter</rdaGr2:professionOrOccupation>
+    <gnd:variantNameForThePerson>Gete, Iogann W.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:locQualifier>$d1749-1832</gnd:locQualifier>
+      <gnd:foreName>Johann Wolfgang von</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>AACR</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethius, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>I. V.</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gete, Iogann Volʹfgang</gnd:variantNameForThePerson>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4053309-8"/>
+    <owl:sameAs rdf:resource="http://dbpedia.org/resource/Johann_Wolfgang_von_Goethe"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Jan Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gyot'e, Yohan Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gêtê, Y. W.</gnd:variantNameForThePerson>
+    <rdaGr2:placeOfBirth xml:lang="de">Frankfurt &lt;Main&gt;</rdaGr2:placeOfBirth>
+    <gnd:variantNameForThePerson>Gkaite, Giochan Bolphnkannk phon</gnd:variantNameForThePerson>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4046517-2"/>
+    <gnd:variantNameForThePerson>Gete, Yôhân Wôlfgang fôn</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>fon</gnd:prefixName>
+      <gnd:foreName>Yohan Ṿolfgang</gnd:foreName>
+      <gnd:surname>Geteh</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Ġūtih, Yūhān Vūlfġanġ fūn</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, João Wolfgang von</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johann Volʹfgang</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johanas Volfgangas</gnd:foreName>
+      <gnd:surname>Gėtė</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Geteh, Yohan Ṿolfgang fon</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <relationship:parentOf rdf:resource="http://d-nb.info/gnd/11854022X"/>
+    <rdaRelGr2:relatedPersonPerson rdf:resource="http://d-nb.info/gnd/11687256X"/>
+    <gnd:variantNameForThePerson>Gót, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Wolfgango</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Göte, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Johan Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Wolfango</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Gūta, Yūhān Wulfgāng fūn</gnd:variantNameForThePerson>
+    <rdaGr2:languageOfThePerson rdf:resource="http://marccodes.heroku.com/languages/ger"/>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>p'on</gnd:prefixName>
+      <gnd:foreName>Yohan Polp'ŭgang</gnd:foreName>
+      <gnd:surname>Koet'e</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>He͏̈te, E͏̈han Vol'fhanh</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, J. W.</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>João Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:functionOfThePerson>Textverfasser</gnd:functionOfThePerson>
+    <rdaGr2:professionOrOccupation rdf:resource="http://d-nb.info/gnd/4200345-3"/>
+    <rdaGr2:identifierForThePerson>(DE-588c)4021455-2</rdaGr2:identifierForThePerson>
+    <gnd:variantNameForThePerson>Gête, Yôhan Wolfgang</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gēte</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johann-Vol'fhanh</gnd:foreName>
+      <gnd:surname>Hete</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>J. W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Goet'e</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Volfango</gnd:variantNameForThePerson>
+    <rdaGr2:identifierForThePerson>(DLC)n 79003362</rdaGr2:identifierForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>...</gnd:foreName>
+      <gnd:surname>Gede</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Volfango</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson rdf:parseType="Resource">
+      <gnd:foreName>Johann W.</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:variantNameForThePerson>
+    <owl:sameAs rdf:resource="http://viaf.org/viaf/24602065"/>
+    <gnd:variantNameForThePerson>Koet'e, Yohan Polp'ŭgang p'on</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, ...</gnd:variantNameForThePerson>
+    <gnd:variantNameForThePerson>Goethe, Ioannes W.</gnd:variantNameForThePerson>
+    <gnd:countryCodeForThePerson>XA-DE</gnd:countryCodeForThePerson>
+    <gnd:variantNameForThePerson>Gete, Johann Volʹfgang</gnd:variantNameForThePerson>
+    <gnd:preferredNameForThePerson rdf:parseType="Resource">
+      <gnd:prefixName>von</gnd:prefixName>
+      <gnd:foreName>Johann Wolfgang</gnd:foreName>
+      <gnd:surname>Goethe</gnd:surname>
+      <gnd:usedRules>RAK-WB</gnd:usedRules>
+    </gnd:preferredNameForThePerson>
+    <gnd:functionOfThePerson>s</gnd:functionOfThePerson>
+    <gnd:variantNameForThePerson>Gede, ...</gnd:variantNameForThePerson>
+  </rdf:Description>
+</rdf:RDF>
+

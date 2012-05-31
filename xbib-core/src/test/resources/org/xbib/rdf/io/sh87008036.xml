@@ -1,0 +1,203 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh87008036" xmlns:madsrdf="http://www.loc.gov/mads/rdf/v1#">
+ 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	<madsrdf:authoritativeLabel xml:lang="en">Preschool children</madsrdf:authoritativeLabel>
+ 	<madsrdf:elementList rdf:parseType="Collection">
+ 	 	<madsrdf:TopicElement>
+ 	 	 	<madsrdf:elementValue xml:lang="en">Preschool children</madsrdf:elementValue>
+ 	 	</madsrdf:TopicElement>
+ 	</madsrdf:elementList>
+ 	<madsrdf:hasBroaderAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85023418">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasBroaderAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85017536">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Buddhist education of preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85025075">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Christian education of preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85070328">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Jewish religious education of preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85025814">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Church work with preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85108720">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Libraries and preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasNarrowerAuthority>
+ 	 	<madsrdf:Topic rdf:about="http://id.loc.gov/authorities/subjects/sh85112651">
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Authority"/>
+ 	 	 	<madsrdf:authoritativeLabel xml:lang="en">Religious education of preschool children</madsrdf:authoritativeLabel>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasNarrowerAuthority>
+ 	<madsrdf:hasExactExternalAuthority rdf:resource="http://stitch.cs.vu.nl/vocabularies/rameau/ark:/12148/cb12010129n"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4064017-6"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4418801-8"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4399912-8"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4114175-1"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4621524-4"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4120560-1"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4206360-7"/>
+ 	<madsrdf:hasCloseExternalAuthority rdf:resource="http://d-nb.info/gnd/4799251-7"/>
+ 	<madsrdf:classification>HQ774.5</madsrdf:classification>
+ 	<madsrdf:isMemberOfMADSCollection rdf:resource="http://id.loc.gov/authorities/subjects/collection_LCSHAuthorizedHeadings"/>
+ 	<madsrdf:isMemberOfMADSScheme rdf:resource="http://id.loc.gov/authorities/subjects"/>
+ 	<madsrdf:isMemberOfMADSCollection rdf:resource="http://id.loc.gov/authorities/subjects/collection_LCSH_General"/>
+ 	<madsrdf:isMemberOfMADSCollection rdf:resource="http://id.loc.gov/authorities/subjects/collection_SubdivideGeographicalIndirect"/>
+ 	<madsrdf:hasVariant>
+ 	 	<madsrdf:Topic>
+ 	 	 	<rdf:type rdf:resource="http://www.loc.gov/mads/rdf/v1#Variant"/>
+ 	 	 	<madsrdf:variantLabel xml:lang="en">Preschoolers</madsrdf:variantLabel>
+ 	 	 	<madsrdf:elementList rdf:parseType="Collection">
+ 	 	 	 	<madsrdf:TopicElement>
+ 	 	 	 	 	<madsrdf:elementValue xml:lang="en">Preschoolers</madsrdf:elementValue>
+ 	 	 	 	</madsrdf:TopicElement>
+ 	 	 	</madsrdf:elementList>
+ 	 	</madsrdf:Topic>
+ 	</madsrdf:hasVariant>
+ 	<owl:sameAs rdf:resource="info:lc/authorities/sh87008036" xmlns:owl="http://www.w3.org/2002/07/owl#"/>
+ 	<owl:sameAs rdf:resource="http://id.loc.gov/authorities/sh87008036#concept" xmlns:owl="http://www.w3.org/2002/07/owl#"/>
+ 	<madsrdf:hasSource>
+ 	 	<madsrdf:Source>
+ 	 	 	<madsrdf:citation-source>Work cat.: Problems of preschool children.</madsrdf:citation-source>
+ 	 	 	<madsrdf:citation-status>found</madsrdf:citation-status>
+ 	 	</madsrdf:Source>
+ 	</madsrdf:hasSource>
+ 	<madsrdf:hasSource>
+ 	 	<madsrdf:Source>
+ 	 	 	<madsrdf:citation-source>ERIC thes.</madsrdf:citation-source>
+ 	 	 	<madsrdf:citation-status>found</madsrdf:citation-status>
+ 	 	</madsrdf:Source>
+ 	</madsrdf:hasSource>
+ 	<madsrdf:hasSource>
+ 	 	<madsrdf:Source>
+ 	 	 	<madsrdf:citation-source>Web. 3</madsrdf:citation-source>
+ 	 	 	<madsrdf:citation-note xml:lang="en">(Preschoolers)</madsrdf:citation-note>
+ 	 	 	<madsrdf:citation-status>found</madsrdf:citation-status>
+ 	 	</madsrdf:Source>
+ 	</madsrdf:hasSource>
+ 	<madsrdf:hasSource>
+ 	 	<madsrdf:Source>
+ 	 	 	<madsrdf:citation-source>Hennepin.</madsrdf:citation-source>
+ 	 	 	<madsrdf:citation-status>found</madsrdf:citation-status>
+ 	 	</madsrdf:Source>
+ 	</madsrdf:hasSource>
+ 	<madsrdf:hasSource>
+ 	 	<madsrdf:Source>
+ 	 	 	<madsrdf:citation-source>NYT, Dec. 18, 1987:</madsrdf:citation-source>
+ 	 	 	<madsrdf:citation-note xml:lang="en">p. A18.</madsrdf:citation-note>
+ 	 	 	<madsrdf:citation-status>found</madsrdf:citation-status>
+ 	 	</madsrdf:Source>
+ 	</madsrdf:hasSource>
+ 	<madsrdf:adminMetadata>
+ 	 	<ri:RecordInfo xmlns:ri="http://id.loc.gov/ontologies/RecordInfo#">
+ 	 	 	<ri:recordChangeDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">1987-12-30T00:00:00</ri:recordChangeDate>
+ 	 	 	<ri:recordStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new</ri:recordStatus>
+ 	 	 	<ri:recordContentSource rdf:resource="http://id.loc.gov/vocabulary/organizations/dlc"/>
+ 	 	</ri:RecordInfo>
+ 	</madsrdf:adminMetadata>
+ 	<madsrdf:adminMetadata>
+ 	 	<ri:RecordInfo xmlns:ri="http://id.loc.gov/ontologies/RecordInfo#">
+ 	 	 	<ri:recordChangeDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">1999-05-04T08:49:43</ri:recordChangeDate>
+ 	 	 	<ri:recordStatus rdf:datatype="http://www.w3.org/2001/XMLSchema#string">revised</ri:recordStatus>
+ 	 	 	<ri:recordContentSource rdf:resource="http://id.loc.gov/vocabulary/organizations/dlc"/>
+ 	 	</ri:RecordInfo>
+ 	</madsrdf:adminMetadata>
+ 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	<skos:prefLabel xml:lang="en" xmlns:skos="http://www.w3.org/2004/02/skos/core#">Preschool children</skos:prefLabel>
+ 	<skosxl:altLabel xmlns:skosxl="http://www.w3.org/2008/05/skos-xl#">
+ 	 	<rdf:Description>
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2008/05/skos-xl#Label"/>
+ 	 	 	<skosxl:literalForm xml:lang="en">Preschoolers</skosxl:literalForm>
+ 	 	</rdf:Description>
+ 	</skosxl:altLabel>
+ 	<skos:broader xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85023418">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:broader>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85017536">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Buddhist education of preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85025075">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Christian education of preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85070328">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Jewish religious education of preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85025814">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Church work with preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85108720">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Libraries and preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:narrower xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<rdf:Description rdf:about="http://id.loc.gov/authorities/subjects/sh85112651">
+ 	 	 	<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+ 	 	 	<skos:prefLabel xml:lang="en">Religious education of preschool children</skos:prefLabel>
+ 	 	</rdf:Description>
+ 	</skos:narrower>
+ 	<skos:exactMatch rdf:resource="http://stitch.cs.vu.nl/vocabularies/rameau/ark:/12148/cb12010129n" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4064017-6" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4418801-8" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4399912-8" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4114175-1" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4621524-4" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4120560-1" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4206360-7" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:closeMatch rdf:resource="http://d-nb.info/gnd/4799251-7" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:inScheme rdf:resource="http://id.loc.gov/authorities/subjects" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
+ 	<skos:altLabel xml:lang="en" xmlns:skos="http://www.w3.org/2004/02/skos/core#">Preschoolers</skos:altLabel>
+ 	<skos:changeNote xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<cs:ChangeSet xmlns:cs="http://purl.org/vocab/changeset/schema#">
+ 	 	 	<cs:subjectOfChange rdf:resource="http://id.loc.gov/authorities/subjects/sh87008036"/>
+ 	 	 	<cs:creatorName>Library of Congress, Network Development and MARC Standards Office</cs:creatorName>
+ 	 	 	<cs:createdDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">1987-12-30T00:00:00</cs:createdDate>
+ 	 	 	<cs:changeReason rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new</cs:changeReason>
+ 	 	</cs:ChangeSet>
+ 	</skos:changeNote>
+ 	<skos:changeNote xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+ 	 	<cs:ChangeSet xmlns:cs="http://purl.org/vocab/changeset/schema#">
+ 	 	 	<cs:subjectOfChange rdf:resource="http://id.loc.gov/authorities/subjects/sh87008036"/>
+ 	 	 	<cs:creatorName>Library of Congress, Network Development and MARC Standards Office</cs:creatorName>
+ 	 	 	<cs:createdDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">1999-05-04T08:49:43</cs:createdDate>
+ 	 	 	<cs:changeReason rdf:datatype="http://www.w3.org/2001/XMLSchema#string">revised</cs:changeReason>
+ 	 	</cs:ChangeSet>
+ 	</skos:changeNote>
+</madsrdf:Topic>
+</rdf:RDF>
