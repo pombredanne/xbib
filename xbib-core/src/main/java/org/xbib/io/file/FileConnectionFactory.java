@@ -68,12 +68,13 @@ public final class FileConnectionFactory
         if (!providesScheme(uri.getScheme())) {
             return null;
         }
-        InputStream in = new FileInputStream(uri.getSchemeSpecificPart());
-        if (scheme.endsWith("gz")) {
+        String path = uri.getSchemeSpecificPart();
+        InputStream in = new FileInputStream(path);
+        if (scheme.endsWith("gz") || path.endsWith(".gz")) {
             return factory.getCodec("gz").decode(in);
-        } else if (scheme.endsWith("bz2")) {
+        } else if (scheme.endsWith("bz2") || path.endsWith(".bz2")) {
             return factory.getCodec("bz2").decode(in);
-        } else if (scheme.endsWith("xz")) {
+        } else if (scheme.endsWith("xz") || path.endsWith(".xz")) {
             return factory.getCodec("xz").decode(in);
         }
         return in;

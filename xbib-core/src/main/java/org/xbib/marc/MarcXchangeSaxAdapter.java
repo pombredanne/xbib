@@ -318,7 +318,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             }
             if (designator != null) {
                 String value = designator.getData();
-                if (!value.isEmpty()) {
+                if (value != null && !value.isEmpty()) {
                     value = normalizeValue(value);
                     // write data field per default into a subfield with code 'a'
                     AttributesImpl attrs = new AttributesImpl();

@@ -1,0 +1,213 @@
+005103443 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103443 001   L HT008920852
+005103443 005   L 20050331
+005103443 008   L 980820m1864uuuugw^^^^^^^||||^00|||^und^d
+005103443 040   L $$aDE-605$$erakwb
+005103443 044   L $$agw$$cDXDE
+005103443 049   L $$aK0001$$aM0001$$aQ0001$$aR0003
+005103443 1001  L $$aHeyse, Paul.$$0(DE-588a)118550772
+005103443 24500 L $$aDramatische Dichtungen /$$cPaul Heyse.
+005103443 260   L $$aBerlin :$$bHertz
+005103443 500   L $$aBd 34 ff. bei Cotta, Stuttgart und Berlin erschienen.
+005103454 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103454 001   L HT008920936
+005103454 005   L 20031112
+005103454 008   L 980820m1908uuuu^^^^^^^^^||||^00|||^und^d
+005103454 040   L $$aDE-605$$erakwb
+005103454 049   L $$aM0001
+005103454 1001  L $$aHeyse, Paul.$$0(DE-588a)118550772
+005103454 24500 L $$aKinder der Welt /$$cPaul Heyse.
+005103454 250   L $$a23. - 25. Aufl.
+005103454 260   L $$aStuttgart [u.a.] :$$bCotta
+005103454 515   L $$aErschienen$$aBd. 1 - 2.
+005103458 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103458 001   L HT008920997
+005103458 005   L 20031112
+005103458 008   L 980820m1876uuuu^^^^^^^^^||||^00|||^und^d
+005103458 040   L $$aDE-605$$erakwb
+005103458 049   L $$aM0001
+005103458 1001  L $$aHeyse, Paul.$$0(DE-588a)118550772
+005103458 24500 L $$aIm Paradiese :$$bRoman in 7 Büchern /$$cPaul Heyse.
+005103458 250   L $$a4. Abdr.
+005103458 260   L $$aBerlin :$$bHertz
+005103458 515   L $$aErschienen$$aBd. 1 - 3.
+005103460 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103460 001   L HT008921019
+005103460 005   L 20031112
+005103460 008   L 980820m1852uuuu^^^^^^^^^m|||^00|||^und^d
+005103460 040   L $$aDE-605$$erakwb
+005103460 049   L $$aM0001$$aQ0001
+005103460 1001  L $$aHeyse, Paul.$$0(DE-588a)118550772
+005103460 24500 L $$aStudia Romanensia /$$cPaulus Heyse.
+005103460 260   L $$a(Berolini :$$bSchade)
+005103460 502   L $$aBerlin, Univ., Diss., 1852.
+005103460 515   L $$aErschienen$$aT. 1.
+005103474 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103474 001   L HT008921271
+005103474 005   L 20031117
+005103474 008   L 980820m1972uuuuxxk^^^^^^||||^00|||^und^d
+005103474 040   L $$aDE-605$$erakwb
+005103474 044   L $$axxk$$cGB
+005103474 049   L $$aA0001$$aM0001
+005103474 1001  L $$aHibbert, Christopher.$$0(DE-605)HP00409077
+005103474 24500 L $$aGeorge IV. /$$cChristopher Hibbert.
+005103474 260   L $$aLondon :$$bLongman
+005103474 515   L $$aErschienen$$aBd. [1] - [2].
+005103477 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103477 001   L HT008921301
+005103477 008   L 990423m1928uuuuau^^^^^^^||||^00|||^und^d
+005103477 040   L $$aDE-605$$erakwb
+005103477 044   L $$aau$$cAT
+005103477 049   L $$aK0001$$aM0001$$aQ1108
+005103477 1001  L $$aHibler-Lebmannsport, Leo.$$0(DE-605)HP00409095
+005103477 24504 L $$aDas mittelenglische Versgedicht The Seege of Troye /$$cLeo Hibler-Lebmannsport.
+005103477 260   L $$aGraz :$$bMoser
+005103483 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103483 001   L HT008921428
+005103483 005   L 20050411
+005103483 008   L 980820m1959uuuugw^^^^^^^||||^00|||^und^d
+005103483 040   L $$aDE-605$$erakwb
+005103483 044   L $$agw$$cDE
+005103483 049   L $$aK0001$$aM0001$$aQ0001
+005103483 1001  L $$aHickmann, Ernst.$$0(DE-605)HP00452586
+005103483 24504 L $$aDie Wirtschaft des Auslandes :$$bdie Entwicklungsvorhaben der Gegenwart /$$cErnst Hickmann ; Bremer Ausschuß für Wirtschaftsforschung.
+005103483 260   L $$aDarmstadt :$$bHoppenstedt
+005103483 515   L $$aErschienen$$aBd. 1 - 2.
+005103483 7102  L $$aBremer Ausschuss für Wirtschaftsforschung.$$0(DE-588b)2006107-9
+005103490 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103490 001   L HT008921556
+005103490 005   L 20071108
+005103490 008   L 980820m1867uuuugw^^^^^^^||||^00|||^und^d
+005103490 035   L $$a(XXXxUND)HBZHT008921556
+005103490 040   L $$aDE-605$$erakwb
+005103490 044   L $$agw$$cDXDE
+005103490 049   L $$aK0001$$aL0001$$aM0001
+005103490 1001  L $$aHiddemann, Friedrich Peter.$$0(DE-605)HP01989497
+005103490 24500 L $$aIllustrationen zu Fritz Reuters Werken /$$cvon F. Hiddemann. In Holzschnitt ausgeführt von R. Brend'amour.
+005103490 260   L $$aBerlin :$$bGrote
+005103490 7001  L $$aBrendámour, Franz Robert Richard$$eIll.$$0(DE-605)HP01927625
+005103498 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103498 001   L HT008921667
+005103498 005   L 20110614
+005103498 008   L 980820m1845uuuugw^^^^^^^||||^00|||^und^d
+005103498 035   L $$a(XXXxUND)HBZHT008921667
+005103498 040   L $$aDE-605$$erakwb
+005103498 044   L $$agw$$cDXDE
+005103498 049   L $$aM0001$$aQ0001$$aQ1016
+005103498 1001  L $$aHiecke, Robert Heinrich.$$0(DE-588a)118817728
+005103498 24500 L $$aCommentatio de partibus orationis /$$cscripsit Robertus Henricus Hiecke.
+005103498 24613 L $$aDe partibus orationis
+005103498 260   L $$aMerseburg :$$bKobitz
+005103500 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103500 001   L HT008921691
+005103500 008   L 980820m1939uuuu^^^^^^^^^||||^00|||^und^d
+005103500 040   L $$aDE-605$$erakwb
+005103500 049   L $$aK0001$$aM0001
+005103500 1001  L $$aHieke, Ernst.$$0(DE-605)HP00452710
+005103500 24500 L $$aZur Geschichte des deutschen Handels mit Ostafrika /$$cErnst Hieke.
+005103500 260   L $$aHamburg :$$bChristians
+005103500 4900  L $$aForschungen z. hamburgischen Wirtschafts- und dt. Aussenhandelsgeschichte ;$$v...
+005103502 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103502 001   L HT008921716
+005103502 005   L 20031121
+005103502 008   L 980820m1934uuuudk^^^^^^^||||^00|||^und^d
+005103502 040   L $$aDE-605$$erakwb
+005103502 044   L $$adk$$cDK
+005103502 049   L $$aM0001
+005103502 1001  L $$aHjelholt, Holger.$$0(DE-605)HP00414147
+005103502 24500 L $$aFalsters Historie /$$cHolger Hjelholt.
+005103502 260   L $$aKøbenhavn :$$bGad in Komm.
+005103502 515   L $$aErschienen$$aBd. 1 - 2.
+005103503 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103503 001   L HT008921717
+005103503 005   L 20031121
+005103503 008   L 980820m1959uuuudk^^^^^^^||||^00|||^und^d
+005103503 040   L $$aDE-605$$erakwb
+005103503 044   L $$adk$$cDK
+005103503 049   L $$aM0001$$aQ0001
+005103503 1001  L $$aHjelholt, Holger.$$0(DE-605)HP00414147
+005103503 24500 L $$aSønderjylland under treårskrigen :$$bet bidrag til dets politiske historie /$$cHolger Hjelholt.
+005103503 260   L $$aKøbenhavn :$$bGad
+005103503 515   L $$aErschienen$$aBd. 1 - 2.
+005103513 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103513 001   L HT008921924
+005103513 005   L 20031110
+005103513 008   L 980820m1927uuuu^^^^^^^^^||||^00|||^und^d
+005103513 040   L $$aDE-605$$erakwb
+005103513 049   L $$aM0001
+005103513 1001  L $$aHierl, Constantin.$$0(DE-605)HP01989596
+005103513 24500 L $$aOperative und taktische Aufgaben zum Studium des Marnefeldzuges 1914 /$$cvon Constantin Hierl.
+005103513 260   L $$aBerlin :$$bMittler
+005103526 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103526 001   L HT008922014
+005103526 005   L 20031111
+005103526 008   L 980825m1934uuuufr^^^^^^^||||^00|||^und^d
+005103526 040   L $$aDE-605$$erakwb
+005103526 044   L $$afr$$cFR
+005103526 049   L $$aM0001
+005103526 1001  L $$aHieronymus, Sophronius Eusebius.$$0(DE-605)HP00409492
+005103526 24500 L $$aLettres spirituelles de Saint Jérôme.
+005103526 260   L $$aParis :$$bLecoffre
+005103526 4900  L $$aBibliothèque patristique de spiritualité
+005103526 7001  L $$aGorce, Denys.$$0(DE-605)HP00334835
+005103526 7001  L $$aHieronymus, Sophronius Eusebius.$$0(DE-605)HP00409492$$tEpistolae.$$lfranz.
+005103532 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103532 001   L HT008922102
+005103532 005   L 20031111
+005103532 008   L 980820m1854uuuu^^^^^^^^^||||^00|||^und^d
+005103532 040   L $$aDE-605$$erakwb
+005103532 049   L $$aM0001
+005103532 1001  L $$aHiersemenzel, Carl C.$$0(DE-605)HP00452829
+005103532 24500 L $$aErgänzungen und Erläuterungen zum allgemeinen Landrecht :$$bmit Ausschluß des Staatsrechts.
+005103532 260   L $$aBerlin :$$bHempel
+005103532 7001  L $$aHiersemenzel, A.$$0(DE-588a)102118701
+005103548 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103548 001   L HT008922265
+005103548 005   L 20111214
+005103548 008   L 980820m1954uuuuxxk^^^^^^c|||^00|||^und^d
+005103548 035   L $$a(XXXxUND)HBZHT008922265
+005103548 040   L $$aDE-605$$erakwb
+005103548 044   L $$axxk$$cGB
+005103548 049   L $$aB4007$$aM0001$$aM1061$$aM1062$$aQ0001$$aQ1149
+005103548 1102  L $$aBritish Museum (London)$$bDepartment of Greek and Roman Antiquities.$$0(DE-588b)1085452-6
+005103548 24510 L $$aCatalogue of the terracottas in the Department of Greek and Roman Antiquities, British Museum /$$cby R. A. Higgins.
+005103548 24613 L $$aCatalogue of the Terracottas in the British Museum
+005103548 260   L $$aLondon :$$bBritish Museum
+005103548 547   L $$aBd. 3 u.d.T.: Catalogue of Greek terracottas in the British Museum. - Bd. 4 u.d.T.: Catalogue of the terracottas in the British Museum
+005103548 7001  L $$aBailey, Donald M.$$0(DE-588a)131792709
+005103548 7001  L $$aBurn, Lucilla.$$0(DE-588a)113502338
+005103548 7001  L $$aHiggins, Reynold Alleyne.$$0(DE-605)HP00452919
+005103568 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103568 001   L HT008922547
+005103568 005   L 20031112
+005103568 008   L 980820m1929uuuufi^^^^^^^m|||^00|||^und^d
+005103568 040   L $$aDE-605$$erakwb
+005103568 044   L $$afi$$cFI
+005103568 049   L $$aK0001$$aM0001
+005103568 1001  L $$aHiitonen, E.$$0(DE-605)HP01989790
+005103568 24503 L $$aLa Compétence d'organisation internationale du travail /$$cE. Hiitonen.
+005103568 260   L $$aParis
+005103568 502   L $$aHelsinki, Univ., Diss., 1929.
+005103584 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103584 001   L HT008922772
+005103584 005   L 20050425
+005103584 008   L 980820m1945uuuube^^^^^^^||||^00|||^und^d
+005103584 040   L $$aDE-605$$erakwb
+005103584 044   L $$abe$$cBE
+005103584 049   L $$aK0001$$aM0001
+005103584 1001  L $$aHildebrand,.$$0(DE-605)HP00409916
+005103584 24503 L $$aDe Kapucijnen in de Nederlanden en het prinsbisdom Luik /$$cdoor P. Hildebrand.
+005103584 260   L $$aAntwerpen :$$bArchief d. Kapucijnen
+005103596 LDR   L ^^^^^nam^a22^^^^^^ia4500
+005103596 001   L HT008922822
+005103596 005   L 20110516
+005103596 008   L 980820m1837uuuugw^^^^^^^||||^00|||^und^d
+005103596 035   L $$a(XXXxUND)HBZHT008922822
+005103596 040   L $$aDE-605$$erakwb
+005103596 044   L $$agw$$cDXDE
+005103596 049   L $$aM0001$$aQ0001
+005103596 1001  L $$aHildebrand, Christian Wilhelm.$$0(DE-588a)103097708
+005103596 24500 L $$aCommentatio de praecipuis, quae veterum philosophorum de summo bono fuerunt, sententiis /$$cChristian Guil. Hildebrand.
+005103596 24613 L $$aPraefatus est de praecipuis, quae veterum philosophorum de summo bono fuerunt, sententiis
+005103596 260   L $$aDüsseldorf
+005103596 515   L $$aErschienen$$a1.1837-2.1847.

@@ -170,16 +170,6 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
         }
     }
 
-    private Frame getParent(Stack<Frame> stack) {
-        Frame parent = null;
-        Frame child = null;
-        for (Frame frame : stack) {
-            parent = child;
-            child = frame;
-        }
-        return parent;
-    }
-
     // get the most-specific langauge tag in scope
     private String getLanguage(Stack<Frame> stack) {
         String lang = "";

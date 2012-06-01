@@ -1,0 +1,114 @@
+{
+   "_index":"test",
+   "_type":"test",
+   "_id":"HT000014677",
+   "_score":0.50861454,
+   "_source":{
+      "xbib:isbnoriginal":"0-12-166650-6",
+      "dc:title":[
+         "in honour of Wassily Hoeffding ; [proceedings of the Advanced International Symposium on Asymptotic Theory of Statistical Tests and Estimation, held at the University of North Carolina at Chapel Hill on April 16 - 18 1979]",
+         "Asymptotic theory of statistical tests and estimation"
+      ],
+      "xbib:isbn":"9780121666507",
+      "xbib:publisherplace":"New York [u.a.]",
+      "dc:publisher":{
+         "xbib:publishername":"Acad. Press",
+         "xbib:publisherplace":"New York [u.a.]"
+      },
+      "xbib:creatordescription":"ed. by I. M. Chakravarti",
+      "dc:subject":{
+         "xbib:subjectname":"Statistischer Test"
+      },
+      "dc:subject":{
+         "xbib:subjectname":"Schätztheorie"
+      },
+      "dc:subject":{
+         "xbib:subjectname":"Asymptotik"
+      },
+      "xbib:publishername":"Acad. Press",
+      "dc:contributor":{
+         "xbib:corporatename":"Advanced International Symposium on Asymptotic Theory of Statistical Tests and Estimation <1979, Chapel Hill, NC>"
+      },
+      "dc:subject":{
+         "xbib:subjectname":"Kongress"
+      },
+      "dcterms:issued":"1980",
+      "xbib:role":"http://www.loc.gov/loc.terms/relators/edt",
+      "dc:contributor":{
+         "xbib:corporatename":"University of North Carolina <Chapel Hill, NC>"
+      },
+      "xbib:taxonomy":[
+         "0/356/357/358/359",
+         "UAMR",
+         "",
+         "rvk/QB 920",
+         "rvk/SK 830"
+      ],
+      "dc:subject":{
+         "xbib:subjectname":"Statistischer Test"
+      },
+      "xbib:subjectname":[
+         "Asymptotik",
+         "Chapel Hill <NC, 1979>",
+         "Schätztheorie",
+         "Statistischer Test",
+         "Kongress"
+      ],
+      "xbib:mabidregion":"testHT000014677",
+      "xbib:mabid":"HT000014677",
+      "dc:type":[
+         "conferencepublication",
+         "h",
+         "monograph"
+      ],
+      "xbib:geo":[
+         "(6.0795192,50.778356)",
+         "(7.753743,49.425326)",
+         "(7.1504332,51.2430404)",
+         "(7.605581,51.966235)",
+         "(8.0260447,50.9121676)",
+         "(8.4941315,52.0391963)",
+         "(7.496527,51.3769689)",
+         "(7.4155171,51.494291)",
+         "(7.006564,51.4630211)",
+         "(7.089443,50.7283345)",
+         "(6.687281,49.7453785)",
+         "(6.7920721,51.1938191)"
+      ],
+      "xbib:isbn10":"0121666506",
+      "dc:subject":{
+         "xbib:subjectname":"Kongress"
+      },
+      "xbib:sysid":"000012457",
+      "dc:contributor":{
+         "xbib:personname":"Hoeffding, Wassily"
+      },
+      "dc:format":"print",
+      "dc:subject":{
+         "xbib:subjectname":"Chapel Hill <NC, 1979>"
+      },
+      "dc:subject":{
+         "xbib:subjectname":"Asymptotik"
+      },
+      "dc:identifier":{
+         "xbib:mabidregion":"testHT000014677",
+         "xbib:mabid":"HT000014677"
+      },
+      "dc:subject":{
+         "xbib:subjectname":"Asymptotik"
+      },
+      "dcterms:extent":"XIV, 350 S. : graph. Darst.",
+      "xbib:personname":[
+         "Chakravarti, Indra M.",
+         "Hoeffding, Wassily"
+      ],
+      "xbib:corporatename":[
+         "Advanced International Symposium on Asymptotic Theory of Statistical Tests and Estimation <1979, Chapel Hill, NC>",
+         "University of North Carolina <Chapel Hill, NC>"
+      ],
+      "dc:contributor":{
+         "xbib:personname":"Chakravarti, Indra M.",
+         "xbib:role":"http://www.loc.gov/loc.terms/relators/edt"
+      }
+   }
+}

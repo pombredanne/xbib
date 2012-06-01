@@ -1,0 +1,22 @@
+{
+    "Creator" : {
+        "type" : "application/x-groovy",
+        "script" : "dublincore/creator.groovy",
+        "values" : [ "100" ]
+    },
+    "Title" : {
+        "type" : "application/x-groovy",
+        "script" : "dublincore/title.groovy",
+        "values" : [ "200" ]
+    },
+    "Date" : {
+        "type" : "application/x-groovy",
+        "script" : "dublincore/date.groovy",
+        "values" : [ "300" ]
+    },
+    "Identifier" : {
+        "type" : "application/x-groovy",
+        "script" : "dublincore/identifier.groovy",
+        "values" : [ "400" ]
+    }
+}

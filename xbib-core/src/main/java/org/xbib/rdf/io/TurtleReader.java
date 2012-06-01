@@ -42,6 +42,9 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.xbib.io.util.URIUtil;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
@@ -61,9 +64,10 @@ import org.xbib.xml.SimpleNamespaceContext;
  * Triple Language</a>
  *
  */
-public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> 
-    implements Triplifier<S,P,O> {
+public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
+        implements Triplifier<S, P, O> {
 
+    private static final Logger logger = Logger.getLogger(TurtleReader.class.getName());
     private final Resource<S, P, O> resource = new SimpleResource<>();
     /**
      * The base URI
@@ -103,10 +107,6 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
      */
     private Stack<Statement<S, P, O>> statements;
     /**
-     * Flag for record begin
-     */
-    private boolean recordBegin;
-    /**
      * Counter for parsed triples
      */
     private long tripleCounter;
@@ -118,6 +118,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
      * An optional statement listener
      */
     private StatementListener<S, P, O> listener;
+    private boolean strict = false;
 
     public TurtleReader(URI uri) {
         this(uri, SimpleNamespaceContext.getInstance());
@@ -133,7 +134,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         this.listener = listener;
         return this;
     }
-    
+
     @Override
     public StatementListener<S, P, O> getListener() {
         return listener;
@@ -164,7 +165,6 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
     public TurtleReader parse(Reader reader) throws IOException {
         this.reader = new PushbackReader(reader, 2);
         this.sb = new StringBuilder();
-        //this.tag = new KeyValue();
         this.eof = false;
         this.statements = new Stack();
         try {
@@ -343,15 +343,14 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             statements.add(0, stmt);
         } else {
             // Send record events. A record is grouped by a sequence of same non-blank subjects
-            if (!subject.equals(lastsubject)) {
-                if (lastsubject != null) {
-                    recordBegin = false;
+            if (lastsubject == null) {
+                if (listener != null) {
+                    listener.newIdentifier(subject.getIdentifier());
                 }
-                if (!recordBegin) {
-                    if (listener != null) {
-                        listener.newIdentifier(subject.getIdentifier());
-                    }
-                    recordBegin = true;
+                lastsubject = subject;
+            } else if (!subject.getIdentifier().equals(lastsubject.getIdentifier())) {
+                if (listener != null) {
+                    listener.newIdentifier(subject.getIdentifier());
                 }
                 lastsubject = subject;
             }
@@ -386,7 +385,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         } else {
             throw new IOException(baseURI
                     + ": unable to parse value, unknown character: code = " + (int) ch
-                    + " character = " + ch);
+                    + " character = '" + ch + "'");
         }
     }
 
@@ -401,15 +400,25 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         validate(ch, '<');
         sb.setLength(0);
         ch = read();
-        while (ch != '>') {
-            sb.append(ch);
-            if (ch == '\\') {
-                ch = read();
+        boolean ended = false;
+        do {
+            while (ch != '>') {
                 sb.append(ch);
+                if (ch == '\\') {
+                    ch = read();
+                    sb.append(ch);
+                }
+                ch = read();
             }
+            // '>' not escaped?
             ch = read();
-        }
-        String decoded = decodeTurtleString(sb.toString());
+            ended = (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r');
+            if (!ended) {
+                logger.log(Level.WARNING, subject + " unescaped '>' in URI: " + sb);
+            }
+        } while (!ended);
+        //decoded = decodeTurtleString(decoded)              
+        String decoded = URIUtil.decode(sb.toString(), "UTF-8");
         URI u;
         try {
             u = new URI(decoded);
@@ -421,7 +430,9 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             String part = pos > 0 ? decoded.substring(pos + 1) : decoded;
             u = URI.create(scheme + ":" + URLEncoder.encode(part, "UTF-8"));
         }
-        return baseURI.resolve(u);
+        u = baseURI.resolve(u);
+        //System.err.println(u);
+        return u;
     }
 
     /**
@@ -779,7 +790,12 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
 
     private void validate(int ch, char v) throws IOException {
         if ((char) ch != v) {
-            throw new IOException(baseURI + ": unexpected character: '" + (char) ch + "' expected: '" + v + "'");
+            String message = (subject != null ? subject : "") + " unexpected character: '" + (char) ch + "' expected: '" + v + "'";
+            if (strict) {
+                throw new IOException(message);
+            } else {
+                logger.log(Level.INFO, message);
+            }
         }
     }
 
@@ -818,7 +834,12 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         while (pos != -1) {
             sb.append(s.substring(i, pos));
             if (pos + 1 >= len) {
-                throw new IllegalArgumentException("unescaped backslash in: " + s);
+                if (strict) {
+                    throw new IllegalArgumentException("unescaped backslash in: " + s);
+                } else {
+                    logger.log(Level.WARNING, "unescaped backslash in: " + s);
+                    break;
+                }
             }
             char ch = s.charAt(pos + 1);
             if (ch == 't') {
@@ -864,7 +885,13 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
                     throw new IllegalArgumentException("illegal Unicode escape sequence '\\U" + xx + "' in: " + s);
                 }
             } else {
-                throw new IllegalArgumentException("Unescaped backslash in: " + s);
+                if (strict) {
+                    throw new IllegalArgumentException("unescaped backslash in: " + s);
+                } else {
+                    logger.log(Level.WARNING, "unescaped backslash in: " + s);
+                    sb.append('\\');
+                    i = pos + 2;
+                }
             }
             pos = s.indexOf('\\', i);
         }

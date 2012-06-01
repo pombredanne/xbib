@@ -132,7 +132,6 @@ public class HttpOperation {
 
     public synchronized void execute(long l, TimeUnit tu) throws IOException {
         long t0 = System.currentTimeMillis();
-        int size = builders.size();
         List<ListenableFuture<HttpResult>> futures = new ArrayList();
         for (Map.Entry<URI, AsyncHttpClient.BoundRequestBuilder> me : builders.entrySet()) {
             futures.add((me.getValue().execute(new Handler(me.getKey()))));            
@@ -162,7 +161,7 @@ public class HttpOperation {
     }
 
     public void execute() throws IOException {
-        execute(0L, TimeUnit.SECONDS);
+        execute(30L, TimeUnit.SECONDS);
     }
 
     public long getResponseMillis() {
