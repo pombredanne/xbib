@@ -56,7 +56,6 @@ import org.xbib.elements.output.ElementOutput;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.rdf.Resource;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -64,7 +63,7 @@ public class MABDisketteTest {
 
     private static final Logger logger = Logger.getLogger(MABDisketteTest.class.getName());
 
-    @Test
+    
     public void testMAB() throws Exception {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, "cp850"));
@@ -73,7 +72,7 @@ public class MABDisketteTest {
         toMAB(mab, w);
     }
 
-    @Test
+    
     public void testXML() throws Exception {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, "cp850"));
@@ -82,7 +81,7 @@ public class MABDisketteTest {
         toXml(new InputSource(mab), w);
     }
 
-    @Test
+    
     public void testElements() throws Exception {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));

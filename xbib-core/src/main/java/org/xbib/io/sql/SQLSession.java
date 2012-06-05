@@ -58,7 +58,6 @@ import org.xbib.io.Session;
  */
 public class SQLSession implements Session {
 
-    private static final long serialVersionUID = -4504866249375837342L;
     /** the logger */
     private static final Logger logger = Logger.getLogger(SQLSession.class.getName());
     /** default encoding */

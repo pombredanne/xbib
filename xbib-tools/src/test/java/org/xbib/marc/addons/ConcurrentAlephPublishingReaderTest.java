@@ -48,7 +48,6 @@ import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.util.AtomicIntegerIterator;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.rdf.Resource;
 
 public class ConcurrentAlephPublishingReaderTest {
 

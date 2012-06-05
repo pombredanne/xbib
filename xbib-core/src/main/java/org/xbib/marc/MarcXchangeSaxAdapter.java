@@ -287,15 +287,16 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             attrs.addAttribute(nsUri, TAG, TAG, "CDATA", tag);
             int ind = designator.getIndicator() != null
                     ? designator.getIndicator().length() : 0;
-            for (int i = 1; i <= ind; i++) {
-                attrs.addAttribute(null, IND + i,
-                        IND + i, "CDATA", designator.getIndicator().substring(i - 1, i));
-            }
-            // force at least two indicators if schema is Marc 21
+            // force at least two default blank indicators if schema is Marc 21
             if ("MARC21".equalsIgnoreCase(schema)) {
                 for (int i = (ind == 0 ? 1 : ind); i <= 2; i++) {
                     attrs.addAttribute(null, IND + i, IND + i, "CDATA", " ");
                 }
+            }
+            // set indicators
+            for (int i = 1; i <= ind; i++) {
+                attrs.addAttribute(null, IND + i,
+                        IND + i, "CDATA", designator.getIndicator().substring(i - 1, i));
             }
             contentHandler.startElement(nsUri, DATAFIELD, DATAFIELD, attrs);
             if (listener != null) {

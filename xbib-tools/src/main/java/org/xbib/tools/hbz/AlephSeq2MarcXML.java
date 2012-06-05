@@ -41,6 +41,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -86,6 +87,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
     private long splitsize = 1000000L;
     private String linkformat = "http://index.hbz-nrw.de/query/services/document/xhtml/hbz/title/%s";
     private Queue<URI> input;
+    private List<Integer> enable;
 
     public static void main(String[] args) {
 
@@ -98,9 +100,10 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required();
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("enable").withRequiredArg().ofType(Integer.class);
                     accepts("linkformat").withRequiredArg().ofType(String.class);
                     accepts("splitsize").withRequiredArg().ofType(Long.class);
-                    accepts("counter").withRequiredArg().ofType(Long.class);
+                    accepts("counter").withRequiredArg().ofType(Long.class).defaultsTo(0L);
                     accepts("help");
                 }
             };
@@ -113,6 +116,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                 System.err.println(" --counter <n>          the start counter for the base name MARC XML files (default: 0)");
                 System.err.println(" --path <path>          a file path from where the input files are recursively collected (required)");
                 System.err.println(" --pattern <pattern>    a regex for selecting mathing file names for input (required)");
+                System.err.println(" --enable [941|956]     enables MARC field 941 or 956 (default:not enabled)");
                 System.err.println(" --linkformat <format>  format string for generating MARC 956 field. Example \"http://index.hbz-nrw.de/query/services/document/xhtml/hbz/title/%s\"  ");
                 System.err.println(" --splitsize <n>        the maximum size of a MARC XML file piece (in octets, default: 1000000)");
                 System.err.println(" --threads <n>          the number of threads  (required, default: 1)");
@@ -121,6 +125,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             output = (String) options.valueOf("output");
             basename = (String) options.valueOf("basename");
             final Queue<URI> input = new Find(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            final List<Integer> enable = (List<Integer>) options.valuesOf("enable");
             final String linkformat = (String) options.valueOf("linkformat");
             final Long splitsize = (Long) options.valueOf("splitsize");
             count.set((Long) options.valueOf("counter"));
@@ -133,14 +138,15 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             System.err.println("counter = " + count.get());
             System.err.println("threads = " + threads + " (default:1)");
             System.err.println("split size = " + splitsize + " (default:1000000)");
+            System.err.println("enable = " + enable + " ");
             System.err.println("linkformat (for MARC 956) = " + linkformat + " (default:\"http://index.hbz-nrw.de/query/services/document/xhtml/hbz/title/%s\")");
-            
+
             ImportService service = new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
 
                         @Override
                         public Importer newImporter() {
-                            AlephSeq2MarcXML importer = new AlephSeq2MarcXML().setInput(input).setLinkPattern(linkformat).setSplitSize(splitsize);
+                            AlephSeq2MarcXML importer = new AlephSeq2MarcXML().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
                             return importer;
                         }
                     }).run(input);
@@ -178,6 +184,13 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
     public AlephSeq2MarcXML setLinkPattern(String linkpattern) {
         if (linkpattern != null) {
             this.linkformat = linkpattern;
+        }
+        return this;
+    }
+
+    public AlephSeq2MarcXML setEnable(List<Integer> enable) {
+        if (enable != null) {
+            this.enable = enable;
         }
         return this;
     }
@@ -226,22 +239,29 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
 
                     @Override
                     public void endRecord() {
-                        FieldDesignator f1 = new FieldDesignator("941", "  ");
-                        f1.setSubfieldId("d");
-                        reader.getAdapter().beginDataField(f1);
-                        reader.getAdapter().beginSubField(f1);
-                        f1.setData(" 1");
-                        reader.getAdapter().endSubField(f1);
-                        reader.getAdapter().endDataField(null);
-                        if (linkformat != null) {
-                            FieldDesignator f2 = new FieldDesignator("956", "  ");
-                            f2.setSubfieldId("u");
-                            reader.getAdapter().beginDataField(f2);
-                            reader.getAdapter().beginSubField(f2);
-                            String p = String.format(linkformat, reader.getAdapter().getIdentifier());
-                            f2.setData(" " + p);
-                            reader.getAdapter().endSubField(f2);
-                            reader.getAdapter().endDataField(null);
+                        if (enable != null) {
+                            for (Integer n : enable) {
+                                if (n == 941) {
+                                    FieldDesignator f1 = new FieldDesignator("941", "  ");
+                                    f1.setSubfieldId("d");
+                                    reader.getAdapter().beginDataField(f1);
+                                    reader.getAdapter().beginSubField(f1);
+                                    f1.setData(" 1");
+                                    reader.getAdapter().endSubField(f1);
+                                    reader.getAdapter().endDataField(null);
+                                } else if (n == 956) {
+                                    if (linkformat != null) {
+                                        FieldDesignator f2 = new FieldDesignator("956", "  ");
+                                        f2.setSubfieldId("u");
+                                        reader.getAdapter().beginDataField(f2);
+                                        reader.getAdapter().beginSubField(f2);
+                                        String p = String.format(linkformat, reader.getAdapter().getIdentifier());
+                                        f2.setData(" " + p);
+                                        reader.getAdapter().endSubField(f2);
+                                        reader.getAdapter().endDataField(null);
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -305,7 +325,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         if (!dir.isDirectory() && !dir.canWrite()) {
             throw new IOException("unable to write to directory " + output);
         }
-        String filename = dir + File.separator + basename + "_" + count.incrementAndGet() + ".xml";
+        String filename = dir + File.separator + basename + "_" + count.getAndIncrement() + ".xml";
         OutputStream out = new ProgressMonitoredOutputStream(new FileOutputStream(filename), watcher);
         return new OutputStreamWriter(out, OUTPUT_ENCODING);
     }
