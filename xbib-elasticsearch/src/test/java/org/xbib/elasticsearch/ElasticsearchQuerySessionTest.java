@@ -37,7 +37,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.testng.annotations.Test;
-import org.xbib.io.Mode;
 import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 
 public class ElasticsearchQuerySessionTest {

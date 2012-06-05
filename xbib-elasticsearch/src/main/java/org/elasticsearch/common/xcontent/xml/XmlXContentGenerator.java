@@ -1,35 +1,23 @@
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor 
- * license agreements. See the NOTICE.txt file distributed with this work
- * for additional information regarding copyright ownership.
+ * Licensed to ElasticSearch and Shay Banon under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. ElasticSearch licenses this
+ * file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation; either version 3 of the License, or 
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Affero General Public License for more details.
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Affero General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses 
- * or write to the Free Software Foundation, Inc., 51 Franklin Street, 
- * Fifth Floor, Boston, MA 02110-1301 USA.
- * 
- * The interactive user interfaces in modified source and object code 
- * versions of this program must display Appropriate Legal Notices, 
- * as required under Section 5 of the GNU Affero General Public License.
- * 
- * In accordance with Section 7(b) of the GNU Affero General Public 
- * License, these Appropriate Legal Notices must retain the display of the 
- * "Powered by xbib" logo. If the display of the logo is not reasonably 
- * feasible for technical reasons, the Appropriate Legal Notices must display
- * the words "Powered by xbib".
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-package org.xbib.elasticsearch.xcontent;
+
+package org.elasticsearch.common.xcontent.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,14 +33,14 @@ import org.elasticsearch.common.xcontent.XContentType;
 public class XmlXContentGenerator implements XContentGenerator {
 
     protected final XmlGenerator generator;
-    
+
     public XmlXContentGenerator(XmlGenerator generator) {
         this.generator = generator;
     }
 
     @Override
     public XContentType contentType() {
-        return XContentType.JSON; // wrong!
+        return XContentType.XML;
     }
 
     @Override
@@ -77,7 +65,7 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     @Override
     public void writeEndObject() throws IOException {
-        generator.writeEndObject();       
+        generator.writeEndObject();
     }
 
     @Override
@@ -142,8 +130,8 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     @Override
     public void writeStringField(String fieldName, String value) throws IOException {
-         writeFieldName(fieldName);
-         writeString(value);
+        writeFieldName(fieldName);
+        writeString(value);
     }
 
     @Override
@@ -167,67 +155,67 @@ public class XmlXContentGenerator implements XContentGenerator {
     @Override
     public void writeNullField(String fieldName) throws IOException {
         writeFieldName(fieldName);
-        writeNull();        
+        writeNull();
     }
 
     @Override
     public void writeNullField(XContentString fieldName) throws IOException {
         writeFieldName(fieldName);
-        writeNull();        
+        writeNull();
     }
 
     @Override
     public void writeNumberField(String fieldName, int value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(XContentString fieldName, int value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(String fieldName, long value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(XContentString fieldName, long value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(String fieldName, double value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(XContentString fieldName, double value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(String fieldName, float value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeNumberField(XContentString fieldName, float value) throws IOException {
         writeFieldName(fieldName);
-        writeNumber(value);        
+        writeNumber(value);
     }
 
     @Override
     public void writeBinaryField(String fieldName, byte[] data) throws IOException {
         writeFieldName(fieldName);
-        writeBinary(data);        
+        writeBinary(data);
     }
 
     @Override
@@ -260,7 +248,6 @@ public class XmlXContentGenerator implements XContentGenerator {
         writeStartObject();
     }
 
-    
     @Override
     public void writeRawField(String fieldName, byte[] content, OutputStream out) throws IOException {
         generator.writeFieldName(fieldName);
@@ -279,7 +266,7 @@ public class XmlXContentGenerator implements XContentGenerator {
     public void writeRawField(String fieldName, InputStream content, OutputStream bos) throws IOException {
         generator.writeFieldName(fieldName);
         flush();
-        Streams.copy(content, bos);        
+        Streams.copy(content, bos);
     }
 
     @Override
@@ -291,7 +278,8 @@ public class XmlXContentGenerator implements XContentGenerator {
             generator.copyCurrentStructure(((XmlXContentParser) parser).parser);
         } else {
             XContentHelper.copyCurrentStructure(this, parser);
-        }    }
+        }
+    }
 
     @Override
     public void flush() throws IOException {
@@ -302,6 +290,4 @@ public class XmlXContentGenerator implements XContentGenerator {
     public void close() throws IOException {
         generator.close();
     }
-
-
 }
