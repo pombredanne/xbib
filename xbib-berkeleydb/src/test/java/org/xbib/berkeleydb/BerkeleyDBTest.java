@@ -35,7 +35,7 @@ public class BerkeleyDBTest<S extends Resource<S, P, O>, P extends Property, O e
     
     @Test
     public void testBerkeleyDB() throws Exception {
-        URI uri = URI.create("bdbresource:localhost/testdb");
+        URI uri = URI.create("bdbresource:target/localhost/testdb");
         BerkeleyDBSession session = new BerkeleyDBSession(uri);
         session.open(Mode.WRITE);
         Write write = new Write();
