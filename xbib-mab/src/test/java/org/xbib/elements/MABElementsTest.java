@@ -63,7 +63,6 @@ public class MABElementsTest {
 
     private static final Logger logger = Logger.getLogger(MABElementsTest.class.getName());
 
-    @Test
     public void testSetupOfElements() throws Exception {
         MABBuilder builder = new MABBuilder();
         KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);                
