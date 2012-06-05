@@ -76,7 +76,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = Logger.getLogger(AlephSeq2MarcXML.class.getName());
     private final static InputStreamService iss = new InputStreamService();
-    private final static AtomicLong count = new AtomicLong(0L);
+    private final static AtomicLong fileCounter = new AtomicLong(0L);
     private final int BUFFER_SIZE = 8192;
     private final String INPUT_ENCODING = "UTF-8";
     private final String OUTPUT_ENCODING = "UTF-8";
@@ -109,7 +109,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             };
             final OptionSet options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for AlephSeq2MarcXMLPieces");
+                System.err.println("Help for AlephSeq2MarcXML");
                 System.err.println(" --help                 print this help message");
                 System.err.println(" --output <dir>         the output directory for generated MARC XML, will be created if it does not exist");
                 System.err.println(" --basename <name>      the base name for generated MARC XML files, will be appended with '_' <counter> '.xml' (required)");
@@ -128,14 +128,14 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             final List<Integer> enable = (List<Integer>) options.valuesOf("enable");
             final String linkformat = (String) options.valueOf("linkformat");
             final Long splitsize = (Long) options.valueOf("splitsize");
-            count.set((Long) options.valueOf("counter"));
+            fileCounter.set((Long) options.valueOf("counter"));
             final Integer threads = (Integer) options.valueOf("threads");
 
             System.err.println("AlephSeq2MarcXML running with the following parameters");
             System.err.println("input = " + input);
             System.err.println("output = " + output);
             System.err.println("basename = " + basename);
-            System.err.println("counter = " + count.get());
+            System.err.println("counter = " + fileCounter.get());
             System.err.println("threads = " + threads + " (default:1)");
             System.err.println("split size = " + splitsize + " (default:1000000)");
             System.err.println("enable = " + enable + " ");
@@ -209,7 +209,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         URI uri = input.isEmpty() ? null : input.poll();
         done = uri == null;
         if (done) {
-            return count;
+            return fileCounter;
         }
         BufferedReader br = null;
         try {
@@ -314,7 +314,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                 logger.log(Level.SEVERE, null, ex);
             }
         }
-        return count;
+        return fileCounter;
     }
 
     private Writer newWriter(BytesProgressWatcher watcher) throws IOException {
@@ -325,7 +325,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         if (!dir.isDirectory() && !dir.canWrite()) {
             throw new IOException("unable to write to directory " + output);
         }
-        String filename = dir + File.separator + basename + "_" + count.getAndIncrement() + ".xml";
+        String filename = dir + File.separator + basename + "_" + fileCounter.getAndIncrement() + ".xml";
         OutputStream out = new ProgressMonitoredOutputStream(new FileOutputStream(filename), watcher);
         return new OutputStreamWriter(out, OUTPUT_ENCODING);
     }

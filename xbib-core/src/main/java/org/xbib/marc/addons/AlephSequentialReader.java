@@ -110,7 +110,7 @@ public class AlephSequentialReader extends FilterReader {
                         in.read(); //skip blank
                         pushback.addLast(ch2);
                         pushback.addLast(ch3);
-                        if (ch != '0' && ch2 != '0') { // control field
+                        if (!(ch == '0' && ch2 == '0')) { // do not attach indicators at control field
                             pushback.addLast(ind1);
                             pushback.addLast(ind2);
                         }
