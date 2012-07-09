@@ -39,14 +39,14 @@ public interface NamespaceContext extends javax.xml.namespace.NamespaceContext {
     
     String abbreviate(URI uri) throws URISyntaxException;
     
-    String abbreviate(URI uri, char delimiter, boolean dropfragment) throws URISyntaxException;
+    String abbreviate(URI uri, boolean dropfragment) throws URISyntaxException;
 
-    void addNamespace(String prefix, String namespaceURI);
+    void addNamespace(String prefix, String namespace);
     
-    Map<String, String> getNamespaceMap();
+    Map<String, String> getNamespaces();
     
-    boolean checkForEmptyNamespace(String prefix);
+    boolean isPrefix(String prefix);
     
-    String[] inContext(URI uri);
+    String[] isNamespace(URI uri);
 
 }

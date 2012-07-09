@@ -62,7 +62,7 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.oai.adapter.OAIAdapter;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.query.QuotedStringTokenizer;
-import org.xbib.xml.ES;
+import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 

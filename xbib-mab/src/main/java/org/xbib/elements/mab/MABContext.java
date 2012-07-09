@@ -22,10 +22,4 @@ public class MABContext extends LiaContext {
     public boolean getContinuing() {
         return continuing;
     }
-    
-    @Override
-    public void clear() {
-        super.clear();
-    }
-    
 }

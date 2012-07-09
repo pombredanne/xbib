@@ -151,7 +151,6 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         return createResource(createPredicate(predicateStr));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Resource<S, P, O> createResource(P predicate) {
         BlankNode<S, P, O> bNode = createBlankNode();
@@ -165,7 +164,6 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         return resources.asMap();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean add(Statement<S, P, O> statement) {
         // auto-create a subject if this resource does not have one.
@@ -237,7 +235,8 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
 
     @Override
     public P createPredicate(final Object predicate) {
-        return (P) new Property(URI.create(predicate.toString()));
+        return (P) new Property(predicate instanceof URI ? (URI) predicate
+                : URI.create(predicate.toString()));
     }
 
     @Override
@@ -261,6 +260,30 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     @Override
     public Collection<O> objectSet(P predicate) {
         return properties.get(predicate);
+    }
+
+    /**
+     * Compact a predicate. Under the predicate, there is a single blank node object
+     * with a single value for the same predicate. In such case, the 
+     * blank node can be removed and the single value can be promoted to
+     * the predicate.
+     * @param predicate 
+     */
+    @Override
+    public void compact(P predicate) {
+        Collection<Resource<S, P, O>> c = resources.get(predicate);
+        if (c.size() == 1) {
+            Resource<S, P, O> r = c.iterator().next();
+            if (r instanceof BlankNode) {
+                Collection<O> values = r.objectSet(predicate);
+                // get the single value and put it to properties
+                if (values.size() == 1) {
+                    resources.removeAll(predicate);
+                    properties.removeAll(predicate);
+                    properties.put(predicate, values.iterator().next());                    
+                }
+            }
+        }
     }
 
     @Override

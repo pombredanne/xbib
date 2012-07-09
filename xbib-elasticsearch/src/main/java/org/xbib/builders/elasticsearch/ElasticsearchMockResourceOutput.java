@@ -33,23 +33,25 @@ package org.xbib.builders.elasticsearch;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.xbib.elasticsearch.AbstractWrite;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.MockWrite;
-import org.xbib.elements.ElementContext;
 import org.xbib.elements.output.DefaultElementOutput;
 import org.xbib.io.Mode;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.ResourceContext;
 
-public class ElasticsearchMockResourceOutput<C extends ElementContext>
+public class ElasticsearchMockResourceOutput<C extends ResourceContext>
         extends DefaultElementOutput<C> {
 
     private static final Logger logger = Logger.getLogger(ElasticsearchMockResourceOutput.class.getName());
     private ElasticsearchSession session;
     private AbstractWrite operator;
+    private final static AtomicLong counter = new AtomicLong(0L);
 
     public void connect(String index, String type) throws IOException {
         this.session = ElasticsearchConnection.getInstance().createSession();
@@ -89,10 +91,11 @@ public class ElasticsearchMockResourceOutput<C extends ElementContext>
     @Override
     public void output(C context,Object info) {
         try {
-            if (session.isOpen()) {
-                Resource resource = context.resource();
+            Resource resource = context.resource();
+            if (session.isOpen() && resource != null) {
                 resource.addProperty("xbib:info", info);
                 operator.write(session, resource);
+                counter.incrementAndGet();
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
@@ -102,5 +105,10 @@ public class ElasticsearchMockResourceOutput<C extends ElementContext>
                 logger.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
+    }
+    
+    @Override
+    public long getCounter() {
+        return counter.longValue();
     }
 }

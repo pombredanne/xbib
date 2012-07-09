@@ -40,6 +40,7 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.xbib.io.Identifiable;
 import org.xbib.io.Session;
 import org.xbib.rdf.Resource;
@@ -101,11 +102,11 @@ public class BulkWrite extends AbstractWrite {
         if (currentBulk.get() == null) {
             currentBulk.set(client.prepareBulk());
         }
-        build(resource);
+        XContentBuilder builder = build(resource);
         if (resource.isDeleted()) {
             currentBulk.get().add(Requests.deleteRequest(index).type(type).id(createId(resource)));
         } else {
-            currentBulk.get().add(Requests.indexRequest(index).type(type).id(createId(resource)).create(false).source(getBuilder()));
+            currentBulk.get().add(Requests.indexRequest(index).type(type).id(createId(resource)).create(false).source(builder));
         }
         if (currentBulk.get().numberOfActions() >= bulkSize) {
             processBulk(client);
@@ -118,17 +119,15 @@ public class BulkWrite extends AbstractWrite {
     }
     
     public void flush(Client client)  throws IOException {
-        if (currentBulk.get() == null) {
-            return;
-        }
         if (totalTimeouts > MAX_TOTAL_TIMEOUTS) {
             // waiting some minutes is much too long, do not wait any longer            
             throw new IOException("total flush() timeouts exceeded limit of + " + MAX_TOTAL_TIMEOUTS + ", aborting");
         }
-        if (currentBulk.get().numberOfActions() > 0) {
+        // submit the rest of the docs for this thread
+        if (currentBulk.get() != null && currentBulk.get().numberOfActions() > 0) {
             processBulk(client);
         }
-        // wait for all outstanding bulk requests
+        // wait for outstanding bulk requests of all threads
         while (onGoingBulks.intValue() > 0) {
             logger.log(Level.INFO, "waiting for {0} active bulk requests", onGoingBulks);
             synchronized (onGoingBulks) {

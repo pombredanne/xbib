@@ -33,8 +33,9 @@ package org.xbib.builders.elasticsearch;
 
 import org.xbib.elasticsearch.AbstractWrite;
 import org.xbib.elasticsearch.BulkWrite;
+import org.xbib.rdf.ResourceContext;
 
-public class ElasticsearchBulkResourceOutput extends ElasticsearchResourceOutput {
+public class ElasticsearchBulkResourceOutput<C extends ResourceContext> extends ElasticsearchResourceOutput<C> {
 
     private int bulkSize;
     private int maxActiveRequests;

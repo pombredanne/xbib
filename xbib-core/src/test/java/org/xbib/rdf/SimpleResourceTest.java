@@ -32,10 +32,10 @@ import org.xbib.rdf.simple.SimpleStatement;
 
 /**
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SimpleResourceTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> 
-   extends Assert {
+public class SimpleResourceTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
+        extends Assert {
 
     @Test
     public void testStatementEquaivalence() {
@@ -126,7 +126,7 @@ public class SimpleResourceTest<S extends Resource<S, P, O>, P extends Property,
         resource.addProperty("urn:hasAttribute", "c");
         assertEquals("[a, b, c]", resource.objectSet(resource.createPredicate("urn:hasAttribute")).toString());
     }
-    
+
     @Test
     public void testPredicateIterator() throws Exception {
         SimpleResource<S, P, O> r = new SimpleResource<>();
@@ -155,4 +155,25 @@ public class SimpleResourceTest<S extends Resource<S, P, O>, P extends Property,
         assertEquals(propCounter, 3);
     }
 
+    @Test
+    public void testOptimize() throws Exception {
+        SimpleResource<S, P, O> r = new SimpleResource<>();
+        r.setIdentifier(URI.create("urn:doc12"));
+        r.addProperty("urn:value1", "Hello World");
+        P predicate = r.createPredicate("urn:value2");
+        Resource<S, P, O> r1 = r.createResource(r.createPredicate(predicate));
+        r1.addProperty(predicate, "a value");
+        r.compact(predicate);
+        Iterator<Statement<S, P, O>> it = r.iterator();
+        int cnt = 0;
+        /*
+         * urn:doc12 urn:value1 Hello World 
+         * urn:doc12 urn:value2 a value
+         */
+        while (it.hasNext()) {
+            Statement<S, P, O> stmt = it.next();
+            cnt++;
+        }
+        assertEquals(cnt, 2);
+    }
 }

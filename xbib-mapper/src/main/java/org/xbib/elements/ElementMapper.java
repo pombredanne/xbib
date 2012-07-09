@@ -31,6 +31,7 @@
  */
 package org.xbib.elements;
 
+import org.xbib.rdf.ResourceContext;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.xbib.keyvalue.KeyValueStreamListener;
 
-public class ElementMapper<E extends Element, C extends ElementContext, K, V>
+public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
         implements KeyValueStreamListener<K, V> {
 
     protected final static Logger logger = Logger.getLogger(ElementMapper.class.getName());

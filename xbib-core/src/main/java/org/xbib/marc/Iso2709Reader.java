@@ -46,8 +46,17 @@ import org.xml.sax.XMLReader;
 
 public class Iso2709Reader implements XMLReader {
 
+    /**
+     * The format property. Default value is "MARC21"
+     */
     public static String FORMAT = "format";
+    /**
+     * The type property. Defaylt value is "Bibliographic"
+     */
     public static String TYPE = "type";
+    /**
+     * The schema property
+     */
     public static String SCHEMA = "schema";
     private MarcXchangeSaxAdapter adapter;
     private ContentHandler contentHandler;
@@ -119,6 +128,11 @@ public class Iso2709Reader implements XMLReader {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Set MarcXchange listener for this reader.
+     * @param listener the MarcXchange listener
+     * @return 
+     */
     public Iso2709Reader setMarcXchangeListener(MarcXchangeListener listener) {
         this.listener = listener;
         return this;
@@ -128,6 +142,11 @@ public class Iso2709Reader implements XMLReader {
         return listener;
     }
     
+    /**
+     * Get the MarcXchange Sax adapter. Useful for inserting MarcXchange data
+     * to the MarcXchange listener.
+     * @return the MarcXchange Sax adapter
+     */
     public MarcXchangeSaxAdapter getAdapter() {
         return adapter;
     }
@@ -142,6 +161,12 @@ public class Iso2709Reader implements XMLReader {
         adapter.parse();
     }
 
+    /**
+     * We do not support system ID based parsing.
+     * @param systemId
+     * @throws IOException
+     * @throws SAXException 
+     */
     @Override
     public void parse(String systemId) throws IOException, SAXException {
         throw new UnsupportedOperationException();

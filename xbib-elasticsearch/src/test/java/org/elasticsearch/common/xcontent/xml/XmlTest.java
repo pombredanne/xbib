@@ -1,7 +1,6 @@
 package org.elasticsearch.common.xcontent.xml;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.elasticsearch.common.xcontent.XContentBuilder;

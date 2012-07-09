@@ -37,14 +37,14 @@ import java.io.Reader;
 import java.util.LinkedList;
 import org.xbib.io.sequential.Separable;
 
-public class AlephSequentialReader extends FilterReader {
+public class SisisExportReader extends FilterReader {
 
     private LinkedList<Integer> pushback;
     private boolean atlinestart;
     private boolean atfield;
     private boolean ended;
 
-    public AlephSequentialReader(Reader reader) {
+    public SisisExportReader(Reader reader) {
         super(reader);
         pushback = new LinkedList();
         atlinestart = true;
@@ -60,7 +60,7 @@ public class AlephSequentialReader extends FilterReader {
         if (ch == -1) {
             if (!ended) {
                 ended = true;
-                return Separable.GS; // close data
+                return Separable.GS;
             } else {
                 return ch;
             }
@@ -68,69 +68,52 @@ public class AlephSequentialReader extends FilterReader {
         if (atlinestart) {
             atlinestart = false;
             atfield = false;
-            // slurp sequential number
-            while (ch >= '0' && ch <= '9') {
-                ch = in.read();
-            }
-            ch = in.read();
-            // catch alphabetical tags, check for LDR, emit GS if found
-            if (ch >= 'A' && ch <= 'Z') {
-                int ch2 = in.read();
-                if (ch2 >= 'A' && ch2 <= 'Z') {
-                    int ch3 = in.read();
-                    if (ch3 >= 'A' && ch3 <= 'Z') {
-                        in.read(); //skip ind1
-                        in.read(); //skip ind2
-                        in.read(); //skip blank
-                        in.read(); //skip 'L' (FMT value)
-                        in.read(); //skip blank
-                        if (ch == 'L' && ch2 == 'D' && ch3 == 'R') {
-                            return Separable.GS;
-                        } else {
-                            pushback.addLast(ch2);
-                            pushback.addLast(ch3);
-                        }
-                    } else {
-                        pushback.addLast(ch2);
-                        pushback.addLast(ch3);
-                    }
-                } else {
-                    pushback.addLast(ch2);
-                }
-            } else if (ch >= '0' && ch <= '9') {
-                // catch numerical field designators
+            if (ch >= '0' && ch <= '9') {
+                // catch four digits (numerical field designator)
                 int ch2 = in.read();
                 if (ch2 >= '0' && ch2 <= '9') {
                     int ch3 = in.read();
                     if (ch3 >= '0' && ch3 <= '9') {
-                        int ind1 = in.read();
-                        int ind2 = in.read();
-                        in.read(); //skip blank
-                        in.read(); //skip 'L' (FMT value)
-                        in.read(); //skip blank
-                        pushback.addLast(ch2);
-                        pushback.addLast(ch3);
-                        if (!(ch == '0' && ch2 == '0')) { // do not attach indicators at control field
-                            pushback.addLast(ind1);
-                            pushback.addLast(ind2);
+                        int ch4 = in.read();
+                        StringBuilder ind = new StringBuilder().append((char) ch);
+                        if (ch4 >= '0' && ch4 <= '9') {
+                            String category = "" + ch + ch2 + ch3 + ch4;
+                            if ("0000".equals(category)) {
+                                // create synthetic  record label
+                                char [] ldr = new char [] { 'L', 'D', 'R'};
+                                for (char ldrch : ldr) {
+                                    pushback.addLast((int)ldrch);
+                                }
+                                ch4 = '1'; // rename 0000 to 0001
+                            }
+                            if ("9999".equals(category)) {
+                                in.read(); // slurp ':'
+                                return Separable.GS;
+                            }
+                            pushback.addLast(ch2);
+                            pushback.addLast(ch3);
+                            pushback.addLast(ch4);
+                            // build SISIS indicator list:
+                            // first char of catgeory plus subcategory characters
+                            ch = in.read(); // dot or colon
+                            if (ch == '.') {
+                                ch = in.read();
+                                if (!(ch2 == '0' && ch3 == '0')) {
+                                    while (ch >= '0' && ch <= '9') {
+                                        pushback.addLast(ch);
+                                    }
+                                }
+                            }
+                            atfield = true;
+                        } else {
+                            pushback.addLast(ch2);
+                            pushback.addLast(ch3);
+                            pushback.addLast(ch4);
                         }
-                        atfield = true;
                     } else {
                         pushback.addLast(ch2);
                         pushback.addLast(ch3);
                     }
-                } else {
-                    pushback.addLast(ch2);
-                }
-            } else {
-                throw new IOException("wrong field designator character: " + ch);
-            }
-        }
-        if (atfield) {
-            if (ch == '$') {
-                int ch2 = in.read();
-                if (ch2 == '$') {
-                    return Separable.US;
                 } else {
                     pushback.addLast(ch2);
                 }

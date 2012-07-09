@@ -31,9 +31,10 @@
  */
 package org.xbib.elements;
 
+import org.xbib.rdf.ResourceContext;
 import org.xbib.elements.output.ElementOutput;
 
-public interface ElementBuilder<K, V, E extends Element, C extends ElementContext> {
+public interface ElementBuilder<K, V, E extends Element, C extends ResourceContext> {
     
     C context();
 

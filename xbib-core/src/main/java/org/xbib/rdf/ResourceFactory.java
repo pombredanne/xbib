@@ -29,17 +29,14 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.xml;
+package org.xbib.rdf;
 
 /**
- * A namespace for Elasticsearch elements
- *
+ * A Resource factory.
+ * 
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface ES {
-    /** The prefix of this namespace */
-    String NS_PREFIX = "es";
+public interface ResourceFactory<R extends Resource> {
 
-    /** The URI of this namespace */
-    String NS_URI = "http://elasticsearch.org/";
+    R newResource();
 }

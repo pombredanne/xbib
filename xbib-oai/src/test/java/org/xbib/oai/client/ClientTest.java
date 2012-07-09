@@ -59,6 +59,7 @@ import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class ClientTest {
 
@@ -110,7 +111,7 @@ public class ClientTest {
                 }
             };
             reader.setListener(listener);
-            final XmlHandler handler = reader.getHandler();
+            final DefaultHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 
                 @Override

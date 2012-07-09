@@ -46,17 +46,17 @@ import java.util.NoSuchElementException;
  */
 public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> {
 
-    private final LinkedList<Statement<S, P, O>> queue;
+    private final LinkedList<Statement<S, P, O>> statements;
     private final boolean recursion;
 
     public StatementIterator(Resource<S, P, O> resource, boolean recursion) {
         this.recursion = recursion;
-        this.queue = resource != null ? unfoldStatements(resource) : new LinkedList();
+        this.statements = resource != null ? unfoldStatements(resource) : new LinkedList();
     }
 
     @Override
     public boolean hasNext() {
-        return !queue.isEmpty();
+        return !statements.isEmpty();
     }
 
     @Override
@@ -64,9 +64,9 @@ public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> 
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        Statement<S, P, O> statement = queue.poll();
+        Statement<S, P, O> statement = statements.poll();
         if (recursion && statement.getObject() instanceof BlankNode) {
-            queue.addAll(0, unfoldStatements((Resource<S, P, O>) statement.getObject()));
+            statements.addAll(0, unfoldStatements((Resource<S, P, O>) statement.getObject()));
         }
         return statement;
     }
@@ -77,13 +77,13 @@ public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> 
     }
 
     private LinkedList<Statement<S, P, O>> unfoldStatements(Resource<S, P, O> resource) {
-        LinkedList<Statement<S, P, O>> q = new LinkedList<Statement<S, P, O>>();
+        LinkedList<Statement<S, P, O>> list = new LinkedList<Statement<S, P, O>>();
         S subj = resource.getSubject();
         for (P pred : resource.predicateSet(subj)) {
             for (O obj : resource.objectSet(pred)) {
-                q.offer(resource.createStatement(subj, pred, obj));
+                list.offer(resource.createStatement(subj, pred, obj));
             }
         }
-        return q;
+        return list;
     }
 }

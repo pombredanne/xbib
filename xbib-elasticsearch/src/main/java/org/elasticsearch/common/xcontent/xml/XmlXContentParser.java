@@ -34,7 +34,7 @@ public class XmlXContentParser extends AbstractXContentParser implements XConten
     
     @Override
     public XContentType contentType() {
-        return XContentType.JSON;
+        return XContentType.XML;
     }
 
     @Override

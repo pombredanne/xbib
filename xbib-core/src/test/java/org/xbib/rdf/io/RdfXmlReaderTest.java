@@ -8,8 +8,7 @@ import org.testng.annotations.Test;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.URINamespaceContext;
 import org.xml.sax.InputSource;
 
 public class RdfXmlReaderTest {
@@ -28,7 +27,7 @@ public class RdfXmlReaderTest {
         reader.parse(new InputSource(in));
         //logger.log(Level.INFO, root.toString());
         StringWriter sw = new StringWriter();
-        NamespaceContext context = SimpleNamespaceContext.getInstance();
+        URINamespaceContext context = URINamespaceContext.getInstance();
         context.addNamespace("gnd", "http://d-nb.info/gnd/");
         context.addNamespace("rdagr2", "http://RDVocab.info/ElementsGr2/");
         context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");

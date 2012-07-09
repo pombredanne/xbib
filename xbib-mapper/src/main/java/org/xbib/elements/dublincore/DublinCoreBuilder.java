@@ -33,21 +33,11 @@ package org.xbib.elements.dublincore;
 
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ElementContextFactory;
-import org.xbib.elements.ResourceFactory;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.simple.SimpleResource;
 
 public class DublinCoreBuilder<K,V>
     extends AbstractElementBuilder<DublinCoreContext, DublinCoreElement, K, V> {
 
-    private final static ResourceFactory<Resource> resourceFactory = new ResourceFactory<Resource>() {
-
-        @Override
-        public Resource newResource() {
-            return new SimpleResource();
-        }
-    };
     private final static ElementContextFactory<DublinCoreContext> contextFactory = new ElementContextFactory<DublinCoreContext>() {
 
         @Override
@@ -58,11 +48,6 @@ public class DublinCoreBuilder<K,V>
     
     public DublinCoreBuilder(String... paths) {
         super(paths);
-    }
-
-    @Override
-    protected ResourceFactory<Resource> getResourceFactory() {
-        return resourceFactory;
     }
 
     @Override

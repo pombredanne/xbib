@@ -137,10 +137,10 @@ public class JsonXmlStreamer {
                     case START_OBJECT:
                         consumer.add(eventFactory.createStartElement(qname, null, null));
                         if (namespaceDecls) {
-                            if (!context.getNamespaceMap().containsKey(qname.getPrefix())) {
+                            if (!context.getNamespaces().containsKey(qname.getPrefix())) {
                                 consumer.add(eventFactory.createNamespace(qname.getPrefix(), qname.getNamespaceURI()));
                             }
-                            for (String prefix : context.getNamespaceMap().keySet()) {
+                            for (String prefix : context.getNamespaces().keySet()) {
                                 String namespaceURI = context.getNamespaceURI(prefix);
                                 consumer.add(eventFactory.createNamespace(prefix, namespaceURI));
                             }

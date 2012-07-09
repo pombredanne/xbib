@@ -60,6 +60,15 @@ public class RecordLabel {
      * 
      * @param label the label
      */
+    public RecordLabel() {
+        
+    }
+    
+    /**
+     * Construct a record label
+     * 
+     * @param label the label
+     */
     public RecordLabel(char[] label) {
         if (label.length != LENGTH) {
             throw new IllegalArgumentException("record label is not " + LENGTH + " octets long");

@@ -55,7 +55,7 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
         super(identifier);
     }
 
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     protected SimpleResource(String value) {
         super((O) new SimpleLiteral<String>(value));
     }
@@ -75,13 +75,13 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
         return new SimpleLiteral<>(value, encodingScheme);
     }
 
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     @Override
     public BlankNode<S, P, O> createBlankNode() {
         return (BlankNode<S, P, O>) new SimpleBlankNode<S, P, S>();
     }
 
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     @Override
     public BlankNode<S, P, O> createBlankNode(String nodeID) {
         return (BlankNode<S, P, O>) new SimpleBlankNode<S, P, S>(nodeID);

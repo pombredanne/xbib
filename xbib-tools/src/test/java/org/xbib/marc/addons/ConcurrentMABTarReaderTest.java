@@ -30,6 +30,7 @@ public class ConcurrentMABTarReaderTest {
     
     private Importer createImporter() {
         ElementOutput<MABContext> output = new ElementOutput<MABContext>() {
+            long counter;
 
             @Override
             public boolean enabled() {
@@ -38,7 +39,14 @@ public class ConcurrentMABTarReaderTest {
 
             @Override
             public void output(MABContext context, Object info) {
+                counter++;
             }
+
+            @Override
+            public long getCounter() {
+                return counter;
+            }
+            
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);

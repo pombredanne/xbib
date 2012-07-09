@@ -107,7 +107,7 @@ public final class CQLQueryModel {
         this.disjunctivefilterTrail = new FilterBreadcrumbTrail(BooleanOperator.OR);
         this.optionTrail = new OptionBreadcrumbTrail();
         // load contexts
-        Map<String, String> map = nsContext.getNamespaceMap();
+        Map<String, String> map = nsContext.getNamespaces();
         for (String context : map.keySet()) {
             if (!FACET_INDEX_NAME.equals(context)
                     && !FILTER_INDEX_NAME.equals(context)

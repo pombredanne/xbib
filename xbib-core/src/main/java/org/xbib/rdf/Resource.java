@@ -263,5 +263,14 @@ public interface Resource<S,P,O>
      * @return an object
      */
     O createObject(Object object);
+    
+    /**
+     * Compact a predicate. Under the predicate, there is a single blank node object
+     * with a single value for the same predicate. In such case, the 
+     * blank node can be removed and the single value can be promoted to
+     * the predicate.
+     * @param predicate 
+     */
+    void compact(P predicate);
 
 }

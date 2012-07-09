@@ -64,6 +64,7 @@ public class AlephPublishingReaderTest {
         System.setProperty("java.naming.factory.initial", "org.xbib.naming.SimpleContextFactory");
 
         ElementOutput<MABContext> output = new ElementOutput<MABContext>() {
+            long counter;
 
             @Override
             public boolean enabled() {
@@ -74,6 +75,12 @@ public class AlephPublishingReaderTest {
             public void output(MABContext context, Object info) {
                 logger.log(Level.INFO, "resource = {0}", context.resource());
                 logger.log(Level.INFO, "info = {0}", info);
+                counter++;
+            }
+
+            @Override
+            public long getCounter() {
+                return counter;
             }
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);

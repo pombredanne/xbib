@@ -33,26 +33,26 @@ package org.xbib.elements.dublincore;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.elements.AbstractElementContext;
-import org.xbib.elements.ElementContext;
+import org.xbib.elements.AbstractResourceContext;
+import org.xbib.rdf.ResourceContext;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.simple.SimpleResource;
 
-public class DublinCoreContext extends AbstractElementContext 
-    implements ElementContext, DublinCoreElements {
+public class DublinCoreContext extends AbstractResourceContext 
+    implements ResourceContext, DublinCoreElements {
 
     private final Map<String,Resource> resources = new HashMap();
 
+    @Override
+    public Resource newResource() {
+        return new SimpleResource();
+    }
+        
     public Resource getResource(Resource resource, String name) {
         if (!resources.containsKey(name)) {
             resources.put(name, resource.createResource(name));
         }
         return resources.get(name);
     }
-
-    @Override
-    public void clear() {
-        this.resources.clear();
-    }
-
 
 }

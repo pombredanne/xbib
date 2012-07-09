@@ -14,6 +14,8 @@ public class DublinCoreBuilderTest {
 
     private static final Logger logger = Logger.getLogger(DublinCoreBuilderTest.class.getName());
     
+    private long counter;
+    
     @Test
     public void testDublinCoreBuilder() throws Exception {
         StringReader sr = new StringReader("100=John Doe\n200=Hello Word\n300=2012\n400=1");
@@ -28,6 +30,12 @@ public class DublinCoreBuilderTest {
             public void output(DublinCoreContext context, Object info) {
                 logger.log(Level.INFO, "resource = {0}", context.resource());
                 logger.log(Level.INFO, "info = {0}", info);
+                counter++;
+            }
+
+            @Override
+            public long getCounter() {
+                return counter;
             }
         };
         

@@ -33,23 +33,25 @@ package org.xbib.builders.elasticsearch;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.xbib.elasticsearch.AbstractWrite;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.Write;
-import org.xbib.elements.ElementContext;
 import org.xbib.elements.output.DefaultElementOutput;
 import org.xbib.io.Mode;
 import org.xbib.io.util.DateUtil;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.ResourceContext;
 
-public class ElasticsearchResourceOutput<C extends ElementContext>
+public class ElasticsearchResourceOutput<C extends ResourceContext>
     extends DefaultElementOutput<C> {
 
     private static final Logger logger = Logger.getLogger(ElasticsearchResourceOutput.class.getName());
     private ElasticsearchSession session;
+    private final static AtomicLong counter = new AtomicLong(0L);
     private AbstractWrite operator;
 
     public void connect(String index, String type) throws IOException {
@@ -72,6 +74,7 @@ public class ElasticsearchResourceOutput<C extends ElementContext>
             } else {
                 logger.log(Level.INFO, "session {0} created", session);
             }
+            operator.createIndex(session);
         } catch (IOException e) {
             logger.log(Level.WARNING, "I/O exception while opening session, reason: {1}",
                     new Object[]{e.getMessage()});
@@ -80,6 +83,7 @@ public class ElasticsearchResourceOutput<C extends ElementContext>
 
     public void disconnect() throws IOException {
         operator.flush(session);
+        
         session.close();
     }
 
@@ -91,10 +95,11 @@ public class ElasticsearchResourceOutput<C extends ElementContext>
     public void output(C context, Object info) {
         try {
             Resource resource = context.resource();
-            if (session.isOpen() && !resource.isDeleted() && !resource.isEmpty()) {
-                resource.addProperty("xbib:update", DateUtil.formatNow());
-                resource.addProperty("xbib:info", info);              
+            if (session.isOpen() && resource != null && !resource.isDeleted() && !resource.isEmpty()) {
+                resource.addProperty(resource.createPredicate("xbib:update"), DateUtil.formatNow());
+                resource.addProperty(resource.createPredicate("xbib:info"), resource.createObject(info));              
                 operator.write(session, resource);
+                counter.incrementAndGet();
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
@@ -104,6 +109,11 @@ public class ElasticsearchResourceOutput<C extends ElementContext>
                 logger.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
+    }
+    
+    @Override
+    public long getCounter() {
+        return counter.longValue();
     }
 
 }

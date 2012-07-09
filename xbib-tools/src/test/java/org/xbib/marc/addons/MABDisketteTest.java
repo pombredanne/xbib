@@ -87,6 +87,7 @@ public class MABDisketteTest {
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/mgl3.xml"), "UTF-8");
         ElementOutput<MABContext> output = new ElementOutput<MABContext>() {
+            long counter;
 
             @Override
             public boolean enabled() {
@@ -96,7 +97,14 @@ public class MABDisketteTest {
             @Override
             public void output(MABContext context, Object info) {
                 logger.log(Level.INFO, context.resource().toString());
+                counter++;
             }
+
+            @Override
+            public long getCounter() {
+                return counter;
+            }
+            
         };
         MABBuilder builder = new MABBuilder().addOutput(output);
         KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);

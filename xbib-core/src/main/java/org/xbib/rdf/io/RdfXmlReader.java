@@ -61,6 +61,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
@@ -127,7 +128,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
 
     @Override
     public RdfXmlReader parse(XMLReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
+        Handler xmlHandler = new Handler();
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
@@ -135,14 +136,14 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
 
     @Override
     public RdfXmlReader parse(XMLFilterReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
+        Handler xmlHandler = new Handler();
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
     }
 
     @Override
-    public XmlHandler getHandler() {
+    public DefaultHandler getHandler() {
         return new Handler();
     }
 
@@ -394,7 +395,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
         public int li = 1;
     }
 
-    class Handler extends XmlHandler {
+    class Handler extends DefaultHandler {
 
         Stack<Frame> stack = new Stack<>();
         StringBuilder pcdata = null;

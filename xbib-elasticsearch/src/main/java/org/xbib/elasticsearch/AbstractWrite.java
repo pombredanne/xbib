@@ -41,7 +41,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.xbib.io.Identifiable;
+import org.xbib.io.StringData;
 import org.xbib.io.operator.CreateOperator;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
@@ -52,7 +54,7 @@ import org.xbib.xml.SimpleNamespaceContext;
 
 /**
  * Abstract class for indexing resources to Elasticsearch
- * 
+ *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
@@ -60,7 +62,6 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
 
     private static final Logger logger = Logger.getLogger(AbstractWrite.class.getName());
     private static final NamespaceContext context = SimpleNamespaceContext.getInstance();
-    private volatile XContentBuilder builder;
     protected String index;
     protected String type;
     protected char delimiter;
@@ -83,14 +84,29 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
         this.type = type;
     }
 
+    public void createIndex(ElasticsearchSession session) throws IOException {
+        CreateIndex create = new CreateIndex();
+        create.setIndex(index);
+        create.setType(type);
+        StringData data = new StringData("{\""+type+"\":{\"date_detection\":false}}");
+        try {
+            create.create(session, null, data);
+        } catch (IndexAlreadyExistsException e) {
+            logger.log(Level.WARNING, e.getMessage());
+        }
+    }
+    
     public String createId(Resource resource) {
+        if (resource.getIdentifier() == null) {
+            return null;
+        }
         String id = resource.getIdentifier().getFragment();
         if (id == null) {
             id = resource.getIdentifier().toString();
         }
         return id;
     }
-    
+
     @Override
     public abstract void write(ElasticsearchSession session, Resource<S, P, O> resource)
             throws IOException;
@@ -98,21 +114,20 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
     @Override
     public abstract void create(ElasticsearchSession session, Identifiable identifiable, Resource<S, P, O> resource)
             throws IOException;
-    
-    
+
     @Override
     public abstract void flush(ElasticsearchSession session)
             throws IOException;
 
     /**
      * Build data for the Elasticsearch session.
-     * 
+     *
      * @param session
      * @param resource
      * @throws IOException
      */
-    protected void build(Resource<S, P, O> resource) throws IOException {
-        this.builder = jsonBuilder();
+    protected XContentBuilder build(Resource<S, P, O> resource) throws IOException {
+        XContentBuilder builder = jsonBuilder();
         try {
             builder.startObject();
             build(builder, resource);
@@ -120,14 +135,11 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
         } catch (URISyntaxException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
+        return builder;
     }
 
     protected char getDelimiter() {
         return delimiter;
-    }
-
-    protected XContentBuilder getBuilder() {
-        return builder;
     }
 
     protected void build(XContentBuilder builder, Resource<S, P, O> resource)
@@ -197,5 +209,4 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
         }
         return properties;
     }
-
 }

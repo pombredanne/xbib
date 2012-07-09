@@ -29,29 +29,28 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.elements;
+package org.xbib.rdf.simple;
 
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.ResourceContext;
 
-/**
- * The interface for all element contexts. An ElementContext is constructed
- * by ElementContextFactories.
- * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
-public interface ElementContext<R extends Resource> {
-    
-    void setResourceFactory(ResourceFactory<R> factory);
-    
-    ResourceFactory<R> getResourceFactory();
-    
-    void setResource(R resource);
-    
-    R resource();
-    
-    /**
-     * Clear the element context.
-     */
-    void clear();
-    
+public class SimpleResourceContext implements ResourceContext<Resource> {
+
+    private Resource resource;
+
+    @Override
+    public Resource newResource() {
+        return new SimpleResource();
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
+    @Override
+    public Resource resource() {
+        return resource;
+    }
+
 }

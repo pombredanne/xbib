@@ -44,7 +44,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         this.lastWrittenSubject = null;
         this.context = context == null ? SimpleNamespaceContext.getInstance() : context;
         // make RDF name spaces
-        for (Map.Entry<String, String> entry : context.getNamespaceMap().entrySet()) {
+        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             handleNamespace(entry.getKey(), entry.getValue());
         }
         startRDF();
@@ -71,7 +71,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             setNamespace("rdf", NS_URI, false);
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             writeStartOfStartTag(NS_URI, "RDF");
-            for (Map.Entry<String, String> entry : context.getNamespaceMap().entrySet()) {
+            for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
                 String prefix = entry.getKey();
                 String name = entry.getValue();
                 writeNewLine();
@@ -119,11 +119,12 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             // Header containing namespace declarations has already been written
             return;
         }
-        if (!context.getNamespaceMap().containsKey(name)) {
+        Map map = context.getNamespaces();
+        if (!map.containsKey(name)) {
             // Namespace not yet mapped to a prefix, try to give it the specified
             // prefix
             boolean isLegalPrefix = prefix.length() == 0 || XMLUtil.isNCName(prefix);
-            if (!isLegalPrefix || context.getNamespaceMap().containsValue(prefix)) {
+            if (!isLegalPrefix || map.containsValue(prefix)) {
                 // Specified prefix is not legal or the prefix is already in use,
                 // generate a legal unique prefix
                 if (fixedPrefix) {
@@ -137,7 +138,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
                     prefix = "ns";
                 }
                 int number = 1;
-                while (context.getNamespaceMap().containsValue(prefix + number)) {
+                while (map.containsValue(prefix + number)) {
                     number++;
                 }
                 prefix += number;

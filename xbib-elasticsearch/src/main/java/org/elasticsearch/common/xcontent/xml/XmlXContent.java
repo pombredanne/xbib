@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import org.elasticsearch.common.BytesHolder;
 import org.elasticsearch.common.xcontent.XContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentGenerator;
@@ -75,27 +76,35 @@ public class XmlXContent implements XContent {
 
     @Override
     public XContentParser createParser(String content) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new XmlXContentParser(new XmlParser(content, handler));
     }
 
     @Override
     public XContentParser createParser(InputStream is) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new XmlXContentParser(new XmlParser(is, handler));
     }
 
     @Override
     public XContentParser createParser(byte[] data) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new XmlXContentParser(new XmlParser(data, handler));
     }
 
     @Override
     public XContentParser createParser(byte[] data, int offset, int length) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new XmlXContentParser(new XmlParser(data, offset, length, handler));
     }
 
     @Override
     public XContentParser createParser(Reader reader) throws IOException {
+        return new XmlXContentParser(new XmlParser(reader, handler));
+    }
+
+/**
+ * ES 0.20 method
+ * 
+ * @Override
+    public XContentParser createParser(BytesHolder bytes) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+   */ 
 }

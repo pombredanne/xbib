@@ -192,7 +192,7 @@ public class JsonSaxAdapter {
     }
 
     private void writeNamespaceDeclarations(NamespaceContext context) throws SAXException {
-        Set<String> keys = new TreeSet(context.getNamespaceMap().keySet());
+        Set<String> keys = new TreeSet(context.getNamespaces().keySet());
         if (root != null && !keys.contains(root.getPrefix())) {
             contentHandler.startPrefixMapping(root.getPrefix(), root.getNamespaceURI());
         }

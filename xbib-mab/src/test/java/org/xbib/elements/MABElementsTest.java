@@ -109,6 +109,8 @@ public class MABElementsTest {
     private Importer createImporter() {
         ElementOutput<MABContext> output = new ElementOutput<MABContext>() {
 
+            long counter;
+            
             @Override
             public boolean enabled() {
                 return true;
@@ -118,6 +120,12 @@ public class MABElementsTest {
             public void output(MABContext context, Object info) {
                 logger.log(Level.INFO, "resource = {0}", context.resource());
                 logger.log(Level.INFO, "info = {0}", info);
+                counter++;
+            }
+
+            @Override
+            public long getCounter() {
+                return counter;
             }
         };
         MABBuilder builder = new MABBuilder().addOutput(output);

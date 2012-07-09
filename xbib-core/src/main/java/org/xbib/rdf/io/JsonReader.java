@@ -52,6 +52,7 @@ import org.xbib.xml.transform.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Write JSON as RDF triples
@@ -124,14 +125,14 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
     }
 
     public JsonReader parse(JsonXmlReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
+        Handler xmlHandler = new Handler();
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
     }
 
     public JsonReader parse(XMLFilterReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
+        Handler xmlHandler = new Handler();
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
@@ -141,7 +142,7 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
         return name.replaceAll("[^a-zA-Z]+", "");
     }
 
-    class Handler extends XmlHandler {
+    class Handler extends DefaultHandler {
 
         StringBuilder content = new StringBuilder();
         Stack<QName> stack = new Stack();

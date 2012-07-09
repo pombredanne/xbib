@@ -31,6 +31,7 @@
  */
 package org.xbib.elements;
 
+import org.xbib.rdf.ResourceContext;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 import java.io.InputStream;
@@ -40,17 +41,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.rdf.Resource;
 
-public abstract class AbstractElementBuilder<C extends ElementContext, E extends Element, K, V>
+public abstract class AbstractElementBuilder<C extends ResourceContext, E extends Element, K, V>
         implements ElementBuilder<K, V, E, C> {
 
     protected final ThreadLocal<C> context = new ThreadLocal();
     private final List<ElementOutput> outputs = new ArrayList();
     private final static String ROOT_PATH = "/org/xbib/elements/output/";
     private final GroovyClassLoader gcl = new GroovyClassLoader();
-
-    protected abstract ResourceFactory<Resource> getResourceFactory();
 
     protected abstract ElementContextFactory<C> getContextFactory();
 
@@ -79,8 +77,7 @@ public abstract class AbstractElementBuilder<C extends ElementContext, E extends
     @Override
     public void begin() {
         C c = getContextFactory().newContext();
-        c.setResourceFactory(getResourceFactory());
-        c.setResource(getResourceFactory().newResource());
+        c.setResource(c.newResource());
         context.set(c);
     }
 
@@ -101,7 +98,6 @@ public abstract class AbstractElementBuilder<C extends ElementContext, E extends
                 output.output(context.get(), trailer);
             }
         }
-        context.get().clear();
     }
 
     @Override

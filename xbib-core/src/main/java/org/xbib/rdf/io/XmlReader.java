@@ -1,22 +1,44 @@
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor 
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ * 
+ * This program is free software; you can redistribute it and/or modify 
+ * it under the terms of the GNU Affero General Public License as published 
+ * by the Free Software Foundation; either version 3 of the License, or 
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see http://www.gnu.org/licenses 
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street, 
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ * 
+ * The interactive user interfaces in modified source and object code 
+ * versions of this program must display Appropriate Legal Notices, 
+ * as required under Section 5 of the GNU Affero General Public License.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public 
+ * License, these Appropriate Legal Notices must retain the display of the 
+ * "Powered by xbib" logo. If the display of the logo is not reasonably 
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
 package org.xbib.rdf.io;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.Stack;
-import javax.xml.namespace.QName;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
 import org.xbib.xml.transform.XMLFilterReader;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -25,34 +47,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class XmlReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
         implements XmlTriplifier<S, P, O> {
 
-    private NamespaceContext context;
-    private NamespaceContext ignore;
     private StatementListener listener;
-    private Resource<S, P, O> root;
-    private Resource<S, P, O> resource;
-    private URI identifier;
-
-    public XmlReader() {
-        this(SimpleNamespaceContext.getInstance());
-    }
-
-    public XmlReader(NamespaceContext context) {
-        this.context = context;
-    }
-
-    public XmlReader setIdentifier(URI identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-
-    public XmlReader setIgnoreNamespaces(NamespaceContext ignore) {
-        this.ignore = ignore;
-        return this;
-    }
-
-    public Resource getResource() {
-        return root;
-    }
+    private XmlHandler handler;
+    private boolean namespaces = true;
+    private boolean validate = false;
 
     /**
      * Set the triple listener that gets called every time a triple is read.
@@ -75,6 +73,16 @@ public class XmlReader<S extends Resource<S, P, O>, P extends Property, O extend
         return listener;
     }
 
+    public XmlReader setValidate(boolean validate) {
+        this.validate = validate;
+        return this;
+    }
+
+    public XmlReader setNamespaces(boolean namespaces) {
+        this.namespaces = namespaces;
+        return this;
+    }
+
     @Override
     public XmlReader parse(InputStream in) throws IOException {
         return parse(new InputStreamReader(in, "UTF-8"));
@@ -92,106 +100,44 @@ public class XmlReader<S extends Resource<S, P, O>, P extends Property, O extend
 
     @Override
     public XmlReader parse(InputSource source) throws IOException, SAXException {
-        parse(XMLReaderFactory.createXMLReader(), source);
-        return this;
+        return parse(XMLReaderFactory.createXMLReader(), source);
     }
 
     @Override
     public XmlReader parse(XMLReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
-        reader.setContentHandler(xmlHandler);
+        if (handler != null) {
+            if (listener != null) {
+                handler.setListener(listener);
+            }
+            reader.setContentHandler(handler);
+        }
+        reader.setFeature("http://xml.org/sax/features/namespaces", namespaces);
+        reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", validate);
         reader.parse(source);
         return this;
     }
 
     @Override
     public XmlReader parse(XMLFilterReader reader, InputSource source) throws IOException, SAXException {
-        XmlHandler xmlHandler = new Handler();
-        reader.setContentHandler(xmlHandler);
+        if (handler != null) {
+            if (listener != null) {
+                handler.setListener(listener);
+            }
+            reader.setContentHandler(handler);
+        }
+        reader.setFeature("http://xml.org/sax/features/namespaces", namespaces);
+        reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", validate);
         reader.parse(source);
+        return this;
+    }
+
+    public XmlReader setHandler(XmlHandler handler) {
+        this.handler = handler;
         return this;
     }
 
     @Override
     public XmlHandler getHandler() {
-        return new Handler();
-    }
-
-    private String prefix(String name) {
-        return name.replaceAll("[^a-zA-Z]+", "");
-    }
-
-    class Handler extends XmlHandler {
-
-        StringBuilder content = new StringBuilder();
-        Stack<QName> stack = new Stack();
-        Stack<Resource> resources = new Stack();
-
-        @Override
-        public void startDocument() throws SAXException {
-            resource = new SimpleResource();
-            root = resource;
-        }
-
-        @Override
-        public void endDocument() throws SAXException {
-            root.setIdentifier(identifier);
-            listener.newIdentifier(identifier);
-            Iterator<Statement<S, P, O>> it = root.iterator(true);
-            while (it.hasNext()) {
-                Statement<S, P, O> st = it.next();
-                listener.statement(st);
-            }
-            root = null;
-        }
-
-        @Override
-        public void startElement(String nsURI, String localname, String qname, Attributes atts) throws SAXException {
-            if (ignore != null && ignore.getPrefix(nsURI) != null) {
-                return;
-            }
-            if (!stack.empty()) {
-                QName name = stack.peek();
-                URI uri = URI.create(prefix(name.getPrefix()) + ":" + name.getLocalPart());
-                P property = root.createPredicate(uri);
-                resources.push(resource);
-                resource = resource.createResource(property);
-            }
-            stack.push(new QName(nsURI, localname, context.getPrefix(nsURI)));
-            content.setLength(0);
-        }
-
-        @Override
-        public void endElement(String nsURI, String localname, String qname) throws SAXException {
-            if (ignore != null && ignore.getPrefix(nsURI) != null) {
-                return;
-            }
-            QName name = stack.pop();
-            URI uri = URI.create(prefix(name.getPrefix()) + ":" + name.getLocalPart());
-            P property = root.createPredicate(uri);
-            if (content.length() > 0) {
-                resource.addProperty(property, content.toString());
-            }
-            if (!resources.empty()) {
-                resource = resources.pop();
-            }
-        }
-
-        @Override
-        public void characters(char[] chars, int start, int length) throws SAXException {
-            content.append(new String(chars, start, length));
-        }
-
-        @Override
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {
-            if (ignore != null && ignore.getPrefix(uri) != null) {
-                return;
-            }
-            context.addNamespace(prefix(prefix), uri);
-        }
-
-        @Override
-        public void endPrefixMapping(String prefix) throws SAXException {
-        }
+        return handler;
     }
 }

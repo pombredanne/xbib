@@ -56,7 +56,7 @@ import org.xbib.sru.ScanResponse;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
-import org.xbib.xml.ES;
+import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 

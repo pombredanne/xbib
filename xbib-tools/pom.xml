@@ -27,6 +27,7 @@
                         <descriptor>${basedir}/src/main/assemblies/source.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/alephseq2marcxml.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearchgndindexer.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearchmedline.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -43,7 +44,7 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-core</artifactId>
+            <artifactId>xbib-mapper</artifactId>   
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>

@@ -86,6 +86,11 @@ public class ConcurrentAlephPublishingReaderTest {
             public void output(MABContext context, Object info) {
                 count.incrementAndGet();
             }
+
+            @Override
+            public long getCounter() {
+                return count.get();
+            }
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);

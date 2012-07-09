@@ -31,9 +31,20 @@
  */
 package org.xbib.elements;
 
+import org.xbib.rdf.ResourceContext;
 import org.xbib.rdf.Resource;
 
-public interface ResourceFactory<R extends Resource> {
-
-    R newResource();
+public abstract class AbstractResourceContext<R extends Resource> implements ResourceContext<R> {
+    
+    private R resource;
+    
+    @Override
+    public void setResource(R resource) {
+        this.resource = resource;
+    }
+    
+    @Override
+    public R resource() {
+        return resource;
+    }
 }

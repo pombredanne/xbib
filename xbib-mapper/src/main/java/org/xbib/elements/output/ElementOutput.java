@@ -31,7 +31,7 @@
  */
 package org.xbib.elements.output;
 
-import org.xbib.elements.ElementContext;
+import org.xbib.rdf.ResourceContext;
 
 /**
  * An Element output, transporting a given context and
@@ -39,10 +39,12 @@ import org.xbib.elements.ElementContext;
  * 
  * @param <C> the context class
  */
-public interface ElementOutput<C extends ElementContext> {
+public interface ElementOutput<C extends ResourceContext> {
 
     boolean enabled();
     
     void output(C context, Object info);
+    
+    long getCounter();
 
 }

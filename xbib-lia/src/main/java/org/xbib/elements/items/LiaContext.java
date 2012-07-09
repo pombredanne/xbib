@@ -56,10 +56,4 @@ public class LiaContext extends DublinCoreContext {
         }
         return lia.getAccesses().getLast();
     }
-    
-    @Override
-    public void clear() {
-        this.lia = new Root();
-    }
-
 }

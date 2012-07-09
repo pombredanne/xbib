@@ -29,32 +29,20 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.elements;
+package org.xbib.rdf;
 
-import org.xbib.rdf.Resource;
-
-public abstract class AbstractElementContext<R extends Resource> implements ElementContext<R> {
+/**
+ * A Resource context. 
+ * 
+ * Resource contexts are useful in situation where you need to create
+ * resources, for example in parsers that ouput resources as results.
+ * 
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public interface ResourceContext<R extends Resource> extends ResourceFactory<R> {
+        
+    void setResource(R resource);
     
-    private ResourceFactory factory;
-    private R resource;
+    R resource();
     
-    @Override
-    public void setResourceFactory(ResourceFactory factory) {
-        this.factory = factory;
-    }
-
-    @Override
-    public ResourceFactory getResourceFactory() {
-        return factory;
-    }
-
-    @Override
-    public void setResource(R resource) {
-        this.resource = resource;
-    }
-    
-    @Override
-    public R resource() {
-        return resource;
-    }
 }

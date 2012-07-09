@@ -48,7 +48,7 @@ import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.URINamespaceContext;
 
 /**
  * RDF Turtle serialization
@@ -67,9 +67,9 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
      */
     private Writer writer;
     /**
-     * namespace context
+     * A Namespace context with URI-related methods
      */
-    private NamespaceContext context;
+    private URINamespaceContext context;
     /**
      * Flag for write start
      */
@@ -101,10 +101,10 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     private long tripleCounter;
 
     public TurtleWriter() {
-        this(SimpleNamespaceContext.getInstance());
+        this(URINamespaceContext.getInstance());
     }
 
-    public TurtleWriter(NamespaceContext context) {
+    public TurtleWriter(URINamespaceContext context) {
         this.context = context;
     }
 
@@ -147,7 +147,7 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     
     public void writeNamespaces(NamespaceContext context) throws IOException {
         boolean written = false;
-        for (Map.Entry<String, String> entry : context.getNamespaceMap().entrySet()) {
+        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             if (entry.getValue().length() > 0) {
                 String nsURI =  entry.getValue().toString();
                 if (!RDF.NS_URI.equals(nsURI)) {
@@ -161,9 +161,9 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         }
     }    
 
-    private void writeNamespaces(NamespaceContext context, Resource<S, P, O> resource) throws IOException {
+    private void writeNamespaces(URINamespaceContext context, Resource<S, P, O> resource) throws IOException {
         // first, collect namespace URIs and prefixes
-        NamespaceContext newContext = SimpleNamespaceContext.newInstance();
+        URINamespaceContext newContext = URINamespaceContext.newInstance();
         Iterator<Statement<S, P, O>> it = resource.iterator(true);
         while (it.hasNext()) {
             Statement<S, P, O> stmt = it.next();

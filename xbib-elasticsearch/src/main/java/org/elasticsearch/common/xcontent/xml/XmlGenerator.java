@@ -26,10 +26,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Stack;
 import javax.xml.namespace.QName;
-import org.xbib.xml.ES;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
-import org.xbib.xml.XMLUtil;
+import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.elasticsearch.common.xcontent.xml.namespace.NamespaceContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -48,32 +46,32 @@ public class XmlGenerator {
 
     public XmlGenerator(OutputStream out)
             throws IOException {
-        this(null, new OutputStreamWriter(out, "UTF-8"), SimpleNamespaceContext.getInstance(), null);
+        this(null, new OutputStreamWriter(out, "UTF-8"), NamespaceContext.getInstance(), null);
     }
 
     public XmlGenerator(OutputStream out, ContentHandler handler)
             throws IOException {
-        this(null, new OutputStreamWriter(out, "UTF-8"), SimpleNamespaceContext.getInstance(), handler);
+        this(null, new OutputStreamWriter(out, "UTF-8"), NamespaceContext.getInstance(), handler);
     }
 
     public XmlGenerator(Writer writer)
             throws IOException {
-        this(null, writer, SimpleNamespaceContext.getInstance(), null);
+        this(null, writer, NamespaceContext.getInstance(), null);
     }
 
     public XmlGenerator(Writer writer, ContentHandler handler)
             throws IOException {
-        this(null, writer, SimpleNamespaceContext.getInstance(), handler);
+        this(null, writer, NamespaceContext.getInstance(), handler);
     }
 
     public XmlGenerator(QName root, OutputStream out)
             throws IOException {
-        this(root, new OutputStreamWriter(out, "UTF-8"), SimpleNamespaceContext.getInstance(), null);
+        this(root, new OutputStreamWriter(out, "UTF-8"), NamespaceContext.getInstance(), null);
     }
 
     public XmlGenerator(QName root, Writer writer)
             throws IOException {
-        this(root, writer, SimpleNamespaceContext.getInstance(), null);
+        this(root, writer, NamespaceContext.getInstance(), null);
     }
 
     public XmlGenerator(QName root, Writer writer, NamespaceContext context, ContentHandler handler)
@@ -102,7 +100,7 @@ public class XmlGenerator {
         objects.push(qname);
         StringBuilder attrs = new StringBuilder();
         if (namespaceDecl) {
-            for (String prefix : context.getNamespaceMap().keySet()) {
+            for (String prefix : context.getNamespaces().keySet()) {
                 String namespaceURI = context.getNamespaceURI(prefix);
                 attrs.append(" xmlns:").append(prefix).append("=\"").append(namespaceURI).append("\"");
                 try {
@@ -213,6 +211,11 @@ public class XmlGenerator {
         }
     }
 
+    /**
+     * Convert abbreviated or non-abbreviaed XML name to a qualified name.
+     * @param name
+     * @return 
+     */
     private QName toQName(String name) {
         String nsPrefix = root.getPrefix();
         String nsURI = root.getNamespaceURI();
@@ -231,19 +234,74 @@ public class XmlGenerator {
         return new QName(nsURI, name, nsPrefix);
     }
 
+    /**
+     * Write begin of XML markup
+     * @param prefix
+     * @param localPart 
+     */
     private void beginElement(String prefix, String localPart) {
         sb.append('<').append(prefix).append(':').append(localPart).append('>');
     }
 
+    /**
+     * Write begin of XML markup element with attributes
+     * @param prefix
+     * @param localPart
+     * @param attrs 
+     */
     private void beginElement(String prefix, String localPart, StringBuilder attrs) {
         sb.append('<').append(prefix).append(':').append(localPart).append(attrs).append('>');
     }
 
+    /**
+     * Write end of XML markup element
+     * @param prefix
+     * @param localPart 
+     */
     private void endElement(String prefix, String localPart) {
         sb.append("</").append(prefix).append(':').append(localPart).append('>');
     }
 
+    /**
+     * Write XML text. The text is escaped with XML escapes.
+     * @param text 
+     */
     private void text(CharSequence text) {
-        sb.append(XMLUtil.escape(text));
+        escape(sb, text);
+    }
+    
+    /**
+     * Replace special characters with XML escapes:
+     * <pre>
+     * &amp; <small>(ampersand)</small> is replaced by &amp;amp;
+     *
+     * &lt; <small>(less than)</small> is replaced by &amp;lt;
+     * &gt; <small>(greater than)</small> is replaced by &amp;gt;
+     * &quot; <small>(double quote)</small> is replaced by &amp;quot;
+     * </pre>
+     *
+     * @param string The string to be escaped.
+     * @return The escaped string.
+     */
+    public static void escape(StringBuilder sb, CharSequence string) {
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+            switch (c) {
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                case '"':
+                    sb.append("&quot;");
+                    break;
+                default:
+                    sb.append(c);
+            }
+        }
     }
 }
