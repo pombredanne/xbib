@@ -37,8 +37,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.mab.MABBuilder;
 import org.xbib.elements.mab.MABContext;
@@ -47,11 +45,13 @@ import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.util.AtomicIntegerIterator;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 
 public class ConcurrentAlephPublishingReaderTest {
 
-    private final static Logger logger = Logger.getLogger(AlephPublishingReader.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AlephPublishingReader.class.getName());
     private final URI uri = URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver");
     private final Iterator<Integer> iterator = new AtomicIntegerIterator(1, 100);
     private final int threads = 4;
@@ -70,8 +70,8 @@ public class ConcurrentAlephPublishingReaderTest {
                     public Importer newImporter() {
                         return createImporter();
                     }
-                }).run(uris);
-        logger.log(Level.INFO, "count = " + count + " result = " + service.getResults());
+                }).execute(uris);
+        logger.info("count = " + count + " result = " + service.getResults());
     }
 
     private Importer createImporter() {

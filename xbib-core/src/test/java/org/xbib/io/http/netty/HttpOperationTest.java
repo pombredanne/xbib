@@ -22,14 +22,14 @@ package org.xbib.io.http.netty;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
 import org.xbib.io.Mode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class HttpOperationTest {
 
-    private static final Logger logger = Logger.getLogger(HttpOperationTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HttpOperationTest.class.getName());
     
     @Test
     public void testGet() throws Exception {
@@ -43,11 +43,11 @@ public class HttpOperationTest {
 
             @Override
             public void process(HttpResult result) throws IOException {
-                logger.log(Level.INFO, "result = " + result);
+                logger.info("result = " + result);
             }
             @Override
             public void processError(HttpResult result) throws IOException {
-                logger.log(Level.INFO, "error status = " + result.getStatusCode());
+                logger.info("error status = " + result.getStatusCode());
             }
 
         });
@@ -68,11 +68,11 @@ public class HttpOperationTest {
 
             @Override
             public void process(HttpResult result) throws IOException {
-                logger.log(Level.INFO, "result = " + result);
+                logger.info("result = " + result);
             }
             @Override
             public void processError(HttpResult result) throws IOException {
-                logger.log(Level.INFO, "error status = " + result.getStatusCode());
+                logger.info("error status = " + result.getStatusCode());
             }
         });
         op.prepareExecution(session).execute(15, TimeUnit.SECONDS);

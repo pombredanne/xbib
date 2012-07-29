@@ -11,10 +11,10 @@
  */
 package org.xbib.xml.transform;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * An {@link ErrorListener} that reacts to errors when transforming (applying) a
@@ -22,7 +22,7 @@ import javax.xml.transform.TransformerException;
  */
 public final class TransformerErrorListener implements ErrorListener {
 
-    private static final Logger logger = Logger.getLogger(TransformerErrorListener.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TransformerErrorListener.class.getName());
     /**
      * We store the exception internally as a workaround to xalan, which reports
      * {@link TransformerException} as {@link RuntimeException} (wrapped).
@@ -34,7 +34,7 @@ public final class TransformerErrorListener implements ErrorListener {
      */
     @Override
     public void warning(TransformerException e) throws TransformerException {
-        logger.log(Level.WARNING, "Warning (recoverable): {0}", e.getMessage());
+        logger.warn("Warning (recoverable): {}", e.getMessage());
     }
 
     /*
@@ -42,7 +42,7 @@ public final class TransformerErrorListener implements ErrorListener {
      */
     @Override
     public void error(TransformerException e) throws TransformerException {
-        logger.log(Level.WARNING, "Error (recoverable): {0}", e.getMessage());
+        logger.error("Error (recoverable): {}", e.getMessage());
     }
 
     /**
@@ -50,7 +50,7 @@ public final class TransformerErrorListener implements ErrorListener {
      */
     @Override
     public void fatalError(TransformerException e) throws TransformerException {
-        logger.log(Level.SEVERE, "Fatal error: {0}", e.getMessage());
+        logger.error("Fatal error: {0}", e.getMessage());
         this.exception = e;
         throw e;
     }

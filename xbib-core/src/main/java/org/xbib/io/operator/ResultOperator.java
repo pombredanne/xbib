@@ -43,6 +43,6 @@ import org.xbib.io.SessionExecutor;
  */
 public interface ResultOperator<S extends Session,R> extends Operator, SessionExecutor<S> {
 
-    void addProcessor(ResultProcessor<R> processor);
+    void setResultProcessor(ResultProcessor<R> processor);
     
 }

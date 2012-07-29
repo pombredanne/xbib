@@ -42,7 +42,7 @@ import org.xbib.io.compress.xz.XZOutputStream;
 public class XZStreamCodec implements StreamCodec<XZInputStream,XZOutputStream> {
 
     @Override
-    public String getSuffix() {
+    public String getName() {
         return "xz";
     }
 

@@ -23,10 +23,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import static org.testng.AssertJUnit.*;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ZlibTest {
+public class ZlibTest extends Assert {
 
     @Test
     public void helloWorld() throws Exception {

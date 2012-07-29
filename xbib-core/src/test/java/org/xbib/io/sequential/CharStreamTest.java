@@ -33,14 +33,14 @@ package org.xbib.io.sequential;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class CharStreamTest {
 
-    private static final Logger logger = Logger.getLogger(CharStreamTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CharStreamTest.class.getName());
 
     int dataCount = 0;
     int unitCount = 0;
@@ -74,25 +74,21 @@ public class CharStreamTest {
         CharStreamListener listener = new CharStreamListener() {
             @Override
             public void data(String data) {
-                //logger.log(Level.INFO, "got data = " + data);
                 incDataCount();
             }
 
             @Override
             public void markUnit() {
-                //logger.log(Level.INFO, "mark UNIT");
                 incUnitCount();
             }
 
             @Override
             public void markRecord() {
-                //logger.log(Level.INFO, "mark RECORD");
                 incRecordCount();
             }
 
             @Override
             public void markGroup() {
-               // logger.log(Level.INFO, "mark GROUP");
                incGroupCount();
             }
 
@@ -113,8 +109,8 @@ public class CharStreamTest {
         } finally {
             stream.close();
         }
-        logger.log(Level.INFO, "data = {0} unit = {1} record = {2} group = {3} file = {4}", 
-                new Object[]{dataCount, unitCount, recordCount, groupCount, fileCount});
+        logger.info("data = {0} unit = {1} record = {2} group = {3} file = {4}", 
+                dataCount, unitCount, recordCount, groupCount, fileCount);
         
         assertEquals(dataCount, 380);
         assertEquals(unitCount, 23);

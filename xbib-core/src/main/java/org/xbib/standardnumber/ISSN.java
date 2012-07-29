@@ -131,12 +131,15 @@ public class ISSN implements StandardNumber {
             throw new InvalidStandardNumberException();
         }
         int sum = 0;
+        int weight;
         for (int i = 0; i < 7; i++) {
-            sum += ((8 - i) * (s.charAt(i) - '0'));
+            weight = 8 -i;
+            sum += weight * (s.charAt(i) - '0');
         }
-        int mod = 11 - (sum % 11);
-        char p = (mod == 10) ? 'x' : (char) ('0' + mod);
-        this.valid = p == Character.toLowerCase(s.charAt(7));
+        int mod = sum % 11;
+        mod = mod == 0 ? 0 : 11 - mod; 
+        char p = mod == 10 ? 'X' : (char) ('0' + mod);
+        this.valid = p == Character.toUpperCase(s.charAt(7));
         if (!valid) {
             throw new InvalidStandardNumberException(lexicalForm);            
         }

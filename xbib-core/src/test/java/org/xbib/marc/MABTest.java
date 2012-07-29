@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -45,13 +46,29 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.testng.annotations.Test;
+import org.xbib.io.InputStreamService;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class MABTest {
 
+    public void testZDB() throws IOException, SAXException,
+            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+
+        InputStream in = getClass().getResourceAsStream("/test/1217zdbtit.dat");
+        if (in == null) {
+            throw new IOException("input stream not found");
+        }
+        FileOutputStream out = new FileOutputStream("target/zdb.xml");
+        try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
+            InputSource source = new InputSource(new InputStreamReader(in, "x-MAB"));
+            read(source, w);
+            w.flush();
+        }
+    }
+
     @Test
-    public void testMAB() throws IOException, SAXException,
+    public void testCreateMABXML() throws IOException, SAXException,
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
         for (String s : new String[]{
                     "test.groupstream"
@@ -73,6 +90,7 @@ public class MABTest {
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
         Iso2709Reader reader = new Iso2709Reader();
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
+        reader.setProperty(Iso2709Reader.TYPE, "Titel");
         TransformerFactory tFactory = TransformerFactory.newInstance();
         Transformer transformer = tFactory.newTransformer();
         StreamResult target = new StreamResult(w);

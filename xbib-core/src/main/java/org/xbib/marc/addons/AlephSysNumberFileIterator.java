@@ -36,8 +36,8 @@ import java.io.Closeable;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Iterate over Aleph Records with sys numbers from file
@@ -45,8 +45,7 @@ import java.util.logging.Logger;
  */
 public class AlephSysNumberFileIterator implements Closeable, Iterator<Integer> {
 
-    /** the logger */
-    private final static Logger logger = Logger.getLogger(AlephSysNumberFileIterator.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AlephSysNumberFileIterator.class.getName());
     private BufferedReader reader;
     private boolean error;
     private String filename;
@@ -65,13 +64,13 @@ public class AlephSysNumberFileIterator implements Closeable, Iterator<Integer> 
         this.error = false;
         this.count = 0;
         if (filename == null) {
-            logger.log(Level.SEVERE, "no iterator file given");
+            logger.error("no iterator file given");
             return;
         }
         try {
             this.reader = new BufferedReader(new FileReader(filename));
         } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -93,13 +92,13 @@ public class AlephSysNumberFileIterator implements Closeable, Iterator<Integer> 
                 reader = null;
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             try {
                 reader.close();
                 reader = null;
                 error = true;
             } catch (Exception ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return false;
@@ -131,6 +130,6 @@ public class AlephSysNumberFileIterator implements Closeable, Iterator<Integer> 
         if (reader != null) {
             reader.close();
         }
-        logger.log(Level.INFO, "iterator closed after {0} elements {1}", new Object[]{count, error ? "with error" : ""});
+        logger.info("iterator closed after {} elements {}", count, error ? "with error" : "");
     }
 }

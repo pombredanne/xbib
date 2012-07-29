@@ -41,7 +41,7 @@ import org.xbib.io.compress.bzip2.Bzip2OutputStream;
 public class Bzip2StreamCodec implements StreamCodec<Bzip2InputStream,Bzip2OutputStream> {
 
     @Override
-    public String getSuffix() {
+    public String getName() {
         return "bz2";
     }
 

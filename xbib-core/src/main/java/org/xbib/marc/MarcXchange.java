@@ -34,7 +34,7 @@ package org.xbib.marc;
 public interface MarcXchange {
 
     String NS_URI = "info:lc/xmlns/marcxchange-v1";
-    String NS_PREFIX = "marc";
+    String NS_PREFIX = "marcx";
     String MARCXCHANGE_SCHEMA = "http://www.loc.gov/standards/iso25577/marcxchange-1-1.xsd";
     String MARC21_NS_URI = "http://www.loc.gov/MARC21/slim";
     String MARC21_NS_PREFIX = "marc";    

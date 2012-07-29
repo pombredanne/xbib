@@ -22,33 +22,27 @@
     </build>    
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>12.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.6</version>
+            <version>1.9.7</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.6</version>
+            <version>1.9.7</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
-            <version>1.7.4</version>
+            <version>1.7.5</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>3.4.6.Final</version>
+            <version>3.5.2.Final</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -58,21 +52,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>serializer</artifactId>
-            <version>2.7.1</version>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-rdf</artifactId>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -80,7 +62,6 @@
             <artifactId>xbib-logging</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>

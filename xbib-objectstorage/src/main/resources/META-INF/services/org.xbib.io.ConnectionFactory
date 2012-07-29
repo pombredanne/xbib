@@ -1,0 +1,2 @@
+org.xbib.io.sql.SQLConnectionFactory
+org.xbib.io.http.netty.HTTPConnectionFactory

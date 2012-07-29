@@ -37,13 +37,12 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-public class InputStreamService implements InputStreamFactory<InputStream> {
+public class InputStreamService {
 
-    public InputStreamService() {
+    private InputStreamService() {
     }
 
-    @Override
-    public InputStream getInputStream(URI uri) throws IOException {
+    public static InputStream getInputStream(URI uri) throws IOException {
         InputStreamFactory factory;
         ServiceLoader<InputStreamFactory> loader = ServiceLoader.load(InputStreamFactory.class);
         Iterator<InputStreamFactory> it = loader.iterator();
@@ -54,10 +53,5 @@ public class InputStreamService implements InputStreamFactory<InputStream> {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean providesScheme(String scheme) {
-        throw new UnsupportedOperationException("Not supported.");
     }
 }

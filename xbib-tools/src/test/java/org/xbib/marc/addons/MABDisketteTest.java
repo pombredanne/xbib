@@ -39,8 +39,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -60,9 +58,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class MABDisketteTest {
-
-    private static final Logger logger = Logger.getLogger(MABDisketteTest.class.getName());
-
     
     public void testMAB() throws Exception {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
@@ -96,7 +91,6 @@ public class MABDisketteTest {
 
             @Override
             public void output(MABContext context, Object info) {
-                logger.log(Level.INFO, context.resource().toString());
                 counter++;
             }
 

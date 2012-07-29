@@ -9,11 +9,11 @@
 
 package org.xbib.io.compress.xz;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import org.xbib.io.compress.xz.check.Check;
 import org.xbib.io.compress.xz.common.EncoderUtil;
 import org.xbib.io.compress.xz.common.StreamFlags;
-import org.xbib.io.compress.xz.check.Check;
 import org.xbib.io.compress.xz.index.IndexEncoder;
 
 /**
@@ -42,12 +42,12 @@ import org.xbib.io.compress.xz.index.IndexEncoder;
  * X86Options x86 = new X86Options();
  * LZMA2Options lzma2 = new LZMA2Options();
  * FilterOptions[] options = { x86, lzma2 };
- * System.out.println("Encoder memory usage: "
+ * String msg = "Encoder memory usage: "
  *                    + FilterOptions.getEncoderMemoryUsage(options)
- *                    + " KiB");
- * System.out.println("Decoder memory usage: "
+ *                    + " KiB";
+ * trign msg2 = "Decoder memory usage: "
  *                    + FilterOptions.getDecoderMemoryUsage(options)
- *                    + " KiB");
+ *                    + " KiB";
  * XZOutputStream outxz = new XZOutputStream(outfile, options);
  * </pre></blockquote>
  */

@@ -41,7 +41,7 @@ import org.xbib.io.StreamCodec;
 public class GzipStreamCodec implements StreamCodec<GZIPInputStream,GZIPOutputStream>  {
 
     @Override
-    public String getSuffix() {
+    public String getName() {
         return "gz";
     }
 

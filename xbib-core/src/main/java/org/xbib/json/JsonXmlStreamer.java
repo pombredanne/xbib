@@ -37,8 +37,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -61,7 +59,7 @@ import org.xbib.xml.SimpleNamespaceContext;
  */
 public class JsonXmlStreamer {
 
-    private static final Logger logger = Logger.getLogger(JsonXmlStreamer.class.getName());
+    //private static final Logger logger = Logger.getLogger(JsonXmlStreamer.class.getName());
 
     private final static JsonFactory jsonFactory = new JsonFactory();
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
@@ -129,8 +127,6 @@ public class JsonXmlStreamer {
         QName qname = root;
         boolean namespaceDecls = true;
         try {
-            // this gives single quotes, does not work for us
-            //consumer.add(eventFactory.createStartDocument("UTF-8", "1.0", false));
             writeXMLProcessingInstruction(consumer, "UTF-8");
             while (token != null) {
                 switch (token) {
@@ -186,10 +182,9 @@ public class JsonXmlStreamer {
                 }
                 token = parser.nextToken();
             }
-            //consumer.add(eventFactory.createEndDocument());
         } catch (JsonParseException e) {
             // Illegal character ((CTRL-CHAR, code 0)): only regular white space (\r, \n, \t) is allowed between tokens
-            logger.log(Level.WARNING, e.getMessage());
+            //logger.log(Level.WARNING, e.getMessage());
         } finally {
             if (consumer instanceof XMLEventWriter) {
                 ((XMLEventWriter)consumer).flush();

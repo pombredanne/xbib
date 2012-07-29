@@ -33,19 +33,18 @@ package org.xbib.marc.addons;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.mab.MABBuilder;
 import org.xbib.elements.mab.MABContext;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.io.util.AtomicIntegerIterator;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.rdf.Resource;
 
 public class AlephPublishingReaderTest {
 
-    private static final Logger logger = Logger.getLogger(AlephPublishingReaderTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AlephPublishingReaderTest.class.getName());
 
     public void testSimpleAleph() throws IOException {
         System.setProperty("java.naming.factory.initial", "org.xbib.naming.SimpleContextFactory");
@@ -53,7 +52,7 @@ public class AlephPublishingReaderTest {
         AlephPublishingReader reader = new AlephPublishingReader().setIterator(new AtomicIntegerIterator(1, 10)).setLibrary("hbz50").setSetName("ALEPHSEMAB").setURI(URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver"));
         try {
             while (reader.hasNext()) {
-                logger.log(Level.INFO, reader.next().toString());
+                logger.info(reader.next().toString());
             }
         } finally {
             reader.close();
@@ -73,8 +72,8 @@ public class AlephPublishingReaderTest {
 
             @Override
             public void output(MABContext context, Object info) {
-                logger.log(Level.INFO, "resource = {0}", context.resource());
-                logger.log(Level.INFO, "info = {0}", info);
+                logger.info("resource = {}", context.resource());
+                logger.info("info = {}", info);
                 counter++;
             }
 
@@ -89,7 +88,7 @@ public class AlephPublishingReaderTest {
         AlephPublishingReader reader = new AlephPublishingReader().setListener(kv).setIterator(new AtomicIntegerIterator(1, 10)).setLibrary("hbz50").setSetName("ALEPHSEMAB").setURI(URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver"));
         try {
             while (reader.hasNext()) {
-                logger.log(Level.INFO, reader.next().toString());
+                logger.info(reader.next().toString());
             }
         } finally {
             reader.close();

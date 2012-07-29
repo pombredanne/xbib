@@ -45,7 +45,7 @@ import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.RdfXmlReader;
+import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.StatementListener;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;

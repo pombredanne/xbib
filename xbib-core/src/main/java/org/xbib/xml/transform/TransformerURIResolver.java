@@ -35,8 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -48,7 +46,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class TransformerURIResolver implements URIResolver {
 
-    private final static Logger logger = Logger.getLogger(TransformerURIResolver.class.getName());
     private String[] path;
 
     public TransformerURIResolver() {
@@ -61,7 +58,6 @@ public class TransformerURIResolver implements URIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
-        logger.log(Level.FINE, "resolving href={0} base={1}", new Object[]{href, base});
         String systemId = href;
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         InputStream in = cl.getResourceAsStream(href);
@@ -97,7 +93,6 @@ public class TransformerURIResolver implements URIResolver {
                   cl.getResource(systemId).toExternalForm()
                 : base != null ? URI.create(base).resolve(systemId).toASCIIString() : systemId;
         source.setSystemId(s);
-        logger.log(Level.FINE, "href resolved to systemId {0}", new Object[]{s});
         return source;
     }
 }

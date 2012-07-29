@@ -38,17 +38,17 @@ import java.net.URI;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionFactory;
 import org.xbib.io.InputStreamFactory;
-import org.xbib.io.StreamCodecServiceFactory;
+import org.xbib.io.StreamCodecService;
 
 /**
- * <p>A file connection factory</p>
+ * <p>A file connection service</p>
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante
  */
 public final class FileConnectionFactory
         implements ConnectionFactory<FileSession>, InputStreamFactory<InputStream> {
 
-    private StreamCodecServiceFactory factory = StreamCodecServiceFactory.getInstance();
+    private StreamCodecService service = StreamCodecService.getInstance();
 
     @Override
     public Connection<FileSession> getConnection(URI uri) throws IOException {
@@ -71,11 +71,11 @@ public final class FileConnectionFactory
         String path = uri.getSchemeSpecificPart();
         InputStream in = new FileInputStream(path);
         if (scheme.endsWith("gz") || path.endsWith(".gz")) {
-            return factory.getCodec("gz").decode(in);
+            return service.getCodec("gz").decode(in);
         } else if (scheme.endsWith("bz2") || path.endsWith(".bz2")) {
-            return factory.getCodec("bz2").decode(in);
+            return service.getCodec("bz2").decode(in);
         } else if (scheme.endsWith("xz") || path.endsWith(".xz")) {
-            return factory.getCodec("xz").decode(in);
+            return service.getCodec("xz").decode(in);
         }
         return in;
     }

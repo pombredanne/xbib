@@ -1540,7 +1540,6 @@ public final class Deflate {
         if (pending != 0) {
             strm.flushPending();
             if (strm.availout == 0) {
-                //System.out.println("  avail_out==0");
                 // Since avail_out is 0, deflate will be called again with
                 // more output space, but possibly with both pending and
                 // avail_in equal to zero. There won't be anything to do,

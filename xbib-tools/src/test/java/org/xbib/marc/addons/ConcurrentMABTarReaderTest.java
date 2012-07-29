@@ -1,7 +1,6 @@
 package org.xbib.marc.addons;
 
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.mab.MABBuilder;
 import org.xbib.elements.mab.MABContext;
@@ -12,8 +11,6 @@ import org.xbib.importer.ImporterFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 
 public class ConcurrentMABTarReaderTest {
-
-    private final static Logger logger = Logger.getLogger(ConcurrentMABTarReaderTest.class.getName());
         
     public void test() throws InterruptedException, ExecutionException {
         ImporterFactory factory = new ImporterFactory() {
@@ -23,7 +20,7 @@ public class ConcurrentMABTarReaderTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(4).setFactory(factory).run(
+        new ImportService().setThreads(4).setFactory(factory).execute(
                 "tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"
         );
     }

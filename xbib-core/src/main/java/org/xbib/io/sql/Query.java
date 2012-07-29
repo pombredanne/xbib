@@ -210,7 +210,7 @@ public class Query implements ResultOperator<SQLSession, ResultSet> {
     }
 
     @Override
-    public void addProcessor(ResultProcessor<ResultSet> processor) {
+    public void setResultProcessor(ResultProcessor<ResultSet> processor) {
         this.processor = processor;
     }
 

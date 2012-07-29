@@ -31,15 +31,11 @@
  */
 package org.xbib.tools.medline;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import org.xbib.builders.elasticsearch.ElasticsearchBulkResourceOutput;
 import org.xbib.elements.output.ElementOutput;
@@ -48,29 +44,29 @@ import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.InputStreamService;
-import org.xbib.io.file.Find;
+import org.xbib.io.file.Finder;
 import org.xbib.io.util.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.ResourceContext;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
-import org.xbib.rdf.io.XmlHandler;
-import org.xbib.rdf.io.XmlReader;
-import org.xbib.rdf.io.XmlResourceHandler;
+import org.xbib.rdf.io.xml.XmlHandler;
+import org.xbib.rdf.io.xml.XmlReader;
+import org.xbib.rdf.io.xml.XmlResourceHandler;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 
 public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = Logger.getLogger(ElasticsearchMedlineIndexer.class.getName());
-    private final static InputStreamService iss = new InputStreamService();
+    private final static Logger logger = LoggerFactory.getLogger(ElasticsearchMedlineIndexer.class.getName());
     private final static AtomicLong fileCounter = new AtomicLong(0L);
-    private final String INPUT_ENCODING = "UTF-8";
-    private boolean done = false;
     private Queue<URI> input;
     private static OptionSet options;
     private final SimpleResourceContext ctx = new SimpleResourceContext();
     private ElementOutput out;
+    private boolean done = false;
 
     public static void main(String[] args) {
         try {
@@ -97,12 +93,12 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
                 System.err.println(" --threads <n>          the number of threads (required, default: 1)");
                 System.exit(1);
             }
-            final Queue<URI> input = new Find(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            final Queue<URI> input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
-            logger.log(Level.INFO, "input = {0},  threads = {1}", new Object[]{input, threads});
+            logger.info("input = {},  threads = {}", new Object[]{input, threads});
 
-            final ElasticsearchBulkResourceOutput es = new ElasticsearchBulkResourceOutput<SimpleResourceContext>();
+            final ElasticsearchBulkResourceOutput es = new ElasticsearchBulkResourceOutput();
             es.connect(URI.create(options.valueOf("es").toString()), options.valueOf("index").toString(), options.valueOf("type").toString());
 
             ImportService service = new ImportService().setThreads(threads).setFactory(
@@ -112,18 +108,13 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
                         public Importer newImporter() {
                             return new ElasticsearchMedlineIndexer(es).setInput(input);
                         }
-                    }).run(input);
-            service.waitFor();
-
-            logger.log(Level.INFO, "files = {0}, docs indexed = {1}", new Object[]{fileCounter, es.getCounter()});
-
+                    }).execute(input);
+            logger.info("files = {}, docs indexed = {}", new Object[]{fileCounter, es.getCounter()});
             es.disconnect();
-
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);
         }
-        System.err.println("Sucess!");
         System.exit(0);
     }
 
@@ -155,31 +146,21 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
         if (done) {
             return fileCounter;
         }
-        BufferedReader br = null;
         try {
-            InputStream in = iss.getInputStream(uri);
-            br = new BufferedReader(new InputStreamReader(in, INPUT_ENCODING));
             XmlHandler handler = new Handler(ctx).setListener(new ResourceBuilder()).setDefaultNamespace("ml", "http://www.nlm.nih.gov/medline");
-            new XmlReader().setHandler(handler).setNamespaces(false).parse(br);
+            XmlReader reader = new XmlReader().setHandler(handler).setNamespaces(false).parse(InputStreamService.getInputStream(uri));
+            reader.close();
             fileCounter.incrementAndGet();
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            }
+            logger.error(ex.getMessage(), ex);
         }
         return fileCounter;
     }
 
     class Handler extends XmlResourceHandler {
 
-        public Handler(ResourceContext context) {
-            super(context);
+        public Handler(ResourceContext ctx) {
+            super(ctx);
         }
 
         @Override

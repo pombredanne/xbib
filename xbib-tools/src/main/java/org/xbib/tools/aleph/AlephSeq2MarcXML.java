@@ -43,9 +43,8 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -60,10 +59,12 @@ import org.xbib.io.BytesProgressWatcher;
 import org.xbib.io.InputStreamService;
 import org.xbib.io.ProgressMonitoredOutputStream;
 import org.xbib.io.SplitWriter;
-import org.xbib.io.file.Find;
+import org.xbib.io.file.Finder;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.DefaultMarcXchangeListener;
 import org.xbib.marc.FieldDesignator;
 import org.xbib.marc.Iso2709Reader;
-import org.xbib.marc.MarcXchangeListener;
 import org.xbib.marc.addons.AlephSequentialReader;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -74,8 +75,7 @@ import org.xml.sax.SAXNotSupportedException;
 
 public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = Logger.getLogger(AlephSeq2MarcXML.class.getName());
-    private final static InputStreamService iss = new InputStreamService();
+    private final static Logger logger = LoggerFactory.getLogger(AlephSeq2MarcXML.class.getName());
     private final static AtomicLong fileCounter = new AtomicLong(0L);
     private final int BUFFER_SIZE = 8192;
     private final String INPUT_ENCODING = "UTF-8";
@@ -124,7 +124,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             }
             output = (String) options.valueOf("output");
             basename = (String) options.valueOf("basename");
-            final Queue<URI> input = new Find(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            final Queue<URI> input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
             final List<Integer> enable = (List<Integer>) options.valuesOf("enable");
             final String linkformat = (String) options.valueOf("linkformat");
             final Long splitsize = (Long) options.valueOf("splitsize");
@@ -149,9 +149,8 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                             AlephSeq2MarcXML importer = new AlephSeq2MarcXML().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
                             return importer;
                         }
-                    }).run(input);
-            service.waitFor();
-        } catch (Exception e) {
+                    }).execute(input);
+        } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);
         }
@@ -213,29 +212,13 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         }
         BufferedReader br = null;
         try {
-            InputStream in = iss.getInputStream(uri);
+            InputStream in = InputStreamService.getInputStream(uri);
             br = new BufferedReader(new InputStreamReader(in, INPUT_ENCODING));
             AlephSequentialReader seq = new AlephSequentialReader(br);
             try (SplitWriter bw = new SplitWriter(newWriter(watcher), BUFFER_SIZE)) {
                 final Iso2709Reader reader = new Iso2709Reader();
                 final StreamResult target = new StreamResult(bw);
-                reader.setMarcXchangeListener(new MarcXchangeListener() {
-
-                    @Override
-                    public void beginRecord(String format, String type) {
-                    }
-
-                    @Override
-                    public void beginControlField(FieldDesignator designator) {
-                    }
-
-                    @Override
-                    public void beginDataField(FieldDesignator designator) {
-                    }
-
-                    @Override
-                    public void beginSubField(FieldDesignator designator) {
-                    }
+                reader.setMarcXchangeListener(new DefaultMarcXchangeListener() {
 
                     @Override
                     public void endRecord() {
@@ -266,10 +249,6 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                     }
 
                     @Override
-                    public void leader(String label) {
-                    }
-
-                    @Override
                     public void trailer(String trailer) {
                         if (watcher.getBytesTransferred() > splitsize) {
                             try {
@@ -279,21 +258,9 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                                 reader.getAdapter().beginCollection();
                                 watcher.resetWatcher();
                             } catch (IOException | SAXException ex) {
-                                logger.log(Level.SEVERE, null, ex);
+                                logger.error(ex.getMessage(), ex);
                             }
                         }
-                    }
-
-                    @Override
-                    public void endControlField(FieldDesignator designator) {
-                    }
-
-                    @Override
-                    public void endDataField(FieldDesignator designator) {
-                    }
-
-                    @Override
-                    public void endSubField(FieldDesignator designator) {
                     }
                 });
                 reader.setProperty(Iso2709Reader.SCHEMA, "marc21");
@@ -304,14 +271,14 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                 transformer.transform(new SAXSource(reader, new InputSource(seq)), target);
             }
         } catch (IOException | SAXNotRecognizedException | SAXNotSupportedException | TransformerFactoryConfigurationError | TransformerException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         } finally {
             try {
                 if (br != null) {
                     br.close();
                 }
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return fileCounter;

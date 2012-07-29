@@ -36,8 +36,6 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -54,13 +52,15 @@ import org.xbib.io.Mode;
 import org.xbib.io.Packet;
 import org.xbib.io.tar.TarEntryReadOperator;
 import org.xbib.io.tar.TarSession;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.FieldDesignator;
 import org.xbib.marc.MarcXchangeListener;
 
 public class MABTarReader extends AbstractImporter<Object, Packet>
         implements MarcXchangeListener, Iterator<Packet> {
 
-    private final static Logger logger = Logger.getLogger(MABTarReader.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(MABTarReader.class.getName());
     private XMLInputFactory factory = XMLInputFactory.newInstance();
     private URI uri;
     private Connection<TarSession> connection;
@@ -162,7 +162,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
         try {
             return prepareRead();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return false;
         }
     }
@@ -181,11 +181,11 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
     public void close() throws IOException {
         if (session != null) {
             session.close();
-            logger.log(Level.INFO, "session closed");
+            logger.info("session closed");
         }
         if (connection != null) {
             connection.close();
-            logger.log(Level.INFO, "connection closed");
+            logger.info("connection closed");
         }
     }
 
@@ -208,7 +208,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
             }
             return prepared;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, null, e);
+            logger.error(e.getMessage(), e);
             throw new IOException(e);
         }
     }
@@ -229,7 +229,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
             }
             trailer(clob);
         } catch (XMLStreamException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         prepared = false;
         return packet;
@@ -358,7 +358,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
         int pos = name == null ? -1 : name.lastIndexOf('/');
         String numberStr = pos >= 0 ? name.substring(pos + 1) : null;
         while ((pos < 0) || (numberStr == null) || numberStr.length() == 0) {
-            logger.log(Level.WARNING, "skipping packet {0}", name);
+            logger.warn("skipping packet {}", name);
             // next message
             packet = op.read(session);
             name = packet.getName();

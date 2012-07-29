@@ -34,18 +34,18 @@ package org.xbib.tools.indexer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.elasticsearch.BulkWrite;
 import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionManager;
 import org.xbib.io.InputStreamService;
 import org.xbib.io.Mode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
-import org.xbib.rdf.io.TurtleReader;
+import org.xbib.rdf.io.turtle.TurtleReader;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -57,7 +57,7 @@ import org.xbib.tools.opt.OptionSet;
  */
 public class ElasticsearchGNDIndexer {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchGNDIndexer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchGNDIndexer.class.getName());
 
     public static void main(String[] args) {
 
@@ -86,7 +86,7 @@ public class ElasticsearchGNDIndexer {
             final String index = (String) options.valueOf("index");
             final String type = (String) options.valueOf("type");
             URI uri = URI.create(uriStr);
-            InputStream in = new InputStreamService().getInputStream(uri);
+            InputStream in = InputStreamService.getInputStream(uri);
             if (in == null) {
                 throw new IOException("file not found: " + uriStr);
             }
@@ -139,7 +139,7 @@ public class ElasticsearchGNDIndexer {
                     operation.write(session, resource);
                 }
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
 

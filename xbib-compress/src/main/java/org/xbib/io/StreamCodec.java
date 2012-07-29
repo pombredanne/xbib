@@ -37,7 +37,7 @@ import java.io.OutputStream;
 
 public interface StreamCodec<I extends InputStream,O extends OutputStream> {
 
-    String getSuffix();
+    String getName();
     
     I decode(InputStream in) throws IOException;
     

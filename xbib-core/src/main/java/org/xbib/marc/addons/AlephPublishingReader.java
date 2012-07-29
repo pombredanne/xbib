@@ -45,8 +45,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -63,13 +61,15 @@ import org.xbib.io.Mode;
 import org.xbib.io.sql.Query;
 import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
 import org.xbib.io.sql.SQLSession;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.FieldDesignator;
 import org.xbib.marc.MarcXchangeListener;
 
 public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
         implements MarcXchangeListener, Iterator<Integer> {
 
-    private final static Logger logger = Logger.getLogger(AlephPublishingReader.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AlephPublishingReader.class.getName());
     private XMLInputFactory factory = XMLInputFactory.newInstance();
     private final DecimalFormat df = new DecimalFormat("000000000");
     private final static int CLOB_BUF_SIZE = 8192;
@@ -121,7 +121,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
         try {
             return prepareRead();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return false;
         }
     }
@@ -210,11 +210,11 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
     public void close() throws IOException {
         if (session != null) {
             session.close();
-            logger.log(Level.INFO, "session closed");
+            logger.info("session closed");
         }
         if (connection != null) {
             connection.close();
-            logger.log(Level.INFO, "connection closed");
+            logger.info("connection closed");
         }
     }
 
@@ -273,7 +273,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
                     new String[]{"docNumber"}, params);
             SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
             try {
-                query.addProcessor(p);
+                query.setResultProcessor(p);
                 query.execute(session);
                 ResultSet results = p.getResultSet();
                 if ((results != null) && results.next()) {
@@ -283,11 +283,11 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
                     this.prepared = true;
                     return true;
                 } else {
-                    logger.log(Level.WARNING, "skipped {0}", pos);
+                    logger.warn("skipped {}", pos);
                     skip = true;
                 }
             } catch (SQLException | IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             } finally {
                 query.close();
                 p.close();
@@ -312,9 +312,8 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
             }
             trailer(clob);
         } catch (XMLStreamException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
-        // invalidate read
         prepared = false;
         return pos;
     }

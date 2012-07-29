@@ -12,6 +12,7 @@
             <unpack>true</unpack>
             <scope>runtime</scope>
             <includes>
+                <include>org.xbib:xbib-rdf</include>
                 <include>org.xbib:xbib-core</include>
                 <include>org.xbib:xbib-logging</include>
                 <include>org.xbib:xbib-compress</include>
@@ -22,14 +23,7 @@
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.apache.lucene:lucene-core</include>
                 <include>org.codehaus.jackson:jackson-core-asl</include>
-
-<!--
-<include>org.apache.lucene:lucene-analyzers</include>
-                <include>org.apache.lucene:lucene-queries</include>
-                <include>org.apache.lucene:lucene-highlighter</include>
-                <include>org.apache.lucene:lucene-memory</include>
--->
-</includes>
+            </includes>
         </dependencySet>
     </dependencySets>
 </assembly>

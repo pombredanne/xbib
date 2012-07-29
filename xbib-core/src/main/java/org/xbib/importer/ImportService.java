@@ -44,6 +44,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class ImportService<T, R> {
 
@@ -61,34 +62,65 @@ public class ImportService<T, R> {
         return this;
     }
 
+    public void shutdown(long millisToWait) throws InterruptedException {
+        if (executorService != null) {
+            executorService.awaitTermination(millisToWait, TimeUnit.MILLISECONDS);
+            executorService.shutdown();
+        }
+    }
+
     public ImportService setFactory(ImporterFactory<T, R> factory) {
         this.factory = factory;
         return this;
     }
 
-    public ImportService run(String... uriStrings)
+    /**
+     * Submit URIs and wait for results
+     * @param uriStrings
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
+    public ImportService execute(String... uriStrings)
             throws InterruptedException, ExecutionException {
         List<URI> uris = new ArrayList();
         for (String s : uriStrings) {
             uris.add(URI.create(s));
         }
         int l = uris.size();
-        return run(uris.toArray(new URI[0]));
+        return execute(uris.toArray(new URI[0]));
     }
 
-    public ImportService run(Queue<URI> uris)
+    /**
+     * Submit URIs and wait for results
+     * @param uris
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
+    public ImportService execute(Queue<URI> uris)
             throws InterruptedException, ExecutionException {
-        submit(uris.toArray(new URI[0]));
-        return waitFor();
+        return execute(uris.toArray(new URI[0]));
     }
 
-    public ImportService run(URI... uris)
+    /**
+     * Submit URIs and wait for results
+     * @param uris
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
+    public ImportService execute(URI... uris)
             throws InterruptedException, ExecutionException {
         submit(uris);
         return waitFor();
     }
 
-    public void submit(URI... uris) {
+    /**
+     * Submit URIs for later invocation
+     * @param uris 
+     */
+    public ImportService submit(URI... uris) {
         if (uris == null) {
             throw new IllegalArgumentException("no uris set");
         }
@@ -116,10 +148,16 @@ public class ImportService<T, R> {
                 tasks.add(importer);
             }
         }
+        return this;
     }
 
+    /**
+     * Invoke all tasks and wait for all results
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException 
+     */
     public ImportService waitFor() throws InterruptedException, ExecutionException {
-        // execute all tasks
         for (Future<T> f : executorService.invokeAll(tasks)) {
             results.put(System.currentTimeMillis(), f.get());
         }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.xbib</groupId>
+        <artifactId>xbib</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>xbib-federator</artifactId>
+    <name>xbib - Bibliographic Search Federator</name>
+    <packaging>war</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="src.dir" value="${project.build.sourceDirectory}" />
+                                <property name="package.dir" value="org/xbib/util" />
+                                <property name="package.name" value="org.xbib.util" />
+                                <property name="buildtime" value="${maven.build.timestamp}" />
+                                <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="}${line.separator}" />
+                                <echo message="BUILD ${buildtime}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <warName>federator</warName>
+                    <warSourceDirectory>${project.basedir}/src/main/webapp</warSourceDirectory>
+                    <webXml>${project.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-charset</artifactId>
+            <version>1.0-SNAPSHOT</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-sru</artifactId>
+            <version>1.0-SNAPSHOT</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-iso23950</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
+            <version>1.12</version>
+        </dependency>
+    </dependencies>
+    <properties>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+    </properties>
+</project>

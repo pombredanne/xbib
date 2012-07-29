@@ -141,7 +141,6 @@ public class BZip2Deflate implements Bzip2Constants {
     public BZip2Deflate(int inBlockSize, int bufferSize, boolean writeBZHeader) throws IOException {
         this.wroteHeader = !writeBZHeader;
         this.bufferSize = bufferSize;
-
         if (inBlockSize > 9) {
             inBlockSize = 9;
         }
@@ -149,7 +148,6 @@ public class BZip2Deflate implements Bzip2Constants {
             inBlockSize = 1;
         }
         blockSize100k = inBlockSize;
-
         this.reset();
     }
 

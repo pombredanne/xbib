@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.transform.OutputKeys;
@@ -27,6 +25,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamSource;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  */
 public final class TransformingDocumentHandler implements ContentHandler {
 
-    private final static Logger logger = Logger.getLogger(TransformingDocumentHandler.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(TransformingDocumentHandler.class.getName());
     /**
      * A map of XSLT output methods and their corresponding MIME content types.
      */
@@ -263,7 +263,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
             for (Iterator<Map.Entry<String, Object>> i = stylesheetParams.entrySet().iterator(); i.hasNext();) {
                 final Map.Entry<String, Object> entry = i.next();
                 transformer.setParameter(entry.getKey(), entry.getValue());
-                logger.log(Level.INFO, "setting transformer parameter {0}", entry.getKey());
+                logger.info("setting transformer parameter {}", entry.getKey());
             }
         }
         this.defaultHandler = handler;
@@ -307,17 +307,17 @@ public final class TransformingDocumentHandler implements ContentHandler {
          */
         final Matcher typeMatcher = typePattern.matcher(data);
         if (!typeMatcher.find()) {
-            logger.log(Level.WARNING, "xml-stylesheet directive with no type attribute (should be text/xsl).");
+            logger.warn("xml-stylesheet directive with no type attribute (should be text/xsl).");
             return null;
         }
         final String type = typeMatcher.group(2);
         if (!"text/xsl".equals(type)) {
-            logger.log(Level.WARNING, "xml-stylesheet directive with incorrect type (should be text/xsl): {0}", type);
+            logger.warn("xml-stylesheet directive with incorrect type (should be text/xsl): {0}", type);
             return null;
         }
         final Matcher hrefMatcher = hrefPattern.matcher(data);
         if (!hrefMatcher.find()) {
-            logger.log(Level.WARNING, "xml-stylesheet directive with no 'href' pseudo-attribute.");
+            logger.warn("xml-stylesheet directive with no 'href' pseudo-attribute.");
             return null;
         }
         return URI.create(hrefMatcher.group(2));
@@ -332,13 +332,9 @@ public final class TransformingDocumentHandler implements ContentHandler {
     private void inspectProcessingInstruction(TransformingDocumentHandler handler,
             String target, String data) throws SAXException {
         URI uri = processXmlStylesheet(target, data);
-        if (uri != null) {
-            logger.log(Level.FINE, "Resolved xml-stylesheet URI: {0}", uri.toString());
-        } else {
-            // Skip unknown processing instructions.
+        if (uri == null) {
             return;
         }
-
         /*
          * Check the pool for precompiled cached Templates
          */
@@ -382,7 +378,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
             tHandler.getTransformer().setErrorListener(transformerErrorListener);
             handler.setTransformerHandler(tHandler);
         } catch (TransformerConfigurationException e) {
-            logger.log(Level.SEVERE, "Transformer configuration exception.", e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -404,7 +400,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
     private void initContentHandler() throws SAXException {
         if (contentHandler == null) {
             if (defaultHandler == null) {
-                logger.log(Level.INFO, "Stylesheet not specified, using identity handler.");
+                logger.info("Stylesheet not specified, using identity handler.");
                 try {
                     this.defaultHandler = pool.getIdentityTransformerHandler();                    
                 } catch (TransformerConfigurationException e) {

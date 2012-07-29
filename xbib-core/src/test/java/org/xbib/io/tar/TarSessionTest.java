@@ -20,17 +20,17 @@
 package org.xbib.io.tar;
 
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionManager;
 import org.xbib.io.Mode;
 import org.xbib.io.Packet;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class TarSessionTest {
 
-    private static final Logger logger = Logger.getLogger(TarSessionTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TarSessionTest.class.getName());
 
     @Test
     public void readFromTar() throws Exception {
@@ -39,8 +39,8 @@ public class TarSessionTest {
         session.open(Mode.READ);
         TarEntryReadOperator op = new TarEntryReadOperator();
         Packet message = op.read(session);
-        logger.log(Level.INFO, "name = {0} number = {1} link = {2} object = {3}", 
-                new Object[]{message.getName(), message.getNumber(), message.getLink(), message.toString()});
+        logger.info("name = {0} number = {1} link = {2} object = {3}", 
+                message.getName(), message.getNumber(), message.getLink(), message.toString());
         session.close();
         conn.close();
     }

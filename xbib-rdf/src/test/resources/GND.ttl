@@ -1,0 +1,97 @@
+@prefix gnd:     <http://d-nb.info/standards/elementset/gnd#> .
+@prefix :        <http://d-nb.info/gnd/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://d-nb.info/gnd/1369-9>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> ;
+      gnd:gndIdentifier "1369-9" ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)1369-9" ;
+      gnd:preferredNameForTheCorporateBody
+              "Gesellschaft für Nephrologie" ;
+      gnd:succeedingCorporateBody
+              <http://d-nb.info/gnd/6527475-1> ;
+      gnd:variantNameForTheCorporateBody
+              "Society of Nephrology" , "GfN" .
+
+<http://d-nb.info/gnd/8643-5>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> ;
+      gnd:gndIdentifier "8643-5" ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)8643-5" ;
+      gnd:preferredNameForTheCorporateBody
+              "Verband des Pfälzischen Gemüse-, Obst- und Gartenbaues" ;
+      gnd:succeedingCorporateBody
+              <http://d-nb.info/gnd/2000585-4> .
+
+<http://d-nb.info/gnd/1658-5>
+      a       gnd:CorporateBody ;
+      gnd:dateOfEstablishment
+              "1851" ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XD-US> ;
+      gnd:gndIdentifier "1658-5" ;
+      gnd:homepage <http://www.umn.edu> ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)16291087-3" , "(DE-588b)1658-5" ;
+      gnd:placeOfBusiness <http://d-nb.info/gnd/4039497-9> ;
+      gnd:preferredNameForTheCorporateBody
+              "University of Minnesota <Minneapolis, Minn.>" ;
+      gnd:variantNameForTheCorporateBody
+              "UM" , "U of M <Minneapolis, Minn.>" .
+
+<http://d-nb.info/gnd/8539-X>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-BA> , <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-YUCS> ;
+      gnd:gndIdentifier "8539-X" ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)8539-X" ;
+      gnd:placeOfBusiness <http://d-nb.info/gnd/4077016-3> ;
+      gnd:preferredNameForTheCorporateBody
+              "Zemaljski Muzej Bosne i Hercegovine <Sarajevo>" ;
+      gnd:variantNameForTheCorporateBody
+              "Hrvatski Zemaljski Musej <Sarajevo>" , "Musée de la République Socialiste de Bosnie et Herzégovine <Sarajevo>" , "Nationalmuseum von Bosnien und Herzegowina <Sarajevo>" , "Zemaljski Muzej Kraljevine Jugoslavija <Sarajevo>" , "Muzej SR Bosne i Hercegovine <Sarajevo>" , "Muzej Bosne i Hercegovine <Sarajevo>" , "Bosnisch-Hercegowinisches Landesmuseum <Sarajevo>" , "Bosnisch-Herzegowinisches Landesmuseum <Sarajevo>" , "Musée de la République Populaire de Bosnie et Herzégovine <Sarajevo>" , "National Museum of Bosnia and Herzegovina <Sarajevo>" , "Zemaljski Muzej SR Bosne i Hercegovine <Sarajevo>" , "Zemaljski Muzej u Bosni i Hercegovini <Sarajevo>" , "Landesmuseum von Bosnien und der Herzegowina <Sarajevo>" , "Bosansko-Hercegovački Zemaljski Muzej <Sarajevo>" , "Zemaljski Muzej <Sarajevo>" , "Državni Muzej <Sarajevo>" , "Musée National de Bosnie-Herzégovine <Sarajevo>" .
+
+<http://d-nb.info/gnd/11557-5>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> ;
+      gnd:gndIdentifier "11557-5" ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)11557-5" ;
+      gnd:precedingCorporateBody
+              <http://d-nb.info/gnd/11558-7> , <http://d-nb.info/gnd/11559-9> ;
+      gnd:preferredNameForTheCorporateBody
+              "Arbeitsgemeinschaft Neue Gemeinschaft für Wohnkultur und Sozialwerk für Wohnung und Hausrat" .
+
+<http://d-nb.info/gnd/1446-1>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XP> ;
+      gnd:gndIdentifier "1446-1" ;
+      gnd:hierarchicalSuperiorOfTheCorporateBody
+              <http://d-nb.info/gnd/877-1> ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)1446-1" ;
+      gnd:preferredNameForTheCorporateBody
+              "International Civil Aviation Organization / Visual Aids Panel" ;
+      gnd:variantNameForTheCorporateBody
+              "Visual Aids Panel" .
+
+<http://d-nb.info/gnd/8510-8>
+      a       gnd:CorporateBody ;
+      gnd:geographicAreaCode
+              <http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE> ;
+      gnd:gndIdentifier "8510-8" ;
+      gnd:oldAuthorityNumber
+              "(DE-588b)8510-8" ;
+      gnd:preferredNameForTheCorporateBody
+              "Gesellschaft für Konservative Publizistik" .
+

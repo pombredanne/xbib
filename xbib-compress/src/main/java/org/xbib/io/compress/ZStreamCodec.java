@@ -41,7 +41,7 @@ import org.xbib.io.compress.zlib.ZOutputStream;
 public class ZStreamCodec implements StreamCodec<ZInputStream, ZOutputStream> {
 
     @Override
-    public String getSuffix() {
+    public String getName() {
         return "z";
     }
 

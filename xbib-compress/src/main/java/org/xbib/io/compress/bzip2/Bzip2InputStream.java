@@ -117,6 +117,7 @@ public class Bzip2InputStream extends InputStream implements Bzip2Constants {
         init();
     }
 
+    @Override
     public final int read() throws IOException {
         if (this.in != null) {
             return read0();

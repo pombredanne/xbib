@@ -48,22 +48,23 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class HttpOperation {
 
-    private static final Logger logger = Logger.getLogger(HttpOperation.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HttpOperation.class.getName());
     private HttpResultProcessor processor;
     private String encoding;
     private long millis;
-    private Map<URI, AsyncHttpClient.BoundRequestBuilder> builders;
+    private Map<URI, AsyncHttpClient> clients;
+    private Map<URI, AsyncHttpClient.BoundRequestBuilder> requests;
     private Map<URI, HttpResult> results;
 
     public HttpOperation() {
-        this.builders = new HashMap();
+        this.clients = new HashMap();
+        this.requests = new HashMap();
         this.results = new HashMap();
-
     }
 
     public HttpOperation setEncoding(String encoding) {
@@ -79,14 +80,15 @@ public class HttpOperation {
         this.processor = processor;
     }
 
-    public HttpOperation prepareExecution(HttpSession session) throws IOException {
+    public synchronized HttpOperation prepareExecution(HttpSession session) throws IOException {
         HttpRequest request;
         while ((request = session.nextRequest()) != null) {
             AsyncHttpClient client = request.buildClient();
             Request req = request.buildRequest();
-            logger.log(Level.INFO, "method=[{0}] uri=[{1}] parameter=[{2}]",
-                    new Object[]{request.getMethod(), request.getURI(), req.getQueryParams()});
-            builders.put(request.getURI(), client.prepareRequest(req));
+            logger.info("method=[{}] uri=[{}] parameter=[{}]",
+                    request.getMethod(), request.getURI(), req.getQueryParams());
+            clients.put(request.getURI(), client);
+            requests.put(request.getURI(), client.prepareRequest(req));
         }
         return this;
     }
@@ -133,12 +135,13 @@ public class HttpOperation {
     public synchronized void execute(long l, TimeUnit tu) throws IOException {
         long t0 = System.currentTimeMillis();
         List<ListenableFuture<HttpResult>> futures = new ArrayList();
-        for (Map.Entry<URI, AsyncHttpClient.BoundRequestBuilder> me : builders.entrySet()) {
-            futures.add((me.getValue().execute(new Handler(me.getKey()))));            
+        for (Map.Entry<URI, AsyncHttpClient.BoundRequestBuilder> me : requests.entrySet()) {
+            futures.add((me.getValue().execute(new Handler(me.getKey()))));
         }
         for (int i = 0; i < futures.size(); i++) {
+            HttpResult r = null;
             try {
-                HttpResult r = futures.get(i).get(l, tu);
+                r = futures.get(i).get(l, tu);
                 results.put(r.getURI(), r);
                 if (r != null) {
                     if (processor != null) {
@@ -153,11 +156,17 @@ public class HttpOperation {
                     }
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException | IOException t) {
-                logger.log(Level.SEVERE, t.getMessage(), t);
+                logger.error(t.getMessage(), t);
+            } finally {
+                if (r != null) {
+                    clients.get(r.getURI()).close();
+                }
             }
         }
         long t1 = System.currentTimeMillis();
         this.millis = t1 - t0;
+        requests.clear();
+        clients.clear();
     }
 
     public void execute() throws IOException {

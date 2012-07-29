@@ -46,8 +46,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.Mode;
 import org.xbib.io.Session;
 
@@ -59,7 +57,7 @@ import org.xbib.io.Session;
 public class SQLSession implements Session {
 
     /** the logger */
-    private static final Logger logger = Logger.getLogger(SQLSession.class.getName());
+    //private static final Logger logger = Logger.getLogger(SQLSession.class.getName());
     /** default encoding */
     public static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
     /** statement cache */
@@ -240,14 +238,12 @@ public class SQLSession implements Session {
         if ((s == null) || (len < 0)) {
             return;
         }
-
         if (len == 0) {
             p.setString(pos, "");
-
             return;
         }
         while (s.length() > len) {
-            logger.log(Level.FINEST, "string too long: {0}", s);
+            //logger.log(Level.FINEST, "string too long: {0}", s);
             int ext = s.length() - len;
             s = s.substring(0, s.length() - ext);
         }
@@ -278,7 +274,7 @@ public class SQLSession implements Session {
             // Oracle driver supports "setAsciiStream" only on "varchar2" columns
             p.setAsciiStream(pos, new ByteArrayInputStream(b), b.length);
         } catch (UnsupportedEncodingException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            //logger.log(Level.SEVERE, e.getMessage(), e);
             p.setString(pos, s);
         }
     }
@@ -399,9 +395,8 @@ public class SQLSession implements Session {
         try {
             d = new java.sql.Date(format.parse(value).getTime());
         } catch (ParseException e1) {
-            logger.log(Level.WARNING, "not a valid date value: {0} required format: {1}", new Object[]{value, format});
-
-            return new java.sql.Date(new Date().getTime());
+            //logger.log(Level.WARNING, "not a valid date value: {0} required format: {1}", new Object[]{value, format});
+            return null; //new java.sql.Date(new Date().getTime());
         }
         return d;
     }
@@ -429,9 +424,8 @@ public class SQLSession implements Session {
                 // This is a kludge. Append midnight to the value and parse again.
                 t = new Timestamp(format.parse(value + " 00:00:00").getTime());
             } catch (ParseException e2) {
-                logger.log(Level.WARNING, "not a valid timestamp value: {0} required format: {1}", new Object[]{value, format});
-
-                return new Timestamp(new Date().getTime());
+                //logger.log(Level.WARNING, "not a valid timestamp value: {0} required format: {1}", new Object[]{value, format});
+                return null;// new Timestamp(new Date().getTime());
             }
         }
         return t;
@@ -453,7 +447,7 @@ public class SQLSession implements Session {
                 new String[]{"table"}, m);
         SQLSingleResult r = new SQLSingleResult(Types.VARCHAR, 2);
         try {
-            query.addProcessor(r);
+            query.setResultProcessor(r);
             query.execute(this);
         } catch (IOException ex) {
             throw new SQLException(ex.getMessage());

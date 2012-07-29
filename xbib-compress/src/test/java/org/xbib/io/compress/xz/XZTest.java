@@ -35,10 +35,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import static org.testng.AssertJUnit.*;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class XZTest {
+public class XZTest extends Assert {
 
     @Test
     public void testHelloWorld() throws Exception {

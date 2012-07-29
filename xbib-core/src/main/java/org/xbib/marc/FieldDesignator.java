@@ -38,7 +38,9 @@ package org.xbib.marc;
  */
 public class FieldDesignator {
 
-    private final String tag;
+    public final static String ERROR_TAG = "___";
+    
+    private String tag;
     private final String indicator;
     private final int position;
     private final int length;
@@ -100,7 +102,7 @@ public class FieldDesignator {
      * @param data
      */
     public FieldDesignator(RecordLabel label, String data) {
-        this.tag = data.length() > 2 ? data.substring(0, 3) : null;
+        this.tag = data.length() > 2 ? data.substring(0, 3) : ERROR_TAG;
         if (isControlField()) {
             this.data = data.substring(3);
             this.indicator = null;
@@ -167,6 +169,10 @@ public class FieldDesignator {
     
     public String getData() {
         return subfieldId != null && data != null && data.length() > 0 ? data.substring(1) : data;
+    }
+    
+    public void setTag(String tag) {
+        this.tag = tag;
     }
     
     public String getTag() {

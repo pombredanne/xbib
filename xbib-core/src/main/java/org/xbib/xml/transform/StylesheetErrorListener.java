@@ -11,26 +11,26 @@
  */
 package org.xbib.xml.transform;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * An {@link ErrorListener} that reacts to errors when parsing (compiling) the stylesheet.
  */
 public final class StylesheetErrorListener implements ErrorListener {
 
-    private final static Logger logger = Logger.getLogger(StylesheetErrorListener.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(StylesheetErrorListener.class.getName());
 
     @Override
     public void warning(TransformerException e) throws TransformerException {
-        logger.log(Level.WARNING, "Warning (recoverable): {0}", e.getMessage());
+        logger.warn("Warning (recoverable): {}", e.getMessage());
     }
 
     @Override
     public void error(TransformerException e) throws TransformerException {
-        logger.log(Level.WARNING, "Error (recoverable): {0}", e.getMessage());
+        logger.warn("Error (recoverable): {}", e.getMessage());
     }
 
     /**
@@ -38,7 +38,7 @@ public final class StylesheetErrorListener implements ErrorListener {
      */
     @Override
     public void fatalError(TransformerException e) throws TransformerException {
-        logger.log(Level.SEVERE, "Fatal error: {0}", e.getMessage());
+        logger.error("Fatal error: {}", e.getMessage());
         throw e;
     }
 }

@@ -36,8 +36,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
@@ -47,6 +45,8 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionFactory;
 import org.xbib.io.util.URIUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * A connection factory for JDBC DataSources
@@ -58,7 +58,7 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
     /**
      * the logger
      */
-    private static final Logger logger = Logger.getLogger(SQLConnectionFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SQLConnectionFactory.class.getName());
     private Properties properties;
     private String jndiName;
 
@@ -76,7 +76,6 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
         try {
             this.properties = URIUtil.getPropertiesFromURI(uri);
         } catch (UnsupportedEncodingException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new IOException(e.getMessage());
         }
         Context context = null;
@@ -90,16 +89,16 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
                 context = new InitialContext();
                 Object o = context.lookup(jndiName);
                 if (o instanceof DataSource) {
-                    logger.log(Level.INFO, "DataSource ''{0}'' found in naming context", jndiName);
+                    logger.info( "DataSource ''{}'' found in naming context", jndiName);
                     ds = (DataSource) o;
                     break;
                 } else {
-                    logger.log(Level.WARNING, "JNDI object {0} not a DataSource class: {1} - ignored", new Object[]{jndiName, o.getClass()});
+                    logger.warn("JNDI object {} not a DataSource class: {} - ignored", jndiName, o.getClass());
                 }
             } catch (NameNotFoundException e) {
-                logger.log(Level.WARNING, "DataSource ''{0}'' not found in context", jndiName);
+                logger.warn("DataSource ''{}'' not found in context", jndiName);
             } catch (NamingException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
             }
         }
         try {
@@ -143,13 +142,11 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
                 ds = (DataSource) bsource;
             }
         } catch (NamingException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new IOException(e.getMessage());
         }
         try {
             ds.getConnection().setAutoCommit("false".equals(properties.getProperty("autoCommit")) ? false : true);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new IOException(e.getMessage());
         }
         return new SQLConnection(ds);

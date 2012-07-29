@@ -36,17 +36,17 @@ import java.io.Writer;
 import org.xbib.io.operator.CreateOperator;
 
 /**
- *  A bridge from packet writing to java.io.Writer
+ * A bridge from packet writing to java.io.Writer
  *
- *  Write packets to a session as if it were a stream.
- *  Packet sessions know how to perform writing.
- * 
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ * Write packets to a session as if it were a stream. Packet sessions know how
+ * to perform writing.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PacketSessionWriter extends Writer {
 
     private Session session;
-    private CreateOperator<Session,Identifiable,Packet> op;
+    private CreateOperator<Session, Identifiable, Packet> op;
 
     public PacketSessionWriter(PacketSession<Session> session) throws IOException {
         this.session = session;

@@ -1,0 +1,308 @@
+The OID of CIPSpecififcInfo is:  
+z3950 2 1000 99 1
+
+
+The OID of CIP Order is:
+z3950 9 1000 99 1
+
+
+CIP-Release-B-APDU {Z39.50-CIP-B-APDU 1} DEFINITIONS ::=
+BEGIN
+IMPORTS IntUnit, InternationalString, Unit FROM Z39.50-APDU-1995;
+
+CIPSpecificInfo	::=		CHOICE
+{
+searchControl		[1]	IMPLICIT		SearchControl,
+term		[2]	EXPLICIT	CIPTerm,
+explainInfo		[3]	IMPLICIT	AdditionalSemanticAttributes
+}
+
+SearchControl		::=	SEQUENCE
+{
+itemDescriptorType	[1]	IMPLICIT INTEGER
+				{
+				collectionDescriptorSearch	(1),
+				productDescriptorSearch	(3)
+				}
+searchScope		[2]	IMPLICIT INTEGER
+				{
+				localSearch			(1),
+				wideSearch				(2)
+				}
+}
+
+CIPTerm	::=		CHOICE
+{
+wrsgrs		[1]	IMPLICIT		WRSGRSSpatialCoverage,
+circle		[2]	IMPLICIT		Circle,
+temporalPeriod		[3]	IMPLICIT		TemporalPeriod
+}
+
+WRSGRSSpatialCoverage	::=	SEQUENCE
+{
+track		[1]	IMPLICIT	INTEGER,
+frames		[2]	SEQUENCE OF	INTEGER
+}
+
+Circle	::=		SEQUENCE
+{
+point		[1]	IMPLICIT	Point,
+radius		[2]	IMPLICIT	IntUnit
+}
+
+Point	::=		SEQUENCE
+{
+latitude		[1]	IMPLICIT	Coordinate,
+longitude		[2]	IMPLICIT	Coordinate
+}
+
+Coordinate	::=		InternationalString
+
+TemporalPeriod	::=	SEQUENCE
+{
+startDate		[1]	IMPLICIT	InternationalString,
+periodDuration		[2]	IMPLICIT	IntUnit,
+periodCycle		[3]	IMPLICIT	IntUnit
+}
+
+AdditionalSemanticAttributes	 ::=  SEQUENCE
+{
+shortMeaning		[1]	IMPLICIT	InternationalString		OPTIONAL,
+-- Short description of the attribute/element.
+unit		[2]	IMPLICIT	Unit				OPTIONAL,
+-- Unit associated with the attribute/element.
+specificInstance	[3]	IMPLICIT	InternationalString		OPTIONAL,
+-- specificInstance provides textual meanings for specific values of 
+-- the attribute/element.
+comment		[4]	IMPLICIT	InternationalString		OPTIONAL,
+-- comment provides additional information about the attribute/ element.
+version		[5]	IMPLICIT	InternationalString,
+-- version provides the version of the attribute/ element.
+valueSyntax		[6]	IMPLICIT	InternationalString
+-- valueSyntax is the definition of the abstract data type used for
+-- the attribute/element.
+}
+
+END
+
+
+
+
+
+{Z39.50-CIP-Order-ES} DEFINITIONS ::=
+BEGIN
+IMPORTS OtherInformation, IntUnit, InternationalString FROM Z39.50-APDU-1995;
+
+CIPOrder	::=		CHOICE
+{
+esRequest		[1]	IMPLICIT SEQUENCE {
+			toKeep	[1]		OriginPartToKeep,
+			notToKeep	[2]		OriginPartNotToKeep},
+taskPackage		[2]	IMPLICIT SEQUENCE {
+			originPart	[1]		OriginPartToKeep,
+			targetPart	[2]		TargetPart}
+}
+
+OriginPartToKeep	::=		SEQUENCE
+{
+action		[1]	IMPLICIT INTEGER {
+			orderQuoteAndValidate	(1),
+			orderSubmit			(2),
+			orderMonitor			(3),
+			orderCancel			(4)},
+orderId		[2]	InternationalString		OPTIONAL,
+orderSpecification	[3]	OrderSpecification		OPTIONAL,
+statusUpdateOption	[4]	StatusUpdateOption		OPTIONAL,
+userInformation		[5]	UserInformation		OPTIONAL,
+otherInfo		[6]	OtherInformation		OPTIONAL
+}
+
+OriginPartNotToKeep	::=		SEQUENCE
+{
+orderId		[1]	InternationalString		OPTIONAL,
+orderSpecification	[2]	OrderSpecification		OPTIONAL,
+userInformation		[3]	UserInformation		OPTIONAL,
+otherInfo		[4]	OtherInformation		OPTIONAL
+}
+
+TargetPart	::=		SEQUENCE
+{
+orderId		[1]	InternationalString,
+orderSpecification	[2]	OrderSpecification		OPTIONAL,
+orderStatusInfo		[3]	OrderStatusInfo		OPTIONAL,
+userInformation		[4]	UserInformation		OPTIONAL,
+otherInfo		[5]	OtherInformation		OPTIONAL
+}
+
+StatusUpdateOption	::=		CHOICE
+{
+manual		[1]	NULL,
+automatic		[2]	IMPLICIT INTEGER {
+				eMail			(1)}
+}
+
+UserInformation	::=		SEQUENCE
+{
+userId		[1]	InternationalString,
+userName		[2]	InternationalString		OPTIONAL,
+userAddress		[3]	PostalAddress		OPTIONAL,
+telNumber		[4]	InternationalString		OPTIONAL,
+faxNumber		[5]	InternationalString		OPTIONAL,
+emailAddress		[6]	InternationalString		OPTIONAL,
+networkAddress		[7]	InternationalString		OPTIONAL,
+account		[8]	InternationalString		OPTIONAL,
+billing		[9]	Billing			OPTIONAL
+}
+
+OrderSpecification	::=		SEQUENCE
+{
+orderingCentreId	[1]	InternationalString,
+orderPrice		[2]	PriceInfo				OPTIONAL,
+orderDeliveryDate	[3]	InternationalString			OPTIONAL,
+orderCancellationDate	[4]	InternationalString			OPTIONAL,
+deliveryUnits		[5]	SEQUENCE OF DeliveryUnitSpec,
+otherInfo		[6]	OtherInformation			OPTIONAL
+}
+
+DeliveryUnitSpec	::=		SEQUENCE
+{
+deliveryUnitId		[1]	InternationalString		OPTIONAL,
+deliveryUnitPrice	[2]	PriceInfo			OPTIONAL,
+deliveryMethod		[3]	DeliveryMethod		OPTIONAL,
+billing		[4]	Billing			OPTIONAL,
+packages		[5]	SEQUENCE OF PackageSpec,
+otherInfo		[6]	OtherInformation		OPTIONAL
+}
+
+DeliveryMethod	::=		CHOICE
+{
+eMail		[1]	InternationalString,
+ftp		[2]	FTPDelivery,
+mail		[3]	PostalAddress,
+otherInfo		[4]	OtherInformation
+}
+
+FTPDelivery	::=		SEQUENCE
+{
+transferDirection		[1]	IMPLICIT INTEGER
+				{
+				push	(0),
+				pull	(1)
+				},
+ftpAddress			[2]	InternationalString
+}
+
+Billing	::=		SEQUENCE
+	{
+	paymentMethod		[1]	PaymentMethod,
+	customerReference	[2]	IMPLICIT InternationalString OPTIONAL,
+	customerPONumber	[3]	IMPLICIT InternationalString OPTIONAL
+	}
+
+PaymentMethod	::=		CHOICE
+	{
+	billInvoice			[0]	IMPLICIT NULL,
+	prepay			[1]	IMPLICIT NULL,
+	depositAccount			[2]	IMPLICIT NULL,
+	creditCard			[3]	IMPLICIT CreditCardInfo,
+	cardInfoPreviouslySupplied	[4] IMPLICIT NULL,
+	privateKnown			[5]	IMPLICIT NULL,
+	privateNotKnown			[6]	IMPLICIT EXTERNAL},
+	}
+
+CreditCardInfo	::=		SEQUENCE
+	{
+	nameOnCard			[1]	IMPLICIT InternationalString,
+	expirationDate			[2]	IMPLICIT InternationalString,
+	cardNumber			[3]	IMPLICIT InternationalString
+}
+
+PostalAddress	::=		SEQUENCE
+{
+streetAddress		[1]	InternationalString,
+city		[2]	InternationalString,
+state		[3]	InternationalString,
+postalCode		[4]	InternationalString,
+country		[5]	InternationalString
+}
+
+PackageSpec	::=		SEQUENCE
+{
+packageId		[1]	InternationalString		OPTIONAL,
+packagePrice		[2]	PriceInfo			OPTIONAL,
+package		[3]	CHOICE
+				{
+				predefinedPackage [1] PredefinedPackage,
+				adHocPackage	      [2] AdHocPackage
+				},
+packageMedium		[4]	InternationalString,
+packageKByteSize	[5]	INTEGER,
+otherInfo		[6]	OtherInformation OPTIONAL
+}
+
+PredefinedPackage	::=		SEQUENCE
+{
+collectionId		[1]	InternationalString,
+orderItems		[2]	SEQUENCE OF OrderItem,
+otherInfo		[3]	OtherInformation		OPTIONAL
+}
+
+AdHocPackage	::=		SEQUENCE OF OrderItem
+
+OrderItem	::=		SEQUENCE
+{
+productId			[1]	InternationalString,
+productPrice			[2]	PriceInfo			OPTIONAL,
+productDeliveryOptions		[3]	ProductDeliveryOptions	OPTIONAL,
+processingType			[4]	InternationalString,
+processingOptions		[5]	InternationalString	OPTIONAL,
+sceneSelectionOptions		[6]	InternationalString	OPTIONAL,
+otherInfo			[7]	OtherInformation		OPTIONAL
+}
+
+ProductDeliveryOptions	::=	SEQUENCE
+{
+productByteSize		[1]	INTEGER			OPTIONAL,
+productFormat		[2]	InternationalString		OPTIONAL,
+productCompression	[3]	InternationalString		OPTIONAL,
+otherInfo		[4]	OtherInformation		OPTIONAL
+}
+
+PriceInfo	::=		SEQUENCE
+{
+price		[1]	IntUnit,
+priceExpirationDate	[2]	InternationalString,
+additionalPriceInfo	[3]	InternationalString		OPTIONAL
+}
+
+OrderStatusInfo	::=		SEQUENCE
+{
+orderState		[1]	CHOICE
+				{
+				staticState			[1] StaticState,
+				dynamicState		[2] DynamicState
+				},
+additionalStatusInfo	[2]	InternationalString		OPTIONAL
+}
+
+StaticState	::=	[1]	IMPLICIT INTEGER
+{
+orderNotValid				(1),
+orderQuotedAndValidated		(2),
+orderCompleted				(3)
+}
+
+DynamicState	::=	[2]	IMPLICIT INTEGER
+{
+requestBeingValidated				(4),
+orderBeingQuotedAndValidated	(5),
+orderBeingProcessed				(6),
+orderBeingCancelled				(7),
+orderBeingDeleted				(8)
+}
+
+END
+
+
+
+

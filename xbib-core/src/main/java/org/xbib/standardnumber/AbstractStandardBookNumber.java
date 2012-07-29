@@ -205,10 +205,11 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
                 throw new InvalidStandardNumberException();
             }
         }
-        if ((checksum % 11) == 0) {
+        int mod = checksum % 11;
+        if (mod == 0) {
             return "0";
         }
-        return NUMVALUES.substring(11 - (checksum % 11), 12 - (checksum % 11));
+        return NUMVALUES.substring(11 - mod, 12 - mod);
     }
 
     /**

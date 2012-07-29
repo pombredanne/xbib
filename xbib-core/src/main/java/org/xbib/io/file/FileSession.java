@@ -42,7 +42,7 @@ import org.xbib.io.Identifiable;
 import org.xbib.io.Mode;
 import org.xbib.io.Packet;
 import org.xbib.io.PacketSession;
-import org.xbib.io.StreamCodecServiceFactory;
+import org.xbib.io.StreamCodecService;
 import org.xbib.io.operator.CreateOperator;
 import org.xbib.io.operator.ReadOperator;
 
@@ -53,7 +53,7 @@ import org.xbib.io.operator.ReadOperator;
  */
 public class FileSession implements PacketSession<FileSession> {
 
-    private final StreamCodecServiceFactory factory = StreamCodecServiceFactory.getInstance();
+    private final StreamCodecService factory = StreamCodecService.getInstance();
     private final FileReadOperation readOp = new FileReadOperation();
     private final FileWriteOperation writeOp = new FileWriteOperation();
     private URI uri;

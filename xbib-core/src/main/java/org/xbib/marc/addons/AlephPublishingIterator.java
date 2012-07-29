@@ -37,14 +37,14 @@ import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionManager;
 import org.xbib.io.Mode;
 import org.xbib.io.sql.Query;
 import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
 import org.xbib.io.sql.SQLSession;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Aleph publishing incremental updates
@@ -52,7 +52,7 @@ import org.xbib.io.sql.SQLSession;
  */
 public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
 
-    private final static Logger logger = Logger.getLogger(AlephPublishingIterator.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AlephPublishingIterator.class.getName());
     private Connection<SQLSession> connection;
     private SQLSession session;
     private ResultSet results;
@@ -110,12 +110,12 @@ public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
                 close();
             }
         } catch (SQLException | IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             try {
                 close();
                 error = true;
             } catch (Exception ex) {
-                logger.log(Level.SEVERE, ex.getMessage());
+                logger.error(ex.getMessage());
             }
         }
         return false;
@@ -147,7 +147,7 @@ public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
                 results = null;
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         } finally {
             if (session != null) {
                 session.close();
@@ -158,7 +158,7 @@ public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
                 connection = null;
             }
         }
-        logger.log(Level.INFO, "update iterator closed after {0} elements {1}", new Object[]{count, error ? "with error" : ""});
+        logger.info("update iterator closed after {} elements {}", count, error ? "with error" : "");
     }
 
     private void createSession() {
@@ -171,11 +171,11 @@ public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
             session.open(Mode.READ);
             Query query = new Query("select /*+ index(z00p z00p_id5) */ z00p_doc_number from " + library
                     + ".z00p where z00p_set = '" + name + "' and z00p_timestamp between '" + fromTime + "' and '" + toTime + "'");
-            query.addProcessor(p);
+            query.setResultProcessor(p);
             query.execute(session);
             this.results = p.getResultSet();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
     }
 }

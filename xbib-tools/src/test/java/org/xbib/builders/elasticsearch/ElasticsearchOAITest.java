@@ -36,10 +36,10 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.EmptyWriter;
 import org.xbib.io.util.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListRecordsResponse;
 import org.xbib.oai.MetadataReader;
@@ -48,9 +48,9 @@ import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.RdfXmlReader;
+import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.StatementListener;
-import org.xbib.rdf.io.TurtleWriter;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
@@ -59,7 +59,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ElasticsearchOAITest {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchOAITest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchOAITest.class.getName());
     private Resource resource;
 
     public void setResource(Resource resource) {
@@ -115,9 +115,9 @@ public class ElasticsearchOAITest {
                     TurtleWriter t = new TurtleWriter();
                     try {
                         t.write(getResource(), true, sw);
-                        logger.log(Level.INFO, sw.toString());
+                        logger.info(sw.toString());
                     } catch (IOException ex) {
-                        logger.log(Level.SEVERE, null, ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
 

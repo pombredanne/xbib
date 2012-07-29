@@ -7,6 +7,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-compress</artifactId>
-    <name>xbib - Stream compression</name>
+    <name>xbib - Compression codecs</name>
     <packaging>jar</packaging>
 </project>
