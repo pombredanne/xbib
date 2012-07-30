@@ -31,64 +31,18 @@
  */
 package org.xbib.federator;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.iso23950.PQFSearchRetrieve;
-import org.xbib.io.iso23950.ZAdapter;
-import org.xbib.io.iso23950.ZAdapterFactory;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.xml.transform.StylesheetTransformer;
+import org.xbib.sru.iso23950.ISO23950SRUAdapter;
+import org.xbib.sru.iso23950.ISO23950SRUAdapterFactory;
 
-public class ZAction
-        extends AbstractAction
-        implements Callable<ZAction> {
+public class PQFZAction extends AbstractAction {
 
-    private final static Logger logger = LoggerFactory.getLogger(ZAction.class.getName());
-    private Map<String, Object> params;
-    private SearchRetrieveResponse response;
-    private List<XMLEvent> list;
-    private StylesheetTransformer transformer;
-    private long count;
-
-    public ZAction() {
-        this.count = 0L;
-    }
-
-    public ZAction setParams(Map<String, Object> params) {
-        this.params = params;
-        return this;
-    }
-
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    public ZAction setResponse(SearchRetrieveResponse response) {
-        this.response = response;
-        return this;
-    }
-    
-    public ZAction setTransformer(StylesheetTransformer transformer) {
-        this.transformer = transformer;
-        return this;
-    }
-    
-    
-    public ZAction setList(List<XMLEvent> list) {
-        this.list = list;
-        return this;
-    }
-
-    public long getCount() {
-        return count;
-    }
+    private final static Logger logger = LoggerFactory.getLogger(PQFZAction.class.getName());
 
     @Override
-    public ZAction call() {
+    public Action call() {
         String query = get(params, "query", null);
         if (query == null) {
             logger.warn("query not set, not executing: {}", params);
@@ -99,7 +53,7 @@ public class ZAction
             return null;
         }
         String name = get(params, "name", "default");
-        ZAdapter adapter = ZAdapterFactory.getAdapter(name);
+        ISO23950SRUAdapter adapter = ISO23950SRUAdapterFactory.getAdapter(name);
         PQFSearchRetrieve request = new PQFSearchRetrieve();
         try {
             int from = get(params, "from", 1);
@@ -108,26 +62,15 @@ public class ZAction
             String elementSetName = get(params, "elementSetName", "F");
             adapter.connect();
             adapter.setStylesheetTransformer(transformer);
-            request.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
-            //request.setResultProcessor(new ZProcessor());
-            adapter.searchRetrieve(request, response, list);
+            request.setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setFrom(from).setSize(size);
+            response.setOrigin(adapter.getURI());
+            adapter.searchRetrieve(request, response, from, size, transformer);
         } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn(adapter.getURI().getHost() + " failure: " + e.getMessage(), e);
         } finally {
             adapter.disconnect();
         }
         this.count = request.getResultCount();
         return this;
     }
-
-    /*class ZProcessor implements ResultProcessor<Record> {
-
-        @Override
-        public void process(Record result) throws IOException {
-            ZEvent event = new ZEvent(result);
-            if (collector != null) {
-                collector.receive(event);
-            }
-        }
-    }*/
 }

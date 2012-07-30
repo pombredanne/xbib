@@ -35,13 +35,13 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.events.XMLEvent;
 import org.testng.annotations.Test;
 import org.xbib.io.Request;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUResponseAdapter;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
@@ -49,7 +49,7 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ClientTest {
 
-    private static final Logger logger = Logger.getLogger(ClientTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ClientTest.class.getName());
 
     @Test
     public void testZDBClient() throws Exception {
@@ -58,10 +58,10 @@ public class ClientTest {
         int from = 0;
         int size = 10;
         URI uri = client.getURI();
-        logger.log(Level.INFO, "uri from properties = {0}", uri);
+        logger.info("uri from properties = {}", uri);
         String authority = uri.getHost() + (uri.getPort() > 0 ? ":" + uri.getPort() : "");
         final URI uri2 = new URI(uri.getScheme(), authority, uri.getPath(), uri.getQuery(), uri.getFragment());
-        logger.log(Level.INFO, "uri = {0}, authority = {1}, uri2 = {2}", new Object[]{ uri, authority, uri2});
+        logger.info("uri = {}, authority = {}, uri2 = {}", uri, authority, uri2);
         
         SearchRetrieve request = new SearchRetrieve()
                 .setURI(client.getURI())           
@@ -81,27 +81,27 @@ public class ClientTest {
 
                 @Override
                 public void onConnect(Request request) {
-                    logger.log(Level.INFO, "connect, request = " + request);
+                    logger.info("connect, request = " + request);
                 }
 
                 @Override
                 public void version(String version) {
-                    logger.log(Level.INFO, "version = " + version);
+                    logger.info("version = " + version);
                 }
 
                 @Override
-                public void numberOfRecords(int numberOfRecords) {
-                    logger.log(Level.INFO, "numberOfRecords = " + numberOfRecords);
+                public void numberOfRecords(long numberOfRecords) {
+                    logger.info("numberOfRecords = " + numberOfRecords);
                 }
 
                 @Override
                 public void beginRecord() {
-                    logger.log(Level.INFO, "begin record");
+                    logger.info("begin record");
                 }
 
                 @Override
                 public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
-                    logger.log(Level.INFO, "got record:"
+                    logger.info("got record:"
                             + " recordSchema=" + recordSchema
                             + " recordPacking=" + recordPacking
                             + " recordIdentifier=" + recordIdentifier
@@ -109,27 +109,26 @@ public class ClientTest {
                 }
 
                 @Override
-                public void recordData(List<XMLEvent> record) {
-                    logger.log(Level.INFO, "recordData = " + record.size() + " events");
+                public void recordData(Collection<XMLEvent> record) {
+                    //logger.info("recordData = " + record + " events");
                 }
 
                 @Override
-                public void extraRecordData(List<XMLEvent> record) {
-                    logger.log(Level.INFO, "extraRecordData = " + record.size() + " events");
+                public void extraRecordData(Collection<XMLEvent> record) {
+                    //logger.info("extraRecordData = " + record + " events");
                 }
 
                 @Override
                 public void endRecord() {
-                    logger.log(Level.INFO, "end record");
+                    logger.info("end record");
                 }
 
                 @Override
                 public void onDisconnect(Request request) {
-                    logger.log(Level.INFO, "disconnect, request = " + request);
+                    logger.info("disconnect, request = " + request);
                 }
             });
-            StylesheetTransformer transformer = new StylesheetTransformer(
-                    "src/test/resources/xsl");
+            StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
             client.setStylesheetTransformer(transformer);
             client.searchRetrieve(request, response).execute(30L, TimeUnit.SECONDS);     
             client.close();

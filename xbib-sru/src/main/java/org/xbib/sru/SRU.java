@@ -237,6 +237,8 @@ public interface SRU {
         put("mods",URI.create("info:srw/schema/1/mods-v3.4"));
         put("onix",URI.create("info:srw/schema/1/onix-v2.0"));
         put("marcxml",URI.create("info:srw/schema/1/marcxml-v1.1"));
+        put("marcxchange",URI.create("info:/srw/schema/9/marcxchange"));
+        put("mx",URI.create("info:/srw/schema/9/marcxchange"));
         put("ead",URI.create("info:srw/schema/1/ead-2002"));
         put("rec",URI.create("info:srw/schema/2/rec-1.0"));
         put("unimarcxml",URI.create("info:srw/schema/8/unimarcxml-v0.1"));
@@ -247,6 +249,12 @@ public interface SRU {
         put("isohold",URI.create("info:srw/schema/5/iso20775-v1.0"));
         put("pam",URI.create("info:srw/schema/11/pam-v2.1"));
     }};
+    
+    Map<String,URI> RECORD_SCHEMA_NAMESPACES = new HashMap() {{
+        put("mods",URI.create("http://www.loc.gov/mods/v3"));
+        put("mx",URI.create("info:lc/xmlns/marcxchange-v1"));
+    }};
+    
     
     
 }

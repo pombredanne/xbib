@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Properties;
 import javax.xml.transform.TransformerException;
 import org.xbib.io.iso23950.CQLSearchRetrieve;
+import org.xbib.io.iso23950.PQFSearchRetrieve;
 import org.xbib.io.iso23950.ZAdapter;
 import org.xbib.io.iso23950.ZAdapterFactory;
 import org.xbib.logging.Logger;
@@ -68,9 +69,20 @@ public class ISO23950SRUAdapter extends SRUPropertiesAdapter {
         this.type = properties.getProperty("type");
     }
 
+    /**
+     * CQL search
+     *
+     * @param request
+     * @param response
+     * @param transformer
+     * @throws IOException
+     * @throws SyntaxException
+     */
     @Override
-    public void performSearchRetrieve(SearchRetrieve request, SearchRetrieveResponse response, StylesheetTransformer transformer)
+    public void performSearchRetrieve(SearchRetrieve request, SearchRetrieveResponse response,
+            StylesheetTransformer transformer)
             throws IOException, SyntaxException {
+        // sanity check for transformer
         if (transformer == null) {
             throw new Diagnostics(1, "no stylesheet transformer installed");
         }
@@ -114,15 +126,83 @@ public class ISO23950SRUAdapter extends SRUPropertiesAdapter {
                     getRecordSchema());
             response.addResponseParameter("X-SRU-recordPacking",
                     getRecordPacking());
-            response.addResponseParameter("X-SRU-numberOfRecords", 
+            response.addResponseParameter("X-SRU-numberOfRecords",
                     Integer.toString(zRequest.getResultCount()));
-            getLogger().info("{} [{}ms] [{}] [{}] [{}] [{}]",
-                    getURI().getPath(), t1 - t0,
+            if (getLogger() != null) {
+                getLogger().info("{} [{}ms] [{}] [{}] [{}] [{}]",
+                        getURI().getPath(), t1 - t0,
                         zAdapter.getURI().getHost(),
                         zAdapter.getDatabases(),
                         zRequest.getResultCount(),
-                        request.getQuery()
-                    );
+                        request.getQuery());
+            }
+        } finally {
+            zAdapter.disconnect();
+        }
+    }
+
+    /**
+     * PQF search for internal usage. Sending PQF queries is not SRU standard.
+     * But Z servers in a federated environment may react differently to
+     * queries, CQL is not possible to be translated to each member in most
+     * cases, and we fall back to a list of PQF queries to each Z server. As a
+     * side effect, from/size must be passed separately , since PQF is not able
+     * to carry this information (startRecord/maximumRecords in SRU). The result
+     * is fully adhering to SRU response.
+     *
+     * @param request
+     * @param from
+     * @param size
+     * @param response
+     * @param transformer
+     * @throws Diagnostics
+     * @throws IOException
+     */
+    public void searchRetrieve(PQFSearchRetrieve request, SearchRetrieveResponse response,
+            int from, int size, StylesheetTransformer transformer)
+            throws Diagnostics, IOException {
+        // sanity check for transformer
+        if (transformer == null) {
+            throw new Diagnostics(1, "no stylesheet transformer installed");
+        }
+        transformer.addParameter("version", version);
+        transformer.addParameter("format", format);
+        transformer.addParameter("type", type);
+        if (stylesheet != null) {
+            try {
+                transformer.setXsl(stylesheet);
+            } catch (TransformerException ex) {
+                logger.warn(ex.getMessage(), ex);
+            }
+        }
+        zAdapter.setStylesheetTransformer(transformer);
+        try {
+            long t0 = System.currentTimeMillis();
+            zAdapter.connect();
+            request.setDatabase(zAdapter.getDatabases()).
+                    setPreferredRecordSyntax(zAdapter.getPreferredRecordSyntax()).
+                    setResultSetName(resultSetName).
+                    setElementSetName(elementSetName).
+                    setFrom(from).setSize(size);
+            zAdapter.searchRetrieve(request, response);
+            long t1 = System.currentTimeMillis();
+            response.addResponseParameter("X-SRU-version",
+                    version);
+            response.addResponseParameter("X-SRU-recordSchema",
+                    getRecordSchema());
+            response.addResponseParameter("X-SRU-recordPacking",
+                    getRecordPacking());
+            response.addResponseParameter("X-SRU-numberOfRecords",
+                    Integer.toString(request.getResultCount()));
+            if (getLogger() != null) {
+                getLogger().info("[{}ms] [{}] [{}] [{}]",
+                        t1 - t0,
+                        zAdapter.getURI().getHost(),
+                        request.getResultCount(),
+                        request.getQuery());
+            }
+        } catch (org.xbib.io.iso23950.Diagnostics d) {
+            throw new Diagnostics(1, d.getPlainText());
         } finally {
             zAdapter.disconnect();
         }

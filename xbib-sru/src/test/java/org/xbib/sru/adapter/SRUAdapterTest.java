@@ -36,12 +36,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
 import org.testng.annotations.Test;
 import org.xbib.io.Request;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUAdapter;
 import org.xbib.sru.SRUResponseAdapter;
@@ -51,7 +51,7 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SRUAdapterTest {
 
-    private static final Logger logger = Logger.getLogger(SRUAdapterTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SRUAdapterTest.class.getName());
 
     @Test
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
@@ -60,75 +60,72 @@ public class SRUAdapterTest {
             int from = 1;
             int size = 10;
             final SRUAdapter adapter = SRUAdapterFactory.getAdapter(adapterName);
-            StylesheetTransformer transformer = new StylesheetTransformer(
-                    "src/test/resources/xsl");
+            StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
             FileOutputStream out = new FileOutputStream("target/sru-adapter-" + adapter.getURI().getHost() + ".xml");
-            Writer w = new OutputStreamWriter(out, "UTF-8");
-            SearchRetrieveResponse response = new SearchRetrieveResponse(w);
-            response.setListener(new SRUResponseAdapter() {
+            try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
+                SearchRetrieveResponse response = new SearchRetrieveResponse(w);
+                response.setListener(new SRUResponseAdapter() {
 
-                @Override
-                public void onConnect(Request request) {
-                    logger.log(Level.INFO, "connect, request = " + request);
-                }
+                    @Override
+                    public void onConnect(Request request) {
+                        logger.info("connect, request = " + request);
+                    }
 
-                @Override
-                public void version(String version) {
-                    logger.log(Level.INFO, "version = " + version);
-                }
+                    @Override
+                    public void version(String version) {
+                        logger.info("version = " + version);
+                    }
 
-                @Override
-                public void numberOfRecords(int numberOfRecords) {
-                    logger.log(Level.INFO, "numberOfRecords = " + numberOfRecords);
-                }
+                    @Override
+                    public void numberOfRecords(long numberOfRecords) {
+                        logger.info("numberOfRecords = " + numberOfRecords);
+                    }
 
-                @Override
-                public void beginRecord() {
-                    logger.log(Level.INFO, "begin record");
-                }
+                    @Override
+                    public void beginRecord() {
+                        logger.info("begin record");
+                    }
 
-                @Override
-                public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
-                    logger.log(Level.INFO, "got record from: adapter=" + adapter.getURI()
-                            + " recordSchema=" + recordSchema
-                            + " recordPacking=" + recordPacking
-                            + " recordIdentifier=" + recordIdentifier
-                            + " recordPosition=" + recordPosition);
-                }
+                    @Override
+                    public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
+                        logger.info("got record from: adapter=" + adapter.getURI()
+                                + " recordSchema=" + recordSchema
+                                + " recordPacking=" + recordPacking
+                                + " recordIdentifier=" + recordIdentifier
+                                + " recordPosition=" + recordPosition);
+                    }
 
-                @Override
-                public void recordData(List<XMLEvent> record) {
-                    //logger.log(Level.INFO, "recordData = " + record);
-                }
+                    @Override
+                    public void recordData(Collection<XMLEvent> record) {
+                    }
 
-                @Override
-                public void extraRecordData(List<XMLEvent> record) {
-                    //logger.log(Level.INFO, "extraRecordData = " + record);
-                }
+                    @Override
+                    public void extraRecordData(Collection<XMLEvent> record) {
+                    }
 
-                @Override
-                public void endRecord() {
-                    logger.log(Level.INFO, "end record");
-                }
+                    @Override
+                    public void endRecord() {
+                        logger.info("end record");
+                    }
 
-                @Override
-                public void onDisconnect(Request request) {
-                    logger.log(Level.INFO, "disconnect, request = " + request);
+                    @Override
+                    public void onDisconnect(Request request) {
+                        logger.info("disconnect, request = " + request);
+                    }
+                });
+                try {
+                    adapter.connect();
+                    adapter.setStylesheetTransformer(transformer);
+                    SearchRetrieve request = new SearchRetrieve();
+                    request.setURI(adapter.getURI()).setVersion(adapter.getVersion()).
+                            setRecordPacking(adapter.getRecordPacking()).setRecordSchema(adapter.getRecordSchema()).setQuery(query).setStartRecord(from).setMaximumRecords(size);
+                    adapter.searchRetrieve(request, response);
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                } finally {
+                    adapter.disconnect();
                 }
-            });
-            try {
-                adapter.connect();
-                adapter.setStylesheetTransformer(transformer);
-                SearchRetrieve request = new SearchRetrieve();
-                request.setURI(adapter.getURI()).setVersion(adapter.getVersion()).
-                        setRecordPacking(adapter.getRecordPacking()).setRecordSchema(adapter.getRecordSchema()).setQuery(query).setStartRecord(from).setMaximumRecords(size);
-                adapter.searchRetrieve(request, response);
-            } catch (IOException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-            } finally {
-                adapter.disconnect();
             }
-            w.close();
         }
     }
 }

@@ -159,9 +159,8 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
                 // single value
                 O value = values.iterator().next();
                 if (!(value instanceof BlankNode)) {
-                    builder.field(
-                            context.abbreviate(predicate.getURI()),
-                            value.toString());
+                    builder.field(context.abbreviate(predicate.getURI()), 
+                            /*value.toString()*/ ((Literal)value).nativeValue() );
                 }
             } else if (values.size() > 1) {
                 // array of values
@@ -169,7 +168,7 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
                 if (!properties.isEmpty()) {
                     builder.startArray(context.abbreviate(predicate.getURI()));
                     for (O value : properties) {
-                        builder.value(value.toString());
+                        builder.value(/*value.toString()*/((Literal)value).nativeValue());
                     }
                     builder.endArray();
                 }

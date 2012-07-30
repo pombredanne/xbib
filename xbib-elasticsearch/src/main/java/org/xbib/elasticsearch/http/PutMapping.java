@@ -35,7 +35,7 @@ public class PutMapping extends AbstractRequest
     }
 
     @Override
-    public void addProcessor(ResultProcessor<InputStream> processor) {
+    public void setResultProcessor(ResultProcessor<InputStream> processor) {
     }
 
     @Override

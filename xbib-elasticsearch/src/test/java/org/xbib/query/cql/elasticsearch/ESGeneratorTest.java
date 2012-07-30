@@ -36,7 +36,6 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.elasticsearch.index.query.IndexQueryParserService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.query.cql.CQLParser;

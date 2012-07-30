@@ -41,13 +41,16 @@ public abstract class AbstractResponse implements Response {
 
     protected OutputStream out;
     protected Writer writer;
+    private String encoding;
 
     public AbstractResponse(Writer writer) {
         this.writer = writer;
+        this.encoding = System.getProperty("file.encoding");
     }
 
     public AbstractResponse(OutputStream out, String encoding) throws UnsupportedEncodingException {
         this.out = out;
+        this.encoding = encoding;
         this.writer = new OutputStreamWriter(out, encoding);
     }
 
@@ -57,6 +60,10 @@ public abstract class AbstractResponse implements Response {
 
     public Writer getWriter() {
         return writer;
+    }
+    
+    public String getEncoding() {
+        return encoding;
     }
 
     public void flush() throws IOException {

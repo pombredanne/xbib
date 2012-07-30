@@ -34,10 +34,10 @@ package org.xbib.io.iso23950;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.xml.XMLEventIterator;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 /**
@@ -63,8 +63,5 @@ public interface ZAdapter {
             throws Diagnostics, IOException;
 
     void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response) 
-            throws Diagnostics, IOException;
-        
-    void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response, List<XMLEvent> list)
             throws Diagnostics, IOException;
 }

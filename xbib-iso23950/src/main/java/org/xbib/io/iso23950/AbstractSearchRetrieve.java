@@ -52,7 +52,7 @@ public abstract class AbstractSearchRetrieve implements Request,
             ResourceBundle.getBundle("org.xbib.io.iso23950.recordsyntax");
     private String user;
     private String password;
-    private int timeout;
+    private long timeout;
     private List<String> databases;
     private String query;
     private int offset;
@@ -74,9 +74,13 @@ public abstract class AbstractSearchRetrieve implements Request,
         return this;
     }
 
-    public AbstractSearchRetrieve setTimeout(int timeout) {
-        this.timeout = timeout;
+    public AbstractSearchRetrieve setTimeout(long seconds) {
+        this.timeout = seconds;
         return this;
+    }
+    
+    public long getTimeout() {
+        return timeout;
     }
 
     public AbstractSearchRetrieve setDatabase(List<String> databases) {
@@ -87,6 +91,10 @@ public abstract class AbstractSearchRetrieve implements Request,
     public AbstractSearchRetrieve setQuery(String query) {
         this.query = query;
         return this;
+    }
+    
+    public String getQuery() {
+        return query;
     }
 
     public AbstractSearchRetrieve setFrom(int offset) {
@@ -160,6 +168,7 @@ public abstract class AbstractSearchRetrieve implements Request,
             }
         }
         AbstractSearchOperation search = getSearchOperation(databases, resultSetName);
+        search.setTimeout(getTimeout() * 1000);
         search.query(session, query);
         long presentMillis = 0L;
         if (!search.isSuccess()) {

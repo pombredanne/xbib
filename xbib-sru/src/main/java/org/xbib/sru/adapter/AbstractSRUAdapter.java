@@ -32,11 +32,8 @@
 package org.xbib.sru.adapter;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.xbib.logging.CustomFileHandler;
-import org.xbib.logging.CustomFormatter;
-import org.xbib.logging.CustomLogger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.ExplainResponse;
@@ -50,9 +47,9 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public abstract class AbstractSRUAdapter implements SRUAdapter {
 
-    private static final Logger logger = Logger.getLogger(AbstractSRUAdapter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractSRUAdapter.class.getName());
     private StylesheetTransformer transformer = new StylesheetTransformer("/xsl");
-    private CustomLogger sruLogger;
+    private Logger sruLogger;
 
     @Override
     public void setStylesheetTransformer(StylesheetTransformer transformer) {
@@ -67,9 +64,7 @@ public abstract class AbstractSRUAdapter implements SRUAdapter {
     @Override
     public void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
             throws Diagnostics, IOException {
-        if (sruLogger == null) {
-            createLogger();
-        }
+        createLogger();
         if (transformer == null) {
             throw new Diagnostics(1, "no stylesheet transformer installed");
         }
@@ -87,14 +82,13 @@ public abstract class AbstractSRUAdapter implements SRUAdapter {
         transformer.addParameter("maximumRecords", request.getMaximumRecords());
         transformer.addParameter("recordPacking", getRecordPacking());
         transformer.addParameter("recordSchema", getRecordSchema());
-        
         try {
             performSearchRetrieve(request, response, transformer);
         } catch (SyntaxException e) {
-            logger.log(Level.SEVERE, "CQL syntax error", e);
+            logger.error("CQL syntax error", e);
             throw new Diagnostics(10, e.getMessage());
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "SRU is unresponsive", e);
+            logger.error("SRU is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         }
     }
@@ -102,46 +96,39 @@ public abstract class AbstractSRUAdapter implements SRUAdapter {
     @Override
     public void scan(Scan request, ScanResponse response)
             throws Diagnostics, IOException {
-        if (sruLogger == null) {
-            createLogger();
-        }
+        createLogger();
         try {
             performScan(request, response);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "SRU is unresponsive", e);
+            logger.error("SRU is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         }
     }
-    
+
     public Logger getLogger() {
         return sruLogger;
     }
-    
+
     public StylesheetTransformer getStylesheetTransformer() {
         return transformer;
     }
 
     private void createLogger() throws IOException {
-        sruLogger = new CustomLogger("org.xbib.sru.logger");
-        sruLogger.setLevel(Level.ALL);
-        String directory = System.getProperty("org.xbib.sru.logging.directory", "logs");
-        String prefix = System.getProperty("org.xbib.sru.logging.prefix", "sru-" + getURI().getHost() + ".");
-        String suffix = System.getProperty("org.xbib.sru.logging.suffix", ".log");
-        CustomFileHandler handler = new CustomFileHandler(directory, prefix, suffix);
-        handler.setFormatter(new CustomFormatter());
-        sruLogger.addHandler(handler);
+        if (sruLogger == null) {
+            sruLogger = LoggerFactory.getLogger("org.xbib.sru.logger");
+        }
     }
-    
+
     protected void performExplain(Explain op, ExplainResponse response) throws Diagnostics, IOException {
         response.write();
     }
-    
-    protected abstract void performSearchRetrieve(SearchRetrieve op, 
-            SearchRetrieveResponse response, 
+
+    protected abstract void performSearchRetrieve(SearchRetrieve op,
+            SearchRetrieveResponse response,
             StylesheetTransformer transformer)
             throws IOException, SyntaxException;
 
-    protected abstract void performScan(Scan op, 
+    protected abstract void performScan(Scan op,
             ScanResponse response)
             throws IOException, SyntaxException;
 }

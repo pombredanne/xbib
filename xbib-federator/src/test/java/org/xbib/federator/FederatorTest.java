@@ -33,26 +33,22 @@ package org.xbib.federator;
 
 import java.io.FileWriter;
 import org.testng.annotations.Test;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.xml.transform.StylesheetTransformer;
 
 public class FederatorTest {
 
-    private final static Logger logger = LoggerFactory.getLogger(FederatorTest.class.getName());
-
     @Test
     public void test() throws Exception {
-        FederatorService f = FederatorService.getInstance().setThreads(5);
+        FederatorService federator = FederatorService.getInstance().setThreads(5);
         String query = "["
                 + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"HBZ\"},"
-                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"GBV\"}"
+                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"GBV\"},"
+                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"BVB\"},"
+                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 linux\", \"name\":\"LCDB\"}"
                 + "]";
-        StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
         try (FileWriter writer = new FileWriter("target/federator-result.xml")) {
-            //f.addListener("mytest", new DefaultResponseListener())
-                    f.submit("mytest", transformer, query)
-                    .waitFor("mytest", transformer, writer);
+                    federator.setStylesheetPath("src/main/resources/xsl")
+                    .submit("mytest", query)
+                    .waitFor("mytest", writer);
         }
     }
 }

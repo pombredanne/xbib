@@ -60,9 +60,9 @@ public class StylesheetTransformer {
     /**
      * We really depend on Xalan 2.7.1 for now.
      * With JDK 6 internal Xalan, there are NPEs while processing attribute patterns @*
+     * Do not use static SAXTransformerFactory. It is not thread safe.
      */
-    private static final SAXTransformerFactory transformerFactory =
-            (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+    private final SAXTransformerFactory transformerFactory;
     private final URIResolver uriResolver;
     private static final StylesheetPool pool = new StylesheetPool();
     private final Map<String, Object> parameters = new HashMap();
@@ -71,14 +71,16 @@ public class StylesheetTransformer {
     private Source xslSource2;
     private StreamResult target;
 
-    public StylesheetTransformer() {
+    public StylesheetTransformer() {        
         this.uriResolver = new TransformerURIResolver();
+        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
         transformerFactory.setURIResolver(uriResolver);
     }
 
     public StylesheetTransformer(String... path) {
         this.uriResolver = new TransformerURIResolver(path);
+        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
         transformerFactory.setURIResolver(uriResolver);
     }
@@ -174,22 +176,25 @@ public class StylesheetTransformer {
             return;
         }
         if (xslSource2 == null) {
-            Templates templates = pool.createTemplate(xslSource);
-            TransformerHandler thandler = pool.newTransformerHandler(templates);
+            Templates templates = pool.newTemplates(transformerFactory, xslSource);
+            TransformerHandler thandler = pool.newTransformerHandler(transformerFactory, templates);
+            //Templates templates = transformerFactory.newTemplates(xslSource);
+            //TransformerHandler thandler = transformerFactory.newTransformerHandler(templates);
             thandler.setResult(target);
             addParameters(thandler.getTransformer());
             transformer.transform(source, new SAXResult(thandler));
             return;
         }
-        Templates templates1 = pool.createTemplate(xslSource);
-        Templates templates2 = pool.createTemplate(xslSource2);
-        TransformerHandler handler1 = pool.newTransformerHandler(templates1);
-        TransformerHandler handler2 = pool.newTransformerHandler(templates2);
+        Templates templates1 = pool.newTemplates(transformerFactory, xslSource);
+        Templates templates2 = pool.newTemplates(transformerFactory, xslSource2);
+        TransformerHandler handler1 = pool.newTransformerHandler(transformerFactory, templates1);
+        TransformerHandler handler2 = pool.newTransformerHandler(transformerFactory, templates2);
         handler1.setResult(new SAXResult(handler2));
         handler2.setResult(target);
         addParameters(handler1.getTransformer());
         addParameters(handler2.getTransformer());
         transformer.transform(source, new SAXResult(handler1));
+        
     }
 
     private void addParameters(Transformer transformer) {

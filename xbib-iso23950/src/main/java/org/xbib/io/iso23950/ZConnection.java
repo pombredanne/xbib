@@ -158,7 +158,7 @@ public class ZConnection implements Connection<ZSession> {
             this.src = new BufferedInputStream(socket.getInputStream());
             this.dest = new BufferedOutputStream(socket.getOutputStream());
         } catch ( IOException | SecurityException | NullPointerException e) {
-            logger.warn(e.getMessage() + ": " + getURI(), e);
+            logger.warn(e.getMessage() + ": " + getURI().getHost(), e);
             try {
                 if (socket != null) {
                     socket.close();

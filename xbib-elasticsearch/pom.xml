@@ -10,7 +10,7 @@
     <name>xbib - Elasticsearch</name>
     <packaging>jar</packaging>
     <properties>
-        <elasticsearch.version>0.19.3</elasticsearch.version>
+        <elasticsearch.version>0.19.8</elasticsearch.version>
         <lucene.version>3.6.0</lucene.version>
     </properties>
     <build>

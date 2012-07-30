@@ -12,14 +12,14 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-elements-mapper</artifactId>
+            <artifactId>xbib-mapper</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>4.1.7</version>
+            <version>4.1.21</version>
             <type>jar</type>
         </dependency>
         <dependency>

@@ -35,14 +35,15 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.events.XMLEvent;
 import org.testng.annotations.Test;
 import org.xbib.io.Request;
 import org.xbib.io.http.netty.HttpOperation;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUResponseAdapter;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
@@ -50,7 +51,7 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public class AsyncClientTest {
 
-    private static final Logger logger = Logger.getLogger(AsyncClientTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AsyncClientTest.class.getName());
 
     @Test
     public void testMultiClient() throws Exception {
@@ -69,27 +70,27 @@ public class AsyncClientTest {
 
                 @Override
                 public void onConnect(Request request) {
-                    logger.log(Level.INFO, "connect, request = " + request);
+                    logger.info("connect, request = " + request);
                 }
 
                 @Override
                 public void version(String version) {
-                    logger.log(Level.INFO, "version = " + version);
+                    logger.info("version = " + version);
                 }
 
                 @Override
-                public void numberOfRecords(int numberOfRecords) {
-                    logger.log(Level.INFO, "numberOfRecords = " + numberOfRecords);
+                public void numberOfRecords(long numberOfRecords) {
+                    logger.info("numberOfRecords = " + numberOfRecords);
                 }
 
                 @Override
                 public void beginRecord() {
-                    logger.log(Level.INFO, "begin record");
+                    logger.info("begin record");
                 }
 
                 @Override
                 public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
-                    logger.log(Level.INFO, "got record:"
+                    logger.info("got record:"
                             + " recordSchema=" + recordSchema
                             + " recordPacking=" + recordPacking
                             + " recordIdentifier=" + recordIdentifier
@@ -97,31 +98,30 @@ public class AsyncClientTest {
                 }
 
                 @Override
-                public void recordData(List<XMLEvent> record) {
-                    logger.log(Level.INFO, "recordData = " + record.size() + " events");
+                public void recordData(Collection<XMLEvent> record) {
+                    //logger.info("recordData = " + record + " events");
                 }
 
                 @Override
-                public void extraRecordData(List<XMLEvent> record) {
-                    logger.log(Level.INFO, "extraRecordData = " + record.size() + " events");
+                public void extraRecordData(Collection<XMLEvent> record) {
+                    //logger.info("extraRecordData = " + record + " events");
                 }
 
                 @Override
                 public void endRecord() {
-                    logger.log(Level.INFO, "end record");
+                    logger.info("end record");
                 }
 
                 @Override
                 public void onDisconnect(Request request) {
-                    logger.log(Level.INFO, "disconnect, request = " + request);
+                    logger.info("disconnect, request = " + request);
                 }
             });
-            StylesheetTransformer transformer = new StylesheetTransformer(
-                    "src/test/resources/xsl");
+            StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
             client.setStylesheetTransformer(transformer);
             HttpOperation op = client.searchRetrieve(request, response);
             op.execute(30L, TimeUnit.SECONDS);
-            logger.log(Level.INFO, "client " + client.getURI() + " took " + op.getResponseMillis() + "ms");
+            logger.info("client " + client.getURI() + " took " + op.getResponseMillis() + "ms");
             client.close();
         }
     }

@@ -64,7 +64,7 @@ public abstract class AbstractOperation
     }
     
     @Override
-    public void addProcessor(ResultProcessor<InputStream> processor) {
+    public void setResultProcessor(ResultProcessor<InputStream> processor) {
         this.processor = processor;
     }
 

@@ -71,7 +71,6 @@
                     <configuration>
                         <!-- systemPropertyVariables only work with forkMode none -->
                         <systemPropertyVariables>
-                            <java.util.logging.manager>org.xbib.logging.CustomLogManager</java.util.logging.manager>
                             <file.encoding>UTF-8</file.encoding>
                         </systemPropertyVariables>
                         <encoding>UTF-8</encoding>
@@ -83,7 +82,7 @@
                         <forkMode>once</forkMode>
                         <useSystemClassLoader>false</useSystemClassLoader>
                         <!-- we fork, so we need system properties on argLine. Override Mac OSX JVM default encoding and override logging -->
-                        <argLine>-Dfile.encoding=utf-8 -Djava.util.logging.manager=org.xbib.logging.CustomLogManager</argLine>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -140,6 +139,11 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.3.1</version>
@@ -150,6 +154,7 @@
         <module>xbib-logging</module>
         <module>xbib-charset</module>
         <module>xbib-compress</module>
+        <module>xbib-rdf</module>
         <module>xbib-core</module>
         <module>xbib-mapper</module>
         <module>xbib-elasticsearch</module>
@@ -160,5 +165,9 @@
         <module>xbib-berkeleydb</module>
         <module>xbib-lia</module>
         <module>xbib-mab</module>
+        <module>xbib-objectstorage</module>
+        <module>xbib-iso23950</module>
+        <module>xbib-atom</module>
+        <module>xbib-federator</module>
     </modules>
 </project>

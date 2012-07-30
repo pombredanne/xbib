@@ -49,7 +49,8 @@ import org.xbib.io.util.URIUtil;
  *  Elasticsearch connection
  *
  */
-public class ElasticsearchConnection implements Connection<ElasticsearchSession> {
+public class ElasticsearchConnection<S extends ElasticsearchSession>
+    implements Connection<S> {
     
     private static final Logger logger = Logger.getLogger(ElasticsearchConnection.class.getName());
     private final static String DEFAULT_CLUSTER_NAME = "elasticsearch";
@@ -92,9 +93,9 @@ public class ElasticsearchConnection implements Connection<ElasticsearchSession>
     
 
     @Override
-    public ElasticsearchSession createSession() throws IOException {
+    public S createSession() throws IOException {
         ElasticsearchSession session = new ElasticsearchSession(this);        
-        return session;
+        return (S)session;
     }
     
     @Override

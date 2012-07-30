@@ -36,7 +36,7 @@ import org.xbib.sru.SRU;
 import org.xbib.sru.explain.Explain;
 import org.xbib.sru.explain.ServerInfo;
 import org.xbib.sru.explain.ZEEREX;
-import org.xbib.xml.transform.XMLFilterReader;
+import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

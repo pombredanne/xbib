@@ -57,6 +57,7 @@ import z3950.v3.SearchResponse;
  */
 public abstract class AbstractSearchOperation implements QueryOperator<ZSession> {
 
+    private long timeout;
     private long millis;
     private boolean status;
     private int[] results;
@@ -79,6 +80,7 @@ public abstract class AbstractSearchOperation implements QueryOperator<ZSession>
     @Override
     public void query(ZSession session, String query) throws IOException {
         long t0 = System.currentTimeMillis();
+        long t1;
         try {
             RPNQuery rpn = getQuery(query);
             SearchRequest search = new SearchRequest();
@@ -99,24 +101,24 @@ public abstract class AbstractSearchOperation implements QueryOperator<ZSession>
             search.s_databaseNames = dbs;
             PDU pduRequest = new PDU();
             pduRequest.c_searchRequest = search;
-            session.getConnection().setTimeout(millis);
+            session.getConnection().setTimeout(getTimeout());
             session.getConnection().writePDU(pduRequest);
             PDU pduResponse = session.getConnection().readPDU();
-            long t1 = System.currentTimeMillis();
-            this.millis = t1 - t0;
+            t1 = System.currentTimeMillis();
+            setMillis(t1 -t0);
             SearchResponse response = pduResponse.c_searchResponse;
             this.count = response.s_resultCount.get();
             if (response.s_searchStatus != null) {
                 this.status = response.s_searchStatus.get();
                 if (status == false) {
-                    if (response.s_records.c_nonSurrogateDiagnostic != null) {
-                        String message = "";
+                    String message = "no message";
+                    if (response.s_records != null && response.s_records.c_nonSurrogateDiagnostic != null) {
                         try {
                             message = "ASN error, non-surrogate diagnostics: " + response.s_records.c_nonSurrogateDiagnostic.ber_encode();
                         } catch (ASN1Exception e) {
                         }
-                        throw new IOException(session.getConnection().getURI().getHost() + ": " + message);
                     }
+                    throw new IOException(session.getConnection().getURI().getHost() + ": " + message);
                 }
             }
             if (response.s_additionalSearchInfo != null && response.s_additionalSearchInfo.value[0] != null) {
@@ -143,9 +145,10 @@ public abstract class AbstractSearchOperation implements QueryOperator<ZSession>
                 }
             }
         } catch (SocketTimeoutException e) {
-            long t1 = System.currentTimeMillis();
+            t1 = System.currentTimeMillis();
+            setMillis(t1 - t0);
             throw new IOException(session.getConnection().getURI().getHost() + ": timeout (" 
-                    + (t1 - t0) + " millis passed, max "
+                    + getMillis() + " millis passed, max "
                     + session.getConnection().getTimeout() + " millis)" , e);
         }
     }
@@ -157,9 +160,21 @@ public abstract class AbstractSearchOperation implements QueryOperator<ZSession>
     public int getResultCount() {
         return count;
     }
-
+    
+    public void setMillis(long millis) {
+        this.millis = millis;
+    }
+    
     public long getMillis() {
         return millis;
+    }
+
+    public void setTimeout(long millis) {
+        this.timeout = millis;
+    }
+    
+    public long getTimeout() {
+        return timeout;
     }
     
     public abstract RPNQuery getQuery(String query) throws IOException;

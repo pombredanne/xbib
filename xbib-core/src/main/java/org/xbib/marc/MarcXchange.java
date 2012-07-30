@@ -34,11 +34,8 @@ package org.xbib.marc;
 public interface MarcXchange {
 
     String NS_URI = "info:lc/xmlns/marcxchange-v1";
-    String NS_PREFIX = "marcx";
+    String NS_PREFIX = "mx";
     String MARCXCHANGE_SCHEMA = "http://www.loc.gov/standards/iso25577/marcxchange-1-1.xsd";
-    String MARC21_NS_URI = "http://www.loc.gov/MARC21/slim";
-    String MARC21_NS_PREFIX = "marc";    
-    String MARC21_SCHEMA = "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd";
     // element names
     String COLLECTION = "collection";
     String RECORD = "record";
@@ -52,5 +49,9 @@ public interface MarcXchange {
     String CODE =  "code";
     String FORMAT =  "format";
     String TYPE =  "type";
+    // related (strict superset)
+    String MARC21_NS_URI = "http://www.loc.gov/MARC21/slim";
+    String MARC21_NS_PREFIX = "marc";    
+    String MARC21_SCHEMA = "http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd";
     
 }

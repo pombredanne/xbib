@@ -36,8 +36,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.List;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
@@ -129,12 +127,6 @@ public abstract class ZBaseAdapter implements ZAdapter {
     @Override
     public void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response)
             throws Diagnostics, IOException {
-        searchRetrieve(request, response, null);
-    }
-
-    @Override
-    public void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response, List<XMLEvent> list)
-            throws Diagnostics, IOException {
         if (transformer == null) {
             throw new Diagnostics(1, "no stylesheet transformer installed");
         }
@@ -151,19 +143,21 @@ public abstract class ZBaseAdapter implements ZAdapter {
             request.setTimeout(getTimeout());
             // execute search
             request.execute(session);
+            response.setOrigin(session.getConnection().getURI());
             // get result count for caller and for stylesheet
             response.numberOfRecords(request.getResultCount());
             transformer.addParameter("numberOfRecords", request.getResultCount());
             // push out results
             ByteArrayInputStream in = new ByteArrayInputStream(records.toByteArray());
-            InputSource source = new InputSource(new InputStreamReader(in, getEncoding()));
-            SRUFilterReader reader = new SRUFilterReader(response, list);
+            // stream encoding, must always be octet! 
+            InputSource source = new InputSource(new InputStreamReader(in, "ISO-8859-1"));
+            SRUFilterReader reader = new SRUFilterReader(response, getEncoding());
             reader.setProperty(Iso2709Reader.FORMAT, getFormat());
             reader.setProperty(Iso2709Reader.TYPE, getType());
-            transformer.setSource(new SAXSource(reader, source)).setTarget(
-                    response.getOutput() != null
-                    ? new StreamResult(response.getOutput())
-                    : new StreamResult(response.getWriter())).apply();
+            transformer.setSource(new SAXSource(reader, source))
+                        .setTarget(response.getOutput() != null
+                        ? new StreamResult(response.getOutput())
+                        : new StreamResult(response.getWriter())).apply();
         } catch (SAXNotSupportedException | SAXNotRecognizedException | TransformerException ex) {
             logger.error(getURI().getHost() + ": " + ex.getMessage(), ex);
         } finally {

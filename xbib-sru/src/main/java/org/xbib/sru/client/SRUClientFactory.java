@@ -34,12 +34,8 @@ package org.xbib.sru.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SRUClientFactory {
-
-    private static final Logger logger = Logger.getLogger(SRUClientFactory.class.getName());
 
     private final static SRUClientFactory instance = new SRUClientFactory();
     
@@ -53,9 +49,9 @@ public class SRUClientFactory {
             try {
                 properties.load(in);
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
             }
-        } else {
+        }
+        if (in == null || properties.isEmpty()) {
             throw new IllegalArgumentException("adapter " + name + " not found");
         }
         SRUPropertiesClient client = new SRUPropertiesClient(properties);

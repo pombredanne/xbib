@@ -101,7 +101,7 @@ public class MABElementsTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(1).setFactory(factory).run(
+        new ImportService().setThreads(1).setFactory(factory).execute(
             "tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"
         );
     }

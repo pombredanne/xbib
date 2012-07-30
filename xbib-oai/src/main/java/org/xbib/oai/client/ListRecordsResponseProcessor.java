@@ -49,7 +49,7 @@ import org.xbib.oai.exceptions.BadResumptionTokenException;
 import org.xbib.oai.exceptions.NoRecordsMatchException;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.transform.StylesheetTransformer;
-import org.xbib.xml.transform.XMLFilterReader;
+import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

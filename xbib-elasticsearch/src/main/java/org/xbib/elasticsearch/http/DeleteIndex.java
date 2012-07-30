@@ -18,7 +18,7 @@ public class DeleteIndex extends AbstractRequest {
     }
 
     @Override
-    public void addProcessor(ResultProcessor<InputStream> processor) {
+    public void setResultProcessor(ResultProcessor<InputStream> processor) {
         
     }
 }

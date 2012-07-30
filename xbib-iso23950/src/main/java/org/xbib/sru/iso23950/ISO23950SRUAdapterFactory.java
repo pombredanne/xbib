@@ -34,7 +34,6 @@ package org.xbib.sru.iso23950;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.xbib.sru.SRUAdapter;
 
 public class ISO23950SRUAdapterFactory {
 
@@ -43,7 +42,7 @@ public class ISO23950SRUAdapterFactory {
     private ISO23950SRUAdapterFactory() {
     }
 
-    public static SRUAdapter getAdapter(String name) {
+    public static ISO23950SRUAdapter getAdapter(String name) {
         Properties properties = new Properties();
         InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/iso23950/adapter/" + name + ".properties");
         if (in != null) {

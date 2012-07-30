@@ -33,7 +33,6 @@ package org.xbib.sru.client;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import org.xbib.io.http.netty.HttpOperation;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.ExplainResponse;

@@ -36,8 +36,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,13 +43,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 import org.xbib.io.negotiate.MediaRangeSpec;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.adapter.SRUAdapterFactory;
 import org.xbib.sru.explain.Explain;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SRUServlet extends HttpServlet implements SRU {
 
-    private static final Logger logger = Logger.getLogger(SRUServlet.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SRUServlet.class.getName());
     private final String responseEncoding = "UTF-8";
     private SRUAdapter adapter;
     private String adapterName;
@@ -73,7 +73,7 @@ public class SRUServlet extends HttpServlet implements SRU {
             adapter = createAdapter(request);
         }
         final SRURequestDumper requestDumper = new SRURequestDumper();
-        logger.log(Level.INFO, requestDumper.toString(request));
+        logger.info(requestDumper.toString(request));
         try {
             adapter.connect();
             final StylesheetTransformer transformer = new StylesheetTransformer("/xsl");
@@ -118,11 +118,11 @@ public class SRUServlet extends HttpServlet implements SRU {
                 adapter.explain(op, new ExplainResponse(out, responseEncoding));
             }
         } catch (Diagnostics diag) {
-            logger.log(Level.WARNING, diag.getMessage(), diag);
+            logger.warn(diag.getMessage(), diag);
             //response.setStatus(500); SRU does not like the idea of 500 HTTP errors
             out.write(diag.getXML().getBytes(responseEncoding));
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             response.setStatus(500);
         } finally {
             out.flush();
@@ -164,8 +164,7 @@ public class SRUServlet extends HttpServlet implements SRU {
             }
             mediaTypes.put(mimeType, mediaType);
         }
-        logger.log(Level.INFO, "mimeType = {0} -> mediaType = {1}",
-                new Object[]{mimeType, mediaType});
+        logger.debug("mimeType = {} -> mediaType = {}", mimeType, mediaType);
         return mediaType;
     }
 

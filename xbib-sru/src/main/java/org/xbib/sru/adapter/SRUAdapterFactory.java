@@ -34,32 +34,28 @@ package org.xbib.sru.adapter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.sru.SRUAdapter;
 
 public class SRUAdapterFactory {
 
-    private static final Logger logger = Logger.getLogger(SRUAdapterFactory.class.getName());
-
     private final static SRUAdapterFactory instance = new SRUAdapterFactory();
-    
+
     private SRUAdapterFactory() {
     }
-    
+
     public static SRUAdapter getAdapter(String name) {
         Properties properties = new Properties();
-        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/adapter/" + name + ".properties");        
-        if (in != null) {
-            try {
+        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/adapter/" + name + ".properties");
+        try {
+            if (in != null) {
                 properties.load(in);
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+
             }
-        } else {
+        } catch (IOException e) {
+        }
+        if (in == null || properties.isEmpty()) {
             throw new IllegalArgumentException("adapter " + name + " not found");
         }
         return new SRUPropertiesAdapter(properties);
-    }    
-    
+    }
 }

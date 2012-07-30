@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -51,24 +53,27 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stax.StAXSource;
-import javax.xml.transform.stream.StreamResult;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.MarcXchange;
+import org.xbib.sru.SRU;
 import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.xml.XMLEventIterator;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class FederatorService {
 
     private final static Logger logger = LoggerFactory.getLogger(FederatorAction.class.getName());
+
+    interface MODS {
+
+        String NS_PREFIX = "mods";
+        String NS_URI = "http://www.loc.gov/mods/v3";
+    }
     private final static FederatorService instance = new FederatorService();
-    private final Map<String, List<XMLEvent>> eventlists = new HashMap();
-    private final Map<String, List<ZAction>> requests = new HashMap();
-    private final Map<String, List<ResponseListener<ZAction>>> listeners = new HashMap();
+    private final Map<String, List<Action>> requests = new HashMap();
+    private final Map<String, List<ResponseListener<Action>>> listeners = new HashMap();
+    private String stylesheetPath;
     private ExecutorService executorService;
     private int threadnum = 1;
 
@@ -79,7 +84,7 @@ public class FederatorService {
         return instance;
     }
 
-    public Map<String, List<ZAction>> getRequests() {
+    public Map<String, List<Action>> getRequests() {
         return requests;
     }
 
@@ -101,7 +106,7 @@ public class FederatorService {
      * @param groupId
      * @param listener
      */
-    public FederatorService addListener(String groupId, ResponseListener<ZAction> listener) {
+    public FederatorService addListener(String groupId, ResponseListener<Action> listener) {
         if (!listeners.containsKey(groupId)) {
             listeners.put(groupId, new ArrayList());
         }
@@ -115,11 +120,16 @@ public class FederatorService {
      * @param groupId
      * @param listener
      */
-    public FederatorService removeListener(String groupId, ResponseListener<ZAction> listener) {
+    public FederatorService removeListener(String groupId, ResponseListener<Action> listener) {
         if (!listeners.containsKey(groupId)) {
             listeners.put(groupId, new ArrayList());
         }
         listeners.get(groupId).remove(listener);
+        return this;
+    }
+
+    public FederatorService setStylesheetPath(String path) {
+        this.stylesheetPath = path;
         return this;
     }
 
@@ -132,9 +142,7 @@ public class FederatorService {
      * @return
      * @throws IOException
      */
-    public FederatorService submit(String groupId,
-            StylesheetTransformer transformer,
-            String json)
+    public FederatorService submit(String groupId, String json)
             throws IOException, InterruptedException, ExecutionException {
         ArrayList<HashMap<String, Object>> specs = null;
         try {
@@ -142,11 +150,11 @@ public class FederatorService {
         } catch (JsonMappingException e) {
             throw new IOException(e);
         }
-        List<ZAction> actions = new ArrayList();
+        List<Action> actions = new ArrayList();
         for (Map<String, Object> params : specs) {
-            actions.add(new ZAction().setParams(params));
+            actions.add(new PQFZAction().setParams(params));
         }
-        submit(groupId, transformer, actions);
+        submit(groupId, actions);
         return this;
     }
 
@@ -159,17 +167,15 @@ public class FederatorService {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public FederatorService submit(String groupId,
-            StylesheetTransformer transformer,
-            List<ZAction> request)
+    public FederatorService submit(String groupId, List<Action> request)
             throws InterruptedException, ExecutionException {
-        LinkedList<XMLEvent> eventlist = new LinkedList();
-        eventlists.put(groupId, eventlist);
-        for (ZAction action : request) {
+        for (Action action : request) {
+            LinkedList<XMLEvent> events = new LinkedList();
+            SearchRetrieveResponse response = new SearchRetrieveResponse(new StringWriter());
+            response.setEvents(events);
             action.setGroup(groupId);
-            action.setResponse(new SearchRetrieveResponse(new StringWriter())); // not needed
-            action.setTransformer(transformer);
-            action.setList(eventlist);
+            action.setResponse(response);
+            action.setTransformer(new StylesheetTransformer(stylesheetPath)); // stylesheet transformer is not shareable
             if (!requests.containsKey(groupId)) {
                 requests.put(groupId, new LinkedList());
             }
@@ -186,51 +192,111 @@ public class FederatorService {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public synchronized FederatorService waitFor(String groupId,
-            StylesheetTransformer transformer, Writer writer)
+    public synchronized FederatorService waitFor(String groupId, Writer writer)
             throws InterruptedException, ExecutionException,
             TransformerException, XMLStreamException {
         if (executorService == null && threadnum > 0) {
             this.executorService = Executors.newFixedThreadPool(threadnum);
         }
         // execute all group actions
+        long count = 0L;
         if (executorService != null && requests.containsKey(groupId)) {
-            for (Future<ZAction> f : executorService.invokeAll(requests.get(groupId))) {
-                ZAction action = f.get();
+            LinkedList<XMLEvent> events = new LinkedList();
+            for (Future<Action> f : executorService.invokeAll(requests.get(groupId))) {
+                Action action = f.get();
+                count += action.getCount();
+                events.addAll(action.getResponse().getEvents());
                 if (listeners.get(groupId) != null) {
-                    for (ResponseListener<ZAction> listener : listeners.get(groupId)) {
+                    for (ResponseListener<Action> listener : listeners.get(groupId)) {
                         listener.onResponse(action);
                     }
                 }
             }
-            // get collected MarcXchange XML events, clean all unwanted events, and pass them to the writer
-            XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLEventWriter ew = outputFactory.createXMLEventWriter(writer);
-            ew.add(eventFactory.createStartDocument());
-            ew.add(eventFactory.createStartElement(MarcXchange.NS_PREFIX, MarcXchange.NS_URI, "collection"));
-            ew.add(eventFactory.createNamespace(MarcXchange.NS_PREFIX, MarcXchange.NS_URI));
-            List<XMLEvent> list = eventlists.get(groupId);
-            for (XMLEvent e : list) {
-                if (e.isProcessingInstruction()) {
-                }
-                else if (e.isStartDocument()) {
-                    ew.add(eventFactory.createStartElement(MarcXchange.NS_PREFIX, MarcXchange.NS_URI, "record"));
-                }
-                else if (e.isEndDocument()) {
-                    ew.add(eventFactory.createEndElement(MarcXchange.NS_PREFIX, MarcXchange.NS_URI, "record"));
-                }
-                else if (e.isNamespace()) {
-                    ew.add(eventFactory.createAttribute( ((Namespace)e).getPrefix(), ((Namespace)e).getNamespaceURI()));
-                }
-                else {
-                    ew.add(e);
-                }
-            }
-            ew.add(eventFactory.createEndElement(MarcXchange.NS_PREFIX, MarcXchange.NS_URI, "collection"));
-            ew.add(eventFactory.createEndDocument());
+            wrapIntoSRUResponse(events, "1.2", Long.toString(count), writer);
         }
         requests.remove(groupId);
         return this;
+    }
+
+    private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+    private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();    
+    
+    private void wrapIntoSRUResponse(Collection<XMLEvent> list, String version, String numberOfRecords, Writer writer) throws XMLStreamException {
+        XMLEventWriter ew = outputFactory.createXMLEventWriter(writer);
+        ew.add(eventFactory.createStartDocument());
+        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "searchRetrieveResponse"));
+        ew.add(eventFactory.createNamespace(SRU.NS_PREFIX, SRU.NS_URI));
+        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "version"));
+        ew.add(eventFactory.createCharacters(version));
+        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "version"));
+        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "numberOfRecords"));
+        ew.add(eventFactory.createCharacters(numberOfRecords));
+        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "numberOfRecords"));
+        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));
+        int pos = 1;
+        Iterator<XMLEvent> it = list.iterator();
+        while (it.hasNext()) {
+            XMLEvent e = it.next();
+            if (e.isProcessingInstruction()) {
+            } else if (e.isStartDocument()) {
+                ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
+            } else if (e.isEndDocument()) {
+                ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
+                ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
+            } else if (e.isNamespace()) {
+                // re-map namespace sand other nasty things
+                String prefix = ((Namespace) e).getPrefix();
+                String nsURI = ((Namespace) e).getNamespaceURI();
+                switch (prefix) {
+                    case "recordSchema":
+                        // declare SRU record schema
+                        if (SRU.RECORD_SCHEMAS.containsKey(nsURI)) {
+                            // add XML namespace
+                            if (SRU.RECORD_SCHEMA_NAMESPACES.containsKey(nsURI)) {
+                                ew.add(eventFactory.createNamespace(nsURI, SRU.RECORD_SCHEMA_NAMESPACES.get(nsURI).toASCIIString()));
+                            }
+                            ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordSchema"));
+                            ew.add(eventFactory.createCharacters(SRU.RECORD_SCHEMAS.get(nsURI).toASCIIString()));
+                            ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordSchema"));
+                        }
+                        break;
+                    case "recordPacking":
+                        // SRU record packing (always "xml")
+                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPacking"));
+                        ew.add(eventFactory.createCharacters(nsURI));
+                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPacking"));
+                        break;
+                    case "recordIdentifier":
+                        // SRU record identifier
+                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordIdentifier"));
+                        ew.add(eventFactory.createCharacters(nsURI));
+                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordIdentifier"));
+                        break;
+                    case "recordPosition":
+                        // SRU record position is the global position (NOT the local record position)
+                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPosition"));
+                        ew.add(eventFactory.createCharacters(Integer.toString(pos++)));
+                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPosition"));
+                        // now, after recordPosition, start with recordData
+                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
+                        break;
+                    case "id":
+                        // non-SRU: let us identify the origin of the record by XML ID
+                        ew.add(eventFactory.createAttribute(prefix, nsURI));
+                        break;
+                    case "format":
+                    case "type":
+                        // skip format, type
+                        break;
+                    default:
+                        ew.add(e);
+                        break;
+                }
+            } else {
+                ew.add(e);
+            }
+        }
+        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));
+        ew.add(eventFactory.createEndDocument());
     }
 }

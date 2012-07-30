@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
-import org.xbib.rdf.io.TurtleReader;
-import org.xbib.rdf.io.TurtleWriter;
+import org.xbib.rdf.io.turtle.TurtleReader;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
 
 /**

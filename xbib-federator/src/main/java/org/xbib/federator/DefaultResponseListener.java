@@ -34,12 +34,12 @@ package org.xbib.federator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
-public class DefaultResponseListener implements ResponseListener<ZAction> {
+public class DefaultResponseListener implements ResponseListener<Action> {
 
     private final static Logger logger = LoggerFactory.getLogger(DefaultResponseListener.class.getName());
     
     @Override
-    public void onResponse(ZAction action) {
+    public void onResponse(Action action) {
         logger.info("action={}", action);
     }
     

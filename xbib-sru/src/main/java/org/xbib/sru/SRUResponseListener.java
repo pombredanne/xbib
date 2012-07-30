@@ -31,26 +31,55 @@
  */
 package org.xbib.sru;
 
-import java.util.List;
+import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.ResponseListener;
 
 public interface SRUResponseListener extends ResponseListener {
        
+    /**
+     * Get the SRU version
+     * @param version 
+     */
     void version(String version);
     
-    void numberOfRecords(int numberOfRecords);
+    /**
+     * Get the SRU number of records
+     * @param numberOfRecords 
+     */
+    void numberOfRecords(long numberOfRecords);
     
+    /**
+     * Begin SRU record
+     */
     void beginRecord();
     
+    /**
+     * SRU record metdata
+     * @param recordSchema
+     * @param recordPacking
+     * @param recordIdentifier
+     * @param recordPosition 
+     */
     void recordMetadata(String recordSchema, String recordPacking, 
          String recordIdentifier,
          int recordPosition);
     
-    void recordData(List<XMLEvent> record);
+    /**
+     * SRU record data
+     * @param record 
+     */
+    void recordData(Collection<XMLEvent> record);
     
-    void extraRecordData(List<XMLEvent> record);
+    /**
+     * SRU extra record data
+     * @param record 
+     */
+    void extraRecordData(Collection<XMLEvent> record);
     
+    /**
+     * End SRU record
+     */
     void endRecord();
     
 }

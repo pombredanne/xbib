@@ -77,8 +77,8 @@ public class ElasticsearchSRUTest {
         SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
         adapter.connect();
         StylesheetTransformer transformer = new StylesheetTransformer(
-                "src/main/resources",
-                "src/main/resources/xsl"
+                "src/test/resources",
+                "src/test/resources/xsl"
         );
         adapter.setStylesheetTransformer(transformer);
         SearchRetrieve op = new SearchRetrieve();

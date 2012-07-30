@@ -23,6 +23,8 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamSource;
 import org.xbib.logging.Logger;
@@ -45,10 +47,10 @@ public final class TransformingDocumentHandler implements ContentHandler {
     /**
      * A map of XSLT output methods and their corresponding MIME content types.
      */
-    private final static HashMap<String, String> METHOD_MAPPING;
+    private final static HashMap<String, String> METHOD_MAPPING;    
 
     static {
-        METHOD_MAPPING = new HashMap<String, String>();
+        METHOD_MAPPING = new HashMap();
         METHOD_MAPPING.put("xml", "application/xml");
         METHOD_MAPPING.put("html", "text/html");
         METHOD_MAPPING.put("text", "text/plain");
@@ -71,6 +73,10 @@ public final class TransformingDocumentHandler implements ContentHandler {
      */
     private final Pattern resourcePattern = Pattern.compile(
             "(resource[ \\t]*=[ \\t]*\")([^\"]*)(\")", Pattern.CASE_INSENSITIVE);
+    
+    private final  SAXTransformerFactory transformerFactory = 
+            (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+    
     /**
      * The default handler used when no <code>xml-stylesheet</code> directive is
      * specified in the XML stream.
@@ -96,7 +102,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
     /**
      * A pool of precompiled stylesheets.
      */
-    private StylesheetPool pool;
+    private final StylesheetPool pool;
     /**
      *
      */
@@ -113,8 +119,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
      * path is used to initialize local streams instead of requesting the stylesheet via
      * HTTP.
      */
-    public TransformingDocumentHandler(
-            Map<String, Object> stylesheetParams, StylesheetPool pool) {
+    public TransformingDocumentHandler(Map<String, Object> stylesheetParams, StylesheetPool pool) {
         this.pool = pool;
         this.stylesheetParams = stylesheetParams;
     }
@@ -340,7 +345,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
          */
         try {
             final String systemId = uri.toString();
-            Templates template = pool.createTemplate(new StreamSource(systemId));
+            Templates template = pool.newTemplates(transformerFactory, new StreamSource(systemId));
             // Find out about the content type and encoding.
             if (contentTypeListener != null) {
                 final Properties outputProps = template.getOutputProperties();
@@ -374,7 +379,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
                     throw new SAXException(ex);
                 }
             }
-            final TransformerHandler tHandler = pool.newTransformerHandler(template);
+            final TransformerHandler tHandler = pool.newTransformerHandler(transformerFactory, template);
             tHandler.getTransformer().setErrorListener(transformerErrorListener);
             handler.setTransformerHandler(tHandler);
         } catch (TransformerConfigurationException e) {
@@ -402,7 +407,7 @@ public final class TransformingDocumentHandler implements ContentHandler {
             if (defaultHandler == null) {
                 logger.info("Stylesheet not specified, using identity handler.");
                 try {
-                    this.defaultHandler = pool.getIdentityTransformerHandler();                    
+                    this.defaultHandler = pool.getIdentityTransformerHandler(transformerFactory);                    
                 } catch (TransformerConfigurationException e) {
                     throw new SAXException(e);
                 }

@@ -42,6 +42,7 @@ import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.MockWrite;
 import org.xbib.elements.output.DefaultElementOutput;
 import org.xbib.io.Mode;
+import org.xbib.io.util.DateUtil;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.ResourceContext;
 
@@ -92,8 +93,9 @@ public class ElasticsearchMockResourceOutput<C extends ResourceContext>
     public void output(C context,Object info) {
         try {
             Resource resource = context.resource();
-            if (session.isOpen() && resource != null) {
-                resource.addProperty("xbib:info", info);
+            if (session.isOpen() && resource != null && !resource.isDeleted() && !resource.isEmpty()) {
+                resource.addProperty(resource.createPredicate("xbib:update"), DateUtil.formatNow());
+                resource.addProperty(resource.createPredicate("xbib:info"), resource.createObject(info));              
                 operator.write(session, resource);
                 counter.incrementAndGet();
             }

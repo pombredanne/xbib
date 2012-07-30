@@ -52,7 +52,7 @@ import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
 import org.xbib.xml.transform.StylesheetTransformer;
-import org.xbib.xml.transform.XMLFilterReader;
+import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.InputSource;
 
 public class SimpleSRUClient implements SRUClient {
@@ -91,8 +91,7 @@ public class SimpleSRUClient implements SRUClient {
     public String getStylesheet() {
         return null;        
     }
-    
-    
+
     @Override
     public String getUsername() {
         return null;        
@@ -137,7 +136,10 @@ public class SimpleSRUClient implements SRUClient {
         transformer.addParameter("maximumRecords", request.getMaximumRecords());
         transformer.addParameter("recordPacking", request.getRecordPacking());
         transformer.addParameter("recordSchema", request.getRecordSchema());
+        transformer.addParameter("origin", request.getURI());
 
+        response.setOrigin(request.getURI());
+        
         open();
         HttpRequest req = new HttpRequest("GET").setURI(request.getURI())
                 .addParameter(SRU.OPERATION_PARAMETER, "searchRetrieve")
@@ -155,7 +157,7 @@ public class SimpleSRUClient implements SRUClient {
         /*if (getEncoding() != null && !getEncoding().isEmpty()) {
             req.setEncoding(getEncoding());
         }*/
-        session.addRequest(req);
+        session.addRequest(req);        
         SearchRetrieveProcessor processor = new SearchRetrieveProcessor(request, response);
         HttpOperation operation = new HttpOperation();
         operation.addProcessor(processor);

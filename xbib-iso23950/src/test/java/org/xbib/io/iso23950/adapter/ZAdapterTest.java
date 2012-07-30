@@ -41,15 +41,20 @@ import org.xbib.io.iso23950.CQLSearchRetrieve;
 import org.xbib.io.iso23950.Diagnostics;
 import org.xbib.io.iso23950.ZAdapter;
 import org.xbib.io.iso23950.ZAdapterFactory;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ZAdapterTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(ZAdapterTest.class.getName());
+    
     @Test
     public void testAdapterSearchRetrieve() {
         for (String adapterName : Arrays.asList("BNF", "LIBRIS", "LOC", "OBVSG")) {
             try {
+                logger.info("trying " + adapterName);
                 String query = "dc.title = Linux";
                 String resultSetName = "default";
                 String elementSetName = "F";

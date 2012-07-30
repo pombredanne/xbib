@@ -19,6 +19,10 @@
 
 package org.elasticsearch.common.xcontent;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import org.codehaus.jackson.smile.SmileConstants;
 import org.elasticsearch.ElasticSearchIllegalArgumentException;
 import org.elasticsearch.ElasticSearchParseException;
@@ -26,11 +30,6 @@ import org.elasticsearch.common.BytesHolder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.common.xcontent.smile.SmileXContent;
 import org.elasticsearch.common.xcontent.xml.XmlXContent;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
 import org.xml.sax.ContentHandler;
 
 /**

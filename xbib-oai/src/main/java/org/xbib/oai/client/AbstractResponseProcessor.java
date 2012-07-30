@@ -40,7 +40,7 @@ import org.xbib.io.http.netty.HttpResultProcessor;
 import org.xbib.oai.OAIRequest;
 import org.xbib.oai.OAIResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
-import org.xbib.xml.transform.XMLFilterReader;
+import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

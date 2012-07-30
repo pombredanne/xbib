@@ -5,4 +5,7 @@ public class DublinCoreOutput extends DefaultElementOutput<DublinCoreContext> {
     public void output(DublinCoreContext context, info) { 
          println 'scripted output, got resource ' + context.resource()
     }
+    public long getCounter() {
+        return 0;
+    }
 }

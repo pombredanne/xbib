@@ -31,7 +31,7 @@
  */
 package org.xbib.sru;
 
-import java.util.List;
+import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.Request;
 
@@ -58,7 +58,7 @@ public class SRUResponseAdapter implements SRUResponseListener {
     }
 
     @Override
-    public void numberOfRecords(int numberOfRecords) {
+    public void numberOfRecords(long numberOfRecords) {
     }
 
     @Override
@@ -70,11 +70,11 @@ public class SRUResponseAdapter implements SRUResponseListener {
     }
 
     @Override
-    public void recordData(List<XMLEvent> record) {
+    public void recordData(Collection<XMLEvent> record) {
     }
 
     @Override
-    public void extraRecordData(List<XMLEvent> record) {
+    public void extraRecordData(Collection<XMLEvent> record) {
     }
 
     @Override

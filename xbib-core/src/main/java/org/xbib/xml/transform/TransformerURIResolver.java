@@ -46,6 +46,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class TransformerURIResolver implements URIResolver {
 
+    
+    
     private String[] path;
 
     public TransformerURIResolver() {
@@ -87,8 +89,7 @@ public class TransformerURIResolver implements URIResolver {
             throw new TransformerException("no XML reader for SAX source in URI resolving for:" + href);
         }
         SAXSource source = new SAXSource(reader, new InputSource(in));
-        // set system ID (where to find it)
-        
+        // set system ID (where to find it)        
         String s = cl.getResource(systemId) != null ? 
                   cl.getResource(systemId).toExternalForm()
                 : base != null ? URI.create(base).resolve(systemId).toASCIIString() : systemId;

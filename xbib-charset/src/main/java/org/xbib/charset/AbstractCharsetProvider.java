@@ -107,10 +107,8 @@ public class AbstractCharsetProvider extends CharsetProvider {
             Charset charset2;
             Class class1 = Class.forName(packagePrefix + "." + s1, true,
                     getClass().getClassLoader());
-
             charset2 = (Charset) class1.newInstance();
             cache.put(s, new SoftReference(charset2));
-
             return charset2;
         } catch (ClassNotFoundException e1) {
             System.err.println("Class not found: " + packagePrefix + "." + s1);
@@ -119,7 +117,6 @@ public class AbstractCharsetProvider extends CharsetProvider {
         } catch (InstantiationException e3) {
             System.err.println("Instantiation failed: " + packagePrefix + "." + s1);
         }
-
         return null;
     }
 
@@ -129,6 +126,7 @@ public class AbstractCharsetProvider extends CharsetProvider {
      * @return the character set if it can be provided
      *
      */
+    @Override
     public final Charset charsetForName(String s) {
         return lookup(canonicalize(s));
     }
@@ -136,6 +134,7 @@ public class AbstractCharsetProvider extends CharsetProvider {
     /**
      * @return character sets provided by this provider
      */
+    @Override
     public final Iterator charsets() {
         return new Iterator() {
 

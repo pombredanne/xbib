@@ -52,7 +52,6 @@ public class SearchRetrieve extends AbstractSRURequest {
     public SearchRetrieve setURI(URI uri) {
         return (SearchRetrieve)super.setURI(uri);
     }
-        
    
     @Override
     public SearchRetrieve setUsername(String username) {        

@@ -37,7 +37,8 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.ListIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.stream.events.XMLEvent;
 import org.testng.annotations.Test;
 import org.xbib.io.Request;
@@ -58,6 +59,7 @@ public class SRUAdapterTest {
     public void testAdapterSearchRetrieve() {
         for (String adapterName : Arrays.asList("OBVSG")) {
             try {
+                logger.info("trying " + adapterName);
                 StringWriter sw = new StringWriter();
                 String query = "dc.title = Linux";
                 int from = 1;
@@ -101,16 +103,18 @@ public class SRUAdapterTest {
                         }
 
                         @Override
-                        public void recordData(ListIterator<XMLEvent> record) {
-                            while (record.hasNext()) {
-                                logger.info("recordData = " + record.next());
+                        public void recordData(Collection<XMLEvent> record) {
+                            Iterator iterator = record.iterator();
+                            while (iterator.hasNext()) {
+                                logger.info("recordData = " + iterator.next());
                             }
                         }
 
                         @Override
-                        public void extraRecordData(ListIterator<XMLEvent> record) {
-                            while (record.hasNext()) {
-                                logger.info("extraRecordData = " + record.next());
+                        public void extraRecordData(Collection<XMLEvent> record) {
+                            Iterator iterator = record.iterator();
+                            while (iterator.hasNext()) {
+                                logger.info("extraRecordData = " + iterator.next());
                             }
                         }
 

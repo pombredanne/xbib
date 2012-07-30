@@ -32,7 +32,8 @@
 package org.xbib.sru.adapter;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Collection;
+import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.http.netty.HttpOperation;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Scan;
@@ -45,7 +46,8 @@ import org.xbib.xml.transform.StylesheetTransformer;
 public abstract class SRUProxyAdapter extends AbstractSRUAdapter {
 
     @Override
-    public void performSearchRetrieve(SearchRetrieve request, SearchRetrieveResponse response, StylesheetTransformer transformer)
+    public void performSearchRetrieve(SearchRetrieve request, SearchRetrieveResponse response, 
+            StylesheetTransformer transformer)
             throws IOException, SyntaxException {
         response.addResponseParameter("X-SRU-version",
                 request.getVersion());
@@ -53,15 +55,17 @@ public abstract class SRUProxyAdapter extends AbstractSRUAdapter {
                 request.getRecordSchema());
         response.addResponseParameter("X-SRU-recordPacking",
                 request.getRecordPacking());
+        response.addResponseParameter("X-SRU-origin",
+                request.getURI().toASCIIString());
         SimpleSRUClient client = new SimpleSRUClient();
         client.setStylesheetTransformer(transformer);
         HttpOperation op = client.searchRetrieve(request, response);
-        getLogger().log(Level.INFO, "{0} [{1}ms] [{2}] [{3}] [{4}]",
-                new Object[]{request.getURI(), 
-                    op.getResponseMillis(),
-                    op.getResults(), 
-                    op.getContentType(request.getURI()), 
-                    request.getQuery()});
+        getLogger().info("{} [{}ms] [{}] [{}] [{}]",
+                request.getURI(), 
+                op.getResponseMillis(),
+                op.getResults(), 
+                op.getContentType(request.getURI()), 
+                request.getQuery());
     }
 
     @Override

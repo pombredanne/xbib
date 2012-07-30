@@ -38,28 +38,86 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public interface SRUAdapter {
     
+    /**
+     * Get the URI of this adapter. The URI describes the SRU server.
+     * @return the URI
+     */
     URI getURI();
 
+    /**
+     * Connect to the SRU server.
+     */
     void connect();
     
+    /**
+     * Disconnect from the SRU server.
+     */
     void disconnect();
 
+    /**
+     * Set style sheet transformer.
+     * @param transformer 
+     */
     void setStylesheetTransformer(StylesheetTransformer transformer);
-                
-    void explain(Explain request, ExplainResponse response) throws Diagnostics, IOException;
+       
+    /**
+     * Execute SRU explain.
+     * @param request
+     * @param response
+     * @throws Diagnostics
+     * @throws IOException 
+     */
+    void explain(Explain request, ExplainResponse response) 
+            throws Diagnostics, IOException;
     
-    void scan(Scan request, ScanResponse response) throws Diagnostics, IOException;
+    /**
+     * Execute SRU scan.
+     * @param request
+     * @param response
+     * @throws Diagnostics
+     * @throws IOException 
+     */
+    void scan(Scan request, ScanResponse response) 
+            throws Diagnostics, IOException;
     
-    void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response) throws Diagnostics, IOException;
+    /**
+     * Execute SRU searchRetrieve.
+     * @param request
+     * @param response
+     * @throws Diagnostics
+     * @throws IOException 
+     */
+    void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response) 
+            throws Diagnostics, IOException;
     
+    /**
+     * Get SRU version. Valid versions are: 1.1, 1.2, 2.0
+     * @return the SRU version
+     */
     String getVersion();
     
+    /**
+     * Get SRU record schema.
+     * @return the SRU record schema
+     */
     String getRecordSchema();
     
+    /**
+     * Get SRU record packing.
+     * @return the SRU record packing
+     */
     String getRecordPacking();
     
+    /**
+     * Get encoding.
+     * @return the encoding
+     */
     String getEncoding();
     
+    /**
+     * Get style sheet name.
+     * @return style sheet name
+     */
     String getStylesheet();
     
 }

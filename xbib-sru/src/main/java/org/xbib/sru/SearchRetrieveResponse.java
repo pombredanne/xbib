@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.List;
+import java.net.URI;
+import java.util.Collection;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.AbstractResponse;
@@ -46,6 +47,8 @@ public class SearchRetrieveResponse extends AbstractResponse
 
     private HttpServletResponse response;
     private SRUResponseListener listener;
+    private URI origin;
+    private Collection<XMLEvent> events;
 
     public SearchRetrieveResponse(Writer writer) {
         super(writer);
@@ -61,7 +64,7 @@ public class SearchRetrieveResponse extends AbstractResponse
             throws UnsupportedEncodingException {
         super(out, encoding);
     }
-
+    
     @Override
     public void write() throws IOException {
     }
@@ -76,7 +79,7 @@ public class SearchRetrieveResponse extends AbstractResponse
     public void setListener(SRUResponseListener listener) {
         this.listener = listener;
     }
-
+    
     @Override
     public void onConnect(Request request) {
         if (listener != null) {
@@ -112,11 +115,11 @@ public class SearchRetrieveResponse extends AbstractResponse
     }
 
     @Override
-    public void numberOfRecords(int numberOfRecords) {
+    public void numberOfRecords(long numberOfRecords) {
         if (listener != null) {
             listener.numberOfRecords(numberOfRecords);
         }
-    }    
+    }
     
     @Override
     public void beginRecord() {
@@ -135,15 +138,15 @@ public class SearchRetrieveResponse extends AbstractResponse
     }
 
     @Override
-    public void recordData(List<XMLEvent> record) {
-        if (listener != null) {
+    public void recordData(Collection<XMLEvent> record) {
+        if (listener != null && record != null) {
             listener.recordData(record);
         }
     }
 
     @Override
-    public void extraRecordData(List<XMLEvent> record) {
-        if (listener != null) {
+    public void extraRecordData(Collection<XMLEvent> record) {
+        if (listener != null && record != null) {
             listener.extraRecordData(record);
         }
     }
@@ -154,4 +157,22 @@ public class SearchRetrieveResponse extends AbstractResponse
             listener.endRecord();
         }
     }
+    
+    public SearchRetrieveResponse setOrigin(URI origin) {
+        this.origin = origin;
+        return this;
+    }
+
+    public URI getOrigin() {
+        return origin;
+    }
+    
+    public void setEvents(Collection<XMLEvent> events) {
+        this.events = events;
+    }
+    
+    public Collection<XMLEvent> getEvents() {
+        return events;
+    }    
 }
+

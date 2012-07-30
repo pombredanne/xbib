@@ -32,7 +32,10 @@
 package org.xbib.io.iso23950.adapter;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+import java.util.Collection;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.marc.FieldDesignator;
@@ -50,18 +53,14 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
     private final String nsURI = MarcXchange.NS_URI;
     private final String recordSchema = MarcXchange.NS_PREFIX;
     private final String recordPacking = "xml";
-    private int recordPosition;
     private final SearchRetrieveResponse response;
-    private List<XMLEvent> events;
+    private final String encoding;
+    private int recordPosition;
 
-    public SRUFilterReader(SearchRetrieveResponse response) {
-        this(response, null);
-    }
-
-    public SRUFilterReader(SearchRetrieveResponse response, List<XMLEvent> events) {
+    public SRUFilterReader(SearchRetrieveResponse response, String encoding) {
         this.response = response;
-        this.events = events;
         this.recordPosition = 1;
+        this.encoding = encoding;
     }
 
     @Override
@@ -77,19 +76,27 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
     @Override
     public void beginRecord(String format, String type) {
         response.beginRecord();
+        response.recordMetadata(recordSchema, recordPacking, "", recordPosition);
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartDocument());
-            // emit format & type  for federating
-            events.add(eventFactory.createNamespace("format",format));
+            // emit additional parameter values for federating disguised as "namespace"
+            events.add(eventFactory.createNamespace("format", format));
             events.add(eventFactory.createNamespace("type", type));
+            events.add(eventFactory.createNamespace("id", recordPosition + "_" + response.getOrigin().getHost() ));            
+            events.add(eventFactory.createNamespace("recordSchema", recordSchema));
+            events.add(eventFactory.createNamespace("recordPacking", recordPacking));
+            // no recordIdentifier possible here
+            events.add(eventFactory.createNamespace("recordPosition", Integer.toString(recordPosition)));
         }
+        recordPosition++;
     }
 
     @Override
     public void endRecord() {
-        response.recordMetadata(recordSchema, recordPacking, "", recordPosition++);
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
-            response.recordData(events.listIterator());
+            response.recordData(events);
         }
         response.endRecord();
         if (events != null) {
@@ -99,6 +106,7 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void leader(String label) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartElement(recordSchema, nsURI, "leader"));
             events.add(eventFactory.createCharacters(label));
@@ -113,6 +121,7 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void beginControlField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartElement(recordSchema, nsURI, "controlfield"));
             if (designator != null && designator.getTag() != null) {
@@ -123,9 +132,10 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void endControlField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             if (designator != null && designator.getData() != null) {
-                events.add(eventFactory.createCharacters(designator.getData()));
+                events.add(eventFactory.createCharacters(decode(designator.getData())));
             }
             events.add(eventFactory.createEndElement(recordSchema, nsURI, "controlfield"));
         }
@@ -133,13 +143,15 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void beginDataField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartElement(recordSchema, nsURI, "datafield"));
             if (designator != null && designator.getTag() != null) {
                 events.add(eventFactory.createAttribute("tag", designator.getTag()));
                 if (designator.getIndicator() != null) {
                     for (int i = 0; i < designator.getIndicator().length(); i++) {
-                        events.add(eventFactory.createAttribute("ind" + (i + 1), designator.getIndicator().substring(i, i + 1)));
+                        events.add(eventFactory.createAttribute("ind" + (i + 1), 
+                                designator.getIndicator().substring(i, i + 1)));
                     }
                 }
             }
@@ -148,9 +160,10 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void endDataField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             if (designator != null && designator.getData() != null) {
-                events.add(eventFactory.createCharacters(designator.getData()));
+                events.add(eventFactory.createCharacters(decode(designator.getData())));
             }
             events.add(eventFactory.createEndElement(recordSchema, nsURI, "datafield"));
         }
@@ -158,6 +171,7 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void beginSubField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartElement(recordSchema, nsURI, "subfield"));
             if (designator != null && designator.getSubfieldId() != null) {
@@ -168,11 +182,23 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
 
     @Override
     public void endSubField(FieldDesignator designator) {
+        Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             if (designator != null && designator.getData() != null) {
-                events.add(eventFactory.createCharacters(designator.getData()));
+                events.add(eventFactory.createCharacters(decode(designator.getData())));
             }
             events.add(eventFactory.createEndElement(recordSchema, nsURI, "subfield"));
+        }
+    }
+
+    private String decode(String value) {
+        String s = value;
+        try {
+            // read from octet stream and map to encoding
+            s = Normalizer.normalize(new String(s.getBytes("ISO-8859-1"), encoding), Form.NFKC);
+            return s;
+        } catch (UnsupportedEncodingException ex) {
+            return s;
         }
     }
 }
