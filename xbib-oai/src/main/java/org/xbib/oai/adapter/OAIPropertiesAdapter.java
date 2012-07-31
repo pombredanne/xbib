@@ -36,8 +36,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.oai.GetRecordRequest;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
@@ -46,12 +44,11 @@ import org.xbib.oai.ListMetadataFormatsRequest;
 import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListSetsRequest;
 import org.xbib.oai.OAIResponse;
-import org.xbib.oai.OAIServerRequest;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class OAIPropertiesAdapter implements OAIAdapter {
-    private static final Logger logger = Logger.getLogger(OAIPropertiesAdapter.class.getName());
+
     public final static String ADAPTER_URI = "uri";
     public final static String STYLESHEET = "stylesheet";
     public final static String REPOSITORY_NAME = "identify.repositoryName";
@@ -61,13 +58,12 @@ public class OAIPropertiesAdapter implements OAIAdapter {
     public final static String EARLIEST_DATESTAMP = "identify.earliestDatestamp";
     public final static String DELETED_RECORD = "identify.deletedRecord";
     public final static String GRANULARITY = "identify.granularity";
-    
     private Properties properties;
 
     public OAIPropertiesAdapter(Properties properties) {
         this.properties = properties;
     }
-    
+
     public Properties getProperties() {
         return properties;
     }
@@ -76,23 +72,22 @@ public class OAIPropertiesAdapter implements OAIAdapter {
     public URI getURI() {
         return URI.create(properties.getProperty(ADAPTER_URI).trim());
     }
-    
+
     @Override
     public String getStylesheet() {
         return properties.getProperty(STYLESHEET);
     }
-    
+
     @Override
     public String getRepositoryName() {
         return properties.getProperty(REPOSITORY_NAME);
     }
-    
+
     @Override
     public URL getBaseURL() {
         try {
             return new URL(properties.getProperty(BASE_URL));
         } catch (MalformedURLException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
             return null;
         }
     }
@@ -106,22 +101,22 @@ public class OAIPropertiesAdapter implements OAIAdapter {
     public String getAdminEmail() {
         return properties.getProperty(ADMIN_EMAIL);
     }
-    
+
     @Override
     public String getEarliestDatestamp() {
         return properties.getProperty(EARLIEST_DATESTAMP);
     }
-    
+
     @Override
     public String getDeletedRecord() {
         return properties.getProperty(DELETED_RECORD);
     }
-    
+
     @Override
     public String getGranularity() {
         return properties.getProperty(GRANULARITY);
     }
-    
+
     @Override
     public void connect() {
     }
@@ -140,33 +135,32 @@ public class OAIPropertiesAdapter implements OAIAdapter {
     }
 
     @Override
-    public void identify(IdentifyRequest request, IdentifyResponse response) 
+    public void identify(IdentifyRequest request, IdentifyResponse response)
             throws OAIException {
     }
 
     @Override
-    public void listMetadataFormats(ListMetadataFormatsRequest request, OAIResponse response) 
+    public void listMetadataFormats(ListMetadataFormatsRequest request, OAIResponse response)
             throws OAIException {
     }
 
     @Override
-    public void listSets(ListSetsRequest request, OAIResponse response) 
+    public void listSets(ListSetsRequest request, OAIResponse response)
             throws OAIException {
     }
 
     @Override
-    public void listIdentifiers(ListIdentifiersRequest request, OAIResponse response) 
+    public void listIdentifiers(ListIdentifiersRequest request, OAIResponse response)
             throws OAIException {
     }
 
     @Override
-    public void listRecords(ListRecordsRequest request, OAIResponse response) 
+    public void listRecords(ListRecordsRequest request, OAIResponse response)
             throws OAIException {
     }
 
     @Override
-    public void getRecord(GetRecordRequest request, OAIResponse response) 
+    public void getRecord(GetRecordRequest request, OAIResponse response)
             throws OAIException {
     }
-    
 }

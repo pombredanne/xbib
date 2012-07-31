@@ -21,18 +21,18 @@ package org.xbib.builders.berkeleydb;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.berkeleydb.BerkeleyDBSession;
 import org.xbib.berkeleydb.Write;
 import org.xbib.elements.output.DefaultElementOutput;
 import org.xbib.io.Mode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.ResourceContext;
 
 public class BerkeleyDBResourceOutput<C extends ResourceContext>
     extends DefaultElementOutput<C> {
 
-    private static final Logger logger = Logger.getLogger(BerkeleyDBResourceOutput.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(BerkeleyDBResourceOutput.class.getName());
     private BerkeleyDBSession session; 
     private Write write;
     private long counter;
@@ -47,13 +47,13 @@ public class BerkeleyDBResourceOutput<C extends ResourceContext>
         try {
             session.open(Mode.WRITE);
             if (!session.isOpen()) {
-                logger.log(Level.SEVERE, "unable to open session {0}", session);
+                logger.error("unable to open session {}", session);
             } else {
-                logger.log(Level.INFO, "session {0} created", session);
+                logger.info("session {} created", session);
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, "I/O exception while opening session, reason: {1}",
-                    new Object[]{e.getMessage()});
+            logger.warn("I/O exception while opening session, reason: {}",
+                    e.getMessage());
         }
     }
 
@@ -70,11 +70,11 @@ public class BerkeleyDBResourceOutput<C extends ResourceContext>
                 counter++;
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             try {
                 session.close();
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
     }

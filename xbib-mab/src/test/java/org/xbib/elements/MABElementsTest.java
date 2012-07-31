@@ -39,13 +39,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import org.testng.annotations.Test;
 import org.xbib.elements.mab.MABBuilder;
 import org.xbib.elements.mab.MABContext;
 import org.xbib.elements.output.ElementOutput;
@@ -53,15 +50,16 @@ import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.addons.MABTarReader;
-import org.xbib.rdf.Resource;
 import org.xml.sax.InputSource;
 
 public class MABElementsTest {
 
-    private static final Logger logger = Logger.getLogger(MABElementsTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(MABElementsTest.class.getName());
 
     public void testSetupOfElements() throws Exception {
         MABBuilder builder = new MABBuilder();
@@ -118,8 +116,7 @@ public class MABElementsTest {
 
             @Override
             public void output(MABContext context, Object info) {
-                logger.log(Level.INFO, "resource = {0}", context.resource());
-                logger.log(Level.INFO, "info = {0}", info);
+                logger.info("resource = {} info = {}", context.resource(), info);
                 counter++;
             }
 

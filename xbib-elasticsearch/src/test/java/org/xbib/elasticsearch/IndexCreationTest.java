@@ -31,18 +31,18 @@
  */
 package org.xbib.elasticsearch;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.discovery.MasterNotDiscoveredException;
 import org.testng.annotations.Test;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionManager;
 import org.xbib.io.Mode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class IndexCreationTest {
 
-    private static final Logger logger = Logger.getLogger(IndexCreationTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(IndexCreationTest.class.getName());
 
     @Test
     public void testDeleteCreate() throws Exception {
@@ -59,16 +59,16 @@ public class IndexCreationTest {
             PutMapping mappingOp = new PutMapping();
             mappingOp.setIndex("test");
             mappingOp.setType("type");
-            logger.log(Level.INFO, "deleting index");
+            logger.info("deleting index");
             removeOp.execute(session);
             // wait for complete...
             Thread.sleep(2000L);
-            logger.log(Level.INFO, "creating index");
+            logger.info("creating index");
             createOp.execute(session);
             mappingOp.execute(session);
-            logger.log(Level.INFO, "created mapping");
+            logger.info("created mapping");
         } catch (MasterNotDiscoveredException | NoNodeAvailableException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         } finally {
             if (session != null) {
                 session.close();

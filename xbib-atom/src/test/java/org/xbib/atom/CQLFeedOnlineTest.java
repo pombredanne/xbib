@@ -22,12 +22,12 @@ package org.xbib.atom;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Test CQL Feed controller
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class CQLFeedOnlineTest {
 
     /** the logger */
-    private static final Logger logger = Logger.getLogger(CQLFeedOnlineTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CQLFeedOnlineTest.class.getName());
 
     @Test
     public void testFeedControllerCQL() throws Exception {
@@ -58,11 +58,11 @@ public class CQLFeedOnlineTest {
                 0, 10);
             StringWriter sw = new StringWriter();
             feed.writeTo("prettyxml", sw);
-            logger.log(Level.INFO, sw.toString());
+            logger.info(sw.toString());
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 }

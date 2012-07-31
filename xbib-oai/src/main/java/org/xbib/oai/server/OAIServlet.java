@@ -31,7 +31,6 @@
  */
 package org.xbib.oai.server;
 
-import org.xbib.oai.adapter.OAIAdapter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -39,14 +38,14 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.xbib.io.util.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
 import org.xbib.oai.ListIdentifiersRequest;
@@ -54,17 +53,17 @@ import org.xbib.oai.ListMetadataFormatsRequest;
 import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListSetsRequest;
 import org.xbib.oai.OAI;
-import org.xbib.oai.exceptions.OAIException;
-import org.xbib.oai.OAIServerRequest;
 import org.xbib.oai.OAIResponse;
 import org.xbib.oai.OAIServiceFactory;
 import org.xbib.oai.ResumptionToken;
+import org.xbib.oai.adapter.OAIAdapter;
 import org.xbib.oai.adapter.OAIAdapterFactory;
+import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class OAIServlet extends HttpServlet implements OAI {
 
-    private static final Logger logger = Logger.getLogger(OAIServlet.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OAIServlet.class.getName());
     private final OAIRequestDumper requestDumper = new OAIRequestDumper();
     private final StylesheetTransformer transformer = new StylesheetTransformer("/xsl");
     private final String responseEncoding = "UTF-8";
@@ -84,7 +83,7 @@ public class OAIServlet extends HttpServlet implements OAI {
         if (adapter == null) {
             adapter = createAdapter(request);
         }
-        logger.log(Level.INFO, requestDumper.toString(request));
+        logger.info(requestDumper.toString(request));
         try {
             adapter.connect();
             adapter.setStylesheetTransformer(transformer);
@@ -112,7 +111,7 @@ public class OAIServlet extends HttpServlet implements OAI {
                 adapter.listRecords(oaiRequest, oaiResponse);
             }
         } catch (OAIException | URISyntaxException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             response.setStatus(500);
         } finally {
             out.flush();

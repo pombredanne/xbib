@@ -32,9 +32,9 @@
 package org.xbib.sru.elasticsearch;
 
 import java.io.ByteArrayOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.ExplainResponse;
 import org.xbib.sru.SRUAdapter;
@@ -46,7 +46,7 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ElasticsearchSRUTest {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchSRUTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUTest.class.getName());
 
     @Test
     public void testAdapterInit() throws Exception {
@@ -63,14 +63,13 @@ public class ElasticsearchSRUTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             adapter.explain(op, new ExplainResponse(out, "UTF-8"));
-           logger.log(Level.INFO, "out = {0}", out.toString());
+           logger.info("out = {}", out.toString());
         } catch (Diagnostics d) {
-            logger.log(Level.WARNING, "error, diag = {0}", d);
+            logger.warn("error, diag = {}", d);
         } finally {
             adapter.disconnect();
         }
-    }
-    
+    }    
     
     @Test
     public void testAdapterSearchRetrieve() throws Exception {
@@ -91,9 +90,9 @@ public class ElasticsearchSRUTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             adapter.searchRetrieve(op, new SearchRetrieveResponse(out, "UTF-8"));
-            logger.log(Level.INFO, "output", out.toString());
+            logger.info("output", out.toString());
         } catch (Diagnostics d) {
-            logger.log(Level.WARNING, "error", d);
+            logger.warn("error", d);
         } finally {
             adapter.disconnect();
         }

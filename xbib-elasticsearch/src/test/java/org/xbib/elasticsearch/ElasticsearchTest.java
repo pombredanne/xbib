@@ -31,8 +31,6 @@
  */
 package org.xbib.elasticsearch;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
@@ -46,10 +44,12 @@ import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
 import static org.elasticsearch.node.NodeBuilder.*;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class ElasticsearchTest {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchTest.class.getName());
 
     @Test
     public void testQuery() {
@@ -64,7 +64,7 @@ public class ElasticsearchTest {
                     setTypes(type).
                     setFrom(0).setSize(10).setQuery(textQuery("_all", "test")).execute().actionGet();
         } catch (ClusterBlockException | NoNodeAvailableException | IndexMissingException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         } finally {
             if (node !=null){
                 node.stop();
@@ -84,7 +84,7 @@ public class ElasticsearchTest {
             client.addTransportAddress(address);
             client.close();
         } catch (MasterNotDiscoveredException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 }

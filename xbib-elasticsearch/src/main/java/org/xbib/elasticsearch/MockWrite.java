@@ -33,10 +33,11 @@ package org.xbib.elasticsearch;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+import org.xbib.elasticsearch.rdf.RDFBuilder;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 
 /**
@@ -47,24 +48,25 @@ import org.xbib.rdf.Resource;
  */
 public class MockWrite extends Write {
 
+    private static final Logger logger = LoggerFactory.getLogger(MockWrite.class.getName());
+    private final RDFBuilder rdfbuilder = new RDFBuilder();
+    
     public MockWrite(String index, String type) {
         super(index, type);
     }
-    
-    private static final Logger logger = Logger.getLogger(MockWrite.class.getName());
 
     @Override
     public void write(ElasticsearchSession session, Resource resource)
             throws IOException {
         try {
-            logger.log(Level.INFO, "got this resource: {0}", resource.toString());
+            logger.info("got this resource: {}", resource.toString());
             XContentBuilder builder = jsonBuilder();
             builder.prettyPrint().startObject();
-            build(builder, resource);
+            rdfbuilder.build(builder, resource);
             builder.endObject();
-            logger.log(Level.INFO, " and I build this XContent = {0}", builder.string());
+            logger.info("and I build this XContent = {}", builder.string());
         } catch (URISyntaxException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 }

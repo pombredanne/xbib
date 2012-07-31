@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.xbib.elements.ElementMapFactory;
 import org.xbib.marc.FieldDesignatorList;
@@ -28,7 +27,7 @@ public class FormatCarrier extends MABElement {
             }
             carriers = new ObjectMapper().readValue(json, HashMap.class);
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.info(null, ex);
         }
     }
 

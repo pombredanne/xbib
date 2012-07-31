@@ -43,8 +43,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -54,29 +52,24 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.xbib.io.Mode;
 import org.xbib.io.Session;
-import org.xbib.logging.CustomFileHandler;
-import org.xbib.logging.CustomFormatter;
-import org.xbib.logging.CustomLogger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class ElasticsearchSession implements Session {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchSession.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSession.class.getName());
     private final ElasticsearchConnection connection;
     private final TransportClient client;
     private final Set<InetSocketTransportAddress> addresses = new HashSet();
-    private CustomLogger queryLogger;
+    private Logger queryLogger;
 
     public ElasticsearchSession(ElasticsearchConnection connection) {
         this.connection = connection;
         this.client = createClient(connection.isSniff());
         try {
             findNodes();
-        } catch (UnknownHostException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } catch (SocketException ex) {
-            logger.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -119,19 +112,12 @@ public class ElasticsearchSession implements Session {
 
     private void createQueryLog() throws IOException {
         if (queryLogger == null) {
-            queryLogger = new CustomLogger("es.query.logger");
-            queryLogger.setLevel(Level.ALL);
-            String directory = System.getProperty("es.query.logging.directory", "logs");
-            String prefix = System.getProperty("es.query.logging.prefix", connection.getClusterName() + "-query.");
-            String suffix = System.getProperty("es.query.logging.suffix", ".log");
-            CustomFileHandler handler = new CustomFileHandler(directory, prefix, suffix);
-            handler.setFormatter(new CustomFormatter());
-            queryLogger.addHandler(handler);
+            queryLogger = LoggerFactory.getLogger("es.query.logger");
         }
     }
 
     private TransportClient createClient(boolean sniff) {
-        logger.log(Level.INFO, "starting discovery for clustername {0}", connection.getClusterName());
+        logger.info("starting discovery for clustername {}", connection.getClusterName());
         Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", connection.getClusterName()).put("client.transport.sniff", sniff).build();
         return new TransportClient(settings);
     }
@@ -147,9 +133,9 @@ public class ElasticsearchSession implements Session {
                 case "hostname": {
                     InetSocketTransportAddress address = new InetSocketTransportAddress(InetAddress.getLocalHost().getHostName(), port);
                     if (!addresses.contains(address)) {
-                        logger.log(Level.INFO, "adding hostname address for transport client = {0}", address);
+                        logger.info("adding hostname address for transport client = {}", address);
                         client.addTransportAddress(address);
-                        logger.log(Level.INFO, "hostname address added");
+                        logger.info("hostname address added");
                         addresses.add(address);
                         newaddresses = true;
                     }
@@ -164,7 +150,7 @@ public class ElasticsearchSession implements Session {
                             if (addr instanceof Inet4Address || connection.isIPV6()) {
                                 InetSocketTransportAddress address = new InetSocketTransportAddress(addr, port);
                                 if (!addresses.contains(address)) {
-                                    logger.log(Level.INFO, "adding interface address for transport client = {0}", address);
+                                    logger.info("adding interface address for transport client = {}", address);
                                     client.addTransportAddress(address);
                                     addresses.add(address);
                                     newaddresses = true;
@@ -178,24 +164,24 @@ public class ElasticsearchSession implements Session {
         } else {
             InetSocketTransportAddress address = new InetSocketTransportAddress(hostname, port);
             if (!addresses.contains(address)) {
-                logger.log(Level.INFO, "adding custom address for transport client = {0}", address);
+                logger.info("adding custom address for transport client = {}", address);
                 client.addTransportAddress(address);
                 addresses.add(address);
                 newaddresses = true;
             }
         }
-        logger.log(Level.INFO, "addresses = {0}", addresses);
+        logger.info("addresses = {}", addresses);
         if (newaddresses) {
             List<DiscoveryNode> nodes = client.connectedNodes().asList();
-            logger.log(Level.INFO, "connected nodes = {0}", nodes);
+            logger.info("connected nodes = {}", nodes);
             for (DiscoveryNode node : nodes) {
-                logger.log(Level.INFO, "new connection to {0} {1}", new Object[]{node.getId(), node.getName()});
+                logger.info("new connection to {} {}", node.getId(), node.getName());
             }
         }
     }
 
     public void checkHealth() throws IOException {
-        logger.log(Level.INFO, "checking cluster health");
+        logger.info("checking cluster health");
         if (isOpen()) {
             ClusterHealthResponse healthResponse =
                     client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout("30s").execute().actionGet();

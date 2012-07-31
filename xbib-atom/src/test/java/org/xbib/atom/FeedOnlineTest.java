@@ -22,12 +22,12 @@ package org.xbib.atom;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Test Atom Feed controller
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class FeedOnlineTest {
 
     /** the logger */
-    private static final Logger logger = Logger.getLogger(FeedOnlineTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(FeedOnlineTest.class.getName());
         
     @Test
     public void testFeedControllerES() throws Exception {
@@ -58,12 +58,10 @@ public class FeedOnlineTest {
                 0, 10);
             StringWriter sw = new StringWriter();
             feed.writeTo("prettyxml", sw);
-            logger.log(Level.INFO, sw.toString());
-            logger.log(Level.INFO, "number of entries = {0}", feed.getEntries().size());
-        } catch (NoNodeAvailableException e) {
-            logger.log(Level.WARNING, e.getMessage());
-        } catch (IOException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.info(sw.toString());
+            logger.info("number of entries = {0}", feed.getEntries().size());
+        } catch (NoNodeAvailableException | IOException e) {
+            logger.warn(e.getMessage());
         }
     }
 }

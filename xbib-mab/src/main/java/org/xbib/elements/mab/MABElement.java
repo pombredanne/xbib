@@ -34,12 +34,13 @@ package org.xbib.elements.mab;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import java.util.logging.Logger;
 import org.xbib.elements.Element;
 import org.xbib.elements.bibliographic.ExtraBibliographicProperties;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.dublincore.DublinCoreTerms;
 import org.xbib.elements.dublincore.DublinCoreTermsProperties;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.FieldDesignatorList;
 
 public abstract class MABElement
@@ -48,7 +49,7 @@ public abstract class MABElement
         DublinCoreTerms, DublinCoreTermsProperties,
         ExtraBibliographicProperties {
 
-    protected static final Logger logger = Logger.getLogger(MABElement.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger(MABElement.class.getName());
 
     protected Map params;
     

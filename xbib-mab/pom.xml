@@ -35,14 +35,13 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-charset</artifactId>
+            <artifactId>xbib-logging</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
+            <artifactId>xbib-charset</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>test</scope>

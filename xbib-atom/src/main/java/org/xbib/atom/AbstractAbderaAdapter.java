@@ -23,8 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
@@ -33,6 +31,8 @@ import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.apache.abdera.protocol.server.provider.managed.ManagedCollectionAdapter;
 import org.xbib.io.util.URIUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * An abstract Abdera managed collection adapter
@@ -41,7 +41,7 @@ import org.xbib.io.util.URIUtil;
  */
 public abstract class AbstractAbderaAdapter extends ManagedCollectionAdapter {
 
-    private final static Logger logger = Logger.getLogger(AbstractAbderaAdapter.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AbstractAbderaAdapter.class.getName());
 
     protected abstract AtomFeedFactory getFeedFactory();
 
@@ -88,7 +88,7 @@ public abstract class AbstractAbderaAdapter extends ManagedCollectionAdapter {
                     size // result set size
                     );
             if (feed == null) {
-                logger.log(Level.SEVERE, "unable to create feed");
+                logger.error("unable to create feed");
                 ProviderHelper.servererror(request, "could not generate feed", null);
             }
             return ProviderHelper.returnBase(feed.getDocument(), 200, null);

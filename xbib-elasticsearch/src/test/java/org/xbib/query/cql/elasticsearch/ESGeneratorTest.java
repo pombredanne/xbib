@@ -34,10 +34,10 @@ package org.xbib.query.cql.elasticsearch;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
 
 /**
@@ -47,10 +47,8 @@ import org.xbib.query.cql.CQLParser;
  */
 public class ESGeneratorTest extends Assert {
 
-    /** the logger */
-    private final static Logger logger = Logger.getLogger(ESGeneratorTest.class.getName());
-   
-    
+    private final static Logger logger = LoggerFactory.getLogger(ESGeneratorTest.class.getName());
+       
     @Test
     public void testValid() throws Exception {
         TextProcessor t = new TextProcessor();
@@ -98,7 +96,7 @@ public class ESGeneratorTest extends Assert {
                                 errors++;
                             }
                         } catch (Exception e) {
-                            logger.log(Level.WARNING, e.getMessage(), e);
+                            logger.warn(e.getMessage(), e);
                             errors++;
                         }
                     }

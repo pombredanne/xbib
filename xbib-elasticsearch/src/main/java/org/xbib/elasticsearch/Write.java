@@ -32,12 +32,12 @@
 package org.xbib.elasticsearch;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.xbib.io.Identifiable;
 import org.xbib.io.Session;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 
 /**
@@ -47,8 +47,7 @@ import org.xbib.rdf.Resource;
  */
 public class Write extends AbstractWrite {
 
-    /** the logger */
-    private static final Logger logger = Logger.getLogger(Write.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Write.class.getName());
 
     public Write(String index, String type) {
         this(index, type, ':');
@@ -75,9 +74,9 @@ public class Write extends AbstractWrite {
         try {
             IndexResponse response = session.getClient().prepareIndex().setIndex(index).setType(type)
                     .setId(createId(resource)).setSource(builder).execute().actionGet();
-            logger.log(Level.FINE, "{0} indexed", response.getId());
+            logger.debug("{} indexed", response.getId());
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.getMessage() + " got exception for content = {0}" + builder.string(), e);
+            logger.warn(e.getMessage() + " got exception for content = {}" + builder.string(), e);
         }
     }
 

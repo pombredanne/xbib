@@ -40,10 +40,10 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.Connection;
 import org.xbib.io.util.URIUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  *  Elasticsearch connection
@@ -52,7 +52,7 @@ import org.xbib.io.util.URIUtil;
 public class ElasticsearchConnection<S extends ElasticsearchSession>
     implements Connection<S> {
     
-    private static final Logger logger = Logger.getLogger(ElasticsearchConnection.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchConnection.class.getName());
     private final static String DEFAULT_CLUSTER_NAME = "elasticsearch";
     private final static URI DEFAULT_URI = URI.create("es://interfaces:9300");
     private final static Map<URI, ElasticsearchConnection> instances = new HashMap();
@@ -120,23 +120,23 @@ public class ElasticsearchConnection<S extends ElasticsearchSession>
         String hostname = "localhost";
         try {
             hostname = InetAddress.getLocalHost().getHostName();
-            logger.log(Level.FINE, "the hostname is {0}", hostname);
+            logger.debug("the hostname is {}", hostname);
             Properties p = new Properties();
             try (InputStream in = ElasticsearchSession.class.getResource("/org/xbib/elasticsearch/cluster.properties").openStream()) {
                 p.load(in);
                 if (p.containsKey(hostname)) {
                     uri = URI.create(p.getProperty(hostname));
-                    logger.log(Level.FINE, "URI found in cluster.properties for hostname {0} = {1}",
-                        new Object[]{hostname, uri});
+                    logger.debug("URI found in cluster.properties for hostname {} = {}",
+                        hostname, uri);
                     return uri;
                 }
             }
         } catch (UnknownHostException e) {
-            logger.log(Level.WARNING, "can't resolve host name, probably something wrong with network config: " + e.getMessage(), e);
+            logger.warn("can't resolve host name, probably something wrong with network config: " + e.getMessage(), e);
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
         }
-        logger.log(Level.FINE, "URI for hostname {0} = {1}", new Object[]{hostname, uri});
+        logger.debug("URI for hostname {} = {}", hostname, uri);
         return uri;
     }
     
@@ -149,19 +149,19 @@ public class ElasticsearchConnection<S extends ElasticsearchSession>
             sniff = "true".equalsIgnoreCase(map.get("sniff"));
             clustername = map.get("es.cluster.name");
             if (clustername != null) {
-                logger.log(Level.INFO, "cluster name found in URI {0}", uri);
+                logger.info("cluster name found in URI {}", uri);
                 return clustername;
             }
         } catch (UnsupportedEncodingException ex) {
-            logger.log(Level.WARNING, ex.getMessage(), ex);
+            logger.warn(ex.getMessage(), ex);
         }
-        logger.log(Level.INFO, "cluster name not found in URI {0}, parameter es.cluster.name", uri);
+        logger.info("cluster name not found in URI {}, parameter es.cluster.name", uri);
         clustername = System.getProperty("es.cluster.name");
         if (clustername != null) {
-            logger.log(Level.INFO, "cluster name found in es.cluster.name system property = {0}", clustername);
+            logger.info("cluster name found in es.cluster.name system property = {}", clustername);
             return clustername;
         }
-        logger.log(Level.INFO, "cluster name not found, falling back to default " + DEFAULT_CLUSTER_NAME);
+        logger.info("cluster name not found, falling back to default " + DEFAULT_CLUSTER_NAME);
         clustername = DEFAULT_CLUSTER_NAME;
         return clustername;
     }

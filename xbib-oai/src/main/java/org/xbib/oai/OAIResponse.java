@@ -36,19 +36,19 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 import org.xbib.io.AbstractResponse;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class OAIResponse extends AbstractResponse
         implements XMLEventConsumer {
 
-    private static final Logger logger = Logger.getLogger(OAIResponse.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OAIResponse.class.getName());
     private static final XMLOutputFactory outputFactory =  XMLOutputFactory.newInstance();
     private XMLEventWriter eventWriter;
     private String errorCode;
@@ -60,7 +60,7 @@ public class OAIResponse extends AbstractResponse
         try {
             eventWriter = outputFactory.createXMLEventWriter(writer);
         } catch (XMLStreamException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -70,7 +70,7 @@ public class OAIResponse extends AbstractResponse
         try {
             eventWriter = outputFactory.createXMLEventWriter(out);
         } catch (XMLStreamException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -85,7 +85,7 @@ public class OAIResponse extends AbstractResponse
                 eventWriter.flush();
             }
         } catch (XMLStreamException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

@@ -21,14 +21,14 @@ package org.xbib.atom;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.JsonXmlValueMode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 
 /**
@@ -38,7 +38,7 @@ import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 public class CQLElasticsearchAtomFeedController extends ElasticsearchAtomFeedController {
 
     /** the logger */
-    private final static Logger logger = Logger.getLogger(CQLElasticsearchAtomFeedController.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(CQLElasticsearchAtomFeedController.class.getName());
     private final QueryResultAction processorInstance = new ElasticSearchAction();
 
     @Override
@@ -54,7 +54,7 @@ public class CQLElasticsearchAtomFeedController extends ElasticsearchAtomFeedCon
             try {
                 jsonXml.toXML(in, builder, new QName(ES.NS_URI, "result", ES.NS_PREFIX));
             } catch (XMLStreamException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 throw new IOException(ex);
             }
         }

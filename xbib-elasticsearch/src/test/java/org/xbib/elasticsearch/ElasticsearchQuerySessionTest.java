@@ -33,15 +33,15 @@ package org.xbib.elasticsearch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 
 public class ElasticsearchQuerySessionTest {
     
-    private static final Logger logger = Logger.getLogger(ElasticsearchQuerySessionTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchQuerySessionTest.class.getName());
     
     @Test
     public void testDSLQuery() throws Exception {
@@ -61,7 +61,7 @@ public class ElasticsearchQuerySessionTest {
         } finally {
             connection.close();
         }
-        logger.log(Level.INFO, out.toString());
+        logger.info(out.toString());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ElasticsearchQuerySessionTest {
         } finally {
             connection.close();
         }
-        logger.log(Level.INFO, out.toString());
+        logger.info(out.toString());
     }
     
     

@@ -35,17 +35,12 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
-import org.xbib.oai.OAIServerRequest;
 import org.xbib.oai.OAIServiceFactory;
 
 public class SimpleAdapterTest {
-
-    private static final Logger logger = Logger.getLogger(SimpleAdapterTest.class.getName());
 
     @Test
     public void testIdentify() throws Exception {
@@ -57,7 +52,6 @@ public class SimpleAdapterTest {
         adapter.connect();
         adapter.identify(request, response);
         adapter.disconnect();
-        logger.log(Level.INFO, "result = " + sw);
     }
     
     class MyIdentifyRequest extends IdentifyRequest {

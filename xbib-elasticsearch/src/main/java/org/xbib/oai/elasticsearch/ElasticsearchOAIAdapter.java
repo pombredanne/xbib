@@ -37,18 +37,19 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.DateUtil;
 import org.xbib.json.JsonXmlReader;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.GetRecordRequest;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
@@ -62,13 +63,12 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.oai.adapter.OAIAdapter;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.query.QuotedStringTokenizer;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
 public class ElasticsearchOAIAdapter implements OAIAdapter {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchOAIAdapter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIAdapter.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
     private ElasticsearchConnection connection;
@@ -92,7 +92,7 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
             connection.close();
             connection = null;
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -244,16 +244,16 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
             action.setTarget(response.getOutput());
             action.searchAndProcess(query);
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.SEVERE, "OAI " + adapterURI + ": unresponsive", e);
+            logger.error("OAI " + adapterURI + ": unresponsive", e);
             throw new OAIException(e);
         } catch (IndexMissingException e) {
-            logger.log(Level.SEVERE, "OAI " + adapterURI + ": database does not exist", e);
+            logger.error("OAI " + adapterURI + ": database does not exist", e);
             throw new OAIException(e);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "OAI " + adapterURI + ": database is unresponsive", e);
+            logger.error("OAI " + adapterURI + ": database is unresponsive", e);
             throw new OAIException(e);
         } finally {
-            logger.log(Level.INFO, "OAI completed: query = {1}", query);
+            logger.info("OAI completed: query = {}", query);
         }
     }
     

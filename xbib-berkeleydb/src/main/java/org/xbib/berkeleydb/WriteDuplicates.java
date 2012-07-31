@@ -30,14 +30,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.Session;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 
 public class WriteDuplicates extends AbstractWrite {
 
-    private static final Logger logger = Logger.getLogger(WriteDuplicates.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(WriteDuplicates.class.getName());
     private String uniqueKey;
     /**
      * Duplicate key summary
@@ -88,7 +88,7 @@ public class WriteDuplicates extends AbstractWrite {
                 addWeak(uniqueKey, key);
             }
         } catch (IllegalStateException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
         } finally {
             if (transaction != null) {
                 transaction.commit();
@@ -123,7 +123,7 @@ public class WriteDuplicates extends AbstractWrite {
             dups.put(n, (dups.containsKey(n) ? dups.get(n) : 0) + 1);
         } catch (Exception e) {
             // this warning appears when duplicate summary is dubios, e.g. second runs
-            logger.log(Level.WARNING, "wrong summary when counting dup = " + n + ", summary = " + dups);
+            logger.warn("wrong summary when counting dup = " + n + ", summary = " + dups);
         }
     }
 

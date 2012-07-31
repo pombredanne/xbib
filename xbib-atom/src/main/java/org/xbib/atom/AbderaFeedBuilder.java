@@ -29,8 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -47,22 +45,27 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.ExtensibleElement;
 import org.apache.abdera.model.Feed;
 import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * The Abdera feed builder for Elasticsearch atom feeds is an XML event consumer
- * 
+ *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class AbderaFeedBuilder implements XMLEventConsumer {
 
-    /** the logger */
-    private final static Logger logger = Logger.getLogger(AbderaFeedBuilder.class.getName());
+    /**
+     * the logger
+     */
+    private final static Logger logger = LoggerFactory.getLogger(AbderaFeedBuilder.class.getName());
     private final UUIDGenerator generator = UUIDGenerator.getInstance();
     private final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-    /** message formatter */
+    /**
+     * message formatter
+     */
     private final MessageFormat formatter = new MessageFormat("");
     private final Map<String, String> services = new LinkedHashMap<String, String>() {
-
         {
             put("xhtml", "application/xhtml+xml");
             put("xml", "application/xml");
@@ -70,9 +73,10 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
             put("json", "application/json");
         }
     };
-    /**  feed elements from JSON stream */
+    /**
+     * feed elements from JSON stream
+     */
     private final Set<String> elements = new HashSet<String>() {
-
         {
             add("hits");
             add("took");
@@ -85,11 +89,17 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
             add("sort");
         }
     };
-    /** the Abdera instance (transient because it is non-serializable) */
+    /**
+     * the Abdera instance (transient because it is non-serializable)
+     */
     private final transient Abdera abdera;
-    /** the atom feed (transient because it is non-serializable) */
+    /**
+     * the atom feed (transient because it is non-serializable)
+     */
     private final transient Feed feed;
-    /** the current atom entry(transient because it is non-serializable) */
+    /**
+     * the current atom entry(transient because it is non-serializable)
+     */
     private transient Entry entry;
     private final Stack<ExtensibleElement> stack;
     private StringBuilder path;
@@ -100,7 +110,7 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     private final String servicePath;
     private String entryId;
     private AtomFeedProperties config;
-    
+
     public AbderaFeedBuilder(AtomFeedProperties config, String query) {
         this.abdera = config.getAbdera();
         this.feed = abdera.newFeed();
@@ -181,10 +191,10 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
                         String title = s != null ? s + " / " + child.getText() : child.getText();
                         entry.setTitle(title);
                     } /*else if ("descriptionISODIS25577".equals(name)) {
-                        injectXML(this, child.getText(),
-                                new QName("http://www.openarchives.org/OAI/2.0/", name, "oai"));
-                        child.setText(""); // replace XML text with XML stream
-                    }*/
+                     injectXML(this, child.getText(),
+                     new QName("http://www.openarchives.org/OAI/2.0/", name, "oai"));
+                     child.setText(""); // replace XML text with XML stream
+                     }*/
                 }
             }
             int pos = path.lastIndexOf(qname.getLocalPart());
@@ -210,24 +220,24 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
         addProcessTime(processMillis);
         addOpenSearch(totalHits, from, size);
         String s = addStyleSheet();
-        logger.log(Level.INFO, "query[{0}] hits[{1}] millis[{2}] searchtime[{3}] stylesheet[{4}]",
-                new Object[]{query, totalHits, millis, processMillis, s});
+        logger.info("[query={}] [hits={}] [millis={}] [searchtime={}] [stylesheet={}]",
+                query, totalHits, millis, processMillis, s);
         return feed;
     }
 
     protected void addOpenSearch(long total, long from, long size) {
-        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.TOTAL_RESULTS, OpenSearch.NS_PREFIX, 
-           Long.toString(total));
-        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.START_INDEX, OpenSearch.NS_PREFIX, 
-           Long.toString(from));
-        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.ITEMS_PER_PAGE, OpenSearch.NS_PREFIX, 
-           Long.toString(size));
-    }    
-    
+        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.TOTAL_RESULTS, OpenSearch.NS_PREFIX,
+                Long.toString(total));
+        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.START_INDEX, OpenSearch.NS_PREFIX,
+                Long.toString(from));
+        feed.addSimpleExtension(OpenSearch.NS_URI, OpenSearch.ITEMS_PER_PAGE, OpenSearch.NS_PREFIX,
+                Long.toString(size));
+    }
+
     protected void createServices(Entry entry) {
         for (String s : services.keySet()) {
             // relative URI, because baseURI is not correct in case of reverse proxies (or use ProxyPreserveHost on)
-            String href = 
+            String href =
                     (servicePath != null ? servicePath : "")
                     + "/" + s
                     + "/" + index + "/" + type + "/" + id;
@@ -239,17 +249,17 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add feed author. The author name is usually configured in a properties
      * file.
-     * 
+     *
      * @param feed
      */
     protected void addFeedAuthor() {
         feed.addAuthor(config.getFeedAuthor());
-                //properties.getProperty(FEED_AUTHOR_PROPERTY_KEY, "unknown"));
+        //properties.getProperty(FEED_AUTHOR_PROPERTY_KEY, "unknown"));
     }
 
     /**
      * Add feed title. Usually a formatted query.
-     * 
+     *
      * @param feed
      * @param query
      */
@@ -263,7 +273,7 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
 
     /**
      * Add result count and elapsed time. Usually formatted by configuration.
-     * 
+     *
      * @param feed
      * @param count
      * @param elapsedTime
@@ -280,17 +290,17 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add some info about the frontend. Might be useful for logging or for
      * tracking errors if several frontends are running.
-     * 
+     *
      * @param feed
      */
     protected void addFrontendInfo() {
-        feed.addSimpleExtension(ES.NS_URI, "frontend", ES.NS_PREFIX, 
+        feed.addSimpleExtension(ES.NS_URI, "frontend", ES.NS_PREFIX,
                 ManagementFactory.getRuntimeMXBean().getName());
     }
 
     /**
      * Add some info about the result processing time.
-     * 
+     *
      * @param feed
      * @param millis
      */
@@ -306,7 +316,7 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add a style sheet processing instruction for XSLT. Usually the style
      * sheet location is given by configuration.
-     * 
+     *
      * @param feed
      */
     protected String addStyleSheet() {

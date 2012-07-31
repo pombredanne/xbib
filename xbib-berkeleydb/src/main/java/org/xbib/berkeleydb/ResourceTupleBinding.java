@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
@@ -42,7 +42,7 @@ import org.xbib.rdf.simple.SimpleResource;
 public class ResourceTupleBinding extends TupleBinding
         implements StatementListener {
 
-    private static final Logger logger = Logger.getLogger(ResourceTupleBinding.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ResourceTupleBinding.class.getName());
     private final TurtleWriter writer;
     private final TurtleReader reader;
     private long writtenChars;
@@ -66,7 +66,7 @@ public class ResourceTupleBinding extends TupleBinding
             writtenChars += len;
             to.writeString(s);
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -80,7 +80,7 @@ public class ResourceTupleBinding extends TupleBinding
             reader.parse(new StringReader(s));
             return resource;
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

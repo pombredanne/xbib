@@ -37,13 +37,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class ValueMapFactory {
 
-    private final static Logger logger = Logger.getLogger(ValueMapFactory.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(ValueMapFactory.class.getName());
     private final static Map<String, Object> maps = new HashMap();
 
     private ValueMapFactory() {
@@ -67,7 +67,7 @@ public class ValueMapFactory {
                 }
                 maps.put(format, map);
             } catch (IOException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
             }
         }
         return (Map<String, String>) maps.get(format);
@@ -83,7 +83,7 @@ public class ValueMapFactory {
                 ObjectMapper mapper = new ObjectMapper();
                 maps.put(format, mapper.readValue(json, HashMap.class));
             } catch (IOException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
             }
         }
         return (Map) maps.get(format);

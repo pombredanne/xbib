@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.apache.abdera.Abdera;
@@ -37,6 +35,8 @@ import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.URIUtil;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.JsonXmlValueMode;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  *  Atom feed controller for Elasticsearch DSL JSON query.
@@ -57,7 +57,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
     final String FEED_STYLESHEET_PROPERTY_KEY = "feed.stylesheet";
     final String FEED_SERVICE_PATH_KEY = "feed.service.path";
     /** the logger */
-    private final static Logger logger = Logger.getLogger(ElasticsearchAtomFeedController.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(ElasticsearchAtomFeedController.class.getName());
     private final QueryResultAction defaultAction = new ElasticSearchAction();
     protected AbderaFeedBuilder builder;
     
@@ -163,11 +163,10 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             return builder.getFeed(query, t1 - t0, 
                     action.getTookInMillis(), action.getFrom(), action.getSize());
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "atom feed query " + query + " session "
-                    + " is unresponsive", e);
+            logger.error("atom feed query " + query + " session is unresponsive", e);
             throw e;
         } finally {
-            logger.log(Level.INFO, "atom feed query {0} completed", query);
+            logger.info("atom feed query completed: {}", query);
         }
     }
     
@@ -183,7 +182,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             try {
                 jsonXml.toXML(in, builder, new QName(ES.NS_URI, "result", ES.NS_PREFIX));
             } catch (XMLStreamException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 throw new IOException(ex);
             }
         }

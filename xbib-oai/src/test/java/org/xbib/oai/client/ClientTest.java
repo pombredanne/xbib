@@ -37,10 +37,10 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
 import org.xbib.io.EmptyWriter;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
 import org.xbib.oai.ListRecordsRequest;
@@ -52,9 +52,8 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
-import org.xbib.rdf.io.turtle.TurtleWriter;
-import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.io.XmlTriplifier;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
@@ -63,7 +62,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ClientTest {
 
-    private static final Logger logger = Logger.getLogger(ClientTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ClientTest.class.getName());
 
     public void testZDBClient() throws Exception {
         OAIClient client = OAIClientFactory.getClient("ZDB");
@@ -130,9 +129,9 @@ public class ClientTest {
                     TurtleWriter t = new TurtleWriter();
                     try {
                         t.write(getResource(), true, sw);
-                        logger.log(Level.INFO, sw.toString());
+                        logger.info(sw.toString());
                     } catch (IOException ex) {
-                        logger.log(Level.SEVERE, null, ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
 
@@ -165,9 +164,9 @@ public class ClientTest {
             try {
                 client.prepareListRecords(request, response);
                 OAIOperation op = client.execute(30, TimeUnit.SECONDS);
-                logger.log(Level.INFO, "OAI results " + op.getResults());
+                logger.info("OAI results " + op.getResults());
             } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 failure = true;
             }
         } while (request.getResumptionToken() != null && !failure);

@@ -31,19 +31,20 @@
  */
 package org.xbib.elements;
 
-import org.xbib.rdf.ResourceContext;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.ResourceContext;
 
 public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
         implements KeyValueStreamListener<K, V> {
 
-    protected final static Logger logger = Logger.getLogger(ElementMapper.class.getName());
+    protected final static Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
     private final Map<String, Element> map;
     private List<ElementBuilder<K, V, E, C>> builders = new ArrayList();
 

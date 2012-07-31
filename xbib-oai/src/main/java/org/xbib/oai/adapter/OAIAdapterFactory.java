@@ -34,29 +34,29 @@ package org.xbib.oai.adapter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class OAIAdapterFactory {
-    private static final Logger logger = Logger.getLogger(OAIAdapterFactory.class.getName());
 
+    private static final Logger logger = LoggerFactory.getLogger(OAIAdapterFactory.class.getName());
     private final static OAIAdapterFactory instance = new OAIAdapterFactory();
-    
+
     private OAIAdapterFactory() {
     }
-    
+
     public static OAIAdapter getAdapter(String name) {
         Properties properties = new Properties();
-        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/adapter/" + name + ".properties");        
+        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/adapter/" + name + ".properties");
         if (in != null) {
             try {
                 properties.load(in);
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         } else {
             throw new IllegalArgumentException("adapter " + name + " not found");
         }
         return new OAIPropertiesAdapter(properties);
-    }     
+    }
 }

@@ -38,10 +38,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.io.Mode;
 import org.xbib.io.Session;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Berkeley Database session
@@ -49,7 +49,7 @@ import org.xbib.io.Session;
  */
 public class BerkeleyDBSession implements Session {
 
-    private static final Logger logger = Logger.getLogger(BerkeleyDBSession.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(BerkeleyDBSession.class.getName());
 
     private URI uri;
 
@@ -173,7 +173,7 @@ public class BerkeleyDBSession implements Session {
                     }
                     this.isOpen = true;
                 } catch (DatabaseException e) {
-                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
                 break;
             case READ:
@@ -186,7 +186,7 @@ public class BerkeleyDBSession implements Session {
                     }
                     this.isOpen = true;
                 } catch (DatabaseException e) {
-                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
                 break;
         }
@@ -210,7 +210,7 @@ public class BerkeleyDBSession implements Session {
                 for (BerkeleyDBIterator it : iterators) {
                     it.close();
                 }
-                logger.log(Level.INFO, "cleaning up ...");
+                logger.info("cleaning up ...");
                 // let's clean up the database
                 boolean anyCleaned = false;
                 while (env.cleanLog() > 0) {
@@ -221,7 +221,7 @@ public class BerkeleyDBSession implements Session {
                     force.setForce(true);
                     env.checkpoint(force);
                 }
-                logger.log(Level.INFO, "... cleaning done");
+                logger.info("... cleaning done");
                 if (secondarydb != null) {
                     secondarydb.close();
                 }

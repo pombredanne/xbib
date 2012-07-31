@@ -5,14 +5,14 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
 
 public class CQLTest {
 
-    private final static Logger logger = Logger.getLogger(CQLTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(CQLTest.class.getName());
 
     @Test
     public void testQueries() throws UnsupportedEncodingException, IOException {
@@ -29,7 +29,7 @@ public class CQLTest {
                         process(line);
                         ok++;
                     } catch (Exception e) {
-                        logger.log(Level.WARNING, e.getMessage());
+                        logger.warn(e.getMessage());
                         errors++;
                     }
                 }

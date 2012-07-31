@@ -34,8 +34,6 @@ package org.xbib.builders.elasticsearch;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.elasticsearch.AbstractWrite;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
@@ -43,13 +41,15 @@ import org.xbib.elasticsearch.Write;
 import org.xbib.elements.output.DefaultElementOutput;
 import org.xbib.io.Mode;
 import org.xbib.io.util.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.ResourceContext;
 
 public class ElasticsearchResourceOutput<C extends ResourceContext>
     extends DefaultElementOutput<C> {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchResourceOutput.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchResourceOutput.class.getName());
     private ElasticsearchSession session;
     private final static AtomicLong counter = new AtomicLong(0L);
     private AbstractWrite operator;
@@ -70,14 +70,14 @@ public class ElasticsearchResourceOutput<C extends ResourceContext>
         try {
             session.open(Mode.WRITE);
             if (!session.isOpen()) {
-                logger.log(Level.SEVERE, "unable to open session {0}", session);
+                logger.error("unable to open session {}", session);
             } else {
-                logger.log(Level.INFO, "session {0} created", session);
+                logger.info("session {} created", session);
             }
             operator.createIndex(session);
         } catch (IOException e) {
-            logger.log(Level.WARNING, "I/O exception while opening session, reason: {1}",
-                    new Object[]{e.getMessage()});
+            logger.warn("I/O exception while opening session, reason: {}",
+                    e.getMessage());
         }
     }
 
@@ -102,11 +102,11 @@ public class ElasticsearchResourceOutput<C extends ResourceContext>
                 counter.incrementAndGet();
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             try {
                 session.close();
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
     }

@@ -46,7 +46,6 @@
             <artifactId>xbib-logging</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

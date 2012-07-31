@@ -35,17 +35,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.json.JsonXmlReader;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 import org.xbib.sru.Diagnostics;
@@ -56,13 +57,12 @@ import org.xbib.sru.ScanResponse;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
 public class ElasticsearchSRUAdapter implements SRUAdapter {
 
-    private static final Logger logger = Logger.getLogger(ElasticsearchSRUAdapter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUAdapter.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
     private final String recordPacking = "xml";
@@ -86,10 +86,9 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
             connection.close();
             connection = null;
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
-
 
     @Override
     public void setStylesheetTransformer(StylesheetTransformer transformer) {
@@ -143,19 +142,19 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
             action.setSize(request.getMaximumRecords());
             action.searchAndProcess(request.getQuery());            
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.SEVERE, "SRU " + adapterURI + ": unresponsive", e);
+            logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (IndexMissingException e) {
-            logger.log(Level.SEVERE, "SRU " + adapterURI + ": database does not exist", e);
+            logger.error("SRU " + adapterURI + ": database does not exist", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (SyntaxException e) {
-            logger.log(Level.SEVERE, "SRU " + adapterURI + ": database does not exist", e);
+            logger.error("SRU " + adapterURI + ": database does not exist", e);
             throw new Diagnostics(10, e.getMessage());
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "SRU " + adapterURI + ": database is unresponsive", e);
+            logger.error("SRU " + adapterURI + ": database is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } finally {
-            logger.log(Level.INFO, "SRU completed: query = {0}", request.getQuery());
+            logger.info("SRU completed: query = {0}", request.getQuery());
         }
     }
 

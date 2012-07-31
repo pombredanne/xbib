@@ -36,8 +36,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -46,13 +44,15 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class QueryResultAction extends AbstractQueryResultAction {
 
     /**
      * the logger
      */
-    private static final Logger logger = Logger.getLogger(QueryResultAction.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(QueryResultAction.class.getName());
     private ElasticsearchConnection connection;
     private OutputStream out;
     private String filter;
@@ -110,13 +110,13 @@ public class QueryResultAction extends AbstractQueryResultAction {
                 }
             }
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         } finally {
             out.write(message);
             session.close();
         }
         long t1 = System.currentTimeMillis();
-        logger.log(Level.INFO, "get complete: {0}/{1}/{2} [{3}ms]", new Object[]{index, type, id, (t1 - t0)});
+        logger.info("get complete: {}/{}/{} [{}ms]", index, type, id, (t1 - t0));
     }
 
     public void getAndProcess(String index, String type, String id) throws IOException {
@@ -134,13 +134,13 @@ public class QueryResultAction extends AbstractQueryResultAction {
                 processError(jsonErrorMessageStream("no response"));
             }
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             processError(jsonErrorMessageStream(e.getMessage()));
         } finally {
             session.close();
         }
         long t1 = System.currentTimeMillis();
-        logger.log(Level.INFO, "get(process) complete: {0}/{1}/{2} [{3}ms]", new Object[]{index, type, id, (t1 - t0)});
+        logger.info("get(process) complete: {}/{}/{} [{}ms]", index, type, id, (t1 - t0));
     }
 
     public void setFilter(String filter) {
@@ -232,11 +232,11 @@ public class QueryResultAction extends AbstractQueryResultAction {
             long t1 = System.currentTimeMillis();
             long searchTime = response.tookInMillis();
             long hits = response.getHits().getTotalHits();
-            session.getQueryLogger().log(Level.INFO, "[{0}] [{1}ms] [{2}ms] [{3}] [{4}] [{5}]",
-                    new Object[]{address, t1 - t0, searchTime, hits, query, translated});
+            session.getQueryLogger().info("[{}] [{}ms] [{}ms] [{}] [{}] [{}]",
+                    address, t1 - t0, searchTime, hits, query, translated);
             return response;
         } catch (NoNodeAvailableException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return null;
         } finally {
             session.close();

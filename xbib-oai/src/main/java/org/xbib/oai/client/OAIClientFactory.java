@@ -35,12 +35,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class OAIClientFactory {
 
-    private static final Logger logger = Logger.getLogger(OAIClientFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OAIClientFactory.class.getName());
     private final static OAIClientFactory instance = new OAIClientFactory();
 
     private OAIClientFactory() {
@@ -53,7 +53,7 @@ public class OAIClientFactory {
             try {
                 properties.load(in);
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
             OAIPropertiesClient client = new OAIPropertiesClient(properties);
             client.setURI(URI.create(properties.getProperty("uri")));
