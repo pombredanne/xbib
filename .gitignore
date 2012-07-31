@@ -21,6 +21,8 @@ target/
 ## netbeans ignores
 nb-configuration.xml
 nbactions.xml
+
+# passwords
 BVB.properties
 GBV.properties
 HBZ.properties
@@ -28,6 +30,7 @@ HEBIS.properties
 SWB.properties
 KOBV.properties
 SWB.properties
+ZDB.properties
 */BVB.properties
 */GBV.properties
 */HBZ.properties
