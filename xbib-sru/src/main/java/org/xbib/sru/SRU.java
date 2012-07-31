@@ -253,6 +253,7 @@ public interface SRU {
     Map<String,URI> RECORD_SCHEMA_NAMESPACES = new HashMap() {{
         put("mods",URI.create("http://www.loc.gov/mods/v3"));
         put("mx",URI.create("info:lc/xmlns/marcxchange-v1"));
+        put("marc21",URI.create("http://www.loc.gov/MARC21/slim"));
     }};
     
     

@@ -34,7 +34,7 @@ package org.xbib.sru.adapter;
 import java.net.URI;
 import java.util.Properties;
 
-public class SRUPropertiesAdapter extends SRUProxyAdapter {
+public class SRUPropertiesAdapter extends ProxySRUAdapter {
     public final static String RECORDSCHEMA = "recordSchema";
     public final static String RECORDPACKING = "recordPacking";
     public final static String ENCODING = "encoding";

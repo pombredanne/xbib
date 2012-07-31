@@ -52,8 +52,8 @@ public class ClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ClientTest.class.getName());
 
     @Test
-    public void testZDBClient() throws Exception {
-        SRUClient client = SRUClientFactory.getClient("ZDB");
+    public void testClient() throws Exception {
+        SRUClient client = SRUClientFactory.getClient("Bielefeld");
         String query = "title = linux";
         int from = 0;
         int size = 10;

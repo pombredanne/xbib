@@ -55,15 +55,11 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRU;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class FederatorService {
-
-    private final static Logger logger = LoggerFactory.getLogger(FederatorAction.class.getName());
 
     interface MODS {
 
@@ -152,7 +148,15 @@ public class FederatorService {
         }
         List<Action> actions = new ArrayList();
         for (Map<String, Object> params : specs) {
-            actions.add(new PQFZAction().setParams(params));
+            String type = (String) params.get("type");
+            switch (type) {
+                case "z3950":
+                    actions.add(new PQFZAction().setParams(params));
+                    break;
+                case "sru":
+                    actions.add(new SRUAction().setParams(params));
+                    break;
+            }
         }
         submit(groupId, actions);
         return this;
@@ -217,10 +221,9 @@ public class FederatorService {
         requests.remove(groupId);
         return this;
     }
-
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();    
-    
+    private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+
     private void wrapIntoSRUResponse(Collection<XMLEvent> list, String version, String numberOfRecords, Writer writer) throws XMLStreamException {
         XMLEventWriter ew = outputFactory.createXMLEventWriter(writer);
         ew.add(eventFactory.createStartDocument());
@@ -234,10 +237,12 @@ public class FederatorService {
         ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "numberOfRecords"));
         ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));
         int pos = 1;
+        boolean inElement = false;
         Iterator<XMLEvent> it = list.iterator();
         while (it.hasNext()) {
             XMLEvent e = it.next();
             if (e.isProcessingInstruction()) {
+                // drop all processing instructions
             } else if (e.isStartDocument()) {
                 ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
             } else if (e.isEndDocument()) {
@@ -281,7 +286,7 @@ public class FederatorService {
                         ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
                         break;
                     case "id":
-                        // non-SRU: let us identify the origin of the record by XML ID
+                        // let us identify the origin of the record by an XML ID
                         ew.add(eventFactory.createAttribute(prefix, nsURI));
                         break;
                     case "format":
@@ -293,7 +298,14 @@ public class FederatorService {
                         break;
                 }
             } else {
-                ew.add(e);
+                if (e.isStartElement()) {
+                    inElement = true;
+                } else if (e.isEndElement()) {
+                    inElement = false;
+                }
+                if (!e.isCharacters() || inElement) {
+                    ew.add(e);
+                }
             }
         }
         ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));

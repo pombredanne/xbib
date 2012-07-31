@@ -55,7 +55,7 @@ public class SRUAdapterTest {
 
     @Test
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
-        for (String adapterName : Arrays.asList("Gent", "Lund", "Bielefeld", "ZDB")) {
+        for (String adapterName : Arrays.asList("Gent", "Lund", "Bielefeld")) {
             String query = "title = linux";
             int from = 1;
             int size = 10;

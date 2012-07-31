@@ -12,15 +12,17 @@ import org.xbib.io.iso23950.ZAdapterFactory;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.sru.iso23950.adapter.SRUAdapterTest;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ZAdapterTest {
 
     private final static Logger logger = LoggerFactory.getLogger(ZAdapterTest.class.getName());
     private final String[] adapterNames = new String[]{
-        "BVB", "GBV", "HBZ", "HEBIS", "KOBV", "ZDB"
-    // "SWB" broken:  z3950.bsz-bw.de: ASN error, non-surrogate diagnostics: [UNIVERSAL 16]{[UNIVERSAL 6] '2a8648ce130401'H,[UNIVERSAL 2] '00ec'H,[UNIVERSAL 27] '737762'H}
+        "BVB", "GBV", "HBZ", "HEBIS", "ZDB" 
+        // "KOBV"z3950.kobv.de: connection read PDU error
+        //java.io.IOException: connection read PDU error
+        //	at org.xbib.io.iso23950.ZConnection.readPDU(ZConnection.java:215
+        // "SWB" broken:  z3950.bsz-bw.de: ASN error, non-surrogate diagnostics: [UNIVERSAL 16]{[UNIVERSAL 6] '2a8648ce130401'H,[UNIVERSAL 2] '00ec'H,[UNIVERSAL 27] '737762'H}
     };
 
     @Test

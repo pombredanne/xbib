@@ -35,6 +35,7 @@ import java.net.URI;
 import java.util.Properties;
 
 public class SRUPropertiesClient extends SimpleSRUClient {
+
     public final static String RECORDSCHEMA = "recordSchema";
     public final static String RECORDPACKING = "recordPacking";
     public final static String ENCODING = "encoding";
@@ -43,23 +44,22 @@ public class SRUPropertiesClient extends SimpleSRUClient {
     public final static String VERSION = "version";
     public final static String USERNAME = "username";
     public final static String PASSWORD = "password";
-        
     private Properties properties;
 
     public SRUPropertiesClient(Properties properties) {
         this.properties = properties;
     }
-    
+
     @Override
     public String getRecordSchema() {
         return properties.getProperty(RECORDSCHEMA, "mods");
     }
-    
+
     @Override
     public String getRecordPacking() {
         return properties.getProperty(RECORDPACKING, "xml");
     }
-    
+
     @Override
     public String getEncoding() {
         return properties.getProperty(ENCODING, "UTF-8");
@@ -69,7 +69,7 @@ public class SRUPropertiesClient extends SimpleSRUClient {
     public String getVersion() {
         return properties.getProperty(VERSION, "1.2");
     }
-    
+
     @Override
     public String getStylesheet() {
         return properties.getProperty(STYLESHEET);
@@ -77,14 +77,14 @@ public class SRUPropertiesClient extends SimpleSRUClient {
 
     @Override
     public URI getURI() {
-        return  URI.create(properties.getProperty(CLIENT_URI));
+        return URI.create(properties.getProperty(CLIENT_URI));
     }
-    
+
     @Override
     public String getUsername() {
         return properties.getProperty(USERNAME);
     }
-    
+
     @Override
     public String getPassword() {
         return properties.getProperty(PASSWORD);

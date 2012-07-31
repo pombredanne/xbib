@@ -21,8 +21,7 @@ public class SRUAdapterTest {
     
     @Test
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
-        // SWB missing: java.io.IOException: z3950.bsz-bw.de: ASN error, non-surrogate diagnostics: [UNIVERSAL 16]{[UNIVERSAL 6] '2a8648ce130401'H,[UNIVERSAL 2] '00ec'H,[UNIVERSAL 27] '737762'H}
-        for (String adapterName : Arrays.asList("BVB","GBV","HBZ","HEBIS","KOBV","ZDB")) {            
+        for (String adapterName : Arrays.asList("BVB","GBV","HBZ","HEBIS","ZDB")) {            
             SRUAdapter adapter = ISO23950SRUAdapterFactory.getAdapter(adapterName);
             FileOutputStream out = new FileOutputStream("target/sru-" + adapter.getURI().getHost() + ".xml");
             try (Writer sw = new OutputStreamWriter(out, "UTF-8")) {

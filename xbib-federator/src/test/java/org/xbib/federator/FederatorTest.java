@@ -40,10 +40,11 @@ public class FederatorTest {
     public void test() throws Exception {
         FederatorService federator = FederatorService.getInstance().setThreads(5);
         String query = "["
-                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"HBZ\"},"
+                //+ "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"HBZ\"},"
                 + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"GBV\"},"
-                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"BVB\"},"
-                + "{\"type\":\"z3950\", \"query\":\"@attr 1=4 linux\", \"name\":\"LCDB\"}"
+                //+ "{\"type\":\"z3950\", \"query\":\"@attr 1=4 test\", \"name\":\"BVB\"},"
+                //+ "{\"type\":\"z3950\", \"query\":\"@attr 1=4 linux\", \"name\":\"LCDB\"},"
+                + "{\"type\":\"sru\", \"query\":\"pica.title = test\", \"name\":\"GBV\"}"
                 + "]";
         try (FileWriter writer = new FileWriter("target/federator-result.xml")) {
                     federator.setStylesheetPath("src/main/resources/xsl")

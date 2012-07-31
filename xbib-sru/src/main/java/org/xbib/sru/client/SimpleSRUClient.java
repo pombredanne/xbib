@@ -51,8 +51,8 @@ import org.xbib.sru.SRUResultProcessor;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
-import org.xbib.xml.transform.StylesheetTransformer;
 import org.xbib.xml.XMLFilterReader;
+import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
 public class SimpleSRUClient implements SRUClient {
@@ -124,6 +124,12 @@ public class SimpleSRUClient implements SRUClient {
     @Override
     public HttpOperation searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
             throws IOException, SyntaxException {
+        if (request == null) {
+            throw new IOException("request not set");
+        }
+        if (request.getURI() == null) {
+            throw new IOException("request URI not set");
+        }
         if (transformer == null) {
             throw new IOException("style sheet transformer not set");
         }
@@ -266,9 +272,6 @@ public class SimpleSRUClient implements SRUClient {
             session.close();
             session = null;
         }
-                /// ?
-        //if (processor != null)    processor.close();
-
     }
 }
 

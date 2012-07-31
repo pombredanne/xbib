@@ -62,6 +62,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
     private LinkedList<XMLEvent> recordData;
     private LinkedList<XMLEvent> extraRecordData;
     private boolean echo;
+    private boolean isRecordIdentifier;
 
     public SearchRetrieveFilterReader(SearchRetrieve request, SearchRetrieveResponse response) {
         this.request = request;
@@ -86,49 +87,64 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
     @Override
     public void startElement(String uri, String localname, String qname, Attributes atts)
             throws SAXException {
-        if (!recordData.isEmpty()) {
-            ListIterator attributes = getAttributes(atts);
-            ListIterator namespaces = getNamespaces(namespaceContext);
-            recordData.add(eventFactory.createStartElement(toQName(uri, qname), attributes, namespaces));
-        }
-        if (!extraRecordData.isEmpty()) {
-            ListIterator attributes = getAttributes(atts);
-            ListIterator namespaces = getNamespaces(namespaceContext);
-            extraRecordData.add(eventFactory.createStartElement(toQName(uri, qname), attributes, namespaces));
-        }
         if (SRU.NS_URI.equals(uri)) {
-                    switch (localname) {
-                        case "record":
-                            recordPacking = null;
-                            recordSchema = null;
-                            recordIdentifier = null;
-                            recordPosition = 0;
-                            response.beginRecord();
-                            break;
-                        case "recordData":
-                            recordData.add(eventFactory.createStartDocument());
-                            break;
-                        case "extraRecordData":
-                            extraRecordData.add(eventFactory.createStartDocument());
-                            break;
-                        case "echoedSearchRetrieveRequest":
-                            echo = true;
-                            break;
+            switch (localname) {
+                case "record":
+                    recordPacking = null;
+                    recordSchema = null;
+                    recordIdentifier = null;
+                    recordPosition = 0;
+                    response.beginRecord();
+                    break;
+                case "recordData": {
+                    recordData.add(eventFactory.createStartDocument());
+                    ListIterator<Namespace> namespaces = getNamespaces(namespaceContext);
+                    while (namespaces.hasNext()) {
+                        Namespace ns = namespaces.next();
+                        recordData.add(eventFactory.createNamespace(ns.getPrefix(), ns.getNamespaceURI()));
                     }
+                    break;
+                }
+                case "extraRecordData": {
+                    extraRecordData.add(eventFactory.createStartDocument());
+                    ListIterator<Namespace> namespaces = getNamespaces(namespaceContext);
+                    while (namespaces.hasNext()) {
+                        Namespace ns = namespaces.next();
+                        extraRecordData.add(eventFactory.createNamespace(ns.getPrefix(), ns.getNamespaceURI()));
+                    }
+                    break;
+                }
+                case "echoedSearchRetrieveRequest":
+                    echo = true;
+                    break;
+            }
+        } else {
+            isRecordIdentifier = false;
+            if (!recordData.isEmpty()) {
+                QName q = toQName(uri, qname);
+                recordData.add(eventFactory.createStartElement(q.getPrefix(), q.getNamespaceURI(), q.getLocalPart()));
+                ListIterator<Attribute> attributes = getAttributes(atts);
+                while (attributes.hasNext()) {
+                    Attribute a = attributes.next();
+                    recordData.add(eventFactory.createAttribute(a.getName(), a.getValue()));
+                    isRecordIdentifier = "controlfield".equals(q.getLocalPart()) && "tag".equals(a.getName().getLocalPart()) && "001".equals(a.getValue());
+                }
+            }
+            if (!extraRecordData.isEmpty()) {
+                QName q = toQName(uri, qname);
+                extraRecordData.add(eventFactory.createStartElement(q.getPrefix(), q.getNamespaceURI(), q.getLocalPart()));
+                ListIterator<Attribute> attributes = getAttributes(atts);
+                while (attributes.hasNext()) {
+                    Attribute a = attributes.next();
+                    extraRecordData.add(eventFactory.createAttribute(a.getName(), a.getValue()));
+                }
+            }
         }
         super.startElement(uri, localname, qname, atts);
     }
 
     @Override
     public void endElement(String uri, String localname, String qname) throws SAXException {
-        if (!recordData.isEmpty()) {
-            ListIterator namespaces = getNamespaces(namespaceContext);
-            recordData.add(eventFactory.createEndElement(toQName(uri, qname), namespaces));
-        }
-        if (!extraRecordData.isEmpty()) {
-            ListIterator namespaces = getNamespaces(namespaceContext);
-            extraRecordData.add(eventFactory.createEndElement(toQName(uri, qname), namespaces));
-        }
         if (SRU.NS_URI.equals(uri)) {
             if ("recordPacking".equals(localname)) {
                 recordPacking = content;
@@ -147,17 +163,33 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
             } else if ("recordIdentifier".equals(localname)) {
                 recordIdentifier = content;
             } else if ("record".equals(localname)) {
-                response.recordMetadata(recordSchema, recordPacking, recordIdentifier,
-                        recordPosition);
+                response.recordMetadata(recordSchema, recordPacking, recordIdentifier, recordPosition);
                 response.endRecord();
             } else if ("echoedSearchRetrieveRequest".equals(localname)) {
                 echo = false;
             } else if ("version".equals(localname) && !echo) {
                 response.version(content);
             } else if ("numberOfRecords".equals(localname)) {
-                int n = Integer.parseInt(content);
+                int n = -1;
+                try {
+                    n = Integer.parseInt(content);
+                } catch (NumberFormatException e) {
+                    // drop                    
+                }
                 response.numberOfRecords(n);
                 response.addResponseParameter("X-SRU-numberOfRecords", content);
+            }
+        } else {
+            if (!recordData.isEmpty()) {
+                QName q = toQName(uri, qname);
+                recordData.add(eventFactory.createEndElement(q.getPrefix(), q.getNamespaceURI(), q.getLocalPart()));
+                if (isRecordIdentifier && recordIdentifier == null) {
+                    recordIdentifier = content;
+                }
+            }
+            if (!extraRecordData.isEmpty()) {
+                QName q = toQName(uri, qname);
+                recordData.add(eventFactory.createEndElement(q.getPrefix(), q.getNamespaceURI(), q.getLocalPart()));
             }
         }
         super.endElement(uri, localname, qname);
@@ -224,7 +256,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
         }
         return list.listIterator();
     }
-    
+
     private ListIterator<Namespace> getNamespaces(SimpleNamespaceContext namespaceContext) {
         List<Namespace> namespaces = new LinkedList();
         String defaultNamespaceUri = namespaceContext.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
@@ -237,5 +269,5 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
         }
         return namespaces.listIterator();
     }
-
+    
 }

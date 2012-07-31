@@ -219,8 +219,7 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
                 if (e.isNamespace()) {
                     Namespace ns = (Namespace) e;
                     if ("recordPosition".equals(ns.getPrefix())) {
-                        it.previous();
-                        events.add(eventFactory.createNamespace("recordIdentifier", recordIdentifier));
+                        it.add(eventFactory.createNamespace("recordIdentifier", recordIdentifier));
                         return;
                     }
                 }
