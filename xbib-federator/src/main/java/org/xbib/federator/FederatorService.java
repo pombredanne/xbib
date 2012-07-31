@@ -244,7 +244,7 @@ public class FederatorService {
                 ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
                 ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
             } else if (e.isNamespace()) {
-                // re-map namespace sand other nasty things
+                // disguised namespace  other nasty things
                 String prefix = ((Namespace) e).getPrefix();
                 String nsURI = ((Namespace) e).getNamespaceURI();
                 switch (prefix) {

@@ -36,7 +36,10 @@ import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.marc.FieldDesignator;
 import org.xbib.marc.Iso2709Reader;
@@ -83,7 +86,8 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
             // emit additional parameter values for federating disguised as "namespace"
             events.add(eventFactory.createNamespace("format", format));
             events.add(eventFactory.createNamespace("type", type));
-            events.add(eventFactory.createNamespace("id", recordPosition + "_" + response.getOrigin().getHost() ));            
+            events.add(eventFactory.createNamespace("id", recordPosition + "_" + response.getOrigin().getHost()));
+            // disguised namespaces for SRU
             events.add(eventFactory.createNamespace("recordSchema", recordSchema));
             events.add(eventFactory.createNamespace("recordPacking", recordPacking));
             // no recordIdentifier possible here
@@ -135,7 +139,12 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
         Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             if (designator != null && designator.getData() != null) {
-                events.add(eventFactory.createCharacters(decode(designator.getData())));
+                String s = decode(designator.getData());
+                // plugin recordIdentifier to the disguised namespaces
+                if ("001".equals(designator.getTag())) {
+                    plugRecordIdentifier(events, s);
+                }
+                events.add(eventFactory.createCharacters(s));
             }
             events.add(eventFactory.createEndElement(recordSchema, nsURI, "controlfield"));
         }
@@ -150,7 +159,7 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
                 events.add(eventFactory.createAttribute("tag", designator.getTag()));
                 if (designator.getIndicator() != null) {
                     for (int i = 0; i < designator.getIndicator().length(); i++) {
-                        events.add(eventFactory.createAttribute("ind" + (i + 1), 
+                        events.add(eventFactory.createAttribute("ind" + (i + 1),
                                 designator.getIndicator().substring(i, i + 1)));
                     }
                 }
@@ -199,6 +208,23 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
             return s;
         } catch (UnsupportedEncodingException ex) {
             return s;
+        }
+    }
+
+    private void plugRecordIdentifier(Collection<XMLEvent> events, String recordIdentifier) {
+        if (events instanceof List) {
+            ListIterator<XMLEvent> it = ((List) events).listIterator(events.size());
+            while (it.hasPrevious()) {
+                XMLEvent e = it.previous();
+                if (e.isNamespace()) {
+                    Namespace ns = (Namespace) e;
+                    if ("recordPosition".equals(ns.getPrefix())) {
+                        it.previous();
+                        events.add(eventFactory.createNamespace("recordIdentifier", recordIdentifier));
+                        return;
+                    }
+                }
+            }
         }
     }
 }

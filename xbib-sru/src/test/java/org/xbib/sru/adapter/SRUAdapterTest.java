@@ -117,8 +117,11 @@ public class SRUAdapterTest {
                     adapter.connect();
                     adapter.setStylesheetTransformer(transformer);
                     SearchRetrieve request = new SearchRetrieve();
-                    request.setURI(adapter.getURI()).setVersion(adapter.getVersion()).
-                            setRecordPacking(adapter.getRecordPacking()).setRecordSchema(adapter.getRecordSchema()).setQuery(query).setStartRecord(from).setMaximumRecords(size);
+                    request.setURI(adapter.getURI())
+                            .setVersion(adapter.getVersion())
+                            .setRecordPacking(adapter.getRecordPacking())
+                            .setRecordSchema(adapter.getRecordSchema())
+                            .setQuery(query).setStartRecord(from).setMaximumRecords(size);
                     adapter.searchRetrieve(request, response);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
