@@ -29,71 +29,23 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.federator;
+package org.xbib.federator.action;
 
-import java.util.Collection;
-import java.util.Map;
-import javax.xml.stream.events.XMLEvent;
+import java.util.concurrent.Callable;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
-public abstract class AbstractAction implements Action {
+public interface Action extends Callable<Action> {
 
-    private String group;
-    protected Map<String, Object> params;
-    protected SearchRetrieveResponse response;
-    protected StylesheetTransformer transformer;
-    protected long count = 0L;
-
-    @Override
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public Action setParams(Map<String, Object> params) {
-        this.params = params;
-        return this;
-    }
-
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    @Override
-    public Action setResponse(SearchRetrieveResponse response) {
-        this.response = response;
-        return this;
-    }
+    Action setBase(String base);
     
-    @Override
-    public SearchRetrieveResponse getResponse() {
-        return response;
-    }
+    Action setGroup(String group);
 
-    @Override
-    public Action setTransformer(StylesheetTransformer transformer) {
-        this.transformer = transformer;
-        return this;
-    }
+    Action setResponse(SearchRetrieveResponse response);
 
-    @Override
-    public long getCount() {
-        return count;
-    }
-
-    protected String get(Map<String, Object> map, String key, String defaultValue) {
-        return map.containsKey(key) ? map.get(key).toString() : defaultValue;
-    }
-
-    protected int get(Map<String, Object> map, String key, int defaultValue) {
-        return map.containsKey(key) ? (Integer) map.get(key) : defaultValue;
-    }
-
-    protected boolean get(Map<String, Object> map, String key, boolean defaultValue) {
-        return map.containsKey(key) ? (Boolean) map.get(key) : defaultValue;
-    }
+    SearchRetrieveResponse getResponse();
+    
+    Action setTransformer(StylesheetTransformer transformer);
+    
+    long getCount();
 }

@@ -46,6 +46,7 @@ import org.xbib.io.iso23950.AbstractSearchRetrieve;
 import org.xbib.io.iso23950.Diagnostics;
 import org.xbib.io.iso23950.InitOperation;
 import org.xbib.io.iso23950.Record;
+import org.xbib.io.iso23950.RecordIdentifierSetter;
 import org.xbib.io.iso23950.ZAdapter;
 import org.xbib.io.iso23950.ZConnection;
 import org.xbib.io.iso23950.ZSession;
@@ -66,6 +67,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
     private boolean connected;
     private boolean authenticated;
     private StylesheetTransformer transformer;
+    private RecordIdentifierSetter setter;
 
     @Override
     public void connect() {
@@ -83,8 +85,15 @@ public abstract class ZBaseAdapter implements ZAdapter {
     }
 
     @Override
-    public void setStylesheetTransformer(StylesheetTransformer transformer) {
+    public ZAdapter setStylesheetTransformer(StylesheetTransformer transformer) {
         this.transformer = transformer;
+        return this;
+    }
+    
+    @Override
+    public ZAdapter setRecordIdentifierSetter(RecordIdentifierSetter setter) {
+        this.setter = setter;
+        return this;
     }
 
     /**
@@ -98,7 +107,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
      * @throws IOException
      */
     @Override
-    public void searchRetrieve(AbstractSearchRetrieve request, OutputStream records, OutputStream errors)
+    public ZAdapter searchRetrieve(AbstractSearchRetrieve request, OutputStream records, OutputStream errors)
             throws Diagnostics, IOException {
         try {
             connectInternal();
@@ -114,6 +123,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
         } finally {
             disconnectInternal();
         }
+        return this;
     }
 
     /**
@@ -125,7 +135,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
      * @throws IOException
      */
     @Override
-    public void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response)
+    public ZAdapter searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response)
             throws Diagnostics, IOException {
         if (transformer == null) {
             throw new Diagnostics(1, "no stylesheet transformer installed");
@@ -152,6 +162,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
             // stream encoding, must always be octet! 
             InputSource source = new InputSource(new InputStreamReader(in, "ISO-8859-1"));
             SRUFilterReader reader = new SRUFilterReader(response, getEncoding());
+            reader.setRecordIdentifierSetter(setter);
             reader.setProperty(Iso2709Reader.FORMAT, getFormat());
             reader.setProperty(Iso2709Reader.TYPE, getType());
             transformer.setSource(new SAXSource(reader, source))
@@ -163,6 +174,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
         } finally {
             disconnectInternal();
         }
+        return this;
     }
 
     protected void connectInternal() throws IOException {

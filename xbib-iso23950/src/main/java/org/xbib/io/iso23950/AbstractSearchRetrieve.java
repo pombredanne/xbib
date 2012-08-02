@@ -149,6 +149,10 @@ public abstract class AbstractSearchRetrieve implements Request,
         if (timeout > 0) {
             session.getConnection().setTimeout(timeout);
         }
+        if (offset < 1) {
+            // Z39.50 bails out when offset = 0
+            this.offset = 1;
+        }
         this.resultCount = -1;
         long t0 = System.currentTimeMillis();
         if (!session.isOpen()) {

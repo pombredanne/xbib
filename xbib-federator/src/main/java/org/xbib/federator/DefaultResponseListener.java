@@ -31,6 +31,7 @@
  */
 package org.xbib.federator;
 
+import org.xbib.federator.action.Action;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 

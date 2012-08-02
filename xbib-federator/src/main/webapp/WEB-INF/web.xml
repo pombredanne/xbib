@@ -64,25 +64,21 @@
         <servlet-name>REST</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
-            <param-name>documentpagemods.stylesheet</param-name>
-            <param-value>xsl/es-mods-xml.xsl</param-value>
+            <param-name>federator.base</param-name>
+            <param-value>tag:fernleihe@hbz-nrw.de,2012-08:federator</param-value>
         </init-param>
         <init-param>
-            <param-name>documentpagexhtml.stylesheet</param-name>
-            <param-value>xsl/es-mods-xml.xsl,xsl/es-mods-lia-html.xsl</param-value>
+            <param-name>federator.threads</param-name>
+            <param-value>25</param-value>
         </init-param>
         <init-param>
-            <param-name>cqlpagemods.stylesheet</param-name>
-            <param-value>xsl/es-mods-xml.xsl</param-value>
-        </init-param>
-        <init-param>
-            <param-name>cqlpagexhtml.stylesheet</param-name>
-            <param-value>xsl/es-mods-xml.xsl,xsl/es-mods-lia-html.xsl</param-value>
+            <param-name>federator.stylesheet.path</param-name>
+            <param-value>xsl</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-        <description>Search/Retrieve by URI</description>
+        <description>Elasticsearch SRU</description>
         <servlet-name>SRUServlet</servlet-name>
         <servlet-class>org.xbib.sru.SRUServlet</servlet-class>
         <init-param>
@@ -222,7 +218,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>REST</servlet-name>
-        <url-pattern>/services/*</url-pattern>
+        <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SRUServlet</servlet-name>

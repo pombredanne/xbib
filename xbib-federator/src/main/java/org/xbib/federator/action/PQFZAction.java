@@ -29,9 +29,10 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.federator;
+package org.xbib.federator.action;
 
 import org.xbib.io.iso23950.PQFSearchRetrieve;
+import org.xbib.io.iso23950.RecordIdentifierSetter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.iso23950.ISO23950SRUAdapter;
@@ -45,14 +46,14 @@ public class PQFZAction extends AbstractAction {
     public Action call() {
         String query = get(params, "query", null);
         if (query == null) {
-            logger.warn("query not set, not executing: {}", params);
+            logger.warn("query parameter not set, not executing: {}", params);
             return null;
         }
         if (response == null) {
             logger.warn("response not set, not executing: {}", params);
             return null;
         }
-        String name = get(params, "name", "default");
+        final String name = get(params, "name", "default");
         ISO23950SRUAdapter adapter = ISO23950SRUAdapterFactory.getAdapter(name);
         PQFSearchRetrieve request = new PQFSearchRetrieve();
         try {
@@ -64,6 +65,13 @@ public class PQFZAction extends AbstractAction {
             adapter.setStylesheetTransformer(transformer);
             request.setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setFrom(from).setSize(size);
             response.setOrigin(adapter.getURI());
+            adapter.setRecordIdentifierSetter(new RecordIdentifierSetter() {
+
+                @Override
+                public String setRecordIdentifier(String identifier) {
+                    return base + "/" + name + "#" + identifier.trim(); 
+                }
+            });
             adapter.searchRetrieve(request, response, from, size, transformer);
         } catch (Exception e) {
             logger.warn(adapter.getURI().getHost() + " failure: " + e.getMessage(), e);
@@ -73,4 +81,5 @@ public class PQFZAction extends AbstractAction {
         this.count = request.getResultCount();
         return this;
     }
+    
 }

@@ -34,9 +34,7 @@ package org.xbib.io.iso23950;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
-import javax.xml.stream.events.XMLEvent;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
@@ -53,15 +51,17 @@ public interface ZAdapter {
     
     void disconnect();
 
-    void setStylesheetTransformer(StylesheetTransformer transformer);
+    ZAdapter setStylesheetTransformer(StylesheetTransformer transformer);
         
     List<String> getDatabases();
     
     String getPreferredRecordSyntax();
 
-    void searchRetrieve(AbstractSearchRetrieve request, OutputStream records, OutputStream errors) 
+    ZAdapter searchRetrieve(AbstractSearchRetrieve request, OutputStream records, OutputStream errors) 
             throws Diagnostics, IOException;
 
-    void searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response) 
+    ZAdapter searchRetrieve(AbstractSearchRetrieve request, SearchRetrieveResponse response) 
             throws Diagnostics, IOException;
+    
+    ZAdapter setRecordIdentifierSetter(RecordIdentifierSetter setter);
 }

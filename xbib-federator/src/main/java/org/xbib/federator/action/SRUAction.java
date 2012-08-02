@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.federator;
+package org.xbib.federator.action;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,7 +39,6 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SRU;
 import org.xbib.sru.SRUAdapter;
 import org.xbib.sru.SRUResponseAdapter;
 import org.xbib.sru.SearchRetrieve;
@@ -61,7 +60,7 @@ public class SRUAction extends AbstractAction {
             logger.warn("response not set, not executing: {}", params);
             return null;
         }
-        String name = get(params, "name", "default");
+        final String name = get(params, "name", "default");
         final int from = get(params, "from", 1);
         final int size = get(params, "size", 10);
         final SRUAdapter adapter = SRUAdapterFactory.getAdapter(name);
@@ -126,10 +125,11 @@ public class SRUAction extends AbstractAction {
                                 it.next(); // step to element
                                 it.next();
                                 // disguised namespaces for SRU.
-                                it.add(eventFactory.createNamespace("recordSchema", recordSchema));
-                                it.add(eventFactory.createNamespace("recordPacking", recordPacking));
-                                it.add(eventFactory.createNamespace("recordIdentifier", recordIdentifier));
-                                it.add(eventFactory.createNamespace("recordPosition", Integer.toString(recordPosition)));
+                                it.add(eventFactory.createProcessingInstruction("recordSchema", recordSchema));
+                                it.add(eventFactory.createProcessingInstruction("recordPacking", recordPacking));
+                                it.add(eventFactory.createProcessingInstruction("recordIdentifier", 
+                                        getBase() + "/" + name + "#" + recordIdentifier.trim()));
+                                it.add(eventFactory.createProcessingInstruction("recordPosition", Integer.toString(recordPosition)));
                                 break;
                             }
                         }

@@ -36,6 +36,7 @@ import java.util.Properties;
 import javax.xml.transform.TransformerException;
 import org.xbib.io.iso23950.CQLSearchRetrieve;
 import org.xbib.io.iso23950.PQFSearchRetrieve;
+import org.xbib.io.iso23950.RecordIdentifierSetter;
 import org.xbib.io.iso23950.ZAdapter;
 import org.xbib.io.iso23950.ZAdapterFactory;
 import org.xbib.logging.Logger;
@@ -57,6 +58,7 @@ public class ISO23950SRUAdapter extends SRUPropertiesAdapter {
     private final String stylesheet;
     private final String format;
     private final String type;
+    private RecordIdentifierSetter setter;
 
     public ISO23950SRUAdapter(Properties properties) {
         super(properties);
@@ -69,6 +71,11 @@ public class ISO23950SRUAdapter extends SRUPropertiesAdapter {
         this.type = properties.getProperty("type");
     }
 
+    public ISO23950SRUAdapter setRecordIdentifierSetter(RecordIdentifierSetter setter) {
+        this.setter = setter;
+        return this;
+    }    
+    
     /**
      * CQL search
      *
@@ -184,7 +191,8 @@ public class ISO23950SRUAdapter extends SRUPropertiesAdapter {
                     setResultSetName(resultSetName).
                     setElementSetName(elementSetName).
                     setFrom(from).setSize(size);
-            zAdapter.searchRetrieve(request, response);
+            zAdapter.setRecordIdentifierSetter(setter)
+                    .searchRetrieve(request, response);
             long t1 = System.currentTimeMillis();
             response.addResponseParameter("X-SRU-version",
                     version);
