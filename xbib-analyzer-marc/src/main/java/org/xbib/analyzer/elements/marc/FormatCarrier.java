@@ -29,14 +29,38 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.elements.pica;
+package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.addons.PicaElement;
+import java.util.Map;
+import org.xbib.analyzer.marc.MARCBuilder;
+import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.analyzer.marc.MARCValueMapper;
+import org.xbib.elements.dublincore.DublinCoreTerms;
+import org.xbib.marc.FieldCollection;
 
-public class Source extends PicaElement {
-    private final static Source instance = new Source();
-    
-    public static Source getInstance() {
+public class FormatCarrier extends MARCElement {
+
+    private final static FormatCarrier instance = new FormatCarrier();
+    private static Map<String,String> format = new MARCValueMapper("format").getMap();
+    private static Map<String,String> carriers = new MARCValueMapper("carriers").getMap();
+
+    private FormatCarrier() {
+    }
+
+    public static MARCElement getInstance() {
         return instance;
+    }
+
+    public Map<String,String> getFormats() {
+        return format;
+    }
+
+    public Map<String,String> getCarriers() {
+        return carriers;
+    }
+
+    @Override
+    public void build(MARCBuilder b, FieldCollection key, String value) {
+        b.context().getResource(b.context().resource(), DublinCoreTerms.FORMAT).addProperty(DCTERMS_MEDIUM, value);
     }
 }

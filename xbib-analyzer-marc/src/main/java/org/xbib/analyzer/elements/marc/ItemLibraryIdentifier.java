@@ -1,10 +1,10 @@
-package org.xbib.analyzer.marc;
+package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.addons.MABBuilder;
-import org.xbib.analyzer.marc.addons.MABElement;
-import org.xbib.analyzer.marc.addons.MABContext;
 import java.util.List;
 import java.util.Map;
+import org.xbib.analyzer.marc.MARCBuilder;
+import org.xbib.analyzer.marc.MARCContext;
+import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.elements.ValueMapFactory;
 import org.xbib.elements.items.Access;
 import org.xbib.elements.items.Authority;
@@ -14,11 +14,11 @@ import org.xbib.elements.items.Library;
 import org.xbib.elements.items.Service;
 import org.xbib.elements.items.TransportMethod;
 import org.xbib.marc.Field;
-import org.xbib.marc.FieldList;
+import org.xbib.marc.FieldCollection;
 
-public class ItemLibraryIdentifier extends MABElement {
+public class ItemLibraryIdentifier extends MARCElement {
 
-    private final static MABElement element = new ItemLibraryIdentifier();
+    private final static MARCElement element = new ItemLibraryIdentifier();
     private final String defaultProvider = "DE-605";
     private final static Map<String, String> sigel2isil = ValueMapFactory.getAssocStringMap("sigel2isil");
     private final static Map<String, Map<String, List<String>>> product2isil =
@@ -27,12 +27,12 @@ public class ItemLibraryIdentifier extends MABElement {
     private ItemLibraryIdentifier() {
     }
 
-    public static MABElement getInstance() {
+    public static MARCElement getInstance() {
         return element;
     }
 
     @Override
-    public void build(MABBuilder b, FieldList key, String value) {
+    public void build(MARCBuilder b, FieldCollection key, String value) {
         boolean servicecreated = false;
         for (Field d : key) {
             switch (d.getSubfieldId()) {
@@ -50,7 +50,7 @@ public class ItemLibraryIdentifier extends MABElement {
         }
     }
 
-    private String resolveIdentifier(MABBuilder b, String value) {
+    private String resolveIdentifier(MARCBuilder b, String value) {
         if (product2isil.containsKey(value)) {
             for (String isil : product2isil.get(value).get("authorized")) {
                 createISIL(b, isil, value);
@@ -64,7 +64,7 @@ public class ItemLibraryIdentifier extends MABElement {
         return isil;
     }
 
-    private void createISIL(MABBuilder b, String isil, String provider) {
+    private void createISIL(MARCBuilder b, String isil, String provider) {
         b.context().getResource(b.context().resource(), IDENTIFIER).addProperty(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
         if (provider == null) {
             provider = defaultProvider;
@@ -76,8 +76,8 @@ public class ItemLibraryIdentifier extends MABElement {
         b.context().access(new Access().name(provider, authority).library(new Library().library(isil, Authority.ISIL)));
     }
 
-    private void createItemService(MABBuilder b, String itemStatus) {
-        MABContext lia = b.context();
+    private void createItemService(MARCBuilder b, String itemStatus) {
+        MARCContext lia = b.context();
         String format = b.context().getFormat();
         boolean continuing = b.context().getContinuing();
         if (itemStatus == null) {

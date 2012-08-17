@@ -33,8 +33,8 @@ package org.xbib.analyzer.elements.marc;
 
 import org.xbib.analyzer.marc.MARCElement;
 
-public class PersonName extends MARCElement {
-    private final static PersonName instance = new PersonName();
+public class Subject extends MARCElement {
+    private final static Subject instance = new Subject();
     
     public static MARCElement getInstance() {
         return instance;

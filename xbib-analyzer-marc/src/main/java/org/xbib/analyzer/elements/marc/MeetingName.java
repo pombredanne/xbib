@@ -29,34 +29,14 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.marc;
+package org.xbib.analyzer.elements.marc;
 
-import java.util.Map;
-import org.xbib.marc.FieldList;
+import org.xbib.analyzer.marc.MARCElement;
 
-public class FormatCarrier extends MARCElement {
-
-    private final static FormatCarrier instance = new FormatCarrier();
-    private static Map<String,String> format = new MARCValueMapper("format").getMap();
-    private static Map<String,String> carriers = new MARCValueMapper("carriers").getMap();
-
-    private FormatCarrier() {
-    }
-
+public class MeetingName extends MARCElement {
+    private final static MeetingName instance = new MeetingName();
+    
     public static MARCElement getInstance() {
         return instance;
-    }
-
-    public Map<String,String> getFormats() {
-        return format;
-    }
-
-    public Map<String,String> getCarriers() {
-        return carriers;
-    }
-
-    @Override
-    public void build(MARCBuilder b, FieldList key, String value) {
-        b.context().getResource(b.context().resource(), FORMAT).addProperty(DCTERMS_MEDIUM, value);
     }
 }
