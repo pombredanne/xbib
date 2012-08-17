@@ -32,6 +32,7 @@
 package org.xbib.elements.dublincore;
 
 import java.io.StringReader;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.output.ElementOutput;
@@ -40,7 +41,7 @@ import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
-public class DublinCoreBuilderTest {
+public class DublinCoreBuilderTest extends Assert {
 
     private static final Logger logger = LoggerFactory.getLogger(DublinCoreBuilderTest.class.getName());
     
@@ -73,5 +74,6 @@ public class DublinCoreBuilderTest {
         try (KeyValueReader reader = new KeyValueReader(sr).addListener(listener)) {
             while (reader.readLine() != null);
         }
+        assertEquals(output.getCounter() > 0, true);
     }
 }

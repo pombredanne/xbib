@@ -1,7 +1,147 @@
 {
     "Source" : {
         "values" : [
-            "001"
+        "001B0,001Bt"
         ]
+    },
+    "RecordIdentifier" : {
+        "values"  :[ "003@0"]
+    },
+    "Identifier" : {
+        "values" : [
+        "008Hd,008He"
+        ],
+        "subfields" : {
+            "a" : "identifierAuthorityBIK",
+            "b" : "identifierAuthorityDBS",
+            "c" : "identifierAuthorityLocal",
+            "d" : "identifierAuthoritySigel",
+            "e" : "identifierAuthorityISIL",
+            "f" : "identifierAuthorityEZB",
+            "g" : "identifierAuthorityOCLC",
+            "h" : "identifierAuthorityISILOther"
+        }
+    },
+    "ShortName" : {
+        "values" : [
+        "029@4,029@a"
+        ]
+    },
+    "Name" : {
+        "values" : [
+        "029Aa"
+        ],
+        "subfields" : {
+            "a" : "name"
+        }
+    },
+    "Location" : {
+        "values" : [
+        "032P2,032Pa,032Pb,032Pd,032Pe,032Pf,032Pi,032Pj,032Pk,032Pl,032Pn,032Pp",
+        "032P2,032Pa,032Pb,032Pd,032Pe,032Pf,032Pi,032Pj,032Pn,032Pp"
+        ],
+        "subfields" : {
+            "a" : "locationStreet",
+            "b" : "locationPlace",
+            "d" : "locationCountryCode",
+            "e" : "locationZipCode",
+            "f" : "locationState",
+            "g" : "locationPostBox",
+            "h" : "locationBuilding",
+            "i" : "openingHours",
+            "j" : "openingHoursComments"
+        }
+    },
+    "InterLibrary" : {
+        "values" : [
+        "035Ia,035Ic,035Ie"
+        ],
+        "subfields" : {
+            "a" : "libraryRegion",
+            "b" : "libraryServiceType",
+            "c" : "libraryGroup",
+            "e" : "libraryServiceMode"
+        }
+    },
+    "Communication" : {
+        "values" : [
+        "035Ba,035Bc,035Bd,035Be,035Bf,035Bk,035Bl"
+        ],
+        "subfields" : {
+            "a" : "code", /* S=Sitz, P=Postanschrift, R=Rechnungsanschrift, W=weitere */
+            "d" : "phoneCountryPrefix",
+            "e" : "phoneLocationPrefix",
+            "f" : "phoneNumber",
+            "k" : "email",
+            "l" : "communicationComment"
+        }
+    },
+    "Organization" : {
+        "values" : [
+        "035Ea,035Eb,035Ef,035Eg,035Eh,035Ei"
+        ],
+        "subfields" : {
+            "a" : "status",
+            "b" : "selector",
+            "c" : "zdbReportMarker",
+            "d" : "category",
+            "e" : "zdbRmportMarker",
+            "f" : "organizationType",
+            "g" : "fundingOrganization",
+            "h" : "organizationSize",
+            "i" : "serviceRestrictions",
+            "k" : "formerSigel"
+        },
+        "organizationType" : {
+            "11" : "Nationalbibliothek",
+            "15" : "Zentrale Fachbibliothek",
+            "21" : "Regionalbibliothek",
+            "33" : "Öffentliche Bibliothek",
+            "36" : "Öffentliche Bibliothek für besondere Benutzergruppen",
+            "39" : "Fahrbibliothek",
+            "60" : "Zentrale Universitätsbibliothek",
+            "65" : "Abteilungsbibliothek, Institutsbibliothek, Fachbereichsbibliothek (Universität)",
+            "70" : "Zentrale Hochschulbibliothek, nicht Universität",
+            "73" : "Abteilungsbibliothek, Fachbereichsbibliothek (Hochschule, nicht Universität)",
+            "81" : "Wissenschaftliche Spezialbibliothek",
+            "85" : "Archiv (nicht Archivbibliothek)",
+            "86" : "Museum (nicht Museumsbibliothek)",
+            "87" : "Verlag",
+            "88" : "Sonstige Einrichtung",
+            "89" : "Paket elektronischer Ressourcen",
+            "91" : "Fachstelle für Bibliotheken",
+            "94" : "Regionaler Zentralkatalog / Leihverkehrszentrale",
+            "95" : "Virtuelle Bibliothek / Portal",
+            "96" : "Verbundsystem/ -katalog",
+            "98" : "Serviceeinrichtung"
+        },
+        "fundingOrganization" : {
+            "01" : "Bundesrepublik Deutschland",
+            "02" : "Land",
+            "03" : "Kreis",
+            "04" : "Gemeinde",
+            "05" : "Sonstige Gebietskörperschaft",
+            "06" : "Sonstige öffentliche Trägerschaft",
+            "07" : "Körperschaft oder Stiftung des öffentlichen Rechts",
+            "08" : "Körperschaft oder Stiftung des privaten Rechts",
+            "09" : "Ev. Kirche",
+            "10" : "Kath. Kirche",
+            "11" : "Sonstige Religionsgemeinschaften",
+            "12" : "Private Trägerschaft",
+            "13" : "Ausländische Trägerschaft"        
+        },
+        "organizationSize" : {
+            "01" : "bis 1.000",
+            "02" : "1.001 - 2.000",
+            "03" : "2.001 - 3.000",
+            "04" : "3.001 - 5.000",
+            "05" : "5.001 - 10.000",
+            "06" : "10.001 - 30.000",
+            "07" : "30.001 - 100.000",
+            "08" : "100.001 - 300.000",
+            "09" : "300.001 - 1.000.000",
+            "10" : "1.000.001 und mehr",
+            "11" : "Einrichtung ohne Bestand"            
+        }
     }
 }

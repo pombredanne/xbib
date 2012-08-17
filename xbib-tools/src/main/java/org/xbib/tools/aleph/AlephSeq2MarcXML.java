@@ -62,8 +62,8 @@ import org.xbib.io.SplitWriter;
 import org.xbib.io.file.Finder;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.DefaultMarcXchangeListener;
-import org.xbib.marc.FieldDesignator;
+import org.xbib.marc.MarcXchangeAdapter;
+import org.xbib.marc.Field;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.addons.AlephSequentialReader;
 import org.xbib.tools.opt.OptionParser;
@@ -218,14 +218,14 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             try (SplitWriter bw = new SplitWriter(newWriter(watcher), BUFFER_SIZE)) {
                 final Iso2709Reader reader = new Iso2709Reader();
                 final StreamResult target = new StreamResult(bw);
-                reader.setMarcXchangeListener(new DefaultMarcXchangeListener() {
+                reader.setMarcXchangeListener(new MarcXchangeAdapter() {
 
                     @Override
                     public void endRecord() {
                         if (enable != null) {
                             for (Integer n : enable) {
                                 if (n == 941) {
-                                    FieldDesignator f1 = new FieldDesignator("941", "  ");
+                                    Field f1 = new Field("941", "  ");
                                     f1.setSubfieldId("d");
                                     reader.getAdapter().beginDataField(f1);
                                     reader.getAdapter().beginSubField(f1);
@@ -234,7 +234,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                                     reader.getAdapter().endDataField(null);
                                 } else if (n == 956) {
                                     if (linkformat != null) {
-                                        FieldDesignator f2 = new FieldDesignator("956", "  ");
+                                        Field f2 = new Field("956", "  ");
                                         f2.setSubfieldId("u");
                                         reader.getAdapter().beginDataField(f2);
                                         reader.getAdapter().beginSubField(f2);

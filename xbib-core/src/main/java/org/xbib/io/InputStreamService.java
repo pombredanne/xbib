@@ -33,11 +33,16 @@ package org.xbib.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 public class InputStreamService {
+
+    public static int DEFAULT_BUFFER_SIZE = 8192;
 
     private InputStreamService() {
     }
@@ -53,5 +58,19 @@ public class InputStreamService {
             }
         }
         return null;
+    }
+
+    public static String getString(InputStream input, String encoding) throws IOException {
+        return getString(new InputStreamReader(input,encoding));
+    }
+    
+    public static String getString(Reader input) throws IOException {
+        StringWriter output = new StringWriter();
+        char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+        int n;
+        while ((n = input.read(buffer))!= -1) {
+            output.write(buffer, 0, n);
+        }
+        return output.toString();
     }
 }

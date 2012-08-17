@@ -36,11 +36,16 @@ import org.xbib.elements.Element;
 
 public abstract class DublinCoreElement implements Element {
     
-    protected Map params;
+    protected Map<String, Object> params;
     
     @Override
-    public void setParameter(Map params) {
+    public void setSettings(Map params) {
         this.params = params;
+    }
+    
+    @Override
+    public Map<String, Object> getSettings() {
+        return params;
     }
     
     @Override

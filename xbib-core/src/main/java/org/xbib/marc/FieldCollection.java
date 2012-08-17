@@ -31,34 +31,44 @@
  */
 package org.xbib.marc;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 
-public class FieldDesignatorList extends ArrayList<FieldDesignator> {
+public class FieldCollection extends LinkedList<Field> {
 
-    public final static FieldDesignatorList FORMAT_KEY = 
-            new FieldDesignatorList("FORMAT");
-    public final static FieldDesignatorList TYPE_KEY = 
-            new FieldDesignatorList("TYPE");            
-    public final static FieldDesignatorList LEADER_KEY =    
-            new FieldDesignatorList("LEADER");
-    
-    public FieldDesignatorList() {
+    public final static FieldCollection FORMAT_KEY =  new FieldCollection("FORMAT");
+    public final static FieldCollection TYPE_KEY =  new FieldCollection("TYPE");            
+    public final static FieldCollection LEADER_KEY =  new FieldCollection("LEADER");
+
+    public FieldCollection() {
         super();
     }
     
-    private FieldDesignatorList(String tag) {
-        super();
-        add(new FieldDesignator(tag));
+    private FieldCollection(String tag) {
+        this();
+        super.add(new Field(tag));
+    }
+
+    public String getDesignators() {
+        StringBuilder sb = new StringBuilder();
+        Collections.sort(this);
+        for (Field field : this) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(field.getDesignator());
+        }
+        return sb.toString();        
     }
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (FieldDesignator d : this) {
+        for (Field field : this) {
             if (sb.length() > 0) {
                 sb.append(',');
             }
-            sb.append(d.toString());
+            sb.append(field.toString());
         }
         return sb.toString();
     }

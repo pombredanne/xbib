@@ -47,8 +47,9 @@ public class ElasticsearchQuerySessionTest {
     public void testDSLQuery() throws Exception {
         OutputStream out = new ByteArrayOutputStream();
         ElasticsearchConnection connection  = ElasticsearchConnection.getInstance();
+        ElasticsearchSession session = connection.createSession();
         QueryResultAction p =  new QueryResultAction();
-        p.setConnection(connection);
+        p.setSession(session);
         p.setTarget(out);
         p.setIndex("test");
         p.setFrom(0);
@@ -59,6 +60,7 @@ public class ElasticsearchQuerySessionTest {
         } catch (NoNodeAvailableException e) {
             //
         } finally {
+            session.close();
             connection.close();
         }
         logger.info(out.toString());
@@ -68,8 +70,9 @@ public class ElasticsearchQuerySessionTest {
     public void testCQLQuery() throws Exception {
         OutputStream out = new ByteArrayOutputStream();
         ElasticsearchConnection connection  = ElasticsearchConnection.getInstance();
+        ElasticsearchSession session = connection.createSession();
         ElasticsearchCQLResultAction p =  new ElasticsearchCQLResultAction();
-        p.setConnection(connection);
+        p.setSession(session);
         p.setTarget(out);
         p.setIndex("test");
         p.setFrom(0);
@@ -80,6 +83,7 @@ public class ElasticsearchQuerySessionTest {
         } catch (NoNodeAvailableException e) {
             // ignore
         } finally {
+            session.close();
             connection.close();
         }
         logger.info(out.toString());

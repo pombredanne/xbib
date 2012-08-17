@@ -49,17 +49,16 @@ import org.xbib.logging.LoggerFactory;
 
 public class QueryResultAction extends AbstractQueryResultAction {
 
-    /**
-     * the logger
-     */
     private static final Logger logger = LoggerFactory.getLogger(QueryResultAction.class.getName());
-    private ElasticsearchConnection connection;
+    private Logger queryLogger;
+    private ElasticsearchSession session;
     private OutputStream out;
     private String filter;
     private String facets;
 
-    public void setConnection(ElasticsearchConnection connection) {
-        this.connection = connection;
+    public void setSession(ElasticsearchSession session) throws IOException {
+        this.session = session;
+        session.setQueryLogger(queryLogger);
         setTimeout(30000L); // default time out
     }
 
@@ -84,6 +83,10 @@ public class QueryResultAction extends AbstractQueryResultAction {
         }
     }
 
+    public void setQueryLogger(Logger queryLogger) {
+        this.queryLogger = queryLogger;
+    }
+
     @Override
     public void searchAndProcess(final String query) throws IOException {
         SearchResponse response = performQuery(query);
@@ -98,7 +101,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
     public void get(String index, String type, String id) throws IOException {
         long t0 = System.currentTimeMillis();
         byte[] message = jsonErrorMessage("no response");
-        ElasticsearchSession session = connection.createSession();
         try {
             GetResponse response = session.getClient().prepareGet(index, type, id).execute().actionGet();
             if (response != null) {
@@ -113,7 +115,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
             logger.error(e.getMessage(), e);
         } finally {
             out.write(message);
-            session.close();
         }
         long t1 = System.currentTimeMillis();
         logger.info("get complete: {}/{}/{} [{}ms]", index, type, id, (t1 - t0));
@@ -121,7 +122,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
 
     public void getAndProcess(String index, String type, String id) throws IOException {
         long t0 = System.currentTimeMillis();
-        ElasticsearchSession session = connection.createSession();
         try {
             GetResponse response = session.getClient().prepareGet(index, type, id).execute().actionGet();
             if (response != null) {
@@ -136,8 +136,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
         } catch (NoNodeAvailableException e) {
             logger.error(e.getMessage(), e);
             processError(jsonErrorMessageStream(e.getMessage()));
-        } finally {
-            session.close();
         }
         long t1 = System.currentTimeMillis();
         logger.info("get(process) complete: {}/{}/{} [{}ms]", index, type, id, (t1 - t0));
@@ -187,8 +185,7 @@ public class QueryResultAction extends AbstractQueryResultAction {
 
     protected SearchResponse performQuery(final String query) throws IOException {
         long t0 = System.currentTimeMillis();
-        ElasticsearchSession session = connection.createSession();
-        
+
         SearchRequestBuilder request = session.getClient().prepareSearch();
         String translated = buildQuery(request, query);
         request.setTimeout(new TimeValue(getTimeout()));
@@ -226,7 +223,7 @@ public class QueryResultAction extends AbstractQueryResultAction {
         } else {
             types.append('*');
         }
-        StringBuilder address = new StringBuilder().append(connection.getClusterName()).append('/').append(indexes).append('/').append(types);
+        StringBuilder address = new StringBuilder().append(indexes).append('/').append(types);
         try {
             SearchResponse response = request.execute().actionGet();
             long t1 = System.currentTimeMillis();
@@ -238,8 +235,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
         } catch (NoNodeAvailableException e) {
             logger.error(e.getMessage(), e);
             return null;
-        } finally {
-            session.close();
         }
     }
 

@@ -31,28 +31,45 @@
  */
 package org.xbib.keyvalue;
 
-public interface KeyValueStreamListener<K,V> {
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
+public class KeyValueStreamLogger<K,V> implements KeyValueStreamListener<K,V> {
+
+    private static final Logger logger = LoggerFactory.getLogger(KeyValueStreamLogger.class.getName());
+    
     /**
      * Begin a key/value stream
      */
-    void begin();
+    @Override
+    public void begin() {
+        logger.info("begin");
+    }
     
     /**
      * Propagate key/value to listener
      * @param key
      * @param value 
      */
-    void keyValue(K key, V value);
+    @Override
+    public void keyValue(K key, V value) {
+        logger.info("key = {} value = {}", key, value);
+    }
     
     /**
      * End a key/value stream
      */
-    void end();
+    @Override
+    public void end() {
+        logger.info("end");
+    }
     
     /**
      * End a key/value stream with an information object
      * @param info 
      */
-    void end(Object info);
+    @Override
+    public void end(Object info) {
+        logger.info("end, info = {}", info);
+    }
 }

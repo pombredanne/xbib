@@ -59,7 +59,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     private char mark = '\u0000';
     private int position = 0;
     private FieldDirectory directory;
-    private FieldDesignator designator;
+    private Field designator;
     private RecordLabel label;
     private boolean datafieldOpen;
     private boolean subfieldOpen;
@@ -187,6 +187,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             }
             contentHandler.endElement(nsUri, RECORD, RECORD);
             if (listener != null) {
+                // emit trailer event, drives record output segmentation
                 listener.trailer(null);
             }
             this.recordOpen = false;
@@ -219,7 +220,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void beginControlField(FieldDesignator designator) {
+    public void beginControlField(Field designator) {
         if (designator == null) {
             return;
         }
@@ -237,7 +238,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void endControlField(FieldDesignator designator) {
+    public void endControlField(Field designator) {
         try {
             if (listener != null) {
                 listener.endControlField(designator);
@@ -266,7 +267,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void beginDataField(FieldDesignator designator) {
+    public void beginDataField(Field designator) {
         if (designator == null) {
             return;
         }
@@ -310,7 +311,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void endDataField(FieldDesignator designator) {
+    public void endDataField(Field designator) {
         try {
             if (!datafieldOpen) {
                 return;
@@ -338,7 +339,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void beginSubField(FieldDesignator designator) {
+    public void beginSubField(Field designator) {
         if (designator == null) {
             return;
         }
@@ -359,7 +360,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     @Override
-    public void endSubField(FieldDesignator designator) {
+    public void endSubField(Field designator) {
         try {
             if (listener != null) {
                 listener.endSubField(designator);
@@ -412,14 +413,14 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                             leader(label.getFixed());
                             directory = new FieldDirectory(label, fieldContent);
                             if (directory.isEmpty()) {
-                                designator = new FieldDesignator(label, fieldContent.substring(RecordLabel.LENGTH));
+                                designator = new Field(label, fieldContent.substring(RecordLabel.LENGTH));
                                 if (designator.getTag() != null) {
                                     beginDataField(designator);
                                 }
                             }
                         } else {
                             directory = new FieldDirectory(label, fieldContent);
-                            designator = new FieldDesignator(label);
+                            designator = new Field(label);
                         }
                         break;
                     case Separable.RS:
@@ -432,9 +433,9 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                             }
                         }
                         if (directory != null && directory.containsKey(position)) {
-                            designator = new FieldDesignator(label, directory.get(position), fieldContent, false);
+                            designator = new Field(label, directory.get(position), fieldContent, false);
                         } else {
-                            designator = new FieldDesignator(label, fieldContent);
+                            designator = new Field(label, fieldContent);
                         }
                         if (designator != null /*&& !designator.isEmpty()*/) {
                             beginDataField(designator);
@@ -445,7 +446,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                             subfieldOpen = true;
                             beginDataField(designator);
                         }
-                        designator = new FieldDesignator(label, designator, fieldContent, true);
+                        designator = new Field(label, designator, fieldContent, true);
                         beginSubField(designator);
                         endSubField(designator);
                         break;

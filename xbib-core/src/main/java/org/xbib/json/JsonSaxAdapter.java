@@ -15,20 +15,20 @@
  */
 package org.xbib.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
+import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
+import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.namespace.QName;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import static org.codehaus.jackson.JsonToken.END_ARRAY;
-import static org.codehaus.jackson.JsonToken.END_OBJECT;
-import static org.codehaus.jackson.JsonToken.FIELD_NAME;
-import static org.codehaus.jackson.JsonToken.START_ARRAY;
-import static org.codehaus.jackson.JsonToken.START_OBJECT;
-import static org.codehaus.jackson.JsonToken.VALUE_NULL;
 import org.xbib.xml.NamespaceContext;
 import org.xbib.xml.SimpleNamespaceContext;
 import org.xml.sax.ContentHandler;

@@ -45,10 +45,16 @@ import java.util.Map;
 public interface Element<K,V,B extends ElementBuilder>  {
     
     /**
-     * Set parameters to this element
-     * @param params 
+     * Set settings for this element from configuration
+     * @param settings 
      */
-    void setParameter(Map params);
+    void setSettings(Map settings);
+    
+    /**
+     * Get settings.
+     * @return 
+     */
+    Map<String,Object> getSettings();
     
     /**
      * Begin building the element
@@ -56,7 +62,7 @@ public interface Element<K,V,B extends ElementBuilder>  {
     void begin();
     
     /**
-     * Build an element, add key/value information to the build process
+     * Build an element by adding a key/value information using a builder
      * @param builder
      * @param key
      * @param value 

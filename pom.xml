@@ -158,13 +158,13 @@
         <module>xbib-core</module>
         <module>xbib-mapper</module>
         <module>xbib-elasticsearch</module>
+        <module>xbib-analyzer-marc</module>
         <module>xbib-query</module>
         <module>xbib-sru</module>
         <module>xbib-oai</module>
         <module>xbib-tools</module>
         <module>xbib-berkeleydb</module>
         <module>xbib-lia</module>
-        <module>xbib-mab</module>
         <module>xbib-objectstorage</module>
         <module>xbib-iso23950</module>
         <module>xbib-atom</module>

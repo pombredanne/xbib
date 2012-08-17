@@ -58,52 +58,52 @@ public class MarcXmlReaderTest {
 
             @Override
             public void leader(String label) {
-                logger.info("leader="+label);
+                logger.debug("leader="+label);
             }
 
             @Override
             public void beginRecord(String format, String type) {
-                logger.info("beginRecord format="+format + " type="+type);
+                logger.debug("beginRecord format="+format + " type="+type);
             }
 
             @Override
             public void beginControlField(Field field) {
-                logger.info("beginControlField field="+field);
+                logger.debug("beginControlField field="+field);
             }
 
             @Override
             public void endControlField(Field field) {
-                logger.info("endControlField field="+field);
+                logger.debug("endControlField field="+field);
             }
 
             @Override
             public void beginDataField(Field field) {
-                logger.info("beginDataField field="+field);
+                logger.debug("beginDataField field="+field);
             }
 
             @Override
             public void endDataField(Field field) {
-                logger.info("endDataField field="+field);
+                logger.debug("endDataField field="+field);
             }
 
             @Override
             public void beginSubField(Field field) {
-                logger.info("beginSubField field="+field);
+                logger.debug("beginSubField field="+field);
             }
 
             @Override
             public void endSubField(Field field) {
-                logger.info("endsubField field="+field);
+                logger.debug("endsubField field="+field);
             }
 
             @Override
             public void endRecord() {
-                logger.info("endRecord");
+                logger.debug("endRecord");
             }
 
             @Override
             public void trailer(String trailer) {
-                logger.info("trailer " + trailer);
+                logger.debug("trailer " + trailer);
             }
         });
         reader.parse();

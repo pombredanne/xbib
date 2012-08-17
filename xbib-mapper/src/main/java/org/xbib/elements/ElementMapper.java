@@ -36,12 +36,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.script.ScriptException;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.ResourceContext;
 
-public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
+public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         implements KeyValueStreamListener<K, V> {
 
     protected final static Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
@@ -51,7 +52,15 @@ public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
     public ElementMapper(String format) {
         try {
             this.map = ElementMapFactory.getElementMap(format);
-        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException | ScriptException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ElementMapper(String path, String format) {
+        try {
+            this.map = ElementMapFactory.getElementMap(path, format);
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException | ScriptException e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,7 +69,14 @@ public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
         builders.add(builder);
         return this;
     }
+    
+    protected Map<String,Element> getMap() {
+        return map;
+    }
 
+    protected List<ElementBuilder<K, V, E, C>> getBuilders() {
+        return builders;
+    }
     
     @Override
     public void begin() {
@@ -73,13 +89,14 @@ public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
     public void keyValue(K key, V value) {
         if (key == null) {
             return;
-        }        
-        E e = (E) map.get(key.toString());
+        }
+        E element = (E) map.get(key.toString());
         for (ElementBuilder<K, V, E, C> builder : builders) {
-            if (e != null) {
-                e.build(builder, key, value);
+            if (element != null) {
+                element.build(builder, key, value);
             }
-            builder.build(e, key, value);
+            // call the builder with a global key/value pair, even when e is null
+            builder.build(element, key, value);
         }
     }
 
@@ -91,9 +108,9 @@ public class ElementMapper<E extends Element, C extends ResourceContext, K, V>
     }
 
     @Override
-    public void end(Object metadata) {
+    public void end(Object info) {
         for (ElementBuilder<K, V, E, C> builder : builders) {
-            builder.end(metadata);
+            builder.end(info);
         }
     }
 

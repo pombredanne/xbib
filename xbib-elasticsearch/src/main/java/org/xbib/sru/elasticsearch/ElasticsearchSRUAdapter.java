@@ -43,6 +43,7 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
+import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.json.JsonXmlReader;
 import org.xbib.logging.Logger;
@@ -68,6 +69,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     private final String recordPacking = "xml";
     private final String recordSchema = "mods";
     private ElasticsearchConnection connection;
+    private ElasticsearchSession session;
     private StylesheetTransformer transformer;
 
     @Override
@@ -78,11 +80,20 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     @Override
     public void connect() {
         connection = ElasticsearchConnection.getInstance();
+        try {
+            session = connection.createSession();
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void disconnect() {
         try {
+            if (session != null) {
+                session.close();
+            }
+            session = null;
             connection.close();
             connection = null;
         } catch (IOException ex) {
@@ -136,11 +147,11 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         transformer.addParameter("recordSchema", getRecordSchema());
         try {
             QueryResultAction action = createAction(request);
-            action.setConnection(connection);
+            action.setSession(session);
             action.setTarget(response.getOutput());
             action.setFrom(request.getStartRecord() - 1);
             action.setSize(request.getMaximumRecords());
-            action.searchAndProcess(request.getQuery());            
+            action.searchAndProcess(request.getQuery());
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());

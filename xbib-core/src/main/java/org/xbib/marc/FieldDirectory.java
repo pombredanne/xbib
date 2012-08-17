@@ -33,7 +33,7 @@ package org.xbib.marc;
 
 import java.util.TreeMap;
 
-public class FieldDirectory extends TreeMap<Integer, FieldDesignator> {
+public class FieldDirectory extends TreeMap<Integer, Field> {
 
     public FieldDirectory(RecordLabel label, String segment) throws FieldDirectoryException {
         super();
@@ -66,7 +66,7 @@ public class FieldDirectory extends TreeMap<Integer, FieldDesignator> {
                     int position = label.getBaseAddressOfData() + Integer.parseInt(
                             segment.substring(i + keylength + label.getDataFieldLength(),
                             i + keylength + label.getDataFieldLength() + label.getStartingCharacterPositionLength()));
-                    put(position, new FieldDesignator(label, key, position, length));
+                    put(position, new Field(label, key, position, length));
                 } catch (NumberFormatException e) {
                     throw new FieldDirectoryException("directory corrupt? key = " + key + " length = " + directoryLength);
                 }

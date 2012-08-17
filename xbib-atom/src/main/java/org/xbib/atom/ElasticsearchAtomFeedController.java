@@ -31,6 +31,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.xbib.elasticsearch.ElasticsearchConnection;
+import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.URIUtil;
 import org.xbib.json.JsonXmlStreamer;
@@ -147,11 +148,12 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
         String[] index = p.getProperty("index") != null ? p.getProperty("index").split(",") : null;
         String[] type = p.getProperty("type") != null ? p.getProperty("type").split(",") : null;
         ElasticsearchConnection connection = ElasticsearchConnection.getInstance();
+        ElasticsearchSession session = connection.createSession();
         // we need not to setTarget
         try {
             this.builder = new AbderaFeedBuilder(config, query);
             QueryResultAction action = getAction();
-            action.setConnection(connection);
+            action.setSession(session);
             action.setIndex(index);
             action.setType(type);
             action.setFrom(config.getFrom());
@@ -166,6 +168,8 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             logger.error("atom feed query " + query + " session is unresponsive", e);
             throw e;
         } finally {
+            session.close();
+            connection.close();
             logger.info("atom feed query completed: {}", query);
         }
     }

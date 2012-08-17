@@ -37,7 +37,7 @@ import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
 
 public class MABBuilder<K,V> 
-    extends AbstractElementBuilder<MABContext,MABElement, K, V>
+    extends AbstractElementBuilder<K,V,MABElement,MABContext>
     implements DublinCoreProperties {
 
     private final ElementContextFactory<MABContext> contextFactory = new ElementContextFactory<MABContext>() {

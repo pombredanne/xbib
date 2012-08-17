@@ -37,6 +37,8 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.MarcXchangeListener;
 import org.xbib.marc.addons.DNBPICA;
@@ -49,6 +51,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DNBPICAXmlReader
         extends DefaultHandler implements DNBPICA, MarcXchangeListener {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DNBPICAXmlReader.class.getName());
 
     private static final SAXParserFactory factory = SAXParserFactory.newInstance();
     private ContentHandler contentHandler;
@@ -92,23 +96,23 @@ public class DNBPICAXmlReader
     }
 
     @Override
-    public void beginControlField(Field designator) {
+    public void beginControlField(Field field) {
         if (listener != null) {
-            listener.beginControlField(designator);
+            listener.beginControlField(field);
         }
     }
 
     @Override
-    public void beginDataField(Field designator) {
+    public void beginDataField(Field field) {
         if (listener != null) {
-            listener.beginDataField(designator);
+            listener.beginDataField(field);
         }
     }
 
     @Override
-    public void beginSubField(Field designator) {
+    public void beginSubField(Field field) {
         if (listener != null) {
-            listener.beginSubField(designator);
+            listener.beginSubField(field);
         }
     }
 
@@ -120,23 +124,23 @@ public class DNBPICAXmlReader
     }
 
     @Override
-    public void endControlField(Field designator) {
+    public void endControlField(Field field) {
         if (listener != null) {
-            listener.endControlField(designator);
+            listener.endControlField(field);
         }
     }
 
     @Override
-    public void endDataField(Field designator) {
+    public void endDataField(Field field) {
         if (listener != null) {
-            listener.endDataField(designator);
+            listener.endDataField(field);
         }
     }
 
     @Override
-    public void endSubField(Field designator) {
+    public void endSubField(Field field) {
         if (listener != null) {
-            listener.endSubField(designator);
+            listener.endSubField(field);
         }
     }
 
@@ -210,7 +214,8 @@ public class DNBPICAXmlReader
                 break;
             }
             case SUBF: {
-                Field field = fields.get(fields.size() - 1);
+                // get tag and indicator from previous data field
+                Field field = new Field(fields.get(fields.size() - 1));
                 field.setSubfieldId(null); // reset sub field ID
                 field.setData(null); // reset data
                 for (int i = 0; i < atts.getLength(); i++) {
@@ -241,11 +246,14 @@ public class DNBPICAXmlReader
                 break;
             }
             case TAG: {
-                endDataField(fields.remove(0).setSubfieldId(null).setData(content.toString()));
+                Field field = fields.get(0).setSubfieldId(null).setData(content.toString());
+                endDataField(field);
+                fields.clear();
                 break;
             }
             case SUBF: {
-                endSubField(fields.remove(fields.size() - 1).setData(content.toString()));
+                Field field = fields.get(fields.size() - 1).setSubfieldData(content.toString());
+                endSubField(field);
                 break;
             }
         }

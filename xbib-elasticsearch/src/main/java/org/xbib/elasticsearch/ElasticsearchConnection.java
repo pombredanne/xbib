@@ -89,18 +89,23 @@ public class ElasticsearchConnection<S extends ElasticsearchSession>
     @Override
     public URI getURI() {
         return uri;
-    }    
-    
+    }
 
     @Override
     public S createSession() throws IOException {
-        ElasticsearchSession session = new ElasticsearchSession(this);        
+        ElasticsearchSession session = new ElasticsearchSession(this, null);        
+        return (S)session;
+    }
+
+    public S createSession(Logger logger) throws IOException {
+        ElasticsearchSession session = new ElasticsearchSession(this, logger);
         return (S)session;
     }
     
     @Override
     public void close() throws IOException {
-        
+        instances.clear();
+        // nothing to close
     }
     
     public String getClusterName() {

@@ -34,7 +34,7 @@ package org.xbib.elements.items;
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ElementContextFactory;
 
-public class LiaBuilder<K,V> extends AbstractElementBuilder<LiaContext, LiaElement, K, V> {
+public class LiaBuilder<K,V> extends AbstractElementBuilder<K,V, LiaElement, LiaContext> {
 
     private final static ElementContextFactory<LiaContext> contextFactory = new ElementContextFactory<LiaContext>() {
 

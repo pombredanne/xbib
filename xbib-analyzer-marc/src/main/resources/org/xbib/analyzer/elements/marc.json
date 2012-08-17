@@ -1,7 +1,317 @@
 {
-    "PersonName" : {
+    "RecordFormat" : {
         "values" : [
-            "100"
+        "FORMAT"
+        ]  
+    },
+    "RecordType" : {
+        "values" : [
+        "TYPE"
+        ]  
+    },
+    "RecordLeader" : {
+        "values" : [
+        "LEADER"
+        ]  
+    },
+    "RecordIdentifier" : {
+        "values" : [
+        "001"
+        ] 
+    },
+    "PhysicalDescription" : {
+        "values" : [
+        "007", "300  a"
+        ],
+        "tags" : {
+            "007" : "codes",
+            "300" : "extent"
+        },
+        "codes" : {
+            "00" : {
+                "a" : {
+                    "value":"Map",
+                    "01" : { /* Specific material designation */
+                        "d" : "Atlas",
+                        "g" : "Diagram",
+                        "j" : "Map",
+                        "k" : "Profile",
+                        "q" : "Model",
+                        "r" : "Remote-sensing image",
+                        "s" : "Section",
+                        "u" : "Unspecified",
+                        "y" : "View",
+                        "z" : "Other"
+                    },
+                    "03" : { /* Color */
+                        "a" : "One color",
+                        "c" : "Multicolored"
+                    },
+                    "04" : { /* Physical medium */
+                        "a" : "Paper",
+                        "b" : "Wood",
+                        "c" : "Stone",
+                        "d" : "Metal",
+                        "e" : "Synthetic",
+                        "f" : "Skin",
+                        "g" : "Textiles",
+                        "i" : "Plastic",
+                        "j" : "Glass",
+                        "l" : "Vinyl",
+                        "n" : "Vellum",
+                        "p" : "Plaster",
+                        "q" : "Flexible base photographic, positive",
+                        "r" : "Flexible base photographic, negative",
+                        "s" : "Non-flexible base photographic, positive",
+                        "t" : "Non-flexible base photographic, negative",
+                        "u" : "Unknown",
+                        "v" : "Leather",
+                        "w" : "Parchment",
+                        "y" : "Other photographic medium",
+                        "z" : "Other"
+                    },
+                    "05" : { /* Type of reproduction */
+                        "f" : "Facsimile",
+                        "n" : "Not applicable",
+                        "u" : "Unknown",
+                        "z" : "Other"
+                    },
+                    "06" : { /* Production/reproduction details */
+                        "a" : "Photocopy, blueline print",
+                        "b" : "Photocopy",
+                        "c" : "Pre-production",
+                        "d" : "Film",
+                        "u" : "Unknown",
+                        "z" : "Other"
+                    },
+                    "07" : { /* Positive/negative aspect */
+                        "a" : "Positive",
+                        "b" : "Negative",
+                        "m" : "Mixed polarity",
+                        "n" : "Not applicable"
+                    }
+                },
+                "c" : {
+                    "value" : "Electronic resource",
+                    "01" : { /* Specific material designation */
+                        "a" : "Tape cartridge",
+                        "b" : "Chip cartridge",
+                        "c" : "Computer optical disc cartridge",
+                        "d" : "Computer disc",
+                        "e" : "Computer disc cartridge",
+                        "f" : "Tape cassette",
+                        "h" : "Tape reel",
+                        "j" : "Magnetic disk",
+                        "k" : "Computer card",
+                        "m" : "Magneto-optical disc",
+                        "o" : "Optical disc",
+                        "r" : "Remote",
+                        "u" : "Unspecified",
+                        "z" : "Other"
+                    },
+                    "03" : { /* Color */
+                        "a" : "One color",
+                        "b" : "Black-and-white",
+                        "c" : "Multicolored",
+                        "g" : "Gray scale",
+                        "m" : "Mixed",
+                        "n" : "Not applicable",
+                        "u" : "Unknown",
+                        "z" : "Other"
+                    },
+                    "04" : { /* Dimensions */
+                        "a" : "3 1/2 in.",
+                        "e" : "12 in.",
+                        "g" : "4 3/4 in. or 12 cm.",
+                        "i" : "1 1/8 x 2 3/8 in.",
+                        "j" : "3 7/8 x 2 1/2 in.",
+                        "n" : "Not applicable",
+                        "o" : "5 1/4 in.",
+                        "u" : "Unknown",
+                        "v" : "8 in.",
+                        "z" : "Other"
+                    },
+                    "05" : { /* Sound */
+                        "a" : "Sound",
+                        "u" : "Unknown"
+                    },
+                    "10" : { /* Quality assurance target(s) */
+                        "a" : "Absent",
+                        "n" : "Not applicable",
+                        "p" : "Present",
+                        "u" : "Unknown"
+                    }
+                },
+                "d" : {
+                    "value" : "Globe"
+                },
+                "f" : {
+                    "value" : "Tactile material"
+                },
+                "g" : {
+                    "value" : "Projected graphic"
+                },
+                "h" : {
+                    "value" : "Microform"
+                },
+                "k" : {
+                    "value" : "Nonprojected graphic"
+                },
+                "m" : {
+                    "value" : "Motion picture"
+                },
+                "o" : {
+                    "value" : "Kit"
+                },
+                "q" : {
+                    "value" : "Notated music"
+                },
+                "r" : {
+                    "value" : "Remote-sensing image"
+                },
+                "s" : {
+                    "value" : "Sound recording"
+                },
+                "t" : {
+                    "value" : "Text"
+                },
+                "v" : {
+                    "value" : "Videorecording"
+                },
+                "z" : {
+                    "value" : "Unspecified"
+                }
+            }
+        }
+    },
+    "GeneralInformation" :{
+        "values" : [
+        "008"
+        ]
+    },
+    "StandardIdentifier" : {
+        "values" : [
+        "020  a",
+        "020  c"
+        ],
+        "tags" : {
+            "020" : "ISBN"
+        },
+        "subfields" : {
+            "a" : "value",
+            "c" : "termsOfAvailability"
+        }
+    },
+    "OtherClassificationNumber" :{
+        "values" : [
+        "084  a"
+        ]
+    },
+    "PersonalName" : {
+        "values" : [
+        "100", "100  ", "100  c", "100  e",  "700  ", "700  c", "700  e"
+        ],
+        "subfields" : {
+            "e" : "relatorTerm"
+        }
+    },
+    "CorporateName" : {
+        "values" : [
+        "110", "110  a", "110  c"
+        ],
+        "subfields" : {
+            "a" : "name",
+            "c" : "locationOfMeeting"
+        }
+    },
+    "MeetingName" : {
+        "values" : [
+        "111"
+        ]
+    },
+    "TitleStatement" :{
+        "values":[
+        "1300 a",
+        "24500a",
+        "24500b",
+        "24500p"
+        ],
+        "tags": {
+            "130" : "uniformTitle",
+            "245" : "title"
+        },
+        "subfields" : {
+            "a" : "value",
+            "b" : "remainder",
+            "p" : "part"
+        }
+    },
+    "EditionStatement" : {
+        "values" : [
+        "250  ",
+        "250  a"
+        ]
+    },
+    "PublicationStatement" : {
+        "values" : [
+        "260  a", "260  b", "260  c"
+        ],
+        "subfields" : {
+            "a" : "placeOfPublication",
+            "b" : "publisherName",
+            "c" : "dateOfPublication"
+        }
+    },
+    "SeriesStatement" : {
+        "values":[
+        "4901 a"
+        ]
+    },
+    "Note" : {
+        "values" : [
+        "500  a"
+        ]
+    },
+    "TableOfContents" : {
+        "values" : [
+        "505  a",
+        "5050 a"
+        ]
+    },
+    "Subject" : {
+        "values" : [
+        "6530 a" 
+        ]
+    },
+    "LinkingEntries" : {
+        "values":[
+        "760  w" /* Main Series Entry */
+        ],
+        "subfields" : {
+            "w" : "recordControlNumber"
+        },
+        "types" : {
+            "760" : "MainSeries",
+            "762" : "Subseries",
+            "765" : "OriginalLanguage",
+            "767" : "Translation",
+            "770" : "Supplement/SpecialIssue",
+            "772" : "SupplementParent",
+            "773" : "HostItem",
+            "774" : "ConstituentUnit",
+            "775" : "OtherEdition",
+            "776" : "AdditionalPhysicalForm",
+            "777" : "IssuedWith",
+            "780" : "Preceding",
+            "785" : "Succeeding",
+            "786" : "DataSource",
+            "787" : "OtherRelationship"
+        }
+    },
+    "Skip" : {
+        "values" : [
+        "001,007",
+        "801  a"
         ]
     }
 }

@@ -34,18 +34,16 @@ import org.xml.sax.ContentHandler;
 public class XmlXContent implements XContent {
     
     public static XContentBuilder contentBuilder() throws IOException {
-        return XContentBuilder.builder(xmlXContent);
+        return XContentBuilder.builder(new XmlXContent());
     }    
     
     public static XContentBuilder contentBuilder(ContentHandler handler) throws IOException {
         return XContentBuilder.builder(new XmlXContent().handler(handler));
-    }
-    
-    public final static XmlXContent xmlXContent = new XmlXContent();
+    }    
     
     private ContentHandler handler;
     
-    private XmlXContent() {
+    public XmlXContent() {
     }
     
     public XmlXContent handler(ContentHandler handler) {

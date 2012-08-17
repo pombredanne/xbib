@@ -1,4 +1,4 @@
-package org.xbib.analyzer.marc;
+package org.xbib.analyzer.elements.marc;
 
 import org.testng.annotations.Test;
 

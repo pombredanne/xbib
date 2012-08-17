@@ -45,6 +45,7 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.xcontent.xml.namespace.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
+import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.DateUtil;
 import org.xbib.json.JsonXmlReader;
@@ -72,9 +73,9 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
     private ElasticsearchConnection connection;
+    private ElasticsearchSession session;
     private StylesheetTransformer transformer;
     private String oaiStyleSheet = "es-oai-response.xsl";
-    
 
     @Override
     public URI getURI() {
@@ -84,11 +85,20 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
     @Override
     public void connect() {
         connection = ElasticsearchConnection.getInstance();
+        try {
+            session = connection.createSession();
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void disconnect() {
         try {
+            if (session != null) {
+                session.close();
+            }
+            session = null;
             connection.close();
             connection = null;
         } catch (IOException ex) {
@@ -240,7 +250,7 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
 
     private void perform(QueryResultAction action, String query, OAIResponse response) throws OAIException {
         try {
-            action.setConnection(connection);
+            action.setSession(session);
             action.setTarget(response.getOutput());
             action.searchAndProcess(query);
         } catch (NoNodeAvailableException e) {
@@ -256,5 +266,4 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
             logger.info("OAI completed: query = {}", query);
         }
     }
-    
 }

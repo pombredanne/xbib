@@ -54,7 +54,7 @@ import org.xbib.io.tar.TarEntryReadOperator;
 import org.xbib.io.tar.TarSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.FieldDesignator;
+import org.xbib.marc.Field;
 import org.xbib.marc.MarcXchangeListener;
 
 public class MABTarReader extends AbstractImporter<Object, Packet>
@@ -116,42 +116,42 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
     }
 
     @Override
-    public void beginControlField(FieldDesignator designator) {
+    public void beginControlField(Field designator) {
         if (listener != null) {
             listener.beginControlField(designator);
         }
     }
 
     @Override
-    public void endControlField(FieldDesignator designator) {
+    public void endControlField(Field designator) {
         if (listener != null) {
             listener.endControlField(designator);
         }
     }
 
     @Override
-    public void beginDataField(FieldDesignator designator) {
+    public void beginDataField(Field designator) {
         if (listener != null) {
             listener.beginDataField(designator);
         }
     }
 
     @Override
-    public void endDataField(FieldDesignator designator) {
+    public void endDataField(Field designator) {
         if (listener != null) {
             listener.endDataField(designator);
         }
     }
 
     @Override
-    public void beginSubField(FieldDesignator designator) {
+    public void beginSubField(Field designator) {
         if (listener != null) {
             listener.beginSubField(designator);
         }
     }
 
     @Override
-    public void endSubField(FieldDesignator designator) {
+    public void endSubField(Field designator) {
         if (listener != null) {
             listener.endSubField(designator);
         }
@@ -221,7 +221,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
         try {
             try (StringReader sr = new StringReader(clob)) {
                 XMLEventReader xmlReader = factory.createXMLEventReader(sr);
-                Stack<FieldDesignator> stack = new Stack();
+                Stack<Field> stack = new Stack();
                 while (xmlReader.hasNext()) {
                     processEvent(stack, xmlReader.peek());
                     xmlReader.nextEvent();
@@ -235,7 +235,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
         return packet;
     }
 
-    private void processEvent(Stack<FieldDesignator> stack, XMLEvent event) {
+    private void processEvent(Stack<Field> stack, XMLEvent event) {
         if (event.isStartElement()) {
             StartElement element = (StartElement) event;
             String localName = element.getName().getLocalPart();
@@ -280,21 +280,21 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
             }
             switch (localName) {
                 case "subfield":
-                    FieldDesignator f = stack.peek();
-                    FieldDesignator subfield = new FieldDesignator(f.getTag(), f.getIndicator(), Character.toString(code));
+                    Field f = stack.peek();
+                    Field subfield = new Field(f.getTag(), f.getIndicator(), Character.toString(code));
                     stack.push(subfield);
                     beginSubField(subfield);
                     break;
                 case "datafield": {
-                    FieldDesignator field = ind2 != '\u0000'
-                            ? new FieldDesignator(tag, Character.toString(ind1) + Character.toString(ind2))
-                            : new FieldDesignator(tag, Character.toString(ind1));
+                    Field field = ind2 != '\u0000'
+                            ? new Field(tag, Character.toString(ind1) + Character.toString(ind2))
+                            : new Field(tag, Character.toString(ind1));
                     stack.push(field);
                     beginDataField(field);
                     break;
                 }
                 case "controlfield": {
-                    FieldDesignator field = new FieldDesignator(tag);
+                    Field field = new Field(tag);
                     stack.push(field);
                     beginControlField(field);
                     break;

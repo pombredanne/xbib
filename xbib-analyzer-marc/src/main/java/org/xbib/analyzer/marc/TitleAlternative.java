@@ -1,17 +1,13 @@
 package org.xbib.analyzer.marc;
 
-import org.xbib.analyzer.marc.addons.MABElement;
-
-
-public class TitleAlternative extends MABElement {
+public class TitleAlternative extends MARCElement {
     
-    private final static MABElement element = new TitleAlternative();
+    private final static MARCElement element = new TitleAlternative();
     
     private TitleAlternative() {
-    }
+    }    
     
-    
-    public static MABElement getInstance() {
+    public static MARCElement getInstance() {
         return element;
     }
 }

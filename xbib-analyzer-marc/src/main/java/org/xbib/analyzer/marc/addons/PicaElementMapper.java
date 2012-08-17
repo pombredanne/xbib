@@ -31,12 +31,42 @@
  */
 package org.xbib.analyzer.marc.addons;
 
+import java.util.Map;
+import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.ElementMapper;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
-public class PicaElementMapper extends ElementMapper {
-    
+public class PicaElementMapper
+        extends ElementMapper<FieldCollection, String, PicaElement, PicaContext> {
+
     public PicaElementMapper(String format) {
         super("/org/xbib/analyzer/elements/", format);
     }
-    
+
+    @Override
+    public void keyValue(FieldCollection key, String value) {
+        if (key == null) {
+            return;
+        }
+        PicaElement e = (PicaElement) getMap().get(key.getDesignators());
+        for (ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder : getBuilders()) {
+            if (e != null) {
+                // field builder - check for subfield type and pass configured values
+                Map<String, String> subfields = (Map<String, String>) e.getSettings().get("subfields");
+                if (subfields == null) {
+                    e.fields(builder, key, value);
+                } else {
+                    for (Field field : key) {
+                        String subfield = field.getSubfieldId();
+                        e.field(builder, field, subfields.get(subfield));
+                    }
+                }
+            } else {
+                logger.info("no element for {}", key.getDesignators());
+            }
+            // call the builder with a global key/value pair, even when e is null
+            builder.build(e, key, value);
+        }
+    }
 }

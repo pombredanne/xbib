@@ -36,7 +36,7 @@ import org.xbib.elements.ElementContextFactory;
 import org.xbib.elements.output.ElementOutput;
 
 public class DublinCoreBuilder<K,V>
-    extends AbstractElementBuilder<DublinCoreContext, DublinCoreElement, K, V> {
+    extends AbstractElementBuilder<K, V, DublinCoreElement, DublinCoreContext> {
 
     private final static ElementContextFactory<DublinCoreContext> contextFactory = new ElementContextFactory<DublinCoreContext>() {
 

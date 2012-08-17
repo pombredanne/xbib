@@ -31,52 +31,33 @@
  */
 package org.xbib.elements;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 public class ValueMapFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(ValueMapFactory.class.getName());
+    private final static String ROOT_PATH = "/org/xbib/elements/";
     private final static Map<String, Object> maps = new HashMap();
 
     private ValueMapFactory() {
     }
 
-    public synchronized static Map<String, String> getAssocStringMap(String format) {
-        if (!maps.containsKey(format)) {
-            try {
-                InputStream json = ValueMapFactory.class.getResourceAsStream("/org/xbib/elements/" + format + ".json");
-                if (json == null) {
-                    throw new IOException("format " + format + " not found");
-                }
-                HashMap result = new ObjectMapper().readValue(json, HashMap.class);
-                Object values = result.get(format);
-                Collection<String> c = (Collection<String>) values;
-                // assoc map
-                final HashMap<String, String> map = new HashMap();
-                Iterator<String> it = c.iterator();
-                for (int i = 0; i < c.size(); i += 2) {
-                    map.put(it.next(), it.next());
-                }
-                maps.put(format, map);
-            } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-        return (Map<String, String>) maps.get(format);
+    public static Map getMap(String format) {
+        return getMap(ROOT_PATH, format);
     }
 
-    public synchronized static Map getMap(String format) {
+    public synchronized static Map getMap(String path, String format) {
         if (!maps.containsKey(format)) {
             try {
-                InputStream json = ValueMapFactory.class.getResourceAsStream("/org/xbib/elements/" + format + ".json");
+                InputStream json = ValueMapFactory.class.getResourceAsStream(path + format + ".json");
                 if (json == null) {
                     throw new IOException("format " + format + " not found");
                 }
@@ -87,5 +68,35 @@ public class ValueMapFactory {
             }
         }
         return (Map) maps.get(format);
+    }
+
+    public static Map<String, String> getAssocStringMap(String format) {
+        return getAssocStringMap(ROOT_PATH, format);
+    }
+
+    public synchronized static Map<String, String> getAssocStringMap(String path, String format) {
+        if (!maps.containsKey(format)) {
+            try {
+                InputStream json = ValueMapFactory.class.getResourceAsStream(path + format + ".json");
+                if (json == null) {
+                    throw new IOException("format " + format + " not found");
+                }
+                HashMap result = new ObjectMapper().readValue(json, HashMap.class);
+                Object values = result.get(format);
+                Collection<String> c = (Collection<String>) values;
+                if (c != null) {
+                    // assoc map
+                    final HashMap<String, String> map = new HashMap();
+                    Iterator<String> it = c.iterator();
+                    for (int i = 0; i < c.size(); i += 2) {
+                        map.put(it.next(), it.next());
+                    }
+                    maps.put(format, map);
+                }
+            } catch (IOException e) {
+                logger.warn(e.getMessage(), e);
+            }
+        }
+        return (Map<String, String>) maps.get(format);
     }
 }

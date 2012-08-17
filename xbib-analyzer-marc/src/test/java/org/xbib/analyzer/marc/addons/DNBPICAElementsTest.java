@@ -36,33 +36,51 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import org.testng.annotations.Test;
+import org.xbib.elements.output.ElementOutput;
 import org.xbib.io.InputStreamService;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
+import org.xbib.rdf.ResourceContext;
 import org.xml.sax.InputSource;
 
 public class DNBPICAElementsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DNBPICAElementsTest.class.getName());
 
-    @Test
     public void testSetupOfElements() throws Exception {
         PicaBuilder builder = new PicaBuilder();
-        KeyValueStreamListener listener = new PicaElementMapper("pica").addBuilder(builder);        
+        KeyValueStreamListener listener = new PicaElementMapper("pica/zdb/bib").addBuilder(builder);        
     }
     
     @Test
-    public void testZDBElements() throws Exception {
+    public void testBibElements() throws Exception {
         InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/zdb-oai-bib.xml"));
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         InputSource source = new InputSource(br);
         PicaBuilder builder = new PicaBuilder();
-        KeyValueStreamListener listener = new PicaElementMapper("pica").addBuilder(builder);        
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);        
-        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(kv);
+        builder.addOutput(new ElementOutput() {
+
+            @Override
+            public boolean enabled() {
+                return true;
+            }
+
+            @Override
+            public void output(ResourceContext context, Object info) {
+                logger.info("resource = {}", context.resource());
+            }
+
+            @Override
+            public long getCounter() {
+                return 0;
+            }
+        });
+        KeyValueStreamListener listener = new PicaElementMapper("pica/zdb/bib").addBuilder(builder);        
+        MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().setListener(listener);        
+        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);        
         reader.parse();
     }
     

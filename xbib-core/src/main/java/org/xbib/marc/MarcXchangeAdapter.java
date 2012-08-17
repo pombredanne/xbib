@@ -31,7 +31,7 @@
  */
 package org.xbib.marc;
 
-public class DefaultMarcXchangeListener implements MarcXchangeListener {
+public class MarcXchangeAdapter implements MarcXchangeListener {
 
     @Override
     public void leader(String label) {
@@ -42,15 +42,15 @@ public class DefaultMarcXchangeListener implements MarcXchangeListener {
     }
 
     @Override
-    public void beginControlField(FieldDesignator designator) {
+    public void beginControlField(Field designator) {
     }
 
     @Override
-    public void beginDataField(FieldDesignator designator) {
+    public void beginDataField(Field designator) {
     }
 
     @Override
-    public void beginSubField(FieldDesignator designator) {
+    public void beginSubField(Field designator) {
     }
 
     @Override
@@ -58,15 +58,15 @@ public class DefaultMarcXchangeListener implements MarcXchangeListener {
     }
 
     @Override
-    public void endControlField(FieldDesignator designator) {
+    public void endControlField(Field designator) {
     }
 
     @Override
-    public void endDataField(FieldDesignator designator) {
+    public void endDataField(Field designator) {
     }
 
     @Override
-    public void endSubField(FieldDesignator designator) {
+    public void endSubField(Field designator) {
     }
 
     @Override

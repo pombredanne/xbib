@@ -59,15 +59,16 @@ public class ElasticsearchSession implements Session {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSession.class.getName());
     private final ElasticsearchConnection connection;
-    private final TransportClient client;
     private final Set<InetSocketTransportAddress> addresses = new HashSet();
+    private TransportClient client;
     private Logger queryLogger;
 
-    public ElasticsearchSession(ElasticsearchConnection connection) {
+    public ElasticsearchSession(ElasticsearchConnection connection,  Logger queryLogger) {
         this.connection = connection;
+        this.queryLogger = queryLogger;
         this.client = createClient(connection.isSniff());
         try {
-            findNodes();
+            findNodes();            
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -99,11 +100,25 @@ public class ElasticsearchSession implements Session {
         return client != null && !client.connectedNodes().isEmpty();
     }
 
-    public Client getClient() {
+    public Client getClient() throws UnknownHostException, SocketException, IOException {
+        // check if client can continue to work
+        if (!isOpen()) {
+            if (client != null) {
+                client.close();
+            }
+            logger.warn("reconnecting");
+            this.client = createClient(connection.isSniff());
+            findNodes();            
+        }
         return client;
+    }
+    
+    public void setQueryLogger(Logger queryLogger) {
+        this.queryLogger = queryLogger;
     }
 
     public Logger getQueryLogger() throws IOException {
+        // ensure a query logger does exist
         if (queryLogger == null) {
             createQueryLog();
         }

@@ -1,23 +1,23 @@
 package org.xbib.analyzer.marc.diagnostics;
 
-import org.xbib.marc.FieldList;
+import org.xbib.marc.FieldCollection;
 
 public interface MABDiagnostics {
         
-    void invalidLeader(FieldList key, String msg);
+    void invalidLeader(FieldCollection key, String msg);
 
-    void missingSatzTyp(FieldList key, String msg);
+    void missingSatzTyp(FieldCollection key, String msg);
     
-    void unknownRole(FieldList key, String value);
+    void unknownRole(FieldCollection key, String value);
 
-    void decodeCarrier(FieldList key, String msg, String value);
+    void decodeCarrier(FieldCollection key, String msg, String value);
     
-    void decodeType(FieldList key, String msg, String value);
+    void decodeType(FieldCollection key, String msg, String value);
 
-    void unknownLibrary(FieldList key, String msg, String value);
+    void unknownLibrary(FieldCollection key, String msg, String value);
 
-    void invalidStandardNumber(FieldList key, String msg, String value);
+    void invalidStandardNumber(FieldCollection key, String msg, String value);
 
-    void relation(FieldList key, String type);
+    void relation(FieldCollection key, String type);
     
 }

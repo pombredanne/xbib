@@ -31,6 +31,7 @@
  */
 package org.xbib.federator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -46,8 +47,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.xml.stream.events.XMLEvent;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.xbib.federator.action.Action;
 import org.xbib.federator.action.PQFZAction;
 import org.xbib.federator.action.SRUAction;
@@ -127,7 +126,7 @@ public class Federator {
         ArrayList<HashMap<String, Object>> specs = null;
         try {
             specs = new ObjectMapper().readValue(json, ArrayList.class);
-        } catch (JsonMappingException e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
         List<Action> tasks = new ArrayList();

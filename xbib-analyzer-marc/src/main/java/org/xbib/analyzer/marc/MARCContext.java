@@ -31,10 +31,12 @@
  */
 package org.xbib.analyzer.marc;
 
+import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elements.items.LiaContext;
 
 public class MARCContext extends LiaContext {
 
+    private final static AtomicLong counter = new AtomicLong(0L);
     private String format;
     private boolean continuing;
     
@@ -52,5 +54,9 @@ public class MARCContext extends LiaContext {
     
     public boolean getContinuing() {
         return continuing;
+    }
+    
+    public long increment() {
+        return counter.incrementAndGet();
     }
 }

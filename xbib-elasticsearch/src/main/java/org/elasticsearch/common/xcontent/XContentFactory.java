@@ -39,15 +39,6 @@ public class XContentFactory {
 
     private static int GUESS_HEADER_LENGTH = 20;
 
-    private static final XContent[] contents;
-
-    static {
-        contents = new XContent[3];
-        contents[0] = JsonXContent.jsonXContent;
-        contents[1] = SmileXContent.smileXContent;
-        contents[2] = XmlXContent.xmlXContent;
-    }
-
     /**
      * Returns a content builder using JSON format ({@link org.elasticsearch.common.xcontent.XContentType#JSON}.
      */
@@ -92,7 +83,7 @@ public class XContentFactory {
      * Constructs a new XML builder that will output the result into the provided output stream.
      */
     public static XContentBuilder xmlBuilder(OutputStream os) throws IOException {
-        return new XContentBuilder(XmlXContent.xmlXContent, os);
+        return contentBuilder(XContentType.XML, os);  //new XContentBuilder(new XmlXContent(), os);
     } 
     
     /**
@@ -134,7 +125,12 @@ public class XContentFactory {
      * Returns the {@link org.elasticsearch.common.xcontent.XContent} for the provided content type.
      */
     public static XContent xContent(XContentType type) {
-        return contents[type.index()];
+        switch (type) {
+            case JSON: return JsonXContent.jsonXContent;
+            case SMILE: return SmileXContent.smileXContent;
+            case XML: return new XmlXContent();
+        }
+        return null;
     }
 
     /**
@@ -224,8 +220,9 @@ public class XContentFactory {
                 return XContentType.JSON;
             }
         }
-        if (first == '<')
+        if (first == '<') {
             return XContentType.XML;
+        }
         return null;
     }
 

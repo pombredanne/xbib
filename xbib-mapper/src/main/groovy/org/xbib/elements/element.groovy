@@ -1,7 +1,8 @@
 package org.xbib.elements
 import java.util.Map
 public class GroovyElement implements Element {
-    void setParameter(Map map) {}
+    void setSettings(Map map) {}
+    Map<String,Object> getSettings() {}
     void begin() {}
     void build(builder, key, value) { 
          println 'Hello World!'

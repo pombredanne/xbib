@@ -35,38 +35,68 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import org.xbib.elements.Element;
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.bibliographic.BibliographicProperties;
 import org.xbib.elements.bibliographic.ExtraBibliographicProperties;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.dublincore.DublinCoreTerms;
 import org.xbib.elements.dublincore.DublinCoreTermsProperties;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.FieldList;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
+import org.xbib.marc.MarcXchange;
 
 public abstract class MARCElement
-        implements Element<FieldList, String, MARCBuilder>, 
+        implements Element<FieldCollection, String, MARCBuilder>, 
         DublinCoreProperties, 
         DublinCoreTerms, 
         DublinCoreTermsProperties,
-        ExtraBibliographicProperties {
+        BibliographicProperties,
+        ExtraBibliographicProperties,
+        MarcXchange {
 
     protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
 
-    protected Map params;
+    protected Map<String,Object> params;
     
     @Override
-    public void setParameter(Map params) {
+    public void setSettings(Map params) {
         this.params = params;
     }
-    
+   @Override
+    public Map<String, Object> getSettings() {
+        return params;
+    }    
     @Override
     public void begin() {
     }
 
     @Override
-    public void build(MARCBuilder builder, FieldList key, String value) {
-        builder.context().resource().addProperty("xbib:" + getClass().getSimpleName(), value);
+    public void build(MARCBuilder builder, FieldCollection key, String value) {
+        // unused
     }
+    
+    
+    /**
+     * Process mapped element. Empty by default.
+     * @param builder
+     * @param fields
+     * @param subfieldType 
+     */
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+        // overridden 
+    }
+
+    /**
+     * Process mapped element with subfield mappings. Empty by default.
+     * @param builder
+     * @param field
+     * @param subfieldType 
+     */
+    public void field(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, Field field, String subfieldType) {
+        // overridden
+    }    
 
     @Override
     public void end() {

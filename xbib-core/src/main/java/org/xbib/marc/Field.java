@@ -32,43 +32,46 @@
 package org.xbib.marc;
 
 /**
- * A designator for content in ISO 2709 files
+ * A field in ISO 2709 records.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class FieldDesignator {
+public class Field implements Comparable {
 
     public final static String ERROR_TAG = "___";
-    
     private String tag;
-    private final String indicator;
+    private String indicator;
     private final int position;
     private final int length;
     private String subfieldId;
     private String data;
 
-    public FieldDesignator(String tag) {
+    public Field() {
+        this(null, null, null);
+    }
+
+    public Field(String tag) {
         this(tag, null, null);
     }
 
-    public FieldDesignator(String tag, char ind1) {
+    public Field(String tag, char ind1) {
         this(tag, Character.toString(ind1), null);
     }
 
-    public FieldDesignator(String tag, char ind1, char ind2) {
+    public Field(String tag, char ind1, char ind2) {
         this(tag, Character.toString(ind1) + Character.toString(ind2), null);
     }
 
-    public FieldDesignator(String tag, char ind1, char ind2, char code) {
+    public Field(String tag, char ind1, char ind2, char code) {
         this(tag, Character.toString(ind1) + Character.toString(ind2),
-            Character.toString(code));
+                Character.toString(code));
     }
 
-    public FieldDesignator(String tag, String indicator) {
+    public Field(String tag, String indicator) {
         this(tag, indicator, null);
     }
 
-    public FieldDesignator(String tag, String indicator, String subfieldId) {
+    public Field(String tag, String indicator, String subfieldId) {
         this.tag = tag;
         this.indicator = indicator;
         this.subfieldId = subfieldId;
@@ -77,7 +80,7 @@ public class FieldDesignator {
         this.length = -1;
     }
 
-    public FieldDesignator(RecordLabel label) {
+    public Field(RecordLabel label) {
         this.tag = null;
         this.indicator = null;
         this.subfieldId = null;
@@ -86,7 +89,7 @@ public class FieldDesignator {
         this.length = -1;
     }
 
-    public FieldDesignator(RecordLabel label, String tag, int position, int length) {
+    public Field(RecordLabel label, String tag, int position, int length) {
         this.tag = tag;
         this.indicator = null;
         this.subfieldId = null;
@@ -95,13 +98,21 @@ public class FieldDesignator {
         this.length = length;
     }
 
+    public Field(Field field) {
+        this.tag = field.getTag();
+        this.indicator = field.getIndicator();
+        this.subfieldId = field.getSubfieldId();
+        this.position = field.getPosition();
+        this.length = field.getLength();
+    }
+
     /**
      * Create field with tag and indicators in the data
      *
      * @param label
      * @param data
      */
-    public FieldDesignator(RecordLabel label, String data) {
+    public Field(RecordLabel label, String data) {
         this.tag = data.length() > 2 ? data.substring(0, 3) : ERROR_TAG;
         if (isControlField()) {
             this.data = data.substring(3);
@@ -124,29 +135,34 @@ public class FieldDesignator {
      * @param data
      * @param subfield
      */
-    public FieldDesignator(RecordLabel label, FieldDesignator designator, String data, boolean subfield) {
-        this.tag = designator.getTag();
-        this.position = designator.getPosition();
-        this.length = designator.getLength();
-        if (subfield) {
-            this.indicator = designator.getIndicator();
-            if (label.getSubfieldIdentifierLength() > 1) {
-                this.subfieldId = data.substring(0, label.getSubfieldIdentifierLength() - 1);
-                this.data = data.substring(label.getSubfieldIdentifierLength() - 2);
+    public Field(RecordLabel label, Field designator, String data, boolean subfield) {
+        if (designator == null) {
+            this.position = 0;
+            this.length = 0;
+        } else{
+            this.tag = designator.getTag();
+            this.position = designator.getPosition();
+            this.length = designator.getLength();
+            if (subfield) {
+                this.indicator = designator.getIndicator();
+                if (label.getSubfieldIdentifierLength() > 1) {
+                    this.subfieldId = data.substring(0, label.getSubfieldIdentifierLength() - 1);
+                    this.data = data.substring(label.getSubfieldIdentifierLength() - 2);
+                } else {
+                    // no subfield identifier length specified
+                    this.subfieldId = null; // "a";
+                    this.data = data;
+                }
             } else {
-                // no subfield identifier length specified
-                this.subfieldId = null; // "a";
-                this.data = data;
-            }
-        } else {
-            if (designator.isControlField()) {
-                this.data = data;
-                this.indicator = null;
-                this.subfieldId = null;
-            } else {
-                this.indicator = data.substring(0, label.getIndicatorLength());
-                this.data = data.substring(label.getIndicatorLength());
-                this.subfieldId = null;
+                if (designator.isControlField()) {
+                    this.data = data;
+                    this.indicator = null;
+                    this.subfieldId = null;
+                } else {
+                    this.indicator = data.substring(0, label.getIndicatorLength());
+                    this.data = data.substring(label.getIndicatorLength());
+                    this.subfieldId = null;
+                }
             }
         }
     }
@@ -163,46 +179,136 @@ public class FieldDesignator {
         return subfieldId != null;
     }
 
-    public void setData(String data) {
-        this.data = data;
-    }
-    
-    public String getData() {
-        return subfieldId != null && data != null && data.length() > 0 ? data.substring(1) : data;
-    }
-    
-    public void setTag(String tag) {
+    /**
+     * Set a tag for this designator.
+     *
+     * @param tag a tag
+     * @return this Field object
+     */
+    public Field setTag(String tag) {
         this.tag = tag;
+        return this;
     }
-    
+
+    /**
+     * Get this designator's tag
+     *
+     * @return
+     */
     public String getTag() {
         return tag;
     }
 
+    /**
+     * Set a sequence of indicators for this designator
+     *
+     * @param indicator the sequence of indicators
+     * @return this Field object
+     */
+    public Field setIndicator(String indicator) {
+        this.indicator = indicator;
+        return this;
+    }
+
+    /**
+     * Get indicator sequence.
+     *
+     * @return the indicator sequence
+     */
     public String getIndicator() {
         return indicator;
     }
 
-    public void setSubfieldId(String subfieldId) {
+    /**
+     * Set the dessignatos's sub field identifier.
+     *
+     * @param subfieldId the subfield identifier
+     * @return this Field object
+     */
+    public Field setSubfieldId(String subfieldId) {
         this.subfieldId = subfieldId;
+        return this;
     }
-    
+
+    /**
+     * Get designator's subfield identifier
+     *
+     * @return the subfield identifier
+     */
     public String getSubfieldId() {
         return subfieldId;
     }
 
+    /**
+     * The position of the field of this designator in the record. The position
+     * unit is measured in octets.
+     *
+     * @return the field position
+     */
     public int getPosition() {
         return position;
     }
 
+    /**
+     * Return the length of the field for this designator in the record. The
+     * field length is measured in octets.
+     *
+     * @return the field length
+     */
     public int getLength() {
         return length;
+    }
+
+    /**
+     * Set data for a data field.
+     *
+     * @param data
+     * @return this Field object
+     */
+    public Field setData(String data) {
+        this.data = data;
+        return this;
+    }
+
+    /**
+     * Set data for a subfield.
+     *
+     * @param data
+     * @return this FIeld object
+     */
+    public Field setSubfieldData(String data) {
+        this.data = subfieldId + data;
+        return this;
+    }
+
+    /**
+     * Get the field data.
+     *
+     * @return the data
+     */
+    public String getData() {
+        // subfield ID is first byte in data
+        return subfieldId != null && data != null && data.length() > 0 ? data.substring(1) : data;
+    }
+
+    public String getDesignator() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tag).append(indicator != null ? indicator : "")
+                .append(subfieldId != null ? subfieldId : "");
+        return sb.toString();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(tag).append(indicator != null ? indicator : "").append(subfieldId != null ? subfieldId : "");
+        sb.append(tag).append(indicator != null ? "#" + indicator : "")
+                .append(subfieldId != null ? "$" + subfieldId : "")
+                .append(data != null ? "=" + data : "");
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return getDesignator().compareTo(((Field) o).getDesignator());
     }
 }

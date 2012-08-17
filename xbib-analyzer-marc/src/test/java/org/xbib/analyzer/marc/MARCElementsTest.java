@@ -38,23 +38,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.concurrent.ExecutionException;
+import java.net.URI;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.testng.annotations.Test;
-import org.xbib.elements.ElementMapper;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.ImportService;
-import org.xbib.importer.Importer;
-import org.xbib.importer.ImporterFactory;
+import org.xbib.io.InputStreamService;
 import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.keyvalue.KeyValueStreamLogger;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.addons.MABTarReader;
+import org.xbib.marc.MarcXchangeLogger;
+import org.xbib.rdf.ResourceContext;
 import org.xml.sax.InputSource;
 
 public class MARCElementsTest {
@@ -64,24 +64,22 @@ public class MARCElementsTest {
     @Test
     public void testSetupOfElements() throws Exception {
         MARCBuilder builder = new MARCBuilder();
-        KeyValueStreamListener listener = new MARCElementMapper("marc").addBuilder(builder);                
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);        
+        KeyValueStreamListener listener = new MARCElementMapper("marc").addBuilder(builder);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
         reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
         TransformerFactory tFactory = TransformerFactory.newInstance();
         Transformer transformer = tFactory.newTransformer();
     }
-    
+
     public void testZDBElements() throws Exception {
         InputStream in = new FileInputStream("/Users/joerg/Daten/zdb/2012/1211zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");
         MARCBuilder builder = new MARCBuilder();
-        KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-                
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);        
-        
+        KeyValueStreamListener listener = new MARCElementMapper("marc").addBuilder(builder);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
         reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
@@ -89,47 +87,46 @@ public class MARCElementsTest {
         Transformer transformer = tFactory.newTransformer();
         InputSource source = new InputSource(br);
         StreamResult target = new StreamResult(w);
-        transformer.transform(new SAXSource(reader, source), target);        
+        transformer.transform(new SAXSource(reader, source), target);
     }
-    
-    public void testAlephXML() throws InterruptedException, ExecutionException {
-        ImporterFactory factory = new ImporterFactory() {
 
-            @Override
-            public Importer newImporter() {
-                return createImporter();
-            }
-        };
-        new ImportService().setThreads(1).setFactory(factory).execute(
-            "tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"
-        );
-    }
-    
-    private Importer createImporter() {
-        ElementOutput<MARCContext> output = new ElementOutput<MARCContext>() {
+    @Test
+    public void testStbBonnElements() throws Exception {
+         InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/stb-bonn.mrc"));
 
-            long counter;
-            
+        //InputStream in = new FileInputStream("/Users/joerg/120727_StbBonn_MARC21.TIT");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
+        MARCBuilder builder = new MARCBuilder();
+        builder.addOutput(new ElementOutput() {
             @Override
             public boolean enabled() {
                 return true;
             }
 
             @Override
-            public void output(MARCContext context, Object info) {
-                logger.info("resource = {} info = {}", context.resource(), info);
-                counter++;
+            public void output(ResourceContext context, Object info) {
+               // logger.info("resource = {} info = {}", context.resource(), info);
             }
 
             @Override
             public long getCounter() {
-                return counter;
+                return 0;
             }
-        };
-        MARCBuilder builder = new MARCBuilder().addOutput(output);
-        ElementMapper mapper = new ElementMapper("marc").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
-        return new MABTarReader().setListener(kv);
+        });
+        KeyValueStreamListener kvlistener = new MARCElementMapper("marc").addBuilder(builder);
+        //KeyValueStreamLogger kvlogger = new KeyValueStreamLogger();
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(kvlistener);
+        //MarcXchangeLogger marclogger = new MarcXchangeLogger();
+        Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
+        reader.setProperty(Iso2709Reader.FORMAT, "MARC");
+        reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        Transformer transformer = tFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        InputSource source = new InputSource(br);
+        StreamResult target = new StreamResult(w);
+        transformer.transform(new SAXSource(reader, source), target);
     }
-    
 }

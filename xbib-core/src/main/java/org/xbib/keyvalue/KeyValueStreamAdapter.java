@@ -31,28 +31,40 @@
  */
 package org.xbib.keyvalue;
 
-public interface KeyValueStreamListener<K,V> {
+public class KeyValueStreamAdapter<K,V> implements KeyValueStreamListener<K,V> {
 
     /**
      * Begin a key/value stream
      */
-    void begin();
+    @Override
+    public void begin() {
+        
+    }
     
     /**
      * Propagate key/value to listener
      * @param key
      * @param value 
      */
-    void keyValue(K key, V value);
+    @Override
+    public void keyValue(K key, V value) {
+        
+    }
     
     /**
      * End a key/value stream
      */
-    void end();
+    @Override
+    public void end() {
+        
+    }
     
     /**
      * End a key/value stream with an information object
      * @param info 
      */
-    void end(Object info);
+    @Override
+    public void end(Object info) {
+        
+    }
 }

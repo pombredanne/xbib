@@ -36,18 +36,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.testng.annotations.Test;
+import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
+import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.MarcXchangeListener;
 import org.xml.sax.InputSource;
 
 public class DNBPICAXmlReaderTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DNBPICAXmlReaderTest.class.getName());
-    
-    @Test
-    public void testOAI() throws Exception {
+
+    public void testZDBBIB() throws Exception {
         InputStream in = new FileInputStream("src/test/resources/test/xml/zdb-oai-bib.xml");
         if (in == null) {
             throw new IOException("input stream not found");
@@ -55,57 +57,91 @@ public class DNBPICAXmlReaderTest {
         InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
         DNBPICAXmlReader reader = new DNBPICAXmlReader(source);
         reader.setListener(new MarcXchangeListener() {
-
             @Override
             public void leader(String label) {
-                logger.info("leader="+label);
+                logger.debug("leader=" + label);
             }
 
             @Override
             public void beginRecord(String format, String type) {
-                logger.info("beginRecord format="+format + " type="+type);
+                logger.debug("beginRecord format=" + format + " type=" + type);
             }
 
             @Override
             public void beginControlField(Field field) {
-                logger.info("beginControlField field="+field);
+                logger.debug("beginControlField field=" + field);
             }
 
             @Override
             public void endControlField(Field field) {
-                logger.info("endControlField field="+field);
+                logger.debug("endControlField field=" + field);
             }
 
             @Override
             public void beginDataField(Field field) {
-                logger.info("beginDataField field="+field);
+                logger.debug("beginDataField field=" + field);
             }
 
             @Override
             public void endDataField(Field field) {
-                logger.info("endDataField field="+field);
+                logger.debug("endDataField field=" + field);
             }
 
             @Override
             public void beginSubField(Field field) {
-                logger.info("beginSubField field="+field);
+                logger.debug("beginSubField field=" + field);
             }
 
             @Override
             public void endSubField(Field field) {
-                logger.info("endsubField field="+field);
+                logger.debug("endsubField field=" + field);
             }
 
             @Override
             public void endRecord() {
-                logger.info("endRecord");
+                logger.debug("endRecord");
             }
 
             @Override
             public void trailer(String trailer) {
-                logger.info("trailer " + trailer);
+                logger.debug("trailer " + trailer);
             }
         });
         reader.parse();
+    }
+
+    @Test
+    public void testZDBBIB2Keyvalue() throws Exception {
+        InputStream in = new FileInputStream("src/test/resources/test/xml/zdb-oai-bib.xml");
+        if (in == null) {
+            throw new IOException("input stream not found");
+        }
+        InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
+        DNBPICAXmlReader reader = new DNBPICAXmlReader(source);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(new KeyValueStreamListener<FieldCollection, String>() {
+            @Override
+            public void begin() {
+                logger.debug("begin object");
+            }
+
+            @Override
+            public void keyValue(FieldCollection fields, String value) {
+                logger.info(fields.getDesignators());
+                for (Field field : fields) {
+                    logger.debug("field = {}", field);
+                }
+            }
+
+            @Override
+            public void end() {
+                logger.debug("end object");
+            }
+
+            @Override
+            public void end(Object info) {
+                logger.debug("end object (info={})", info);
+            }
+        });
+        reader.setListener(kv).parse();
     }
 }

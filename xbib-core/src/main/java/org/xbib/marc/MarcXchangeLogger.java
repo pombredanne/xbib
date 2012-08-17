@@ -35,13 +35,13 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 
-public class LoggingMarcXchangeListener implements MarcXchangeListener {
+public class MarcXchangeLogger implements MarcXchangeListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingMarcXchangeListener.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(MarcXchangeLogger.class.getName());
 
     @Override
     public void beginRecord(String format, String type) {
-        logger.info("begin record format={0} type = {1}", new Object[]{format, type});
+        logger.info("begin record format={} type = {}", format, type);
     }
 
     @Override
@@ -51,41 +51,41 @@ public class LoggingMarcXchangeListener implements MarcXchangeListener {
 
     @Override
     public void leader(String label) {
-        logger.info("leader = {0}", label);
+        logger.info("leader = {}", label);
     }
 
     @Override
     public void trailer(String trailer) {
-        logger.info("trailer = {0}", trailer);
+        logger.info("trailer = {}", trailer);
     }
     
     @Override
-    public void beginControlField(FieldDesignator designator) {
-        logger.info("begin control field = {0}", designator);
+    public void beginControlField(Field designator) {
+        logger.info("begin control field = {}", designator);
     }
 
     @Override
-    public void endControlField(FieldDesignator designator) {
-        logger.info("end control field = {0} {1}", new Object[]{designator, designator != null ? designator.getData() : null});
+    public void endControlField(Field designator) {
+        logger.info("end control field = {} {}", designator, designator != null ? designator.getData() : null);
     }
 
     @Override
-    public void beginDataField(FieldDesignator designator) {
-        logger.info("begin data field = {0}", designator);
+    public void beginDataField(Field designator) {
+        logger.info("begin data field = {}", designator);
     }
 
     @Override
-    public void endDataField(FieldDesignator designator) {
-        logger.info("end data field = {0} {1}", new Object[]{designator, designator != null ? designator.getData() : null});
+    public void endDataField(Field designator) {
+        logger.info("end data field = {} {}", designator, designator != null ? designator.getData() : null);
     }
 
     @Override
-    public void beginSubField(FieldDesignator designator) {
-        logger.info("begin sub field = {0}", designator);
+    public void beginSubField(Field designator) {
+        logger.info("begin sub field = {}", designator);
     }
 
     @Override
-    public void endSubField(FieldDesignator designator) {
-        logger.info("end sub field = {0} {1}", new Object[]{designator, designator != null ? designator.getData() : null});
+    public void endSubField(Field designator) {
+        logger.info("end sub field = {} {}", designator, designator != null ? designator.getData() : null);
     }
 }

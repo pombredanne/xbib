@@ -31,7 +31,6 @@
  */
 package org.xbib.elements;
 
-import org.xbib.rdf.ResourceContext;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 import java.io.InputStream;
@@ -41,8 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.rdf.ResourceContext;
 
-public abstract class AbstractElementBuilder<C extends ResourceContext, E extends Element, K, V>
+public abstract class AbstractElementBuilder<K, V, E extends Element, C extends ResourceContext>
         implements ElementBuilder<K, V, E, C> {
 
     protected final ThreadLocal<C> context = new ThreadLocal();
@@ -69,7 +69,7 @@ public abstract class AbstractElementBuilder<C extends ResourceContext, E extend
     }
 
     @Override
-    public AbstractElementBuilder<C, E, K, V> addOutput(ElementOutput output) {
+    public AbstractElementBuilder<K, V, E, C> addOutput(ElementOutput output) {
         outputs.add(output);
         return this;
     }
@@ -83,6 +83,7 @@ public abstract class AbstractElementBuilder<C extends ResourceContext, E extend
 
     @Override
     public void build(E element, K key, V value) {
+        // dummy action
         context.get().resource().addProperty("class:" + getClass().getSimpleName(), value);
     }
 
@@ -92,10 +93,10 @@ public abstract class AbstractElementBuilder<C extends ResourceContext, E extend
     }
 
     @Override
-    public void end(Object trailer) {
+    public void end(Object info) {
         for (ElementOutput output : outputs) {
             if (output.enabled()) {
-                output.output(context.get(), trailer);
+                output.output(context.get(), info);
             }
         }
     }
@@ -103,5 +104,9 @@ public abstract class AbstractElementBuilder<C extends ResourceContext, E extend
     @Override
     public C context() {
         return context.get();
+    }
+    
+    public List<ElementOutput> getOutputs() {
+        return outputs;
     }
 }

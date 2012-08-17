@@ -35,37 +35,53 @@ import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ElementContextFactory;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
-public class PicaBuilder<K,V> 
-    extends AbstractElementBuilder<MABContext,MABElement, K, V>
-    implements DublinCoreProperties {
+public class PicaBuilder
+        extends AbstractElementBuilder<FieldCollection, String, PicaElement, PicaContext>
+        implements DublinCoreProperties {
 
-    private final ElementContextFactory<MABContext> contextFactory = new ElementContextFactory<MABContext>() {
-
+    private static final Logger logger = LoggerFactory.getLogger(PicaBuilder.class.getName());
+    private final ElementContextFactory<PicaContext> contextFactory = new ElementContextFactory<PicaContext>() {
         @Override
-        public MABContext newContext() {
-            return new MABContext();
+        public PicaContext newContext() {
+            return new PicaContext();
         }
-    };     
-    
+    };
+
     @Override
-    protected ElementContextFactory<MABContext> getContextFactory() {
+    protected ElementContextFactory<PicaContext> getContextFactory() {
         return contextFactory;
     }
-    
+
     @Override
-    public MABContext context() {
+    public PicaContext context() {
         return context.get();
     }
-    
+
     @Override
     public PicaBuilder addOutput(ElementOutput output) {
         super.addOutput(output);
         return this;
     }
-    
+
+    /**
+     * All Pica elemente are processed here, mapped or unmapped. The key is a
+     * field list (data field and all subfields) and the value is a value of the
+     * data field (if any).
+     *
+     * @param element
+     * @param fields
+     * @param value
+     */
     @Override
-    public void build(MABElement element, K key, V value) {
+    public void build(PicaElement element, FieldCollection fields, String value) {
+        logger.info("got field list = {}", fields);
+        for (Field f : fields) {
+            logger.info("field = " + f + " isSubField=" + f.isSubField());
+        }
     }
-    
 }

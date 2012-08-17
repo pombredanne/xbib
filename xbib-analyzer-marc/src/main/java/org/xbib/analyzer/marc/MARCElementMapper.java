@@ -31,12 +31,57 @@
  */
 package org.xbib.analyzer.marc;
 
+import java.util.Map;
+import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.ElementMapper;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
-public class MARCElementMapper extends ElementMapper {
+public class MARCElementMapper 
+    extends ElementMapper<FieldCollection, String, MARCElement, MARCContext> {
     
+    /**
+     * Instantiate a MARC element mapper.
+     * @param format name of the configuration to be loaded
+     */
     public MARCElementMapper(String format) {
         super("/org/xbib/analyzer/elements/", format);
     }
+    
+    /**
+     * Process key/value stream of MARC data. The key/value stream is organized
+     * with the subfield set as key and the field data as value.
+     * THe builders of this mapper are iterated, and for each found mapped
+     * element, the element field builders are invoked. Subfield processing
+     * may be configured in the element settings. If there is a subfield
+     * processing setting, call the element field builder for each subfield.
+     * @param key the subfields 
+     * @param value field data
+     */
+    @Override
+    public void keyValue(FieldCollection key, String value) {
+        if (key == null) {
+            return;
+        }
+        MARCElement element = (MARCElement) getMap().get(key.getDesignators());
+        for (ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder : getBuilders()) {            
+            if (element != null) {
+                // field builder - check for subfield type and pass configured values
+                Map<String, String> subfields = (Map<String, String>) element.getSettings().get("subfields");
+                if (subfields == null) {
+                    element.fields(builder, key, value);
+                } else {
+                    for (Field field : key) {
+                        String subfield = field.getSubfieldId();
+                        element.field(builder, field, subfields.get(subfield));
+                    }
+                }
+            } else {
+                logger.info("no element for '{}' fields={}", key.getDesignators(), key);
+            }
+            // call the builder with a global key/value pair, even if an element is not configured
+            builder.build(element, key, value);
+        }
+    }    
     
 }
