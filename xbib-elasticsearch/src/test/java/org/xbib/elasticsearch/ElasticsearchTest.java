@@ -31,6 +31,7 @@
  */
 package org.xbib.elasticsearch;
 
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
@@ -60,7 +61,7 @@ public class ElasticsearchTest {
         try {
             node = nodeBuilder().client(true).node();
             Client client = node.client();
-            client.prepareSearch().setIndices(index).
+            SearchResponse response = client.prepareSearch().setIndices(index).
                     setTypes(type).
                     setFrom(0).setSize(10).setQuery(textQuery("_all", "test")).execute().actionGet();
         } catch (ClusterBlockException | NoNodeAvailableException | IndexMissingException e) {

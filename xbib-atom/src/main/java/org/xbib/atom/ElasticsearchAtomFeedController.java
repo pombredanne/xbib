@@ -29,9 +29,10 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
+import org.xbib.elasticsearch.QueryResult;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.URIUtil;
 import org.xbib.json.JsonXmlStreamer;
@@ -149,7 +150,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
         String[] type = p.getProperty("type") != null ? p.getProperty("type").split(",") : null;
         ElasticsearchConnection connection = ElasticsearchConnection.getInstance();
         ElasticsearchSession session = connection.createSession();
-        // we need not to setTarget
+        // we need not to setOutputStream
         try {
             this.builder = new AbderaFeedBuilder(config, query);
             QueryResultAction action = getAction();
@@ -160,7 +161,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             action.setSize(config.getSize());
             long t0 = System.currentTimeMillis();
             // will set index and type from session properties and use process() method for result stream to put it in 'builder'
-            action.searchAndProcess(query);            
+            action.searchAndProcess(QueryResult.Format.JSON, query);            
             long t1 = System.currentTimeMillis();
             return builder.getFeed(query, t1 - t0, 
                     action.getTookInMillis(), action.getFrom(), action.getSize());

@@ -40,10 +40,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
+import org.xbib.elasticsearch.QueryResult;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.json.JsonXmlReader;
 import org.xbib.logging.Logger;
@@ -148,10 +149,10 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         try {
             QueryResultAction action = createAction(request);
             action.setSession(session);
-            action.setTarget(response.getOutput());
+            action.setOutputStream(response.getOutput());
             action.setFrom(request.getStartRecord() - 1);
             action.setSize(request.getMaximumRecords());
-            action.searchAndProcess(request.getQuery());
+            action.searchAndProcess(QueryResult.Format.JSON, request.getQuery());
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
@@ -228,7 +229,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         public void process(InputStream in) throws IOException {
             try {
                 JsonXmlReader reader = new JsonXmlReader(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getTarget()).apply();
+                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getOutputStream()).apply();
             } catch (TransformerException ex) {
                 throw new IOException(ex);
             }

@@ -42,10 +42,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
+import org.xbib.elasticsearch.QueryResult;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.io.util.DateUtil;
 import org.xbib.json.JsonXmlReader;
@@ -241,7 +242,7 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
         public void process(InputStream in) throws IOException {
             try {
                 JsonXmlReader reader = new JsonXmlReader(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getTarget()).apply();
+                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getOutputStream()).apply();
             } catch (TransformerException ex) {
                 throw new IOException(ex);
             }
@@ -251,8 +252,8 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
     private void perform(QueryResultAction action, String query, OAIResponse response) throws OAIException {
         try {
             action.setSession(session);
-            action.setTarget(response.getOutput());
-            action.searchAndProcess(query);
+            action.setOutputStream(response.getOutput());
+            action.searchAndProcess(QueryResult.Format.JSON, query);
         } catch (NoNodeAvailableException e) {
             logger.error("OAI " + adapterURI + ": unresponsive", e);
             throw new OAIException(e);

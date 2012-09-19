@@ -118,14 +118,15 @@ public class Access implements Node {
         currentPhysicalItem().shelfmark(value);
         return this;
     }
-
+    
     public Access setDescription(String value) {
         currentPhysicalItem().description(value);
         return this;
     }
 
     private static <S, T> LinkedList<T> filter(LinkedList<S> source, Predicate<S, T> p) {
-        LinkedList<T> result = new LinkedList<T>();
+        LinkedList<T> result;
+        result = new LinkedList();
         for (S s : source) {
             T t = p.apply(s);
             if (t != null) {

@@ -43,7 +43,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 import org.testng.annotations.Test;
 import org.xml.sax.InputSource;
 

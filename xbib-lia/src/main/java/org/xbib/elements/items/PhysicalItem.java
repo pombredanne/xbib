@@ -32,10 +32,11 @@
 package org.xbib.elements.items;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class PhysicalItem extends Item {
     
-    private LinkedList<String> numbers = new LinkedList();
+    private List<String> numbers = new LinkedList();
     private String shelfmark;
     private String description;
     private String collection;
@@ -60,7 +61,7 @@ public class PhysicalItem extends Item {
         return this;
     }
     
-    public LinkedList<String> getNumbers() {
+    public List<String> getNumbers() {
         return numbers;
     }
 

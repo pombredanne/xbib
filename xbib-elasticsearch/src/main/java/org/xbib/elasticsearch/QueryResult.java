@@ -33,23 +33,71 @@ package org.xbib.elasticsearch;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import org.xbib.io.InputStreamEmptyProcessor;
+import org.xbib.io.InputStreamErrorProcessor;
+import org.xbib.io.InputStreamProcessor;
 
-public interface QueryResult {
+public interface QueryResult<T> extends InputStreamProcessor, InputStreamEmptyProcessor, InputStreamErrorProcessor{
     
+    /**
+     * The format of the query result
+     */
+    enum Format { JSON, SMILE, YAML };
+    
+    /**
+     * The index
+     * @param index 
+     */
     void setIndex(String... index);
 
+    /**
+     * The type
+     * @param type 
+     */
     void setType(String... type);
     
+    /**
+     * The document ID (for Get)
+     * @param id 
+     */
     void setId(String id);
     
+    /**
+     * Hit offset
+     */
     void setFrom(int from);
     
+    /**
+     * Hit size
+     * @param size 
+     */
     void setSize(int size);
         
-    void setTarget(OutputStream target);
+    /**
+     * Set output stream
+     * @param target 
+     */
+    void setOutputStream(OutputStream target);
     
-    OutputStream getTarget();
+    /**
+     * Get output stream
+     * @return 
+     */
+    OutputStream getOutputStream();
     
-    void search(String query) throws IOException;
+    /**
+     * Search for result and output them in a format to the output stream
+     * @param format
+     * @param query
+     * @throws IOException 
+     */
+    void search(T format, String query) throws IOException;
 
+    /**
+     * Search for result, process it to an input stream, see the processor interfaces.
+     * @param format
+     * @param query
+     * @throws IOException 
+     */
+    void searchAndProcess(T format, String query) throws IOException;
 }

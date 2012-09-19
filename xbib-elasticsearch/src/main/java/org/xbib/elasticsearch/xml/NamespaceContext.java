@@ -1,4 +1,4 @@
-package org.elasticsearch.common.xcontent.xml.namespace;
+package org.xbib.elasticsearch.xml;
 
 import java.net.URI;
 import java.net.URISyntaxException;

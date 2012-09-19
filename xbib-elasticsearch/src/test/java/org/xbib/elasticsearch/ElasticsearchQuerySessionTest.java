@@ -50,13 +50,13 @@ public class ElasticsearchQuerySessionTest {
         ElasticsearchSession session = connection.createSession();
         QueryResultAction p =  new QueryResultAction();
         p.setSession(session);
-        p.setTarget(out);
+        p.setOutputStream(out);
         p.setIndex("test");
         p.setFrom(0);
         p.setSize(5);
         String query = "{\"query\":{\"match_all\":{}}}";
         try {
-            p.search(query);
+            p.search(QueryResult.Format.JSON, query);
         } catch (NoNodeAvailableException e) {
             //
         } finally {
@@ -73,13 +73,13 @@ public class ElasticsearchQuerySessionTest {
         ElasticsearchSession session = connection.createSession();
         ElasticsearchCQLResultAction p =  new ElasticsearchCQLResultAction();
         p.setSession(session);
-        p.setTarget(out);
+        p.setOutputStream(out);
         p.setIndex("test");
         p.setFrom(0);
         p.setSize(5);
         String query = "cql.allIndexes = \"Hello World\"";
         try {
-            p.search(query);
+            p.search(QueryResult.Format.JSON, query);
         } catch (NoNodeAvailableException e) {
             // ignore
         } finally {

@@ -32,7 +32,6 @@
 package org.xbib.elasticsearch;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,10 +46,15 @@ import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
-public class QueryResultAction extends AbstractQueryResultAction {
+public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(QueryResultAction.class.getName());
+
+    private static final long DEFAULT_TIMEOUT = 30000L;
+    
     private Logger queryLogger;
+    
+    
     private ElasticsearchSession session;
     private OutputStream out;
     private String filter;
@@ -59,25 +63,25 @@ public class QueryResultAction extends AbstractQueryResultAction {
     public void setSession(ElasticsearchSession session) throws IOException {
         this.session = session;
         session.setQueryLogger(queryLogger);
-        setTimeout(30000L); // default time out
+        setTimeout(DEFAULT_TIMEOUT); // default time out
     }
 
     @Override
-    public void setTarget(OutputStream target) {
+    public void setOutputStream(OutputStream target) {
         this.out = target;
     }
 
     @Override
-    public OutputStream getTarget() {
+    public OutputStream getOutputStream() {
         return out;
     }
 
     @Override
-    public void search(final String query) throws IOException {
+    public void search(final T format, final String query) throws IOException {
         SearchResponse response = performQuery(query);
         if (response != null) {
             setTookInMillis(response.getTookInMillis());
-            createJSONStream(response, out);
+            createStream(format, response, out);
         } else {
             out.write(jsonErrorMessage("no response"));
         }
@@ -88,11 +92,11 @@ public class QueryResultAction extends AbstractQueryResultAction {
     }
 
     @Override
-    public void searchAndProcess(final String query) throws IOException {
+    public void searchAndProcess(final T format, final String query) throws IOException {
         SearchResponse response = performQuery(query);
         if (response != null) {
             setTookInMillis(response.getTookInMillis());
-            pipeJSONStream(response);
+            dispatchStream(format, response);
         } else {
             processError(jsonErrorMessageStream("no response"));
         }
@@ -128,7 +132,7 @@ public class QueryResultAction extends AbstractQueryResultAction {
                 if (!response.exists() || response.isSourceEmpty()) {
                     processEmpty(jsonEmptyMessageStream("not found"));
                 } else {
-                    process(new ByteArrayInputStream(response.source()));
+                    process(response.sourceRef().streamInput());
                 }
             } else {
                 processError(jsonErrorMessageStream("no response"));
@@ -238,35 +242,29 @@ public class QueryResultAction extends AbstractQueryResultAction {
         }
     }
 
-    protected void createJSONStream(final SearchResponse response, OutputStream out) throws IOException {
-        XContentBuilder builder = new XContentBuilder(JsonXContent.jsonXContent, out);
+    protected void createStream(final T format, final SearchResponse response, OutputStream out) throws IOException {        
+        XContentBuilder builder =  new XContentBuilder(JsonXContent.jsonXContent, out);
         builder.startObject();
         response.toXContent(builder, ToXContent.EMPTY_PARAMS);
         builder.endObject();
         builder.close();
     }
 
-    protected void pipeJSONStream(final SearchResponse response) throws IOException {
-        // choose what pipe we use
-        final boolean notfound = response.getHits().totalHits() == 0L;
+    protected void dispatchStream(final T format, final SearchResponse response) throws IOException {
+
+        StreamByteBuffer buffer = new StreamByteBuffer();        
+        createStream(format, response, buffer.getOutputStream());
+        buffer.getOutputStream().flush();
+        InputStream in = buffer.getInputStream();
+
         final boolean error = response.failedShards() > 0 || response.isTimedOut();
-
-        // @todo do we really need a ByteOutputStream? 
-        // we just use a "simple" memory pipe = byte array in, byte array out
-        // all must fit into memory :-(
-        // PipedInputStream/PipedOutputStream breaks servlet filter stylesheets (they use threads)
-
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        createJSONStream(response, bout);
-        bout.close();
-        ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-
+        final boolean notfound = response.getHits().totalHits() == 0L;
         if (error) {
-            processError(bin);
+            processError(in);
         } else if (notfound) {
-            processEmpty(bin);
+            processEmpty(in);
         } else {
-            process(bin);
+            process(in);
         }
     }
 
@@ -284,5 +282,6 @@ public class QueryResultAction extends AbstractQueryResultAction {
 
     private static InputStream jsonErrorMessageStream(String message) {
         return new ByteArrayInputStream(jsonErrorMessage(message));
+        
     }
 }

@@ -39,7 +39,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import javax.xml.namespace.QName;
 import org.testng.annotations.Test;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 
 public class JsonXmlStreamerTest {
 

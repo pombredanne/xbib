@@ -1,10 +1,10 @@
 package org.xbib.elasticsearch.http;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import java.io.IOException;
 import java.io.InputStream;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
 import org.xbib.io.ResultProcessor;
 import org.xbib.io.StringData;
 import org.xbib.io.operator.ResultOperator;
@@ -95,7 +95,9 @@ public abstract class AbstractRequest
     
     protected StringData getMappings() throws IOException {
         String s = "/org/xbib/elasticsearch/mappings/" + index;
-        if (type != null) s += "/" + type;
+        if (type != null) {
+            s += "/" + type;
+        }
         InputStream in = getClass().getClassLoader().getResourceAsStream(s);
         if (in == null) {
             throw new IOException("mapping file not found: " + s);

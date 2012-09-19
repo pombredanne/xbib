@@ -1,5 +1,5 @@
 
-package org.elasticsearch.common.xcontent.xml.namespace;
+package org.xbib.elasticsearch.xml;
 
 /**
  * A namespace for Elasticsearch XML elements

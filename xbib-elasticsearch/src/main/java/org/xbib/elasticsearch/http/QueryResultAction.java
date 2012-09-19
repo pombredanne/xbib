@@ -6,31 +6,27 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import org.xbib.elasticsearch.AbstractQueryResultAction;
-import org.xbib.io.InputStreamEmptyProcessor;
-import org.xbib.io.InputStreamErrorProcessor;
-import org.xbib.io.InputStreamProcessor;
 import org.xbib.io.Mode;
 import org.xbib.io.http.netty.HttpOperation;
 import org.xbib.io.http.netty.HttpRequest;
 
-public class ElasticsearchDSL extends AbstractQueryResultAction
-        implements InputStreamProcessor, InputStreamEmptyProcessor, InputStreamErrorProcessor {
+public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
 
     private ElasticsearchSession session;
     private OutputStream out;
 
-    public ElasticsearchDSL(ElasticsearchSession session) {
+    public QueryResultAction(ElasticsearchSession session) {
         this.session = session;
     }
 
     @Override
-    public void search(String query)
+    public void search(T format, String query)
             throws IOException {
-        searchAndProcess(query);
+        searchAndProcess(format, query);
     }
 
     @Override
-    public void searchAndProcess(String query)
+    public void searchAndProcess(T format, String query)
             throws IOException {
         HttpRequest request = new HttpRequest("POST").setURI(URI.create(session.getURI() + "/_search")).addParameter("q", query);
         session.open(Mode.READ);
@@ -42,12 +38,12 @@ public class ElasticsearchDSL extends AbstractQueryResultAction
     }
 
     @Override
-    public void setTarget(OutputStream out) {
+    public void setOutputStream(OutputStream out) {
         this.out = out;
     }
 
     @Override
-    public OutputStream getTarget() {
+    public OutputStream getOutputStream() {
         return out;
     }
 

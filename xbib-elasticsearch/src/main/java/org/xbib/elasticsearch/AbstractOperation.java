@@ -33,9 +33,9 @@ package org.xbib.elasticsearch;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.xbib.io.ResultProcessor;
 import org.xbib.io.StringData;
 import org.xbib.io.operator.ResultOperator;

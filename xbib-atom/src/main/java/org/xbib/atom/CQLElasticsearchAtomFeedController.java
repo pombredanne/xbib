@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import org.elasticsearch.common.xcontent.xml.namespace.ES;
+import org.xbib.elasticsearch.xml.ES;
 import org.xbib.elasticsearch.QueryResultAction;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.JsonXmlValueMode;

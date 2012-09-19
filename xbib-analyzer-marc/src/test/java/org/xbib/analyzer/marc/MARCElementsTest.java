@@ -48,18 +48,16 @@ import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.io.InputStreamService;
 import org.xbib.keyvalue.KeyValueStreamListener;
-import org.xbib.keyvalue.KeyValueStreamLogger;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.MarcXchangeLogger;
 import org.xbib.rdf.ResourceContext;
 import org.xml.sax.InputSource;
 
 public class MARCElementsTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MARCElementsTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger("test");
 
     @Test
     public void testSetupOfElements() throws Exception {
@@ -92,9 +90,8 @@ public class MARCElementsTest {
 
     @Test
     public void testStbBonnElements() throws Exception {
-         InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/stb-bonn.mrc"));
-
-        //InputStream in = new FileInputStream("/Users/joerg/120727_StbBonn_MARC21.TIT");
+         //InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/stb-bonn.mrc"));
+        InputStream in = InputStreamService.getInputStream(URI.create("file:///Users/joerg/Daten/DE-369/120727_StbBonn_MARC21.TIT"));
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
         MARCBuilder builder = new MARCBuilder();

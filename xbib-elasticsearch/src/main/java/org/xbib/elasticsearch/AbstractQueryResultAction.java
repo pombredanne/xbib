@@ -31,13 +31,7 @@
  */
 package org.xbib.elasticsearch;
 
-import java.io.IOException;
-import org.xbib.io.InputStreamEmptyProcessor;
-import org.xbib.io.InputStreamErrorProcessor;
-import org.xbib.io.InputStreamProcessor;
-
-public abstract class AbstractQueryResultAction implements QueryResult, 
-        InputStreamProcessor, InputStreamEmptyProcessor, InputStreamErrorProcessor {
+public abstract class AbstractQueryResultAction<T> implements QueryResult<T> {
 
     protected String[] index;
     protected String[] type;
@@ -95,8 +89,5 @@ public abstract class AbstractQueryResultAction implements QueryResult,
     public long getTimeout() {
         return timeout;
     }
-    
-    public abstract void searchAndProcess(String query)
-            throws IOException;
     
 }
