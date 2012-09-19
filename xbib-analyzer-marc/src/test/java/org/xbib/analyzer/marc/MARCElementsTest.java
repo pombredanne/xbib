@@ -90,8 +90,8 @@ public class MARCElementsTest {
 
     @Test
     public void testStbBonnElements() throws Exception {
-         //InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/stb-bonn.mrc"));
-        InputStream in = InputStreamService.getInputStream(URI.create("file:///Users/joerg/Daten/DE-369/120727_StbBonn_MARC21.TIT"));
+        InputStream in =  InputStreamService.getInputStream(URI.create("file:src/test/resources/stb-bonn.mrc"));
+        //InputStream in = InputStreamService.getInputStream(URI.create("file:///Users/joerg/Daten/DE-369/120727_StbBonn_MARC21.TIT"));
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
         MARCBuilder builder = new MARCBuilder();
