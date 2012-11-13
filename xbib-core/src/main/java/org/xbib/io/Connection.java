@@ -46,7 +46,7 @@ public interface Connection<S extends Session> {
      * Set URI of this connection
      * @param uri
      */
-    void setURI(URI uri);
+    Connection setURI(URI uri);
 
     /**
      * Get URI of this connection 

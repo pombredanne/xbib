@@ -32,16 +32,16 @@
 package org.xbib.objectstorage.adapter;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.ObjectStorageParameter;
 import org.xbib.objectstorage.ObjectStorageRequest;
 
 public class DefaultRequest extends AbstractRequest 
     implements ObjectStorageRequest, ObjectStorageParameter {
 
-    private final static Logger logger = Logger.getLogger(DefaultRequest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DefaultRequest.class.getName());
     private LDAPUserAttributes userAttr;
 
     public DefaultRequest(AbstractAdapter adapter) {
@@ -55,7 +55,7 @@ public class DefaultRequest extends AbstractRequest
             try {
                 this.userAttr = new LDAPUserAttributes(adapter.getDirContext(), getUser());
             } catch (NamingException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                logger.error(null, ex);
                 throw new IOException(ex);
             }
         }

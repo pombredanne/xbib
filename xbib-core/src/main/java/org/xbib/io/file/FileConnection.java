@@ -52,8 +52,9 @@ public class FileConnection implements Connection<FileSession> {
     }
 
     @Override
-    public void setURI(URI uri) {
+    public FileConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override

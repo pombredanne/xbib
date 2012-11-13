@@ -92,7 +92,7 @@ public class ContainerGetAction extends AbstractQueryAction {
                 String item = ill.getStandardNumberPrintableRepresentation();
                 row.setItem(item);
             } catch (InvalidStandardNumberException ex) {
-                logger.log(Level.WARNING, ex.getMessage(), ex);
+                logger.warn(ex.getMessage(), ex);
             }
             rows.add(row);
         }

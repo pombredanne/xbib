@@ -76,7 +76,7 @@ public class ZConnection implements Connection<ZSession> {
     }
 
     @Override
-    public void setURI(URI uri) {
+    public ZConnection setURI(URI uri) {
         this.uri = uri;
         this.timeout = DEFAULT_TIMEOUT_MILLIS;
         try {
@@ -84,6 +84,7 @@ public class ZConnection implements Connection<ZSession> {
         } catch (UnsupportedEncodingException ex) {
             logger.error(ex.getMessage(), ex);
         }
+        return this;
     }
 
     @Override

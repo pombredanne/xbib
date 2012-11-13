@@ -34,20 +34,19 @@ package org.xbib.objectstorage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
-import org.xbib.objectstorage.adapter.AbstractAdapter;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.adapter.container.rows.ContainerRow;
 import org.xbib.objectstorage.adapter.container.rows.ItemRow;
 
 public class ObjectStorageResponse implements StreamingOutput {
 
-    private final static Logger logger = Logger.getLogger(ObjectStorageResponse.class.getName());    
+    private final static Logger logger = LoggerFactory.getLogger(ObjectStorageResponse.class.getName());    
     private ResponseBuilder builder;
     private String textResponse;
     private GenericEntity<List<ContainerRow>> containerResponse;
@@ -72,15 +71,15 @@ public class ObjectStorageResponse implements StreamingOutput {
         t1 = System.currentTimeMillis();
         builder.header("X-millis", t1 - t0);
         if (containerResponse != null) {
-            logger.log(Level.INFO, "entity is container response ");
+            logger.info("entity is container response ");
             builder.entity(containerResponse);
         }
         else if (itemResponse != null) {
-            logger.log(Level.INFO, "entity is item response ");
+            logger.info("entity is item response ");
             builder.entity(itemResponse);
         }
         else if (textResponse != null) {
-            logger.log(Level.INFO, "entity is text response ");
+            logger.info("entity is text response ");
             builder.entity(textResponse);
         }
         Response response = builder.build();

@@ -53,6 +53,7 @@ dc.subject=financing
 (a or b) and (c or d)
 unix AND wolfinger
 "keine angst" AND unix
+unix and 2012
 dc.title=unix or wolfinger
 (dc.title = unix or dc.date = 2003) and ( dc.creator = wolfinger and dc.creator = christine or dc.creator = maier )
 financing AND success

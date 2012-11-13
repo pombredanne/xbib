@@ -58,7 +58,7 @@ public class ContainerGetByDateAction extends ContainerGetAction {
         params.put(SIZE_PARAMETER, request.getLongParameter(FROM_PARAMETER, 1L) + request.getLongParameter(SIZE_PARAMETER, 10L) - 1);
         params.put(FROM_DATE_PARAMETER, DateUtil.formatDateISO(request.getDateParameter(FROM_DATE_PARAMETER, DateUtil.midnight())));
         params.put(TO_DATE_PARAMETER, DateUtil.formatDateISO(request.getDateParameter(TO_DATE_PARAMETER, DateUtil.midnight(DateUtil.tomorrow()))));
-        logger.log(Level.INFO, "container get by date = {0} params = {1}", new Object[]{sql, params});        
+        logger.debug("container get by date = {0} params = {1}", new Object[]{sql, params});        
         return params;
     }
 

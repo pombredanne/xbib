@@ -70,19 +70,18 @@ public abstract class AbstractQueryAction extends AbstractAction {
                     ResultSet result = service.executeQuery(service.bind(p, createBindKeys(), createParams(request)))) {
                 SQLWarning warning = result.getWarnings();
                 while (warning != null) {
-                    logger.log(Level.WARNING, "{0} {1}", new Object[]{warning.getMessage(), warning.getSQLState()});
+                    logger.warn("{0} {1}", new Object[]{warning.getMessage(), warning.getSQLState()});
                     warning = warning.getNextWarning();
                 }
                 response.builder().status(200);
                 rows = buildResponse(result, request, response);
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw e;
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-query-millis", t1 - t0);
-                logger.log(rows > 0 ? Level.INFO : Level.WARNING,
-                        "{0}, {1} rows, query took {2} ms", new Object[]{rows > 0 ? "success" : "nothing found", rows, t1 - t0});
+                logger.debug("{0}, {1} rows, query took {2} ms", new Object[]{rows > 0 ? "success" : "nothing found", rows, t1 - t0});
             }
         }
     }

@@ -5,12 +5,13 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
 
-public class CQLTest {
+public class CQLTest extends Assert {
 
     private final static Logger logger = LoggerFactory.getLogger(CQLTest.class.getName());
 
@@ -35,6 +36,7 @@ public class CQLTest {
                 }
             }
         }
+        assertEquals(errors, 0);
     }
 
     private void process(String line) throws Exception {

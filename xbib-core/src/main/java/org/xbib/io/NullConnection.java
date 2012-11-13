@@ -44,8 +44,9 @@ public class NullConnection implements Connection<NullSession> {
     private URI uri;
 
     @Override
-    public void setURI(URI uri) {
+    public NullConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override

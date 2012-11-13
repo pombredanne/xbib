@@ -64,12 +64,12 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
                 service.execute(service.bind(p, createBindKeys(), createParams(request)));
                 response.builder().status(200);
             } catch (SQLException | IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw e;
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-insert-millis", t1 - t0);
-                logger.log(Level.INFO, "insert took {1} ms",  t1 - t0);
+                logger.debug("insert took {1} ms",  t1 - t0);
             }
         }
     }

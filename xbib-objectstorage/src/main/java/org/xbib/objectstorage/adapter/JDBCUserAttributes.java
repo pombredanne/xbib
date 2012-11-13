@@ -51,11 +51,12 @@ public class JDBCUserAttributes implements UserAttributes {
     private final Map<String, Object> params = new HashMap<>();
     private final SQLSession session;
     private final String user;
-    private String name;
+    private Map<String,String> attributes;
 
     public JDBCUserAttributes(SQLSession session, String user) throws SQLException, IOException {
         this.session = session;
         this.user = user;
+        this.attributes = new HashMap();
         retrieve();
     }
 
@@ -63,6 +64,7 @@ public class JDBCUserAttributes implements UserAttributes {
         params.put("user", user);
         final Query query = new Query(bundle.getString("getuserattributes"),
                 new String[]{"user"}, params);
+        String[] keys = bundle.getString("userattributes").split(",");
         SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
         try {
             query.setResultProcessor(p);
@@ -74,8 +76,9 @@ public class JDBCUserAttributes implements UserAttributes {
                 warning = warning.getNextWarning();
             }
             if (result != null && result.next()) {
-                this.name = result.getString(1);
-                //            
+                for (int i = 0; i < result.getMetaData().getColumnCount(); i++) {
+                    attributes.put(keys[i], result.getString(i+1));
+                }
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, e.getMessage() + query.getSQL(), e);
@@ -86,8 +89,14 @@ public class JDBCUserAttributes implements UserAttributes {
         }
     }
     
+    @Override
     public String getName() {
-        return name;
+        return attributes.get("name");
+    }
+    
+    @Override
+    public Map<String,String> getAttributes() {
+        return attributes;
     }
     
 }

@@ -6,6 +6,7 @@
  */
 package org.xbib.query;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -13,7 +14,7 @@ import java.util.StringTokenizer;
  * A string tokenizer that understands quotes and escape characters.
  * @author Igor Peshansky, IBM Corporation
  */
-public class QuotedStringTokenizer extends StringTokenizer {
+public class QuotedStringTokenizer extends StringTokenizer implements Iterator<String> {
     /* Have to keep copies because StringTokenizer makes everything private */
 
     private String str;
@@ -23,7 +24,7 @@ public class QuotedStringTokenizer extends StringTokenizer {
     private boolean returnDelims;
     private int pos;
     private int len;
-    private StringBuffer token;
+    private StringBuilder token;
 
     /**
      * Constructs a string tokenizer for the specified string.
@@ -89,7 +90,7 @@ public class QuotedStringTokenizer extends StringTokenizer {
     private int skipToken(int pos, boolean collect) {
         int p = pos;
         if (collect) {
-            token = new StringBuffer();
+            token = new StringBuilder();
         }
         boolean quoted = false;
         char quote = '\000';
@@ -130,7 +131,7 @@ public class QuotedStringTokenizer extends StringTokenizer {
             }
         }
         if (escaped || quoted) {
-            throw new IllegalArgumentException("Unterminated quoted string");
+            throw new UnterminatedQuotedStringException(str);
         }
         return p;
     }
@@ -161,10 +162,8 @@ public class QuotedStringTokenizer extends StringTokenizer {
         if (returnDelims && delim.indexOf(str.charAt(pos)) >= 0) {
             return str.substring(pos, ++pos);
         }
-        //int start = pos;
         pos = skipToken(pos, true);
         return token.toString();
-        //return str.substring(start, pos);
     }
 
     /**
@@ -215,5 +214,20 @@ public class QuotedStringTokenizer extends StringTokenizer {
     @Override
     public Object nextElement() {
         return nextToken();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return hasMoreTokens();
+    }
+
+    @Override
+    public String next() {
+        return nextToken();
+    }
+
+    @Override
+    public void remove() {
+        
     }
 }

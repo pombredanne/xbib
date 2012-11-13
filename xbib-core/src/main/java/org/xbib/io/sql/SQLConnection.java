@@ -51,8 +51,9 @@ public class SQLConnection implements Connection<SQLSession> {
     }
 
     @Override
-    public void setURI(URI uri) {
+    public SQLConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override

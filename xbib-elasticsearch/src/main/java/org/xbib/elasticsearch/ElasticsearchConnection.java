@@ -82,8 +82,8 @@ public class ElasticsearchConnection<S extends ElasticsearchSession>
     }    
     
     @Override
-    public void setURI(URI uri) {
-        // ignore
+    public ElasticsearchConnection setURI(URI uri) {
+        return this;
     }
 
     @Override

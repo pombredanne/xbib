@@ -38,8 +38,9 @@ public class BerkeleyDBConnection implements Connection<BerkeleyDBSession> {
     }
 
     @Override
-    public void setURI(URI uri) {
+    public BerkeleyDBConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override

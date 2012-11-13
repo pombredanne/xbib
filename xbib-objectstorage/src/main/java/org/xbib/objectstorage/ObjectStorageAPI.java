@@ -37,8 +37,6 @@ import com.sun.jersey.multipart.FormDataParam;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -59,12 +57,14 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import org.xbib.io.util.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.util.ExceptionFormatter;
 
 @Path("/v1")
 public class ObjectStorageAPI implements ObjectStorageParameter {
 
-    private final static Logger logger = Logger.getLogger(ObjectStorageAPI.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(ObjectStorageAPI.class.getName());
     // @todo injection of adapter
     private final static ObjectStorageAdapter adapter = ObjectStorageAdapterService.getInstance().getDefaultAdapter();
     public final static String VERSION = "v1";
@@ -233,7 +233,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             final SecurityContext securityContext,
             final UriInfo uriInfo,
             final String container) {
-        logger.log(Level.INFO, "headContainer");
+        logger.info("headContainer");
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
@@ -300,7 +300,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item) {
-        logger.log(Level.INFO, "getItem " + uriInfo.getAbsolutePath());
+        logger.info("getItem " + uriInfo.getAbsolutePath());
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
@@ -327,7 +327,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             final UriInfo uriInfo,
             String container,
             String item) {
-        logger.log(Level.INFO, "headItem " + uriInfo.getAbsolutePath());
+        logger.info("headItem " + uriInfo.getAbsolutePath());
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
@@ -359,7 +359,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
             InputStream in) {
-        logger.log(Level.INFO, "putItem " + uriInfo.getAbsolutePath());
+        logger.info("putItem " + uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
@@ -385,7 +385,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
             InputStream in) {
-        logger.log(Level.INFO, "putItemStatus " + uriInfo.getAbsolutePath());
+        logger.info("putItemStatus " + uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
@@ -410,7 +410,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(STATE_PARAMETER) String status,
             @FormDataParam("files[]") InputStream in,
             @FormDataParam("files[]") FormDataContentDisposition disp) {
-        logger.log(Level.INFO, "postItem " + uriInfo.getAbsolutePath());
+        logger.info("postItem " + uriInfo.getAbsolutePath());
         if (disp == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
@@ -430,7 +430,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item) {
-        logger.log(Level.INFO, "deleteItem " + uriInfo.getAbsolutePath());
+        logger.info("deleteItem " + uriInfo.getAbsolutePath());
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
@@ -465,11 +465,11 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             StringBuilder sb = new StringBuilder();
             sb.append("[{\"name\":\"").append(item).append("\"").append(",\"type\":\"").append(itemInfo.getMimeType()).append("\"").append(",\"size\":\"").append(itemInfo.getOctets()).append("\"").append(",\"url\":\"").append(itemInfo.getURL()).append("\"").append(",\"delete_url\":\"").append(itemInfo.getDeleteURL()).append("\"").append(",\"delete_type\":\"DELETE\",\"checksum\":\"").append(itemInfo.getChecksum()).append("\"}]");
 
-            logger.log(Level.INFO, sb.toString());
+            logger.info(sb.toString());
             adapter.disconnect();
             return builder.status(Status.OK).entity(sb.toString()).header("X-checksum-sha1", itemInfo.getChecksum()).header("X-octets", itemInfo.getOctets()).header("X-mime-type", itemInfo.getMimeType()).header("X-millis", t1 - t0).build();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return Response.serverError().entity(ExceptionFormatter.format(e)).build();
         }
     }

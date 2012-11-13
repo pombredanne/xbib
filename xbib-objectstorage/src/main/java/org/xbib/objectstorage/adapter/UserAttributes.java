@@ -31,7 +31,11 @@
  */
 package org.xbib.objectstorage.adapter;
 
+import java.util.Map;
+
 public interface UserAttributes {
 
     String getName();
+    
+    Map<String,String> getAttributes();
 }

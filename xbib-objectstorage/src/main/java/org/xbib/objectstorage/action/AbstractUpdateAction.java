@@ -64,12 +64,12 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
                     response.builder().status(404);
                 }
             } catch (SQLException | IOException e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw e;
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-update-millis", t1 - t0);
-                logger.log(Level.INFO, "{0} rows, update took {1} ms", new Object[]{rows, t1 - t0});
+                logger.debug("{0} rows, update took {1} ms", new Object[]{rows, t1 - t0});
             }
         }
     }

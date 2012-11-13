@@ -52,7 +52,7 @@ public final class ConnectionManager {
 
     private ConnectionManager() {
     }
-    
+
     /**
      * Gets a new un-pooled, un-threaded connection by name
      *
@@ -81,6 +81,7 @@ public final class ConnectionManager {
 
     /**
      * Get connection
+     *
      * @param name
      * @param pooled
      * @return a Connection
@@ -93,6 +94,7 @@ public final class ConnectionManager {
 
     /**
      * Get a connection
+     *
      * @param name
      * @param pooled
      * @param threaded
@@ -105,20 +107,14 @@ public final class ConnectionManager {
     }
 
     /**
-     * Get a connection.
-     * <li>
-     * via jndi 
-     * </li>
-     * if that fails, the following will be tried:
-     * <li>
-     * via ServiceLoader. The ServiceLoader loads all classes which are defined in 
-     * WEB-INF/services/org.xbib.io.ConnectionFactory. 
-     * All theses classes should be an instance of the 
-     * ConnectionFactory-interface which has a method 'providesScheme'. 
-     * If a ConnectionFactory equals the scheme
-     * which is given through the parameter 'URI' the connection of 
-     * this ConnectionFactory is returned.
-     * </li>
+     * Get a connection. <li> via jndi </li> if that fails, the following will
+     * be tried: <li> via ServiceLoader. The ServiceLoader loads all classes
+     * which are defined in WEB-INF/services/org.xbib.io.ConnectionFactory. All
+     * theses classes should be an instance of the ConnectionFactory-interface
+     * which has a method 'providesScheme'. If a ConnectionFactory equals the
+     * scheme which is given through the parameter 'URI' the connection of this
+     * ConnectionFactory is returned. </li>
+     *
      * @see ServiceLoader
      * @param uri the URI
      * @param pooled if the connection is pooled
@@ -127,8 +123,8 @@ public final class ConnectionManager {
      *
      * @throws IOException
      */
-	@SuppressWarnings("unchecked")
-	public synchronized static Connection<? extends Session> getConnection(URI uri, boolean pooled, boolean threaded)
+    @SuppressWarnings("unchecked")
+    public synchronized static Connection<? extends Session> getConnection(URI uri, boolean pooled, boolean threaded)
             throws IOException {
         if (uri == null) {
             throw new IllegalArgumentException("no connection URI given");
@@ -156,7 +152,7 @@ public final class ConnectionManager {
             }
         }
         if (!found) {
-            throw new ServiceConfigurationError("no connection factory found for URI scheme " + uri.getScheme() );
+            throw new ServiceConfigurationError("no connection factory found for URI scheme " + uri.getScheme());
         }
         if (threaded) {
             try {
@@ -175,8 +171,8 @@ public final class ConnectionManager {
     }
 
     /**
-     * Ping if a host/port is reachable. Open TCP/IP socket on host/port
-     * with timeout
+     * Ping if a host/port is reachable. Open TCP/IP socket on host/port with
+     * timeout
      *
      * @param host the host
      * @param port the port
@@ -192,5 +188,4 @@ public final class ConnectionManager {
             }
         }
     }
-    
 }

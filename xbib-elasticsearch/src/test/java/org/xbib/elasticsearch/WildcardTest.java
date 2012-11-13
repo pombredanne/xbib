@@ -13,15 +13,15 @@ import org.testng.annotations.Test;
 
 public class WildcardTest {
 
-    private static final String INDEX = "index";
-    private static final String TYPE = "type";
+    private static final String INDEX = "test";
+    private static final String TYPE = "test";
     private static final String FIELD = "field";
     private static Client client;
 
     @Test
     public void test() throws Exception {
         initializeClient();
-        deleteIndex();
+        //deleteIndex();
         index("1", "010");
         index("2", "0*0");
         // exact
@@ -42,13 +42,14 @@ public class WildcardTest {
     private void initializeClient() {
         client = nodeBuilder()
                 .settings(settingsBuilder()
+                .put("cluster.name", "test")
                 .put("index.analysis.analyzer.default.filter", "lowercase")
                 .put("index.analysis.analyzer.default.tokenizer", "keyword"))
                 .local(true).node().client();
     }
 
     private void deleteIndex() {
-        client.admin().indices().delete(deleteIndexRequest("_all")).actionGet();
+        client.admin().indices().delete(deleteIndexRequest(INDEX)).actionGet();
     }
 
     private void index(String id, String fieldValue) throws IOException {

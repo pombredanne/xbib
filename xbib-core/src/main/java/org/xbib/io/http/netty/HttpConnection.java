@@ -49,8 +49,9 @@ public class HttpConnection implements Connection<HttpSession> {
     private List<HttpSession> sessions = new ArrayList<>();
 
     @Override
-    public void setURI(URI uri) {
+    public HttpConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override

@@ -37,9 +37,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
+import org.xbib.query.Filter;
 import org.xbib.query.QuotedStringTokenizer;
+import org.xbib.query.UnterminatedQuotedStringException;
 import org.xbib.query.cql.SyntaxException;
 
 /**
@@ -99,7 +103,7 @@ public class Token implements Node {
             // phrase?
             if (value.startsWith("\"") && value.endsWith("\"")) {
                 this.value = value.substring(1, value.length() - 1).replaceAll("\\\\\"", "\"");
-                this.values = parseQuotedString(this.value);
+                this.values = parseQuot(this.value);
                 tokenClass.add(TokenClass.PHRASE);
             }
             // wildcard?
@@ -166,7 +170,7 @@ public class Token implements Node {
         return dates;
     }
 
-    public List<String> getStrings() {
+    public List<String> getStringList() {
         return values;
     }
 
@@ -288,4 +292,26 @@ public class Token implements Node {
         }
         return result;
     }
+    
+    private List<String> parseQuot(String s) {
+        LinkedList l = new LinkedList();
+        try {
+            Filter.filter(new QuotedStringTokenizer(s, " \t\n\r\f", "\"", '\\', false), l, isWordPred);
+        } catch (UnterminatedQuotedStringException e) {
+        }
+        return l;
+    }
+    
+    private static class IsWordPredicate implements Filter.Predicate<String,String> {
+
+        @Override
+        public String apply(String s) {
+            return s == null || s.length() == 0 || word.matcher(s).matches() ? null : s;
+        }
+    }
+    
+    private final static IsWordPredicate isWordPred = new IsWordPredicate();
+    
+    private final static Pattern word = Pattern.compile("[\\P{IsWord}]");
+
 }

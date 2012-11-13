@@ -46,13 +46,13 @@ public class LDAPUserAttributes implements UserAttributes {
     private final DirContext context;
     private final String base;
     private final String user;
-    private Map<String, Object> result;
+    private Map<String, String> attributes;
 
     public LDAPUserAttributes(DirContext context, String user) throws NamingException {
         this.context = context;
         this.user = user;
-        this.base = context.getEnvironment().containsKey("_baseDN")
-                ? (String) context.getEnvironment().get("_baseDN") : null;
+        this.base = context.getEnvironment().containsKey("ldap_basedn")
+                ? (String) context.getEnvironment().get("ldap_basedn") : null;
         retrieve();
     }
 
@@ -65,10 +65,10 @@ public class LDAPUserAttributes implements UserAttributes {
             SearchResult sr = results.next();
             Attributes attrs = sr.getAttributes();
             NamingEnumeration<? extends Attribute> en = attrs.getAll();
-            result = new HashMap<>(); // single result
+            attributes = new HashMap<>(); // single result
             while (en.hasMore()) {
                 Attribute attr = en.next();
-                result.put(attr.getID(), attr.get(0));
+                attributes.put(attr.getID(), attr.get(0).toString());
             }
         }
         context.close();
@@ -76,7 +76,13 @@ public class LDAPUserAttributes implements UserAttributes {
 
     @Override
     public String getName() {
-        return (String) (result.containsKey("description") ?
-                result.get("description") : result.get("uid"));
+        return (attributes.containsKey("description") ?
+                attributes.get("description") : attributes.get("uid"));
     }
+
+    @Override
+    public Map<String,String> getAttributes() {
+        return attributes;
+    }
+
 }

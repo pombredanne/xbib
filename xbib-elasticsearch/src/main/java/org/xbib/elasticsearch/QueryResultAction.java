@@ -54,7 +54,6 @@ public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
     
     private Logger queryLogger;
     
-    
     private ElasticsearchSession session;
     private OutputStream out;
     private String filter;
@@ -76,6 +75,10 @@ public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
         return out;
     }
 
+    public void setQueryLogger(Logger queryLogger) {
+        this.queryLogger = queryLogger;
+    }
+    
     @Override
     public void search(final T format, final String query) throws IOException {
         SearchResponse response = performQuery(query);
@@ -85,10 +88,6 @@ public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
         } else {
             out.write(jsonErrorMessage("no response"));
         }
-    }
-
-    public void setQueryLogger(Logger queryLogger) {
-        this.queryLogger = queryLogger;
     }
 
     @Override

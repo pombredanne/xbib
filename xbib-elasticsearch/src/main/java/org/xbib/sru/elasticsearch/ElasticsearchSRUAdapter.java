@@ -166,7 +166,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
             logger.error("SRU " + adapterURI + ": database is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } finally {
-            logger.info("SRU completed: query = {0}", request.getQuery());
+            logger.info("SRU completed: query = {}", request.getQuery());
         }
     }
 

@@ -65,7 +65,7 @@ public class ItemGetAction extends AbstractQueryAction {
         long id = ill.getNumber();
         params.put(ITEM_PARAMETER, id);
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
-        logger.log(Level.INFO, "item get action = {0} params={1} id={2}", new Object[]{sql, params, id});
+        logger.debug("item get action = {0} params={1} id={2}", new Object[]{sql, params, id});
         return params;
     }
     

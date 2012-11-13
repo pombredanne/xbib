@@ -2,7 +2,6 @@ package org.xbib.io.compress.lzf.util;
 
 import org.xbib.io.compress.lzf.ChunkDecoder;
 import org.xbib.io.compress.lzf.impl.VanillaChunkDecoder;
-import org.xbib.io.compress.lzf.impl.UnsafeChunkDecoder;
 
 /**
  * Simple helper class used for loading {@link ChunkDecoder} implementations,
@@ -16,15 +15,7 @@ public class ChunkDecoderFactory {
     private final static ChunkDecoderFactory _instance;
 
     static {
-        Class<?> impl = null;
-        try {
-            // first, try loading optimal one, which uses Sun JDK Unsafe...
-            impl = (Class<?>) Class.forName(UnsafeChunkDecoder.class.getName());
-        } catch (Throwable t) {
-        }
-        if (impl == null) {
-            impl = VanillaChunkDecoder.class;
-        }
+        Class<?> impl  = VanillaChunkDecoder.class;        
         _instance = new ChunkDecoderFactory(impl);
     }
     private final Class<? extends ChunkDecoder> _implClass;

@@ -80,7 +80,7 @@ public class PropertiesAdapter extends AbstractAdapter {
         env.put(Context.SECURITY_AUTHENTICATION, getLDAPSecurityAuthentication());
         env.put(Context.SECURITY_PRINCIPAL, getLDAPSecurityPrincipal());
         env.put(Context.SECURITY_CREDENTIALS, getLDAPSecurityCredentials());
-        env.put("_baseDN", getLDAPBaseDN());
+        env.put("ldap_basedn", getLDAPBaseDN());
         return new InitialDirContext(env);
     }
 

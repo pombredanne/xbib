@@ -291,6 +291,13 @@ public final class Query {
      * @param filter the filter
      */
     private void addFilter(Map<String, ESExpression> filters, Filter<Node> filter) {
+        // hack for "location" filter
+        if ("location".equals(filter.getName())) {
+            ESExpression expr1 = new ESExpression(Operator.EQUALS, new ESName("_type"), filter.getValue());
+            ESExpression expr2 = new ESExpression(Operator.EQUALS, new ESName("dc:identifier.xbib:identifierAuthorityISIL"), filter.getValue());
+            filters.put(filter.getName(), new ESExpression(Operator.OR, expr1, expr2));
+            return;
+        }
         try {
             filter.setName(bundle.getString("filter." + filter.getName()));
         } catch (MissingResourceException e) {

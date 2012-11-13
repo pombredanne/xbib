@@ -41,7 +41,7 @@ public class ElasticsearchCQLResultAction extends QueryResultAction {
 
     @Override
     public String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-        if (query == null) {
+        if (query == null || query.length() == 0) {
              builder.setFrom(0).setSize(10).setExtraSource("{\"match_all\":{}}");
         }
         CQLParser parser = new CQLParser(new StringReader(query));

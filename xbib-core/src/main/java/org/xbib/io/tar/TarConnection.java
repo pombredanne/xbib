@@ -48,8 +48,9 @@ public class TarConnection implements Connection<TarSession> {
     private URI uri;
 
     @Override
-    public void setURI(URI uri) {
+    public TarConnection setURI(URI uri) {
         this.uri = uri;
+        return this;
     }
 
     @Override
