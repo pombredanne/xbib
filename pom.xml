@@ -159,6 +159,7 @@
         <module>xbib-core</module>
         <module>xbib-mapper</module>
         <module>xbib-elasticsearch</module>
+        <module>xbib-analyzer-mab</module>
         <module>xbib-analyzer-marc</module>
         <module>xbib-query</module>
         <module>xbib-sru</module>
