@@ -19,7 +19,6 @@ public class SRUAdapterTest {
 
     private final static Logger logger = LoggerFactory.getLogger(SRUAdapterTest.class.getName());
     
-    @Test
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
         for (String adapterName : Arrays.asList("BVB","GBV","HBZ","HEBIS","ZDB")) {            
             SRUAdapter adapter = ISO23950SRUAdapterFactory.getAdapter(adapterName);

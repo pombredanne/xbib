@@ -172,6 +172,5 @@
         <module>xbib-atom</module>
         <module>xbib-federator</module>
         <module>xbib-filetransfer</module>
-        <module>xbib-analyzer-mab</module>
     </modules>
 </project>

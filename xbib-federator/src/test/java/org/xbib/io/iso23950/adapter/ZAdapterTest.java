@@ -25,7 +25,6 @@ public class ZAdapterTest {
         // "SWB" broken:  z3950.bsz-bw.de: ASN error, non-surrogate diagnostics: [UNIVERSAL 16]{[UNIVERSAL 6] '2a8648ce130401'H,[UNIVERSAL 2] '00ec'H,[UNIVERSAL 27] '737762'H}
     };
 
-    @Test
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
         for (String adapterName : adapterNames) {
             ZAdapter adapter = ZAdapterFactory.getAdapter(adapterName);

@@ -41,14 +41,13 @@ public class FederatorTest {
             .setThreads(5)
             .setStylesheetPath("src/main/resources/xsl");
 
-    @Test
     public void test() throws Exception {
         String query = "["
                // + "{\"type\":\"z3950\", \"name\":\"OBVSG\", \"query\":\"@attr 1=4 test\"},"
                // + "{\"type\":\"z3950\", \"name\":\"LCDB\", \"query\":\"@attr 1=4 test\"},"
                // + "{\"type\":\"z3950\", \"name\":\"LIBRIS\", \"query\":\"@attr 1=4 test\"},"
                 //+ "{\"type\":\"z3950\", \"name\":\"LCDB\", \"query\":\"@attr 1=4 linux\" },"
-                + "{\"type\":\"z3950\", \"name\":\"DE-605\", \"query\":\"@attr 1=4 test\", \"from\": 1 },"
+                //+ "{\"type\":\"z3950\", \"name\":\"DE-605\", \"query\":\"@attr 1=4 test\", \"from\": 1 },"
                 // + "{\"type\":\"z3950\", \"name\":\"DE-601\", \"query\":\"@attr 1=4 test\", \"from\": 1 },"
                 //+ "{\"type\":\"z3950\", \"name\":\"DE-603\", \"query\":\"@attr 1=4 test\", \"from\": 1 },"
                 + "{\"type\":\"sru\", \"name\":\"DE-601\", \"query\":\"pica.title = test\", \"from\": 1}"
