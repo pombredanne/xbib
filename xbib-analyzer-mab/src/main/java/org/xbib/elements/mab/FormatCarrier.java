@@ -1,12 +1,12 @@
 package org.xbib.elements.mab;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.xbib.elements.ElementMapFactory;
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.FieldCollection;
 
 public class FormatCarrier extends MABElement {
 
@@ -43,7 +43,7 @@ public class FormatCarrier extends MABElement {
     }
 
     @Override
-    public void build(MABBuilder b, FieldDesignatorList key, String value) {
+    public void build(MABBuilder b, FieldCollection key, String value) {
         b.context().getResource(b.context().resource(), FORMAT).addProperty(DCTERMS_MEDIUM, value);
     }
     

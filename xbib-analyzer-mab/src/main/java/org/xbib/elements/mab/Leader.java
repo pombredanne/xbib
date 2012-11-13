@@ -1,6 +1,7 @@
 package org.xbib.elements.mab;
 
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.FieldCollection;
+
 
 public class Leader extends MABElement {
 
@@ -14,7 +15,7 @@ public class Leader extends MABElement {
     }
 
     @Override
-    public void build(MABBuilder b, FieldDesignatorList key, String value) {
+    public void build(MABBuilder b, FieldCollection key, String value) {
         // value is 25 characters (MAB indicator is at first position)
         String s = value.substring(1);
         char satztyp;

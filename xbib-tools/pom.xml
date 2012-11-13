@@ -94,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-mab</artifactId>   
+            <artifactId>xbib-analyzer-mab</artifactId>   
             <version>${project.version}</version>
             <type>jar</type>
             <scope>test</scope>

@@ -10,8 +10,8 @@ import org.xbib.elements.items.ItemType;
 import org.xbib.elements.items.Library;
 import org.xbib.elements.items.Service;
 import org.xbib.elements.items.TransportMethod;
-import org.xbib.marc.FieldDesignator;
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
 public class ItemLibraryIdentifier extends MABElement {
 
@@ -29,15 +29,15 @@ public class ItemLibraryIdentifier extends MABElement {
     }
 
     @Override
-    public void build(MABBuilder b, FieldDesignatorList key, String value) {
+    public void build(MABBuilder b, FieldCollection key, String value) {
         boolean servicecreated = false;
-        for (FieldDesignator d : key) {
-            switch (d.getSubfieldId()) {
+        for (Field f : key) {
+            switch (f.getSubfieldId()) {
                 case "a":
-                    resolveIdentifier(b, d.getData());
+                    resolveIdentifier(b, f.getData());
                     break;
                 case "e":
-                    createItemService(b, d.getData());
+                    createItemService(b, f.getData());
                     servicecreated = true;
                     break;
             }

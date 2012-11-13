@@ -1,6 +1,7 @@
 package org.xbib.elements.mab;
 
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.FieldCollection;
+
 
 public class Title extends MABElement {
     
@@ -14,7 +15,7 @@ public class Title extends MABElement {
     }
 
     @Override
-    public void build(MABBuilder b, FieldDesignatorList key, String value) {
+    public void build(MABBuilder b, FieldCollection key, String value) {
         b.context().getResource(b.context().resource(), TITLE).addProperty(XBIB_TITLE, value);
     }
 

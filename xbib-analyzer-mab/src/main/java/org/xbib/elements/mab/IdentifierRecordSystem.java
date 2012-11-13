@@ -1,7 +1,7 @@
 package org.xbib.elements.mab;
 
 import java.net.URI;
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.FieldCollection;
 
 public class IdentifierRecordSystem extends MABElement {
     
@@ -15,7 +15,7 @@ public class IdentifierRecordSystem extends MABElement {
     }
 
     @Override
-    public void build(MABBuilder b, FieldDesignatorList key, String value) {
+    public void build(MABBuilder b, FieldCollection key, String value) {
         value = value.trim();
         b.context().resource().setIdentifier(URI.create("http://xbib.org#" + value));
         b.context().getResource(b.context().resource(), IDENTIFIER).addProperty(XBIB_IDENTIFIER_AUTHORITY_SYSID, value);
