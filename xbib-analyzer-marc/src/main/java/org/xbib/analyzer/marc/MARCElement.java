@@ -48,26 +48,27 @@ import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange;
 
 public abstract class MARCElement
-        implements Element<FieldCollection, String, MARCBuilder>, 
-        DublinCoreProperties, 
-        DublinCoreTerms, 
+        implements Element<FieldCollection, String, MARCBuilder>,
+        DublinCoreProperties,
+        DublinCoreTerms,
         DublinCoreTermsProperties,
         BibliographicProperties,
         ExtraBibliographicProperties,
         MarcXchange {
 
     protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
+    protected Map<String, Object> params;
 
-    protected Map<String,Object> params;
-    
     @Override
     public void setSettings(Map params) {
         this.params = params;
     }
-   @Override
+
+    @Override
     public Map<String, Object> getSettings() {
         return params;
-    }    
+    }
+
     @Override
     public void begin() {
     }
@@ -76,13 +77,13 @@ public abstract class MARCElement
     public void build(MARCBuilder builder, FieldCollection key, String value) {
         // unused
     }
-    
-    
+
     /**
      * Process mapped element. Empty by default.
+     *
      * @param builder
      * @param fields
-     * @param subfieldType 
+     * @param subfieldType
      */
     public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
         // overridden 
@@ -90,24 +91,24 @@ public abstract class MARCElement
 
     /**
      * Process mapped element with subfield mappings. Empty by default.
+     *
      * @param builder
      * @param field
-     * @param subfieldType 
+     * @param subfieldType
      */
     public void field(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, Field field, String subfieldType) {
         // overridden
-    }    
+    }
 
     @Override
     public void end() {
     }
-    
+
     protected String cleanRAKCharacters(String value) {
         // remove <<...>>
         // remove <dt.>
         return value.replaceAll("\\s*<<.*?>>", "").replaceAll("\\s*<.*?>", "");
     }
-    
 
     protected String cleanDate(String value) {
         String dateStr = "0001";
@@ -123,15 +124,14 @@ public abstract class MARCElement
         }
         return dateStr;
     }
-    
-    /** current year for sanity checks */
+    /**
+     * current year for sanity checks
+     */
     private static int currentYear;
 
     static {
         GregorianCalendar calender = new GregorianCalendar();
         calender.setTime(new Date());
         currentYear = calender.get(GregorianCalendar.YEAR);
-    }    
-    
-    
+    }
 }

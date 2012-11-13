@@ -41,20 +41,25 @@ import org.xbib.elements.dublincore.DublinCoreTerms;
 import org.xbib.elements.dublincore.DublinCoreTermsProperties;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.FieldDesignatorList;
+import org.xbib.marc.FieldCollection;
 
 public abstract class MABElement
-        implements Element<FieldDesignatorList, String, MABBuilder>, 
+        implements Element<FieldCollection, String, MABBuilder>, 
         DublinCoreProperties, 
         DublinCoreTerms, DublinCoreTermsProperties,
         ExtraBibliographicProperties {
 
     protected static final Logger logger = LoggerFactory.getLogger(MABElement.class.getName());
+    protected Map<String, Object> params;
 
-    protected Map params;
-    
-    public void setParameter(Map params) {
+    @Override
+    public void setSettings(Map params) {
         this.params = params;
+    }
+
+    @Override
+    public Map<String, Object> getSettings() {
+        return params;
     }
     
     @Override
@@ -62,7 +67,7 @@ public abstract class MABElement
     }
 
     @Override
-    public void build(MABBuilder builder, FieldDesignatorList key, String value) {
+    public void build(MABBuilder builder, FieldCollection key, String value) {
         builder.context().resource().addProperty("xbib:" + getClass().getSimpleName(), value);
     }
 
