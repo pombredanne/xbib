@@ -155,8 +155,9 @@ public interface ExtraBibliographicProperties extends XBIB {
     Property XBIB_SUBJECT_RSWK_SUB = Property.create(NS_URI +"subjectSub");
 
     Property XBIB_TITLE = Property.create(NS_URI + "title");
-    Property XBIB_TITLE_SUB = Property.create(NS_URI + "titleSub");
     Property XBIB_TITLE_ALTERNATIVE = Property.create(NS_URI + "titleAlternative");
+    Property XBIB_TITLE_HEADING = Property.create(NS_URI + "titleHeading");
+    Property XBIB_TITLE_SUB = Property.create(NS_URI + "titleSub");
     Property XBIB_TITLE_PART = Property.create(NS_URI + "titlePart");
     Property XBIB_TITLE_WHOLE = Property.create(NS_URI + "titleWhole");
     

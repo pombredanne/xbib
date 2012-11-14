@@ -146,7 +146,7 @@ public class FilterGenerator implements Visitor {
                     break;
                 }
                 case ALL: {
-                    boolean phrase = arg2 instanceof Token && ((Token) arg2).isPhrase();
+                    boolean phrase = arg2 instanceof Token && ((Token) arg2).isProtected();
                     String field = arg1.toString();
                     String value = arg2.toString();
                     if (phrase) {
@@ -163,7 +163,7 @@ public class FilterGenerator implements Visitor {
                     break;
                 }
                 case ANY: {
-                    boolean phrase = arg2 instanceof Token && ((Token) arg2).isPhrase();
+                    boolean phrase = arg2 instanceof Token && ((Token) arg2).isProtected();
                     String field = arg1.toString();
                     String value = arg2.toString();
                     if (phrase) {

@@ -40,12 +40,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.xbib.elasticsearch.xml.ES;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.elasticsearch.ElasticsearchConnection;
 import org.xbib.elasticsearch.ElasticsearchSession;
 import org.xbib.elasticsearch.QueryResult;
 import org.xbib.elasticsearch.QueryResultAction;
+import org.xbib.elasticsearch.xml.ES;
 import org.xbib.json.JsonXmlReader;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -95,7 +95,9 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
                 session.close();
             }
             session = null;
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
             connection = null;
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);

@@ -48,7 +48,7 @@ import org.xbib.logging.LoggerFactory;
 
 public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(QueryResultAction.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(QueryResultAction.class.getName());
 
     private static final long DEFAULT_TIMEOUT = 30000L;
     
@@ -175,7 +175,7 @@ public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
     }
 
     protected String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-        String q = query == null ? "{\"match_all\":{}}" : query;
+        String q = query == null || query.trim().length() == 0 ? "{\"query\":{\"match_all\":{}}}" : query;
         builder.setFrom(from).setSize(size).setExtraSource(q);
         if (filter != null) {
             builder.setFilter(filter);

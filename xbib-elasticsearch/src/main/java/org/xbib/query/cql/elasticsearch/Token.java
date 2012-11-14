@@ -55,7 +55,7 @@ public class Token implements Node {
 
     public enum TokenClass {
 
-        NORMAL, ALL, WILDCARD, BOUNDARY, PHRASE
+        NORMAL, ALL, WILDCARD, BOUNDARY, PROTECTED
     }
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
     /**
@@ -100,11 +100,11 @@ public class Token implements Node {
                 break;
         }
         if (this.value != null) {
-            // phrase?
+            // protected?
             if (value.startsWith("\"") && value.endsWith("\"")) {
                 this.value = value.substring(1, value.length() - 1).replaceAll("\\\\\"", "\"");
                 this.values = parseQuot(this.value);
-                tokenClass.add(TokenClass.PHRASE);
+                tokenClass.add(TokenClass.PROTECTED);
             }
             // wildcard?
             if (this.value.indexOf('*') > 0 || this.value.indexOf('?') > 0) {
@@ -206,8 +206,8 @@ public class Token implements Node {
         return sb.toString();
     }
 
-    public boolean isPhrase() {
-        return tokenClass.contains(TokenClass.PHRASE);
+    public boolean isProtected() {
+        return tokenClass.contains(TokenClass.PROTECTED);
     }
 
     public boolean isBoundary() {

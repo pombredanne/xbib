@@ -41,8 +41,10 @@ public class ElasticsearchCQLResultAction extends QueryResultAction {
 
     @Override
     public String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-        if (query == null || query.length() == 0) {
-             builder.setFrom(0).setSize(10).setExtraSource("{\"match_all\":{}}");
+        if (query == null || query.trim().length() == 0) {
+            String q = "{\"query\":{\"match_all\":{}}}";
+            builder.setFrom(0).setSize(10).setExtraSource(q);
+            return q;
         }
         CQLParser parser = new CQLParser(new StringReader(query));
         parser.parse();
@@ -51,5 +53,4 @@ public class ElasticsearchCQLResultAction extends QueryResultAction {
         parser.getCQLQuery().accept(generator);
         return generator.getRequestResult();
     }
-    
 }

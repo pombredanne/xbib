@@ -50,6 +50,7 @@ public enum Operator implements Node {
     PROX(2),
     ALL(2),
     ANY(2),
+    PHRASE(2),
     FILTER(0),
     SORT(0)
     ;

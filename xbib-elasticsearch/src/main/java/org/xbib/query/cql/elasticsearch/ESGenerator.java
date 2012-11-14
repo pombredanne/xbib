@@ -471,7 +471,7 @@ public class ESGenerator implements Visitor {
                 esop = Operator.RANGE_WITHIN;
                 break;
             case ADJ:
-                esop = Operator.EQUALS;
+                esop = Operator.PHRASE;
                 break;
             case ALL:
                 esop = Operator.ALL;
