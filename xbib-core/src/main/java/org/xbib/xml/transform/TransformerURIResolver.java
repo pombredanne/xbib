@@ -33,8 +33,9 @@ package org.xbib.xml.transform;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.URL;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -46,54 +47,64 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class TransformerURIResolver implements URIResolver {
 
-    
-    
-    private String[] path;
+    private InputStream in;
+    private String[] bases;
 
     public TransformerURIResolver() {
-        this.path = new String[0];
+        this.bases = new String[0];
     }
 
-    public TransformerURIResolver(String... path) {
-        this.path = path;
+    public TransformerURIResolver(String... bases) {
+        this.bases = bases;
     }
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
-        String systemId = href;
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        InputStream in = cl.getResourceAsStream(href);
-        if (in == null && path.length > 0) {
-            for (String s : path) {
-                systemId = s + "/" + href;
-                in = cl.getResourceAsStream(systemId);
-                if (in != null) {
-                    break;
-                }
-                try {
-                    in = new FileInputStream(systemId);
-                } catch (FileNotFoundException e) {
-                }
-                if (in != null) {
-                    break;
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            String systemId = href;
+            URL url = cl.getResource(href);
+            if (cl.getResource(href) != null) {
+                systemId = url.toExternalForm();
+                in = url.openStream();
+            } else {
+                in = cl.getResourceAsStream(href);
+                if (in == null && bases.length > 0) {
+                    for (String s : bases) {
+                        systemId = s + "/" + href;
+                        in = cl.getResourceAsStream(systemId);
+                        if (in == null) {
+                            try {
+                                in = new FileInputStream(systemId);
+                            } catch (FileNotFoundException e) {
+                            }
+                        } else {
+                            break;
+                        }
+                    }
                 }
             }
+            if (in == null) {
+                throw new TransformerException("href could not be resolved: " + href);
+            }
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            SAXSource source = new SAXSource(reader, new InputSource(in));
+            source.setSystemId(systemId);
+            return source;
+        } catch (SAXException e) {
+            throw new TransformerException("no XML reader for SAX source in URI resolving for:" + href, e);
+        } catch (IOException e) {
+            throw new TransformerException("I/O error", e);
         }
-        if (in == null) {
-            throw new TransformerException("href could not be resolved: " + href);
-        }
-        XMLReader reader; 
+    }
+
+    public void close() {
         try {
-            reader = XMLReaderFactory.createXMLReader();
-        } catch (SAXException ex) {
-            throw new TransformerException("no XML reader for SAX source in URI resolving for:" + href);
+            if (in != null) {
+                in.close();
+            }
+        } catch (IOException e) {
+            // ignore
         }
-        SAXSource source = new SAXSource(reader, new InputSource(in));
-        // set system ID (where to find it)        
-        String s = cl.getResource(systemId) != null ? 
-                  cl.getResource(systemId).toExternalForm()
-                : base != null ? URI.create(base).resolve(systemId).toASCIIString() : systemId;
-        source.setSystemId(s);
-        return source;
     }
 }

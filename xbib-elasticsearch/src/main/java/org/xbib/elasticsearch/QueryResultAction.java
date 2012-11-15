@@ -190,6 +190,10 @@ public class QueryResultAction<T> extends AbstractQueryResultAction<T> {
         long t0 = System.currentTimeMillis();
 
         SearchRequestBuilder request = session.getClient().prepareSearch();
+        
+        // set preference to primary_first to prevent different scores
+        request.setPreference("_primary_first");
+        
         String translated = buildQuery(request, query);
         request.setTimeout(new TimeValue(getTimeout()));
 

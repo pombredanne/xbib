@@ -58,31 +58,33 @@ import org.xml.sax.XMLReader;
 public class StylesheetTransformer {
 
     /**
-     * We really depend on Xalan 2.7.1 for now.
-     * With JDK 6 internal Xalan, there are NPEs while processing attribute patterns @*
+     * We really depend on Xalan 2.7.1 for now. With JDK 6 internal Xalan, there
+     * are NPEs while processing attribute patterns
+     *
+     * @*
      * Do not use static SAXTransformerFactory. It is not thread safe.
      */
     private final SAXTransformerFactory transformerFactory;
-    private final URIResolver uriResolver;
-    private static final StylesheetPool pool = new StylesheetPool();
+    private final TransformerURIResolver resolver;
+    private final static StylesheetPool pool = new StylesheetPool();
     private final Map<String, Object> parameters = new HashMap();
     private Source source;
     private Source xslSource;
     private Source xslSource2;
     private StreamResult target;
 
-    public StylesheetTransformer() {        
-        this.uriResolver = new TransformerURIResolver();
+    public StylesheetTransformer() {
+        this.resolver = new TransformerURIResolver();
         transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
-        transformerFactory.setURIResolver(uriResolver);
+        transformerFactory.setURIResolver(resolver);
     }
 
     public StylesheetTransformer(String... path) {
-        this.uriResolver = new TransformerURIResolver(path);
+        this.resolver = new TransformerURIResolver(path);
         transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
-        transformerFactory.setURIResolver(uriResolver);
+        transformerFactory.setURIResolver(resolver);
     }
 
     public StylesheetTransformer addParameter(String name, Object value) {
@@ -113,9 +115,9 @@ public class StylesheetTransformer {
         this.source = new SAXSource(reader, in);
         return this;
     }
-    
+
     public StylesheetTransformer setXsl(String xslPath) throws TransformerException {
-        this.xslSource = uriResolver.resolve(xslPath, null);
+        this.xslSource = resolver.resolve(xslPath, null);
         return this;
     }
 
@@ -130,7 +132,7 @@ public class StylesheetTransformer {
     }
 
     public StylesheetTransformer setXsl2(String xslPath) throws TransformerException {
-        this.xslSource2 = uriResolver.resolve(xslPath, null);
+        this.xslSource2 = resolver.resolve(xslPath, null);
         return this;
     }
 
@@ -145,8 +147,8 @@ public class StylesheetTransformer {
     }
 
     public StylesheetTransformer setFilter(XMLReader reader, InputSource in, String xsl, ContentHandler handler)
-            throws TransformerConfigurationException, TransformerException {        
-        XMLFilter filter = transformerFactory.newXMLFilter(uriResolver.resolve(xsl,null));
+            throws TransformerConfigurationException, TransformerException {
+        XMLFilter filter = transformerFactory.newXMLFilter(resolver.resolve(xsl, null));
         filter.setParent(reader);
         filter.setContentHandler(handler);
         this.source = new SAXSource(filter, in);
@@ -173,6 +175,7 @@ public class StylesheetTransformer {
         addParameters(transformer);
         if (xslSource == null) {
             transformer.transform(source, target);
+            resolver.close();
             return;
         }
         if (xslSource2 == null) {
@@ -183,6 +186,7 @@ public class StylesheetTransformer {
             thandler.setResult(target);
             addParameters(thandler.getTransformer());
             transformer.transform(source, new SAXResult(thandler));
+            resolver.close();
             return;
         }
         Templates templates1 = pool.newTemplates(transformerFactory, xslSource);
@@ -194,7 +198,7 @@ public class StylesheetTransformer {
         addParameters(handler1.getTransformer());
         addParameters(handler2.getTransformer());
         transformer.transform(source, new SAXResult(handler1));
-        
+        resolver.close();
     }
 
     private void addParameters(Transformer transformer) {
