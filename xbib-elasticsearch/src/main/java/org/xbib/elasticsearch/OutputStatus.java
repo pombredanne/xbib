@@ -29,65 +29,10 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
+
 package org.xbib.elasticsearch;
 
-public abstract class AbstractQueryResultAction<T> implements QueryResult<T> {
-
-    protected String[] index;
-    protected String[] type;
-    protected String id;
-    protected int from;
-    protected int size;
-    private long timeout;
-    private long tookInMillis;
-
-    @Override
-    public void setIndex(String... index) {
-        this.index = index;
-    }
-
-    @Override
-    public void setType(String... type) {
-        this.type = type;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+public enum OutputStatus {
     
-    @Override
-    public void setFrom(int from) {
-        this.from = from;
-    }    
-    
-    public int getFrom() {
-        return from;
-    }
-    
-    @Override
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public int getSize() {
-        return size;
-    }
-    
-    public void setTookInMillis(long millis) {
-        this.tookInMillis = millis;
-    }
-    
-    public long getTookInMillis() {
-        return this.tookInMillis;
-    }
-
-    public void setTimeout(long millis) {
-        this.timeout = millis;
-    }
-    
-    public long getTimeout() {
-        return timeout;
-    }
-    
+    OK, ERROR, EMPTY
 }

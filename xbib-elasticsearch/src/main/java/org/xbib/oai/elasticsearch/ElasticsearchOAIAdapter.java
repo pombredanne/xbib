@@ -32,24 +32,17 @@
 package org.xbib.oai.elasticsearch;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
-import javax.xml.namespace.QName;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.xbib.elasticsearch.xml.ES;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.ElasticsearchConnection;
-import org.xbib.elasticsearch.ElasticsearchSession;
-import org.xbib.elasticsearch.QueryResult;
-import org.xbib.elasticsearch.QueryResultAction;
+import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.OutputFormat;
+import org.xbib.elasticsearch.OutputProcessor;
+import org.xbib.elasticsearch.OutputStatus;
 import org.xbib.io.util.DateUtil;
-import org.xbib.json.JsonXmlReader;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.GetRecordRequest;
@@ -65,16 +58,14 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.oai.adapter.OAIAdapter;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.query.QuotedStringTokenizer;
+import org.xbib.query.cql.SyntaxException;
 import org.xbib.xml.transform.StylesheetTransformer;
-import org.xml.sax.InputSource;
 
 public class ElasticsearchOAIAdapter implements OAIAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIAdapter.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
-    private ElasticsearchConnection connection;
-    private ElasticsearchSession session;
     private StylesheetTransformer transformer;
     private String oaiStyleSheet = "es-oai-response.xsl";
 
@@ -85,26 +76,10 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
 
     @Override
     public void connect() {
-        connection = ElasticsearchConnection.getInstance();
-        try {
-            session = connection.createSession();
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
     public void disconnect() {
-        try {
-            if (session != null) {
-                session.close();
-            }
-            session = null;
-            connection.close();
-            connection = null;
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
@@ -129,17 +104,40 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
     }
 
     @Override
-    public void listRecords(ListRecordsRequest request, OAIResponse response) throws OAIException {
-        ResumptionToken resumptionToken = request.getResumptionToken();
-        Date dateFrom = request.getFrom();
-        Date dateUntil = request.getUntil();
-        if (dateFrom != null && dateUntil != null && dateFrom.before(dateUntil)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{\"from\":").append(resumptionToken.getPosition()).append(",\"size\":").append(resumptionToken.getInterval()).append(",\"query\":{\"range\":{\"xbib:timestamp\":{\"from\":\"").append(DateUtil.formatDateISO(dateFrom)).append("\",\"to\":\"").append(DateUtil.formatDateISO(dateUntil)).append("\",\"include_lower\":true,\"include_upper\":true}}}}");
-            QueryResultAction action = createAction(request);
-            perform(action, sb.toString(), response);
-        }
-
+    public void listRecords(final ListRecordsRequest request, final OAIResponse response) throws OAIException {
+        String mediaType = "application/x-mods";
+        String query = getQuery(request);        
+        try {
+            ElasticsearchDAO dao = new ElasticsearchDAO()
+                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName()))
+                    .newClient(false).newRequest()
+                    .setIndex(getIndex(request)).setType(getType(request))
+                    .setFrom(request.getResumptionToken().getPosition()).setSize(1000)
+                    .query(query)
+                    .execute()
+                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .styleWith(transformer, getStylesheet(), response.getOutput())
+                    .dispatchTo(new OutputProcessor() {
+                @Override
+                public void process(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
+                    response.getOutput().write(message);
+                }
+            });
+        } catch (NoNodeAvailableException e) {
+            logger.error("SRU " + adapterURI + ": unresponsive", e);
+            throw new OAIException(e.getMessage());
+        } catch (IndexMissingException e) {
+            logger.error("SRU " + adapterURI + ": database does not exist", e);
+            throw new OAIException(e.getMessage());
+        } catch (SyntaxException e) {
+            logger.error("SRU " + adapterURI + ": database does not exist", e);
+            throw new OAIException(e.getMessage());
+        } catch (IOException e) {
+            logger.error("SRU " + adapterURI + ": database is unresponsive", e);
+            throw new OAIException(e.getMessage());
+        } finally {
+            logger.info("SRU completed: query = {}", query);
+        }        
     }
 
     @Override
@@ -194,37 +192,61 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
         return oaiStyleSheet;
     }
 
-    public QueryResultAction createAction(OAIServerRequest request) {
-        return new ElasticsearchOAIAdapter.Elasticsearch2OAI(request.getPath());
+    private String getIndex(OAIServerRequest request) {
+        String index = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/oai") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                index = spec[spec.length - 2];
+            } else if (spec.length == 1) {
+                index = spec[spec.length - 1];
+            }
+        }
+        return index;
     }
 
-    private class Elasticsearch2OAI extends QueryResultAction {
-
-        private final String path;
-
-        Elasticsearch2OAI(String path) {
-            this.path = path != null && path.startsWith("/oai") ? path.substring(4) : path;
+    private String getType(OAIServerRequest request) {
+        String type = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/oai") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                type = spec[spec.length - 1];
+            } else if (spec.length == 1) {
+                type = null;
+            }
         }
+        return type;
+    }
 
-        @Override
-        public String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-            String location = null;
-            if (path != null) {
-                String[] spec = path.split("/");
-                if (spec.length > 1) {
-                    if (!"*".equals(spec[spec.length - 1])) {
-                        location = spec[spec.length - 1];
-                    }
-                    setIndex(spec[spec.length - 2]);
-                } else if (spec.length == 1) {
-                    setIndex(spec[spec.length - 1]);
+    private String getQuery(ListRecordsRequest request) throws OAIException {
+        String location = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/oai") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                if (!"*".equals(spec[spec.length - 1])) {
+                    location = spec[spec.length - 1];
                 }
             }
-            String q = null;
+        }
+        ResumptionToken resumptionToken = request.getResumptionToken();
+        Date dateFrom = request.getFrom();
+        Date dateUntil = request.getUntil();
+        if (dateFrom == null || dateUntil == null || dateFrom.before(dateUntil)) {
+            throw new OAIException("illegal date arguments");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"from\":").append(resumptionToken.getPosition()).append(",\"size\":").append(resumptionToken.getInterval()).append(",\"query\":{\"range\":{\"xbib:timestamp\":{\"from\":\"").append(DateUtil.formatDateISO(dateFrom)).append("\",\"to\":\"").append(DateUtil.formatDateISO(dateUntil)).append("\",\"include_lower\":true,\"include_upper\":true}}}}");
+        String query = sb.toString();
             if (location != null) {
                 StringBuilder qb = new StringBuilder().append("{\"filtered\":").append(query).append(",\"filter\":{\"or\":[");
                 QuotedStringTokenizer t = new QuotedStringTokenizer(location);
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 while (t.hasMoreTokens()) {
                     if (sb.length() > 0) {
                         sb.append(",");
@@ -233,38 +255,9 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
                 }
                 qb.append(sb);
                 qb.append("]}}");
-                q = qb.toString();
+                query = qb.toString();
             }
-            return super.buildQuery(builder, q);
-        }
-
-        @Override
-        public void process(InputStream in) throws IOException {
-            try {
-                JsonXmlReader reader = new JsonXmlReader(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getOutputStream()).apply();
-            } catch (TransformerException ex) {
-                throw new IOException(ex);
-            }
-        }
+        return query;
     }
-
-    private void perform(QueryResultAction action, String query, OAIResponse response) throws OAIException {
-        try {
-            action.setSession(session);
-            action.setOutputStream(response.getOutput());
-            action.searchAndProcess(QueryResult.Format.JSON, query);
-        } catch (NoNodeAvailableException e) {
-            logger.error("OAI " + adapterURI + ": unresponsive", e);
-            throw new OAIException(e);
-        } catch (IndexMissingException e) {
-            logger.error("OAI " + adapterURI + ": database does not exist", e);
-            throw new OAIException(e);
-        } catch (IOException e) {
-            logger.error("OAI " + adapterURI + ": database is unresponsive", e);
-            throw new OAIException(e);
-        } finally {
-            logger.info("OAI completed: query = {}", query);
-        }
-    }
+ 
 }

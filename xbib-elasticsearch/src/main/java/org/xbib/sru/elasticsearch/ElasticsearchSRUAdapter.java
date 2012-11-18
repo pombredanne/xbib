@@ -32,25 +32,17 @@
 package org.xbib.sru.elasticsearch;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ResourceBundle;
-import javax.xml.namespace.QName;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.ElasticsearchConnection;
-import org.xbib.elasticsearch.ElasticsearchSession;
-import org.xbib.elasticsearch.QueryResult;
-import org.xbib.elasticsearch.QueryResultAction;
-import org.xbib.elasticsearch.xml.ES;
-import org.xbib.json.JsonXmlReader;
+import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.OutputFormat;
+import org.xbib.elasticsearch.OutputProcessor;
+import org.xbib.elasticsearch.OutputStatus;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
-import org.xbib.query.cql.elasticsearch.ElasticsearchCQLResultAction;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.ExplainResponse;
 import org.xbib.sru.SRUAdapter;
@@ -60,7 +52,6 @@ import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
 import org.xbib.xml.transform.StylesheetTransformer;
-import org.xml.sax.InputSource;
 
 public class ElasticsearchSRUAdapter implements SRUAdapter {
 
@@ -69,8 +60,6 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
     private final String recordPacking = "xml";
     private final String recordSchema = "mods";
-    private ElasticsearchConnection connection;
-    private ElasticsearchSession session;
     private StylesheetTransformer transformer;
 
     @Override
@@ -80,28 +69,10 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
 
     @Override
     public void connect() {
-        connection = ElasticsearchConnection.getInstance();
-        try {
-            session = connection.createSession();
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
     public void disconnect() {
-        try {
-            if (session != null) {
-                session.close();
-            }
-            session = null;
-            if (connection != null) {
-                connection.close();
-            }
-            connection = null;
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
@@ -120,7 +91,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     }
 
     @Override
-    public void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response) throws Diagnostics, IOException {
+    public void searchRetrieve(final SearchRetrieve request, final SearchRetrieveResponse response) throws Diagnostics, IOException {
         if (transformer == null) {
             throw new Diagnostics(1, "no stylesheet transformer for mods installed");
         }
@@ -149,12 +120,22 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         transformer.addParameter("recordPacking", getRecordPacking());
         transformer.addParameter("recordSchema", getRecordSchema());
         try {
-            QueryResultAction action = createAction(request);
-            action.setSession(session);
-            action.setOutputStream(response.getOutput());
-            action.setFrom(request.getStartRecord() - 1);
-            action.setSize(request.getMaximumRecords());
-            action.searchAndProcess(QueryResult.Format.JSON, request.getQuery());
+            String mediaType = "application/x-mods";
+            ElasticsearchDAO dao = new ElasticsearchDAO()
+                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName()))
+                    .newClient(false).newRequest()
+                    .setIndex(getIndex(request)).setType(getType(request))
+                    .setFrom(request.getStartRecord() - 1).setSize(request.getMaximumRecords())
+                    .fromCQL(getQuery(request)) /*.filter(filter).facets(facets)*/
+                    .execute()
+                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .styleWith(transformer, getStylesheet(), response.getOutput())
+                    .dispatchTo(new OutputProcessor() {
+                @Override
+                public void process(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
+                    response.getOutput().write(message);
+                }
+            });
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
@@ -197,44 +178,49 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         return "es-sru-response.xsl";
     }
 
-    public ElasticsearchCQLResultAction createAction(SearchRetrieve request) {
-        return new ElasticSearchSRUAction(request.getPath());
+    private String getIndex(SearchRetrieve request) {
+        String index = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                index = spec[spec.length - 2];
+            } else if (spec.length == 1) {
+                index = spec[spec.length - 1];
+            }
+        }
+        return index;
     }
 
-    private class ElasticSearchSRUAction extends ElasticsearchCQLResultAction {
-
-        private final String path;
-
-        ElasticSearchSRUAction(String path) {
-            this.path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
+    private String getType(SearchRetrieve request) {
+        String type = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                type = spec[spec.length - 1];
+            } else if (spec.length == 1) {
+                type = null;
+            }
         }
+        return type;
+    }
 
-        @Override
-        public String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-            String location = null;
-            if (path != null) {
-                String[] spec = path.split("/");
-                if (spec.length > 1) {
-                    if (!"*".equals(spec[spec.length - 1])) {
-                        location = spec[spec.length - 1];
-                    }
-                    setIndex(spec[spec.length - 2]);
-                } else if (spec.length == 1) {
-                    setIndex(spec[spec.length - 1]);
+    private String getQuery(SearchRetrieve request) {
+        String location = null;
+        String path = request.getPath();
+        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
+        if (path != null) {
+            String[] spec = path.split("/");
+            if (spec.length > 1) {
+                if (!"*".equals(spec[spec.length - 1])) {
+                    location = spec[spec.length - 1];
                 }
             }
-            String q = (location != null ? "filter.location any \"" + location + "\" and " : "") + query;
-            return super.buildQuery(builder, q);
         }
-
-        @Override
-        public void process(InputStream in) throws IOException {
-            try {
-                JsonXmlReader reader = new JsonXmlReader(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-                transformer.setSource(new SAXSource(reader, new InputSource(in))).setXsl(getStylesheet()).setTarget(getOutputStream()).apply();
-            } catch (TransformerException ex) {
-                throw new IOException(ex);
-            }
-        }
+        return (location != null ? "filter.location any \"" + location + "\" and " : "") + request.getQuery();
     }
+
 }

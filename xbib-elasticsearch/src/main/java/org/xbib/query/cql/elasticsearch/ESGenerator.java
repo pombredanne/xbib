@@ -56,96 +56,127 @@ import org.xbib.query.cql.Term;
 import org.xbib.query.cql.Visitor;
 import org.xbib.query.cql.elasticsearch.model.Facet;
 import org.xbib.query.cql.elasticsearch.model.Filter;
+import org.xbib.query.cql.elasticsearch.model.QueryModel;
 
 /**
- * Generate Elasticsearch Query DSL from CQL abstract syntax tree
+ * Generate Elasticsearch QueryModel DSL from CQL abstract syntax tree
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESGenerator implements Visitor {
 
-    /** the default resource bundle */
+    /**
+     * the default resource bundle
+     */
     private static final ResourceBundle DEFAULT_BUNDLE =
             ResourceBundle.getBundle("org.xbib.query.cql.elasticsearch.default");
-    private final org.xbib.query.cql.elasticsearch.model.Query model;
-    private final Stack<Node> stack;
-    private SearchRequestBuilder searchBuilder;
-    private SourceGenerator requestGen;
+    private ResourceBundle bundle;
+    private QueryModel model;
+    private Stack<Node> stack;
+    private SourceGenerator sourceGen;
     private QueryGenerator queryGen;
+    private int from;
+    private int size;
 
     /**
      * Default constructor
      */
-    public ESGenerator() throws IOException {
-        this(DEFAULT_BUNDLE, null);
-    }
-
-    public ESGenerator(SearchRequestBuilder searchBuilder) throws IOException {
-        this(DEFAULT_BUNDLE, searchBuilder);
+    public ESGenerator() {
+        this(DEFAULT_BUNDLE);
     }
 
     /**
      * Constructor with custom resource bundle
+     *
      * @param bundle
      */
-    public ESGenerator(ResourceBundle bundle, SearchRequestBuilder searchBuilder) throws IOException {
-        this.model = new org.xbib.query.cql.elasticsearch.model.Query(bundle);
-        this.stack = new Stack<Node>();
-        this.searchBuilder = searchBuilder;
-        this.requestGen = new SourceGenerator();
-        this.queryGen = new QueryGenerator();
+    public ESGenerator(ResourceBundle bundle) {
+        this.bundle = bundle;
+        reset();
     }
 
-    /**
-     * Input result size limits from extra parameters
-     * 
-     * @param from
-     * @param size
-     * @throws IOException 
-     */
-    public void setResultSizeLimits(String from, String size) throws IOException {
+    public final ESGenerator reset() {
+        this.model = new QueryModel(bundle);
+        this.stack = new Stack();
+        try {
+            this.sourceGen = new SourceGenerator();
+            this.queryGen = new QueryGenerator();
+        } catch (IOException e) {
+            // something weird went wrong
+        }
+        return this;
+
+    }
+
+    public ESGenerator setFrom(String from) {
         try {
             if (from != null && from.length() > 0) {
                 int n = Integer.parseInt(from);
                 if (n >= 0) {
-                    model.setFrom(n);
-                }
-            }
-            if (size != null && size.length() > 0) {
-                int n = Integer.parseInt(size);
-                if (n >= 0) {
-                    model.setSize(n);
+                    this.from = n;
                 }
             }
         } catch (Exception e) {
-            throw new IOException("invalid result size limit sepcification: from=" + from + " size=" + size);
         }
+        return this;
     }
 
-    public void setFacet(String facetName, String facetType) throws IOException {
+    public ESGenerator setFrom(int from) {
+        this.from = from;
+        return this;
     }
     
+    public int getFrom() {
+        return from;
+    }
+    
+    public ESGenerator setSize(String size) {
+        try {
+            if (size != null && size.length() > 0) {
+                int n = Integer.parseInt(size);
+                if (n >= 0) {
+                    this.size = n;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return this;
+    }
+
+    public ESGenerator setSize(int size) {
+        this.size = size;
+        return this;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public ESGenerator setFacet(String facetName, String facetType) throws IOException {
+        return this;
+    }
+
     /**
      * Return only Elasticsearch query string
-     * 
+     *
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public String getQueryResult() throws IOException {
         return queryGen.getResult();
     }
 
     public String getRequestResult() throws IOException {
-        return requestGen.getResult();
+        return sourceGen.getResult();
     }
 
-    public int getFrom() {
+    /*public int getFrom() {
         return model.getFrom();
     }
 
     public int getSize() {
         return model.getSize();
-    }
+    }*/
 
     @Override
     public void visit(SortedQuery node) {
@@ -183,13 +214,9 @@ public class ESGenerator implements Visitor {
                 sortGen.start();
                 sortGen.visit(sortnode);
                 sortGen.end();
-                requestGen.build(queryGen, sortGen, model.getFrom(), model.getSize());
+                sourceGen.build(queryGen, sortGen, from,size);
             } else {
-                requestGen.build(queryGen, model.getFrom(), model.getSize());
-            }
-            // throw source into ES search builder
-            if (searchBuilder != null) {
-                searchBuilder.setExtraSource(requestGen.getResult());
+                sourceGen.build(queryGen, from, size);
             }
         } catch (IOException e) {
             throw new SyntaxException("unable to build a valid query from " + node + " , reason: " + e.getMessage(), e);
@@ -302,7 +329,7 @@ public class ESGenerator implements Visitor {
             if (model.isOptionContext(context)) {
                 model.addOption(node.getIndex().getName(), node.getTerm().getValue());
             } else if (model.isFacetContext(context)) {
-                Facet<String> facet = new Facet<>(node.getIndex().getName(), Facet.Type.TERMS , node.getTerm().getValue());
+                Facet<String> facet = new Facet<>(node.getIndex().getName(), Facet.Type.TERMS, node.getTerm().getValue());
                 model.addFacet(facet);
             }
         }

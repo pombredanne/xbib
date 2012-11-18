@@ -87,6 +87,7 @@ public class ElasticsearchSRUTest {
         op.setMaximumRecords(10);
         op.setRecordPacking("xml");
         op.setRecordSchema("mods");
+        op.setPath("/sru/hbz/*");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             adapter.searchRetrieve(op, new SearchRetrieveResponse(out, "UTF-8"));

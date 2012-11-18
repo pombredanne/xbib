@@ -51,7 +51,7 @@ import org.xbib.query.cql.model.CQLQueryModel;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public final class Query {
+public final class QueryModel {
 
     /** the definition bundle for this query model */
     private final ResourceBundle bundle;
@@ -62,14 +62,14 @@ public final class Query {
     private final List<Facet<String>> facets;
     private ESExpression sortexpr; 
     /** result size */
-    private int from = 0;
-    private int size = 10;
+   // private int from = 0;
+   // private int size = 10;
 
     /**
      * Constructor
      * @param bundle the bundle with Elasticsearch definitions
      */
-    public Query(ResourceBundle bundle) {
+    public QueryModel(ResourceBundle bundle) {
         this.bundle = bundle;
         this.options = new HashMap<>();
         this.conjunctivefilters = new HashMap<>();
@@ -180,7 +180,7 @@ public final class Query {
         }
     }    
 
-    public void setFrom(int from) {
+    /*public void setFrom(int from) {
         this.from = from;
     }    
 
@@ -194,7 +194,7 @@ public final class Query {
 
     public int getSize() {
         return getIntValue("option.length", size);
-    }
+    }*/
     
     public void addConjunctiveFilter(Filter<Node> filter) {
         addFilter(conjunctivefilters, filter);

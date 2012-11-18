@@ -66,7 +66,7 @@ public class ElasticsearchSession implements Session {
     public ElasticsearchSession(ElasticsearchConnection connection,  Logger queryLogger) {
         this.connection = connection;
         this.queryLogger = queryLogger;
-        this.client = createClient(connection.isSniff());
+        this.client = createClient();
         try {
             findNodes();            
         } catch (IOException ex) {
@@ -107,7 +107,7 @@ public class ElasticsearchSession implements Session {
                 client.close();
             }
             logger.warn("reconnecting");
-            this.client = createClient(connection.isSniff());
+            this.client = createClient();
             findNodes();            
         }
         return client;
@@ -131,9 +131,13 @@ public class ElasticsearchSession implements Session {
         }
     }
 
-    private TransportClient createClient(boolean sniff) {
+    private TransportClient createClient() {
         logger.info("starting discovery for clustername {}", connection.getClusterName());
-        Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", connection.getClusterName()).put("client.transport.sniff", sniff).build();
+        Settings settings = ImmutableSettings.settingsBuilder()
+                .put("cluster.name", connection.getClusterName())
+                .put("client.transport.sniff", connection.isSniff())
+                
+                .build();
         return new TransportClient(settings);
     }
 

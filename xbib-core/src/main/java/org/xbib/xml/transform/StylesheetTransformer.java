@@ -31,7 +31,6 @@
  */
 package org.xbib.xml.transform;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -43,7 +42,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -121,28 +119,8 @@ public class StylesheetTransformer {
         return this;
     }
 
-    public StylesheetTransformer setXsl(InputStream xsl) {
-        this.xslSource = new StreamSource(xsl);
-        return this;
-    }
-
-    public StylesheetTransformer setXsl(Reader xsl) {
-        this.xslSource = new StreamSource(xsl);
-        return this;
-    }
-
     public StylesheetTransformer setXsl2(String xslPath) throws TransformerException {
         this.xslSource2 = resolver.resolve(xslPath, null);
-        return this;
-    }
-
-    public StylesheetTransformer setXsl2(InputStream xsl) {
-        this.xslSource2 = new StreamSource(xsl);
-        return this;
-    }
-
-    public StylesheetTransformer setXsl2(Reader xsl) {
-        this.xslSource2 = new StreamSource(xsl);
         return this;
     }
 
@@ -172,33 +150,34 @@ public class StylesheetTransformer {
 
     public void apply() throws TransformerException {
         Transformer transformer = transformerFactory.newTransformer();
-        addParameters(transformer);
-        if (xslSource == null) {
-            transformer.transform(source, target);
+        try {
+            addParameters(transformer);
+            if (xslSource == null) {
+                transformer.transform(source, target);
+                return;
+            }
+            if (xslSource2 == null) {
+                Templates templates = pool.newTemplates(transformerFactory, xslSource);
+                TransformerHandler thandler = pool.newTransformerHandler(transformerFactory, templates);
+                //Templates templates = transformerFactory.newTemplates(xslSource);
+                //TransformerHandler thandler = transformerFactory.newTransformerHandler(templates);
+                thandler.setResult(target);
+                addParameters(thandler.getTransformer());
+                transformer.transform(source, new SAXResult(thandler));
+                return;
+            }
+            Templates templates1 = pool.newTemplates(transformerFactory, xslSource);
+            Templates templates2 = pool.newTemplates(transformerFactory, xslSource2);
+            TransformerHandler handler1 = pool.newTransformerHandler(transformerFactory, templates1);
+            TransformerHandler handler2 = pool.newTransformerHandler(transformerFactory, templates2);
+            handler1.setResult(new SAXResult(handler2));
+            handler2.setResult(target);
+            addParameters(handler1.getTransformer());
+            addParameters(handler2.getTransformer());
+            transformer.transform(source, new SAXResult(handler1));
+        } finally {
             resolver.close();
-            return;
         }
-        if (xslSource2 == null) {
-            Templates templates = pool.newTemplates(transformerFactory, xslSource);
-            TransformerHandler thandler = pool.newTransformerHandler(transformerFactory, templates);
-            //Templates templates = transformerFactory.newTemplates(xslSource);
-            //TransformerHandler thandler = transformerFactory.newTransformerHandler(templates);
-            thandler.setResult(target);
-            addParameters(thandler.getTransformer());
-            transformer.transform(source, new SAXResult(thandler));
-            resolver.close();
-            return;
-        }
-        Templates templates1 = pool.newTemplates(transformerFactory, xslSource);
-        Templates templates2 = pool.newTemplates(transformerFactory, xslSource2);
-        TransformerHandler handler1 = pool.newTransformerHandler(transformerFactory, templates1);
-        TransformerHandler handler2 = pool.newTransformerHandler(transformerFactory, templates2);
-        handler1.setResult(new SAXResult(handler2));
-        handler2.setResult(target);
-        addParameters(handler1.getTransformer());
-        addParameters(handler2.getTransformer());
-        transformer.transform(source, new SAXResult(handler1));
-        resolver.close();
     }
 
     private void addParameters(Transformer transformer) {

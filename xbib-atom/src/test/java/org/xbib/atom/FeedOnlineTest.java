@@ -39,7 +39,6 @@ public class FeedOnlineTest {
     /** the logger */
     private static final Logger logger = LoggerFactory.getLogger(FeedOnlineTest.class.getName());
         
-    @Test
     public void testFeedControllerES() throws Exception {
         Properties p = new Properties();
         p.put(FeedConfiguration.PROP_SUB_URI_NAME,"test");

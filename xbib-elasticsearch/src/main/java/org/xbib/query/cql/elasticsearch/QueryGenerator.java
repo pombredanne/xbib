@@ -34,8 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 import java.io.IOException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 
 /**
@@ -44,8 +42,6 @@ import org.xbib.query.cql.SyntaxException;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class QueryGenerator implements Visitor {
-
-    private final static Logger logger = LoggerFactory.getLogger(QueryGenerator.class.getName());
     
     private final XContentBuilder builder;
 
@@ -94,16 +90,7 @@ public class QueryGenerator implements Visitor {
                 case DATETIME:
                     builder.value(token.getDate());
                     break;
-                case NAME:
-                    builder.value(token.getString());
-                    break;
-                case OPERATOR:
-                    builder.value(token.getString());
-                    break;
-                case EXPRESSION:
-                    builder.value(token.getString());
-                    break;
-                case STRING:
+                default:
                     builder.value(token.getString());
                     break;
             }
@@ -269,7 +256,7 @@ public class QueryGenerator implements Visitor {
                                     builder.startObject("text_phrase")
                                             .startObject(field)
                                             .field("query", tok2.getString())
-                                            .field("slop", 1)
+                                            .field("slop", 0)
                                             .endObject()
                                             .endObject();                                
                             } else if (tok2.isAll()) {
@@ -279,7 +266,7 @@ public class QueryGenerator implements Visitor {
                             } else if (tok2.isBoundary()) {
                                 builder.startObject("prefix").field(field, value).endObject();
                             } else {
-                                builder.startObject("text_phrase").startObject(field).field("query", value).field("slop", 1).endObject().endObject();
+                                builder.startObject("text_phrase").startObject(field).field("query", value).field("slop", 0).endObject().endObject();
                             }
                             break;
                         }

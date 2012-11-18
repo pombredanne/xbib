@@ -1,4 +1,4 @@
 package org.xbib.util;
 public final class Version {
- public static String VERSION="13.11.2012 09:59";
+ public static String VERSION="16.11.2012 21:45";
 }

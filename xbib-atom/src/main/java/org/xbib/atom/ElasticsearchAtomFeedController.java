@@ -23,25 +23,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.xbib.elasticsearch.xml.ES;
-import org.xbib.elasticsearch.ElasticsearchConnection;
-import org.xbib.elasticsearch.ElasticsearchSession;
-import org.xbib.elasticsearch.QueryResult;
-import org.xbib.elasticsearch.QueryResultAction;
+import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.OutputFormat;
 import org.xbib.io.util.URIUtil;
-import org.xbib.json.JsonXmlStreamer;
-import org.xbib.json.JsonXmlValueMode;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 /**
- *  Atom feed controller for Elasticsearch DSL JSON query.
+ *  Atom feed controller for Elasticsearch.
  *  The results are wrapped up in an Atom feed format.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
@@ -58,9 +51,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
     final String FEED_CONSTRUCTION_TIME_PATTERN_KEY = "feed.constructiontime.pattern";
     final String FEED_STYLESHEET_PROPERTY_KEY = "feed.stylesheet";
     final String FEED_SERVICE_PATH_KEY = "feed.service.path";
-    /** the logger */
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchAtomFeedController.class.getName());
-    private final QueryResultAction defaultAction = new ElasticSearchAction();
     protected AbderaFeedBuilder builder;
     
     public ElasticsearchAtomFeedController() {
@@ -148,48 +139,30 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
         Properties p = URIUtil.getPropertiesFromURI(uri);
         String[] index = p.getProperty("index") != null ? p.getProperty("index").split(",") : null;
         String[] type = p.getProperty("type") != null ? p.getProperty("type").split(",") : null;
-        ElasticsearchConnection connection = ElasticsearchConnection.getInstance();
-        ElasticsearchSession session = connection.createSession();
-        // we need not to setOutputStream
         try {
-            this.builder = new AbderaFeedBuilder(config, query);
-            QueryResultAction action = getAction();
-            action.setSession(session);
-            action.setIndex(index);
-            action.setType(type);
-            action.setFrom(config.getFrom());
-            action.setSize(config.getSize());
             long t0 = System.currentTimeMillis();
-            // will set index and type from session properties and use process() method for result stream to put it in 'builder'
-            action.searchAndProcess(QueryResult.Format.JSON, query);            
+            this.builder = new AbderaFeedBuilder(config, query);
+            String mediaType = "application/x-mods";
+            ElasticsearchDAO dao = new ElasticsearchDAO()
+                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName()))
+                    .newClient(false).newRequest()
+                    .setIndex(index).setType(type)
+                    .setFrom(config.getFrom()).setSize(config.getSize())
+                    .fromCQL(query) /*.filter(filter).facets(facets)*/
+                    .execute()
+                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .xmlEventConsumer(builder)
+                    .dispatch();
             long t1 = System.currentTimeMillis();
             return builder.getFeed(query, t1 - t0, 
-                    action.getTookInMillis(), action.getFrom(), action.getSize());
+                    dao.getTookInMillis(), config.getFrom(), config.getSize()
+                    );
         } catch (IOException e) {
             logger.error("atom feed query " + query + " session is unresponsive", e);
             throw e;
         } finally {
-            session.close();
-            connection.close();
             logger.info("atom feed query completed: {}", query);
         }
     }
-    
-    protected QueryResultAction getAction() {
-        return defaultAction;
-    }
-    
-    class ElasticSearchAction extends QueryResultAction {
-        
-        @Override
-        public void process(InputStream in) throws IOException {
-            JsonXmlStreamer jsonXml = new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-            try {
-                jsonXml.toXML(in, builder, new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-            } catch (XMLStreamException ex) {
-                logger.error(ex.getMessage(), ex);
-                throw new IOException(ex);
-            }
-        }
-    }
+
 }

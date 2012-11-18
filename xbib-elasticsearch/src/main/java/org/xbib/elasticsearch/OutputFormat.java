@@ -29,28 +29,38 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.query.cql.elasticsearch;
+package org.xbib.elasticsearch;
 
-import java.io.IOException;
-import java.io.StringReader;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.xbib.elasticsearch.QueryResultAction;
-import org.xbib.query.cql.CQLParser;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ElasticsearchCQLResultAction extends QueryResultAction {
+public enum OutputFormat {
 
-    @Override
-    public String buildQuery(SearchRequestBuilder builder, String query) throws IOException {
-        if (query == null || query.trim().length() == 0) {
-            String q = "{\"query\":{\"match_all\":{}}}";
-            builder.setFrom(0).setSize(10).setExtraSource(q);
-            return q;
+    JSON("application/json"),
+    XML("application/xml"),
+    MODS("application/x-mods"),
+    XHTML("application/xhtml+xml");
+    
+    String mime;
+    private static Map<String, OutputFormat> map;
+
+    private static void map(String mime, OutputFormat format) {
+        if (map == null) {
+            map = new HashMap();
         }
-        CQLParser parser = new CQLParser(new StringReader(query));
-        parser.parse();
-        ESGenerator generator = new ESGenerator(builder);
-        generator.setResultSizeLimits(Integer.toString(getFrom()), Integer.toString(getSize()));
-        parser.getCQLQuery().accept(generator);
-        return generator.getRequestResult();
+        map.put(mime, format);
+    }
+
+    OutputFormat(String mime) {
+        this.mime = mime;
+        map(mime, this);
+    }
+
+    public String mimeType() {
+        return mime;
+    }
+
+    public static OutputFormat formatOf(String mime) {
+        return map.get(mime);
     }
 }
