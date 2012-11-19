@@ -154,6 +154,13 @@ public class ElasticsearchDAO {
         }
         return this;
     }
+    
+    public synchronized void shutdown() {
+        if (client != null) {
+            client.close();
+            client = null;
+        }
+    }
 
     public ElasticsearchDAO newRequest() {
         // for CQL 
@@ -255,10 +262,10 @@ public class ElasticsearchDAO {
         }
         long t0 = System.currentTimeMillis();
         try {
-            if (isArray(index)) {
-                searchRequestBuilder.setIndices(index);
+            if (hasIndex(index)) {
+                searchRequestBuilder.setIndices(fixIndexName(index));
             }
-            if (isArray(type)) {
+            if (hasType(type)) {
                 searchRequestBuilder.setTypes(type);
             }
             this.searchResponse = searchRequestBuilder
@@ -517,7 +524,7 @@ public class ElasticsearchDAO {
         return indexes.append("/").append(types).toString();
     }
 
-    private boolean isArray(String[] s) {
+    private boolean hasIndex(String[] s) {
         if (s == null) {
             return false;
         }
@@ -529,6 +536,34 @@ public class ElasticsearchDAO {
         }
         return true;
     }
+
+    private boolean hasType(String[] s) {
+        if (s == null) {
+            return false;
+        }
+        if (s.length == 0) {
+            return false;
+        }
+        if (s[0] == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private String[] fixIndexName(String[] s) {
+        if (s == null) {
+            return new String[]{"*"};
+        }
+        if (s.length == 0) {
+            return new String[]{"*"};
+        }
+        for (int i = 0; i < s.length; i++) {
+            if (s[i] == null || s[i].length() == 0) {
+                s[i] = "*";
+            }
+        }
+        return s;
+    }
     private final static String DEFAULT_CLUSTER_NAME = "elasticsearch";
     private final static URI DEFAULT_URI = URI.create("es://interfaces:9300");
 
@@ -539,7 +574,7 @@ public class ElasticsearchDAO {
             hostname = InetAddress.getLocalHost().getHostName();
             logger.debug("the hostname is {}", hostname);
             Properties p = new Properties();
-            try (InputStream in = ElasticsearchSession.class.getResource("/org/xbib/elasticsearch/cluster.properties").openStream()) {
+            try (InputStream in = ElasticsearchDAO.class.getResource("/org/xbib/elasticsearch/cluster.properties").openStream()) {
                 p.load(in);
                 if (p.containsKey(hostname)) {
                     uri = URI.create(p.getProperty(hostname));
