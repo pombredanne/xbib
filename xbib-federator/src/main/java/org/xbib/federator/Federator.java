@@ -100,7 +100,7 @@ public class Federator {
      * Submit JSON query for bibliographic federation. Create job from a
      * JSON specification.
      *
-     * @param json
+     * @param json the query
      * @return
      * @throws IOException
      */

@@ -55,26 +55,26 @@ public class BerkeleyDBTest<S extends Resource<S, P, O>, P extends Property, O e
     
     private Resource<S,P,O> createResource() {
         Resource<S,P,O> resource = new SimpleResource();
-        resource.setIdentifier(URI.create("urn:resource"));
-        resource.addProperty("dc:title", "Hello")
-        .addProperty("dc:title", "World")
-        .addProperty("xbib:person", "Jörg Prante")
-        .addProperty("dc:subject", "An")
-        .addProperty("dc:subject", "example")
-        .addProperty("dc:subject", "for")
-        .addProperty("dc:subject", "a")
-        .addProperty("dc:subject", "sequence")
-        .addProperty("http://purl.org/dc/terms/place", "Köln");
+        resource.id(URI.create("urn:resource"));
+        resource.property("dc:title", "Hello")
+        .property("dc:title", "World")
+        .property("xbib:person", "Jörg Prante")
+        .property("dc:subject", "An")
+        .property("dc:subject", "example")
+        .property("dc:subject", "for")
+        .property("dc:subject", "a")
+        .property("dc:subject", "sequence")
+        .property("http://purl.org/dc/terms/place", "Köln");
         // sequence optimized for turtle output
-        Resource<S,P,O> r1 = resource.createResource(resource.createPredicate("urn:res#1"));
-        r1.addProperty("property1", "value1");
-        r1.addProperty("property2", "value2");
-        Resource<S,P,O> r2 = resource.createResource(resource.createPredicate("urn:res#2"));
-        r2.addProperty("property3", "value3");
-        r2.addProperty("property4", "value4");
-        Resource<S,P,O> r3 = resource.createResource(resource.createPredicate("urn:res#3"));
-        r3.addProperty("property5", "value5");
-        r3.addProperty("property6", "value6");
+        Resource<S,P,O> r1 = resource.newResource("urn:res#1");
+        r1.property("property1", "value1");
+        r1.property("property2", "value2");
+        Resource<S,P,O> r2 = resource.newResource("urn:res#2");
+        r2.property("property3", "value3");
+        r2.property("property4", "value4");
+        Resource<S,P,O> r3 = resource.newResource("urn:res#3");
+        r3.property("property5", "value5");
+        r3.property("property6", "value6");
         return resource;
     }
 }

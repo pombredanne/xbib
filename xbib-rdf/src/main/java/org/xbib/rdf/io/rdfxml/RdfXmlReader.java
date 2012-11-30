@@ -306,7 +306,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
             if (frame.node != null) {
                 throw new SAXException("ambiguous use of rdf:nodeID");
             }
-            frame.node = blankNode(nodeId).getIdentifier();
+            frame.node = blankNode(nodeId).id();
         }
         String rdfId = attrs.getValue(RDF.toString(), "ID");
         if (rdfId != null) {
@@ -316,7 +316,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
             frame.node = URI.create(getBase(stack) + "#" + rdfId);
         }
         if (frame.node == null) {
-            frame.node = blankNode().getIdentifier();
+            frame.node = blankNode().id();
         }
         frame.isSubject = true;
     }
@@ -333,7 +333,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
             if (node != null) {
                 throw new SAXException("ambiguous use of rdf:nodeID");
             }
-            node = blankNode(nodeId).getIdentifier();
+            node = blankNode(nodeId).id();
         }
         return node;
     }
@@ -377,7 +377,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     private Literal withLanguageTag(Literal l, Stack<Frame> stack) {
         String lang = getLanguage(stack);
         if (!"".equals(lang)) {
-            l.setLanguage(lang);
+            l.language(lang);
         }
         return l;
     }
@@ -477,7 +477,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                     if (parseType != null) {
                         switch (parseType) {
                             case "Resource":
-                                object = object == null ? blankNode().getIdentifier() : object;
+                                object = object == null ? blankNode().id() : object;
                                 yield(ancestorSubject(stack), frame.node, object, frame.reification);
                                 // perform surgery on the current frame
                                 frame.node = object;
@@ -513,7 +513,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                             // ignore
                         } else {
                             if (object == null) {
-                                object = blankNode().getIdentifier();
+                                object = blankNode().id();
                                 yield(ancestorSubject(stack), frame.node, object);
                             }
                             if (aUri.equals(RDF_TYPE)) {
@@ -548,12 +548,12 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                     Frame ppFrame = parentPredicateFrame(stack);
                     // this is a predicate closing
                     if (xmlLiteral != null) { // it was an XMLLiteral
-                        Literal value = new SimpleLiteral(xmlLiteral.toString(), RDF_XMLLITERAL);
+                        Literal value = new SimpleLiteral(xmlLiteral.toString()).type(RDF_XMLLITERAL);
                         yield(ancestorSubject(stack), parentPredicate(stack), value);
                         xmlLiteral = null;
                     } else if (pcdata != null) { // we have an RDF literal
                         URI u = ppFrame.datatype == null ? null : URI.create(ppFrame.datatype);
-                        Literal value = withLanguageTag(new SimpleLiteral(pcdata.toString(), u), stack);
+                        Literal value = withLanguageTag(new SimpleLiteral(pcdata.toString()).type(u), stack);
                         // deal with reification
                         URI reification = ppFrame.reification;
                         yield(ancestorSubject(stack), ppFrame.node, value, reification);
@@ -575,7 +575,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                                 }
                                 yield(node, RDF_FIRST, item);
                                 prevNode = node;
-                                node = blankNode().getIdentifier();
+                                node = blankNode().id();
                             }
                             yield(prevNode, RDF_REST, RDF_NIL);
                         }

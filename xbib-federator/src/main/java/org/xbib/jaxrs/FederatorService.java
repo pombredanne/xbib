@@ -4,22 +4,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
-import javax.xml.stream.XMLStreamException;
 import org.xbib.federator.Federator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -30,52 +27,69 @@ public class FederatorService {
     private final static Logger logger = LoggerFactory.getLogger(FederatorService.class.getName());
     @Context
     ServletConfig servletConfig;
-    @Context
-    ServletContext servletContext;
-    @Context
-    HttpServletRequest servletRequest;
     Federator federator;
 
     @GET
     @Produces({"application/xml; charset=UTF-8"})
-    public StreamingOutput queryGet(
-            @Context final HttpServletResponse response,
-            @HeaderParam("content-type") final String mediaType,
-            @QueryParam("q") final String query)
+    public StreamingOutput getXml(@QueryParam("q") final String query)
             throws Exception {
-        return query(response, mediaType, query);
+        return query("application/xml", query);
     }
 
     @POST
     @Produces({"application/xml; charset=UTF-8"})
-    public StreamingOutput queryPost(
-            @Context final HttpServletResponse response,
-            @HeaderParam("content-type") final String mediaType,
-            @QueryParam("q") final String query)
+    public StreamingOutput postXml(@QueryParam("q") final String query)
             throws Exception {
-        return query(response, mediaType, query);
+        return query("application/xml", query);
     }
 
-    private StreamingOutput query(
-            final HttpServletResponse response,
-            final String mediaType,
+    @GET
+    @Produces({"application/sru+xml; charset=UTF-8"})
+    public StreamingOutput getSRU(@QueryParam("q") final String query)
+            throws Exception {
+        return query("application/sru+xml", query);
+    }
+
+    @POST
+    @Produces({"application/sru+xml; charset=UTF-8"})
+    public StreamingOutput postSRU(@QueryParam("q") final String query)
+            throws Exception {
+        return query("application/sru+xml", query);
+    }
+    
+    @GET
+    @Produces({"application/xhtml+xml; charset=UTF-8"})
+    public StreamingOutput getXHTML(@QueryParam("q") final String query)
+            throws Exception {
+        return query(MediaType.APPLICATION_XHTML_XML, query);
+    }
+
+    @POST
+    @Produces({"application/xhtml+xml; charset=UTF-8"})
+    public StreamingOutput postXHTML(@QueryParam("q") final String query)
+            throws Exception {
+        return query(MediaType.APPLICATION_XHTML_XML, query);
+    }
+    
+    private StreamingOutput query(final String mediaType,
             final String query) {
         return new StreamingOutput() {
             @Override
             public void write(OutputStream output) throws IOException, WebApplicationException {
                 Writer writer = new OutputStreamWriter(output, "UTF-8");
                 try {
+                    final String base = servletConfig.getInitParameter("federator.base");
+                    final int threads = Integer.parseInt(servletConfig.getInitParameter("federator.threads"));
+                    final String stylesheet = servletConfig.getInitParameter(mediaType); 
                     if (federator == null) {
-                        final String base = servletConfig.getInitParameter("federator.base");
-                        final int threads = Integer.parseInt(servletConfig.getInitParameter("federator.threads"));
                         federator = Federator.getInstance()
                                 .setBase(base)
                                 .setThreads(threads)
                                 .setStylesheetPath("xsl");
                     }
                     // write SRU XML response
-                    federator.bibliographic(query).execute().toSRUResponse("1.2", writer);
-                } catch (InterruptedException | ExecutionException | NoSuchAlgorithmException | XMLStreamException e) {
+                    federator.bibliographic(query).execute().toSRUResponse("1.2", writer, stylesheet);
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     throw new IOException(e);
                 }

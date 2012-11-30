@@ -32,14 +32,9 @@
 package org.xbib.importer;
 
 import java.io.Closeable;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 public interface Importer<T,R> extends Callable<T>, Closeable, Iterator<R>  {
- 
-    Importer<T,R> setURI(URI uri);
-    
-    URI getURI();
 
 }

@@ -70,7 +70,7 @@ public class Communication extends PicaElement {
                 resource = builder.context().address(LA_NS_URI + type);
             }
             if (resource != null) {
-                resource.addProperty(Property.create(LA_NS_URI + subfieldType), field.getData());
+                resource.property(Property.create(LA_NS_URI + subfieldType), field.getData());
             }
         }
     }

@@ -39,8 +39,9 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
     private R resource;
     
     @Override
-    public void setResource(R resource) {
+    public ResourceContext<R> resource(R resource) {
         this.resource = resource;
+        return this;
     }
     
     @Override

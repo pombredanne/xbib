@@ -68,7 +68,7 @@ public abstract class MABElement
 
     @Override
     public void build(MABBuilder builder, FieldCollection key, String value) {
-        builder.context().resource().addProperty("xbib:" + getClass().getSimpleName(), value);
+        builder.context().resource().property("xbib:" + getClass().getSimpleName(), value);
     }
 
     @Override

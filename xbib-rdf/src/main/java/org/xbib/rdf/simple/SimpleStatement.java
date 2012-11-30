@@ -56,9 +56,9 @@ public class SimpleStatement<S extends Resource<?, ?, ?>, P extends Property, O 
             SimpleStatement<S,P,O> createStatement(Object subject, Object predicate, Object object) {
         SimpleResource<S,P,O> resource = new SimpleResource();
         return new SimpleStatement(
-                resource.createSubject(subject),
-                resource.createPredicate(predicate),
-                resource.createObject(object)
+                resource.toSubject(subject),
+                resource.toPredicate(predicate),
+                resource.toObject(object)
                 );
     }
     

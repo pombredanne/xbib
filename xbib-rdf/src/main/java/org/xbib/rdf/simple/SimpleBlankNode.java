@@ -69,7 +69,7 @@ public class SimpleBlankNode<S extends Resource<?, ?, ?>, P extends Property, O 
         this.nodeID = nodeURI.getRawSchemeSpecificPart();
         this.identifier = nodeURI;
         this.subject = (S) this;
-        setValue(createObject(nodeURI.toASCIIString()));
+        object(toObject(nodeURI.toASCIIString()));
     }
 
     @Override

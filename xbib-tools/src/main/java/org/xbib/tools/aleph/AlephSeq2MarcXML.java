@@ -62,9 +62,9 @@ import org.xbib.io.SplitWriter;
 import org.xbib.io.file.Finder;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.MarcXchangeAdapter;
 import org.xbib.marc.Field;
 import org.xbib.marc.Iso2709Reader;
+import org.xbib.marc.MarcXchangeAdapter;
 import org.xbib.marc.addons.AlephSequentialReader;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -149,7 +149,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                             AlephSeq2MarcXML importer = new AlephSeq2MarcXML().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
                             return importer;
                         }
-                    }).execute(input);
+                    }).execute();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);
@@ -161,7 +161,6 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         this.watcher = new BytesProgressWatcher(BUFFER_SIZE);
     }
 
-    @Override
     public AlephSeq2MarcXML setURI(URI uri) {
         return this;
     }

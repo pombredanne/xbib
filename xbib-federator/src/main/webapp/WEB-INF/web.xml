@@ -64,8 +64,22 @@
         <servlet-name>REST</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>
+                 org.xbib.jaxrs.ConnegFilter;
+                 com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>application/xhtml+xml</param-name>
+            <param-value>xsl/isodis25577-xhtml.xsl</param-value>
+        </init-param>
+        <init-param>
+            <param-name>application/sru+xml</param-name>
+            <param-value>xsl/isodis25577-sru-response.xsl</param-value>
+        </init-param>
+        <init-param>
             <param-name>federator.base</param-name>
-            <param-value>tag:fernleihe@hbz-nrw.de,2012-08:federator</param-value>
+            <param-value>tag:fl.hbz-nrw.de,2012-11:federator</param-value>
         </init-param>
         <init-param>
             <param-name>federator.threads</param-name>

@@ -32,50 +32,21 @@
 package org.xbib.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.discovery.MasterNotDiscoveredException;
 import org.testng.annotations.Test;
-import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.Mode;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 
 public class IndexCreationTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(IndexCreationTest.class.getName());
-
     @Test
     public void testDeleteCreate() throws Exception {
-        Connection<ElasticsearchSession> conn =
-                (Connection<ElasticsearchSession>) ConnectionManager.getConnection("es://hostname:9300");
-        ElasticsearchSession session = null;
+        final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO()
+                .setIndex("test")
+                .setType("test");
         try {
-            session = conn.createSession();
-            session.open(Mode.CONTROL);
-            DeleteIndex removeOp = new DeleteIndex();
-            removeOp.setIndex("test");
-            CreateIndex createOp = new CreateIndex();
-            createOp.setIndex("test");
-            PutMapping mappingOp = new PutMapping();
-            mappingOp.setIndex("test");
-            mappingOp.setType("type");
-            logger.info("deleting index");
-            removeOp.execute(session);
-            // wait for complete...
-            Thread.sleep(2000L);
-            logger.info("creating index");
-            createOp.execute(session);
-            mappingOp.execute(session);
-            logger.info("created mapping");
-        } catch (MasterNotDiscoveredException | NoNodeAvailableException e) {
-            logger.warn(e.getMessage());
+            es.deleteIndex();
+            es.createIndex(null);
+        } catch (NoNodeAvailableException e) {
         } finally {
-            if (session != null) {
-                session.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
+            es.shutdown();
         }
     }
 }

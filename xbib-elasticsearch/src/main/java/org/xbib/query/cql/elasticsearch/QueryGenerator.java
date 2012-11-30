@@ -32,8 +32,10 @@
 package org.xbib.query.cql.elasticsearch;
 
 import java.io.IOException;
+import java.util.Date;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.xbib.io.util.DateUtil;
 import org.xbib.query.cql.SyntaxException;
 
 /**
@@ -42,7 +44,7 @@ import org.xbib.query.cql.SyntaxException;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class QueryGenerator implements Visitor {
-    
+
     private final XContentBuilder builder;
 
     public QueryGenerator() throws IOException {
@@ -134,6 +136,21 @@ public class QueryGenerator implements Visitor {
         try {
             Operator op = node.getOperator();
             switch (op.getArity()) {
+                case 0: {
+                    // operators with infinite arity
+                    switch (op) {
+                        case FILTER: {
+                            for (Node arg : node.getArgs()) {
+                                arg.accept(this);
+                            }
+                            break;
+                        }
+                    }
+                }
+                case 1: {
+                    // unary operators
+                    break;
+                }
                 case 2: {
                     Node arg1 = node.getArg1();
                     Node arg2 = node.getArgs().length > 1 ? node.getArg2() : null;
@@ -145,23 +162,35 @@ public class QueryGenerator implements Visitor {
                     if (!visible) {
                         return;
                     }
+                    tok2 = checkType(op, arg1, tok2);
                     switch (op) {
                         case EQUALS: {
                             String field = arg1.toString();
                             String value = arg2.toString();
                             // TODO nested search is a hack
                             if (field.startsWith("dc:subject.xbib:subject")) {
-                                nestedSearch(field, "xbib:subjectAuthority", "xbib:subjectValue", value);
+                                nestedSearch(field, "xbib:subjectAuthority", "xbib:subjectValue", tok2.getString());
                             } else {
                                 if (tok2.isProtected()) {
                                     if (tok2.getStringList().size() > 1) {
                                         builder.startObject("bool").startArray("must");
                                         for (String s : tok2.getStringList()) {
-                                            builder.startObject().startObject("text").startObject(field).field("query", s).endObject().endObject().endObject();
+                                            builder.startObject();
+                                            Token t = new Token(s);
+                                            if (t.isAll()) {
+                                                builder.startObject("match_all").endObject();
+                                            } else if (t.isWildcard()) {
+                                                builder.startObject("wildcard").field(field, s).endObject();
+                                            } else if (t.isBoundary()) {
+                                                builder.startObject("prefix").field(field, s).endObject();
+                                            } else {
+                                                builder.startObject("text").startObject(field).field("query", s).endObject().endObject();
+                                            }
+                                            builder.endObject();
                                         }
                                         builder.endArray().endObject();
                                     } else {
-                                        builder.startObject("text").startObject(field).field("query", value).endObject().endObject();
+                                        builder.startObject("text").startObject(field).field("query", tok2.toString()).endObject().endObject();
                                     }
                                 } else if (tok2.isAll()) {
                                     builder.startObject("match_all").endObject();
@@ -183,11 +212,22 @@ public class QueryGenerator implements Visitor {
                                 if (tok2.getStringList().size() > 1) {
                                     builder.startObject("bool").startArray("must");
                                     for (String s : tok2.getStringList()) {
-                                        builder.startObject().startObject("text").startObject(field).field("query", s).endObject().endObject().endObject();
+                                        builder.startObject();
+                                        Token t = new Token(s);
+                                        if (t.isAll()) {
+                                            builder.startObject("match_all").endObject();
+                                        } else if (t.isWildcard()) {
+                                            builder.startObject("wildcard").field(field, s).endObject();
+                                        } else if (t.isBoundary()) {
+                                            builder.startObject("prefix").field(field, s).endObject();
+                                        } else {
+                                            builder.startObject("text").startObject(field).field("query", s).endObject().endObject();
+                                        }
+                                        builder.endObject();
                                     }
                                     builder.endArray().endObject();
                                 } else {
-                                    builder.startObject("text").startObject(field).field("query", value).endObject().endObject();
+                                    builder.startObject("text").startObject(field).field("query", tok2.toString()).endObject().endObject();
                                 }
                             } else if (tok2.isAll()) {
                                 builder.startObject("match_all").endObject();
@@ -208,11 +248,22 @@ public class QueryGenerator implements Visitor {
                                 if (tok2.getStringList().size() > 1) {
                                     builder.startObject("bool").startArray("must");
                                     for (String s : tok2.getStringList()) {
-                                        builder.startObject().startObject("text").startObject(field).field("query", s).endObject().endObject().endObject();
+                                        builder.startObject();
+                                        Token t = new Token(s);
+                                        if (t.isAll()) {
+                                            builder.startObject("match_all").endObject();
+                                        } else if (t.isWildcard()) {
+                                            builder.startObject("wildcard").field(field, s).endObject();
+                                        } else if (t.isBoundary()) {
+                                            builder.startObject("prefix").field(field, s).endObject();
+                                        } else {
+                                            builder.startObject("text").startObject(field).field("query", s).endObject().endObject();
+                                        }
+                                        builder.endObject();
                                     }
                                     builder.endArray().endObject();
                                 } else {
-                                    builder.startObject("text").startObject(field).field("query", value).endObject().endObject();
+                                    builder.startObject("text").startObject(field).field("query", tok2.toString()).endObject().endObject();
                                 }
                             } else if (tok2.isAll()) {
                                 builder.startObject("match_all").endObject();
@@ -232,11 +283,22 @@ public class QueryGenerator implements Visitor {
                                 if (tok2.getStringList().size() > 1) {
                                     builder.startObject("bool").startArray("should");
                                     for (String s : tok2.getStringList()) {
-                                        builder.startObject().startObject("text").startObject(field).field("query", s).endObject().endObject().endObject();
+                                        builder.startObject();
+                                        Token t = new Token(s);
+                                        if (t.isAll()) {
+                                            builder.startObject("match_all").endObject();
+                                        } else if (t.isWildcard()) {
+                                            builder.startObject("wildcard").field(field, s).endObject();
+                                        } else if (t.isBoundary()) {
+                                            builder.startObject("prefix").field(field, s).endObject();
+                                        } else {
+                                            builder.startObject("text").startObject(field).field("query", s).endObject().endObject();
+                                        }
+                                        builder.endObject();
                                     }
                                     builder.endArray().endObject();
                                 } else {
-                                    builder.startObject("text").startObject(field).field("query", value).endObject().endObject();
+                                    builder.startObject("text").startObject(field).field("query", tok2.toString()).endObject().endObject();
                                 }
                             } else if (tok2.isAll()) {
                                 builder.startObject("match_all").endObject();
@@ -252,13 +314,13 @@ public class QueryGenerator implements Visitor {
                         case PHRASE: {
                             String field = arg1.toString();
                             String value = arg2.toString();
-                            if (tok2.isProtected()) {                                    
-                                    builder.startObject("text_phrase")
-                                            .startObject(field)
-                                            .field("query", tok2.getString())
-                                            .field("slop", 0)
-                                            .endObject()
-                                            .endObject();                                
+                            if (tok2.isProtected()) {
+                                builder.startObject("text_phrase")
+                                        .startObject(field)
+                                        .field("query", tok2.getString())
+                                        .field("slop", 0)
+                                        .endObject()
+                                        .endObject();
                             } else if (tok2.isAll()) {
                                 builder.startObject("match_all").endObject();
                             } else if (tok2.isWildcard()) {
@@ -328,7 +390,7 @@ public class QueryGenerator implements Visitor {
                                         builder.startObject("text").field("_all");
                                         arg1.accept(this);
                                         builder.endObject();
-                                    } else {                                    
+                                    } else {
                                         arg1.accept(this);
                                     }
                                     builder.endObject();
@@ -338,7 +400,7 @@ public class QueryGenerator implements Visitor {
                                         builder.startObject("text").field("_all");
                                         arg2.accept(this);
                                         builder.endObject();
-                                    } else {                                    
+                                    } else {
                                         arg2.accept(this);
                                     }
                                     builder.endObject();
@@ -370,7 +432,7 @@ public class QueryGenerator implements Visitor {
                                         builder.startObject("text").field("_all");
                                         arg1.accept(this);
                                         builder.endObject();
-                                    } else {                                    
+                                    } else {
                                         arg1.accept(this);
                                     }
                                     builder.endObject();
@@ -382,7 +444,7 @@ public class QueryGenerator implements Visitor {
                                         builder.startObject("text").field("_all");
                                         arg2.accept(this);
                                         builder.endObject();
-                                    } else {                                    
+                                    } else {
                                         arg2.accept(this);
                                     }
                                     builder.endObject();
@@ -416,25 +478,9 @@ public class QueryGenerator implements Visitor {
                             break;
                         }
                         default:
-                            throw new IllegalArgumentException(
-                                    "unable to translate operator while building elasticsearch query: " + op);
+                            throw new IllegalArgumentException("unable to translate operator while building elasticsearch query: " + op);
                     }
                     break;
-                }
-                case 1: {
-                    // unary operators
-                    break;
-                }
-                case 0: {
-                    // operators with infinite arity
-                    switch (op) {
-                        case FILTER: {
-                            for (Node arg : node.getArgs()) {
-                                arg.accept(this);
-                            }
-                            break;
-                        }
-                    }
                 }
             }
         } catch (IOException e) {
@@ -448,5 +494,23 @@ public class QueryGenerator implements Visitor {
         String term = pos > 0 ? field.substring(pos + 1) : "UNKNOWN";
         builder.startObject("nested").field("path", path).field("score_mode", "avg").startObject("query").startObject("bool").startArray("must").startObject().startObject("term").field(path + "." + termName, term).endObject().endObject().startObject().startObject("text").field(path + "." + textName, text).endObject().endObject().endArray().endObject().endObject().endObject();
     }
-    
+
+    private Token checkType(Operator op, Node node, Token token) {
+        if (token == null) {
+            return null;
+        }
+        if (!op.equals(Operator.RANGE_WITHIN) && node.toString().endsWith("xbib:date")) {
+            TokenType t = token.getType();
+            if (t == TokenType.STRING) {
+                // enforce date conversion from a string value, extract four digits for creating a year
+                String s = token.getString();
+                s = s.replaceAll("[^0-9]+", "");
+                s = s.length() > 4 ? s.substring(0, 4) : s;
+                s = s.length() < 4 ? ("0000" + s).substring(0, 4) : s;
+                Date d = DateUtil.parseDate(s);
+                return new Token(d);
+            }
+        }
+        return token;
+    }
 }

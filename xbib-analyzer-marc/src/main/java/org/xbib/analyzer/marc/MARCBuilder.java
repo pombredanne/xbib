@@ -87,13 +87,13 @@ public class MARCBuilder
     }
     
     public MARCBuilder elementProperty(String elementName, Property property, String value) {        
-        context.get().getResource(context.get().resource(), elementName).addProperty(property, value);
+        context.get().getResource(context.get().resource(), elementName).property(property, value);
         return this;
     }
     
     private void checkForIdentifierPresent() {
-        if (context().resource().getIdentifier() == null) {
-            context().resource().setIdentifier(URI.create("http://xbib.org#"+context().increment()));
+        if (context().resource().id() == null) {
+            context().resource().id(URI.create("http://xbib.org#"+context().increment()));
         }
     }
     

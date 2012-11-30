@@ -168,7 +168,7 @@ public abstract class XmlHandler extends DefaultHandler {
     }
 
     public void openResource() {
-        resourceContext.setResource(resourceContext.newResource());
+        resourceContext.newResource();
     }
 
     public void closeResource() {
@@ -179,7 +179,7 @@ public abstract class XmlHandler extends DefaultHandler {
         if (empty) {
             return;
         }
-        resourceContext.resource().setIdentifier(identifier);
+        resourceContext.resource().id(identifier);
         if (listener != null) {
             listener.newIdentifier(identifier);
             Iterator<Statement> it = resourceContext.resource().iterator(true);

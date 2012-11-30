@@ -91,14 +91,14 @@ public class NTripleWriter<S extends Resource<?, ?, ?>, P extends Property, O ex
 
     public String writeObject(O object) {
         if (object instanceof Resource) {
-            S subject = ((Resource<S, P, O>) object).getSubject();
+            S subject = ((Resource<S, P, O>) object).subject();
             return writeSubject(subject);
         }
         if (object instanceof Literal) {
             Literal<?> value = (Literal<?>) object;
-            String s = "\"" + escape(value.getValue().toString()) + "\"";
-            String lang = value.getLanguage();
-            URI type = value.getType();
+            String s = "\"" + escape(value.object().toString()) + "\"";
+            String lang = value.language();
+            URI type = value.type();
             if (lang != null) {
                 return s + "@" + lang;
             }

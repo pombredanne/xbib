@@ -49,7 +49,7 @@ public class RecordIdentifier extends MARCElement {
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
         for (Field field : fields) {
             URI id =  URI.create("http://xbib.org#" +field.getData().trim());
-            builder.context().resource().setIdentifier(id);
+            builder.context().resource().id(id);
         }
     }
 }

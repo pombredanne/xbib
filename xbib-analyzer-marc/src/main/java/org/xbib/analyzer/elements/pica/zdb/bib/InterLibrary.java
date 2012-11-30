@@ -45,7 +45,7 @@ public class InterLibrary extends PicaElement {
 
     @Override
     public void field(ElementBuilder builder, Field field, String subfieldType) {
-        builder.context().resource().addProperty(Property.create(LA_NS_URI + subfieldType), field.getData());
+        builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
     }
 
 }

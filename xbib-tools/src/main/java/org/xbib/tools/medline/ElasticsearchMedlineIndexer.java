@@ -37,7 +37,7 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.namespace.QName;
-import org.xbib.builders.elasticsearch.ElasticsearchBulkResourceOutput;
+import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -45,7 +45,6 @@ import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.InputStreamService;
 import org.xbib.io.file.Finder;
-import org.xbib.io.util.DateUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.ResourceContext;
@@ -62,7 +61,7 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
 
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchMedlineIndexer.class.getName());
     private final static AtomicLong fileCounter = new AtomicLong(0L);
-    private Queue<URI> input;
+    private static Queue<URI> input;
     private static OptionSet options;
     private final SimpleResourceContext ctx = new SimpleResourceContext();
     private ElementOutput out;
@@ -73,12 +72,14 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
             OptionParser parser = new OptionParser() {
 
                 {
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("es").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("medline*.xml.gz");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("bulksize").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("bulks").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                 }
             };
             options = parser.parse(args);
@@ -93,24 +94,30 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
                 System.err.println(" --threads <n>          the number of threads (required, default: 1)");
                 System.exit(1);
             }
-            final Queue<URI> input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
             logger.info("input = {},  threads = {}", new Object[]{input, threads});
 
-            final ElasticsearchBulkResourceOutput es = new ElasticsearchBulkResourceOutput();
-            es.connect(URI.create(options.valueOf("es").toString()), options.valueOf("index").toString(), options.valueOf("type").toString());
+            
+            final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO();
+                    es.newClient(URI.create(options.valueOf("elasticsearch").toString()), false)
+                    .setIndex(options.valueOf("index").toString())
+                    .setType(options.valueOf("type").toString())
+                    .setBulkSize((Integer)options.valueOf("bulksize"))
+                    .setMaxActiveRequests((Integer)options.valueOf("bulks"));
 
             ImportService service = new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
 
                         @Override
                         public Importer newImporter() {
-                            return new ElasticsearchMedlineIndexer(es).setInput(input);
+                            return new ElasticsearchMedlineIndexer(es);
                         }
-                    }).execute(input);
+                    }).execute();
             logger.info("files = {}, docs indexed = {}", new Object[]{fileCounter, es.getCounter()});
-            es.disconnect();
+            es.flush();
+            es.shutdown();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);
@@ -120,13 +127,6 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
 
     public ElasticsearchMedlineIndexer(ElementOutput out) {
         this.out = out;
-    }
-
-    public ElasticsearchMedlineIndexer setInput(Queue<URI> list) {
-        if (list != null) {
-            this.input = list;
-        }
-        return this;
     }
 
     @Override
@@ -166,7 +166,7 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
         @Override
         public void closeResource() {
             super.closeResource();
-            out.output(ctx, DateUtil.formatNow());
+            out.output(ctx);
         }
 
         @Override
@@ -198,7 +198,7 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
 
         @Override
         public void newIdentifier(URI identifier) {
-            ctx.resource().setIdentifier(identifier);
+            ctx.resource().id(identifier);
         }
 
         @Override

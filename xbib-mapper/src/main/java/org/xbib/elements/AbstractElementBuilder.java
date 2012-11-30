@@ -76,15 +76,15 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
 
     @Override
     public void begin() {
-        C c = getContextFactory().newContext();
-        c.setResource(c.newResource());
+        C c = getContextFactory().newContext(); 
+        c.resource(c.newResource());
         context.set(c);
     }
 
     @Override
     public void build(E element, K key, V value) {
         // dummy action
-        context.get().resource().addProperty("class:" + getClass().getSimpleName(), value);
+        context.get().resource().property("class:" + getClass().getSimpleName(), value);
     }
 
     @Override
@@ -96,7 +96,7 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     public void end(Object info) {
         for (ElementOutput output : outputs) {
             if (output.enabled()) {
-                output.output(context.get(), info);
+                output.output(context.get());
             }
         }
     }

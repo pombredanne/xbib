@@ -101,7 +101,7 @@ public class ClientTest {
 
                 @Override
                 public void newIdentifier(URI uri) {
-                    getResource().setIdentifier(uri);
+                    getResource().id(uri);
                 }
 
                 @Override
@@ -122,8 +122,8 @@ public class ClientTest {
                 @Override
                 public void endDocument() throws SAXException {
                     handler.endDocument();
-                    if (resource.getIdentifier() == null) {
-                        resource.setIdentifier(URI.create(getHeader().getIdentifier()));
+                    if (resource.id() == null) {
+                        resource.id(URI.create(getHeader().getIdentifier()));
                     }
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();

@@ -50,6 +50,10 @@ public class Property implements Serializable, Comparable<Property> {
         }
         this.uri = uri;
     }
+
+    public static Property create(URI uri) {
+        return new Property(uri);
+    }
     
     public static Property create(String uri) {
         return new Property(URI.create(uri));

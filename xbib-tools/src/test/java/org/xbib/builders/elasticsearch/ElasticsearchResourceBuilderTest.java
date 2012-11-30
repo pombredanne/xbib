@@ -13,6 +13,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.testng.annotations.Test;
+import org.xbib.elasticsearch.ElasticsearchIndexerMockDAO;
 import org.xbib.elements.ElementMapper;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.elements.mab.MABBuilder;
@@ -27,9 +28,10 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/mgl2.xml"), "UTF-8");
-        ElasticsearchResourceOutput es = new ElasticsearchResourceOutput();
+        ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+                .setIndex("test")
+                .setType("test");
         try {
-            es.connect("test", "test");
             MABBuilder builder = new MABBuilder().addOutput(es);
             KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
@@ -42,8 +44,8 @@ public class ElasticsearchResourceBuilderTest {
             StreamResult target = new StreamResult(w);
             transformer.transform(new SAXSource(reader, source), target);
         } catch (NoNodeAvailableException e) {
-        } finally {
-            es.disconnect();
+        } finally {        
+            es.shutdown();
         }
     }
 
@@ -51,9 +53,10 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = new FileInputStream("/Users/joerg/Daten/zdb/2012/1211zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");
-        ElasticsearchBulkResourceOutput es = new ElasticsearchBulkResourceOutput();
+        ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+                .setIndex("test")
+                .setType("test");
         try {
-            es.connect("test", "test");
             MABBuilder builder = new MABBuilder().addOutput(es);
             KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
@@ -67,7 +70,7 @@ public class ElasticsearchResourceBuilderTest {
             transformer.transform(new SAXSource(reader, source), target);
         } catch (NoNodeAvailableException e) {
         } finally {
-            es.disconnect();
+            es.shutdown();
         }
     }
 }

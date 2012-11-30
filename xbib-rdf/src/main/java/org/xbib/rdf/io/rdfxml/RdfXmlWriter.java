@@ -173,7 +173,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             // Write new subject:
             writeNewLine();
             writeStartOfStartTag(NS_URI, "Description");
-            if (subj.getIdentifier().getScheme().equals(BlankNode.PREFIX)) {
+            if (subj.id().getScheme().equals(BlankNode.PREFIX)) {
                 writeAttribute(NS_URI, "nodeID", subj.toString());
             } else {
                 writeAttribute(NS_URI, "about", subj.toString());
@@ -190,21 +190,21 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             Resource objRes = (Resource) obj;
             if (objRes instanceof BlankNode) {
                 BlankNode bNode = (BlankNode) objRes;
-                writeAttribute(NS_URI, "nodeID", bNode.getIdentifier().toString());
+                writeAttribute(NS_URI, "nodeID", bNode.id().toString());
             } else {
-                URI uri = objRes.getIdentifier();
+                URI uri = objRes.id();
                 writeAttribute(NS_URI, "resource", uri.toString());
             }
             writer.write("/>");
         } else if (obj instanceof Literal) {
             Literal objLit = (Literal) obj;
             // language attribute
-            if (objLit.getLanguage() != null) {
-                writeAttribute("xml:lang", objLit.getLanguage());
+            if (objLit.language() != null) {
+                writeAttribute("xml:lang", objLit.language());
             }
             // datatype attribute
             boolean isXMLLiteral = false;
-            URI datatype = objLit.getType();
+            URI datatype = objLit.type();
             if (datatype != null) {
                 // Check if datatype is rdf:XMLLiteral
                 isXMLLiteral = datatype.equals(RDF_XMLLITERAL);

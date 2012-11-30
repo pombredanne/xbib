@@ -34,7 +34,7 @@ package org.xbib.query.cql.elasticsearch;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Stack;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.xbib.io.util.DateUtil;
 import org.xbib.query.cql.BooleanGroup;
 import org.xbib.query.cql.BooleanOperator;
 import org.xbib.query.cql.Comparitor;
@@ -169,14 +169,6 @@ public class ESGenerator implements Visitor {
     public String getRequestResult() throws IOException {
         return sourceGen.getResult();
     }
-
-    /*public int getFrom() {
-        return model.getFrom();
-    }
-
-    public int getSize() {
-        return model.getSize();
-    }*/
 
     @Override
     public void visit(SortedQuery node) {
@@ -431,16 +423,15 @@ public class ESGenerator implements Visitor {
     }
 
     private Node termToES(Term node) {
-        if (node.isString()) {
-            return new Token(node.getValue());
-        }
         if (node.isLong()) {
             return new Token(Long.parseLong(node.getValue()));
-        }
-        if (node.isFloat()) {
+        } else if (node.isFloat()) {
             return new Token(Double.parseDouble(node.getValue()));
-        }
-        if (node.isIdentifier()) {
+        } else if (node.isIdentifier()) {
+            return new Token(node.getValue());
+        } else if (node.isDate()) {
+            return new Token(DateUtil.parseDateISO(node.getValue()));
+        } else if (node.isString()) {
             return new Token(node.getValue());
         }
         return null;

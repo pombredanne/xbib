@@ -49,7 +49,7 @@ public class ShortName extends PicaElement {
         boolean valid = false;
         for (Field field : fields) {
             if (valid) {
-                builder.context().resource().addProperty(LA_SHORTNAME, field.getData());
+                builder.context().resource().property(LA_SHORTNAME, field.getData());
                 valid = false;
             } else {
                 // ugly to have hardcoded subfield IDs here

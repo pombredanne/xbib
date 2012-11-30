@@ -34,12 +34,8 @@ package org.xbib.tools.indexer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import org.xbib.elasticsearch.BulkWrite;
-import org.xbib.elasticsearch.ElasticsearchSession;
-import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
+import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
 import org.xbib.io.InputStreamService;
-import org.xbib.io.Mode;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
@@ -82,7 +78,7 @@ public class ElasticsearchGNDIndexer {
                 System.exit(1);
             }
             final String uriStr = (String) options.valueOf("gndfile");
-            final String es = (String) options.valueOf("elasticsearch");
+            final String elasticsearch = (String) options.valueOf("elasticsearch");
             final String index = (String) options.valueOf("index");
             final String type = (String) options.valueOf("type");
             URI uri = URI.create(uriStr);
@@ -91,7 +87,7 @@ public class ElasticsearchGNDIndexer {
                 throw new IOException("file not found: " + uriStr);
             }
             Resource root = new SimpleResource();
-            final ElasticResourceBuilder builder = new ElasticResourceBuilder(root, es, index, type);
+            final ElasticResourceBuilder builder = new ElasticResourceBuilder(root, elasticsearch, index, type);
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
                 @Override
@@ -119,25 +115,18 @@ public class ElasticsearchGNDIndexer {
 
     private static class ElasticResourceBuilder implements StatementListener {
 
+        private final ElasticsearchIndexerDAO elasticsearch = new ElasticsearchIndexerDAO();
         private final Resource resource;
-        private final Connection<ElasticsearchSession> connection;
-        private final ElasticsearchSession session;
-        private final BulkWrite operation;
         private long triplecounter;
 
-        ElasticResourceBuilder(Resource resource, String es, String index, String type) throws IOException {
+        ElasticResourceBuilder(Resource resource, String esURI, String index, String type) throws IOException {
             this.resource = resource;
-            connection = (Connection<ElasticsearchSession>) ConnectionManager.getConnection(es);
-            session = connection.createSession();
-            session.open(Mode.WRITE);
-            operation = new BulkWrite(index, type);
+            elasticsearch.newClient(URI.create(esURI),false).setIndex(index).setType(type);
         }
 
         private void write(Resource resource) {
             try {
-                if (!resource.isEmpty()) {
-                    operation.write(session, resource);
-                }
+                elasticsearch.write(resource);
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
@@ -145,16 +134,14 @@ public class ElasticsearchGNDIndexer {
 
         public void close() throws IOException {
             write(resource);
-            operation.flush(session);
-            session.close();
-            connection.close();
+            elasticsearch.flush();
         }
 
         @Override
         public void newIdentifier(URI uri) {
             write(resource);
             resource.clear();
-            resource.setIdentifier(uri);
+            resource.id(uri);
         }
 
         @Override

@@ -41,12 +41,12 @@ public class SimpleTest <S extends Resource<S, P, O>, P extends Property, O exte
     @Test
     public void testSerialization() throws Exception {
         SimpleResource<S, P, O> d1 = new SimpleResource<S, P, O>(URI.create("urn:doc1"));
-        d1.setIdentifier(URI.create("urn:doc1"));
-        d1.addProperty("urn:valueURI", "Hello World");
-        Resource<S, P, O> resource = d1.createResource(d1.createPredicate("urn:resource"));
-        resource.addProperty(d1.createPredicate("urn:property"), "value");
-        Resource<S, P, O> nestedResource = resource.createResource(d1.createPredicate("urn:nestedresource"));
-        nestedResource.addProperty("urn:nestedproperty", "nestedvalue");
+        d1.id(URI.create("urn:doc1"));
+        d1.property("urn:valueURI", "Hello World");
+        Resource<S, P, O> resource = d1.newResource("urn:resource");
+        resource.property(d1.toPredicate("urn:property"), "value");
+        Resource<S, P, O> nestedResource = resource.newResource("urn:nestedresource");
+        nestedResource.property("urn:nestedproperty", "nestedvalue");
         SimpleResource<S, P, O> d2;
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         ObjectOutput out = new ObjectOutputStream(buffer);
@@ -61,10 +61,10 @@ public class SimpleTest <S extends Resource<S, P, O>, P extends Property, O exte
     @Test
     public void testXMLResourceWriter() throws Exception {
         SimpleResource<S, P, O> root = new SimpleResource<S, P, O>(URI.create("urn:root"));
-        Resource resource = root.createResource(root.createPredicate("urn:resource"));
-        resource.addProperty("urn:property", "value");
-        Resource nestedResource = resource.createResource("urn:nestedresource");
-        nestedResource.addProperty("urn:nestedproperty", "nestedvalue");
+        Resource resource = root.newResource("urn:resource");
+        resource.property("urn:property", "value");
+        Resource nestedResource = resource.newResource("urn:nestedresource");
+        nestedResource.property("urn:nestedproperty", "nestedvalue");
         XMLResourceWriter w = new XMLResourceWriter();
         StringWriter sw = new StringWriter();
         w.toXML(root, sw);

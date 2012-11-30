@@ -1,3 +1,5 @@
+*~
+
 .idea/
 .gradle/
 *.iml
@@ -21,6 +23,20 @@ target/
 ## netbeans ignores
 nb-configuration.xml
 nbactions.xml
+
+# unreleased submodules
+xbib-openurl
+xbib-openrdf
+xbib-swingx
+xbib-printclient
+xbib-fa
+xbib-oauth
+xbib-json
+xbib-jacc
+
+# deploy scripts
+release-github-deploy
+snapshot-github-deploy
 
 # passwords
 BVB.properties

@@ -57,6 +57,7 @@ import javax.xml.stream.util.XMLEventConsumer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import org.elasticsearch.ElasticSearchException;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -83,13 +84,14 @@ import org.xbib.query.cql.elasticsearch.ESGenerator;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
-public class ElasticsearchDAO {
+public class ElasticsearchDAO implements ElasticsearchInterface {
 
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchDAO.class.getName());
-    private static TransportClient client;
-    private final Set<InetSocketTransportAddress> addresses = new HashSet();
+    protected static TransportClient client;
+    protected String[] index;
+    protected String[] type;
+    private final static Set<InetSocketTransportAddress> addresses = new HashSet();
     private Settings settings;
-    private ImmutableSettings.Builder settingsBuilder;
     private SearchRequestBuilder searchRequestBuilder;
     private String originalQuery;
     private String query;
@@ -98,15 +100,12 @@ public class ElasticsearchDAO {
     private OutputFormat format;
     private long tookInMillis;
     private Logger queryLogger;
-    private String[] index;
-    private String[] type;
     private String stylesheets;
     private OutputStream target;
     private StylesheetTransformer transformer;
     private XMLEventConsumer consumer;
 
     public ElasticsearchDAO() {
-        this.settingsBuilder = ImmutableSettings.settingsBuilder();
     }
 
     public ElasticsearchDAO settings(Settings settings) {
@@ -115,14 +114,34 @@ public class ElasticsearchDAO {
     }
 
     public ElasticsearchDAO newClient(boolean force) {
+        return newClient(findURI(), force);
+    }
+
+    public ElasticsearchDAO newClient(URI uri, boolean force) {
         if (force && client != null) {
             client.close();
             client = null;
         }
         if (client == null) {
-            URI uri = findURI();
             if (settings == null) {
-                settings = settingsBuilder.put("cluster.name", findClusterName(uri))
+                settings = initialSettings(uri);
+            }
+            client = new TransportClient(settings);
+            try {
+                connect(uri);
+            } catch (UnknownHostException e) {
+                logger.error(e.getMessage(), e);
+            } catch (SocketException e) {
+                logger.error(e.getMessage(), e);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return this;
+    }
+    
+    protected Settings initialSettings(URI uri) {
+        return ImmutableSettings.settingsBuilder().put("cluster.name", findClusterName(uri))
                         .put("client.transport.sniff", false)
                         .put("transport.netty.connections_per_node.low", 0)
                         .put("transport.netty.connections_per_node.med", 0)
@@ -140,19 +159,6 @@ public class ElasticsearchDAO {
                         .put("threadpool.percolate.type", "fixed")
                         .put("threadpool.percolate.size", "1")
                         .build();
-            }
-            client = new TransportClient(settings);
-            try {
-                connect(uri);
-            } catch (UnknownHostException e) {
-                logger.error(e.getMessage(), e);
-            } catch (SocketException e) {
-                logger.error(e.getMessage(), e);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        return this;
     }
     
     public synchronized void shutdown() {
@@ -421,7 +427,7 @@ public class ElasticsearchDAO {
             GetResponse getResponse = client.prepareGet(index, type, id).execute().actionGet();
             long t1 = System.currentTimeMillis();
             if (queryLogger != null) {
-                queryLogger.info("get complete: {} {}/{}/{} [{}ms] {}",
+                queryLogger.info(" get complete: {} {}/{}/{} [{}ms] {}",
                         format, index, type, id, (t1 - t0), getResponse.exists());
             }
             if (!getResponse.exists() || getResponse.isSourceEmpty()) {
@@ -567,7 +573,7 @@ public class ElasticsearchDAO {
     private final static String DEFAULT_CLUSTER_NAME = "elasticsearch";
     private final static URI DEFAULT_URI = URI.create("es://interfaces:9300");
 
-    private static URI findURI() {
+    protected static URI findURI() {
         URI uri = DEFAULT_URI;
         String hostname = "localhost";
         try {
@@ -592,7 +598,7 @@ public class ElasticsearchDAO {
         return uri;
     }
 
-    private String findClusterName(URI uri) {
+    protected String findClusterName(URI uri) {
         String clustername;
         try {
             // look for URI parameters
@@ -616,7 +622,7 @@ public class ElasticsearchDAO {
         return clustername;
     }
 
-    private void connect(URI uri) throws UnknownHostException, SocketException, IOException {
+    protected void connect(URI uri) throws UnknownHostException, SocketException, IOException {
         String hostname = uri.getHost();
         int port = uri.getPort(); // beware: 9300, not 9200
         boolean newaddresses = false;
@@ -670,4 +676,12 @@ public class ElasticsearchDAO {
             }
         }
     }
+    
+    protected void waitForHealthyCluster() throws IOException {
+        ClusterHealthResponse healthResponse =
+                client.admin().cluster().prepareHealth().setWaitForGreenStatus().setTimeout("30s").execute().actionGet(30000);
+        if (healthResponse.isTimedOut()) {
+            throw new IOException("cluster not healthy, cowardly refusing to continue with operations");
+        }
+    }    
 }

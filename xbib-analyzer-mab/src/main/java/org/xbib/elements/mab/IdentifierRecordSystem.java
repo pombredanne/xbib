@@ -17,8 +17,8 @@ public class IdentifierRecordSystem extends MABElement {
     @Override
     public void build(MABBuilder b, FieldCollection key, String value) {
         value = value.trim();
-        b.context().resource().setIdentifier(URI.create("http://xbib.org#" + value));
-        b.context().getResource(b.context().resource(), IDENTIFIER).addProperty(XBIB_IDENTIFIER_AUTHORITY_SYSID, value);
+        b.context().resource().id(URI.create("http://xbib.org#" + value));
+        b.context().getResource(b.context().resource(), IDENTIFIER).property(XBIB_IDENTIFIER_AUTHORITY_SYSID, value);
     }
 
 }

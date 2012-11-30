@@ -71,10 +71,10 @@ public class AlephPublishingReaderTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
+            public boolean output(MABContext context) {
                 logger.info("resource = {}", context.resource());
-                logger.info("info = {}", info);
                 counter++;
+                return true;
             }
 
             @Override

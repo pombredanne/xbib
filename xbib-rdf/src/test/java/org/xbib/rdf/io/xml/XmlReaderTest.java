@@ -69,7 +69,7 @@ public class XmlReaderTest {
         @Override
         public void newIdentifier(URI uri) {
             //logger.info("uri = {}", uri.toString());
-            src.resource().setIdentifier(uri);
+            src.resource().id(uri);
         }
 
         @Override

@@ -51,38 +51,38 @@ public interface Literal<O> extends Serializable {
      * Set the value for the literal
      * @param value 
      */
-    Literal<O> setValue(O value);
+    Literal<O> object(O value);
 
     /**
      * Get the value
      * @return the value
      */
-    O getValue();
+    O object();
 
     /**
      * Set type of the literal
      * 
      * @param type 
      */
-    void setType(URI type);
+    Literal<O> type(URI type);
     
     /**
      * Get type of the literal
      * @return the type
      */
-    URI getType();
+    URI type();
 
     /**
      * Set the lianguage of the literal
      * @param lang 
      */
-    void setLanguage(String lang);
+    Literal<O> language(String lang);
     
     /**
      * Get language of the literal
      * @return the language
      */
-    String getLanguage();
+    String language();
     
     /**
      * Get native value (Java primitive type)

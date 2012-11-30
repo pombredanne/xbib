@@ -42,7 +42,7 @@ public class TurtleReaderTest {
             //if (!resource.isEmpty())
                 //logger.log(Level.INFO, resource.toString());                
             resource.clear();
-            resource.setIdentifier(uri);
+            resource.id(uri);
             //logger.log(Level.INFO, uri.toString());
         }
 

@@ -60,32 +60,22 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
     }
 
     @Override
-    public Literal<?> createLiteral(String value) {
-        return new SimpleLiteral().setValue(value);
+    public Literal<?> newLiteral(String value) {
+        return new SimpleLiteral().object(value);
     }
 
     @Override
-    public Literal<?> createLiteral(String value, String language) {
-        return new SimpleLiteral<>(value, language);
-    }
-
-    @Override
-    public Literal<?> createLiteral(String value, URI encodingScheme) {
-        return new SimpleLiteral<>(value, encodingScheme);
-    }
-
-    @Override
-    public BlankNode<S, P, O> createBlankNode() {
+    public BlankNode<S, P, O> newBlankNode() {
         return (BlankNode<S, P, O>) new SimpleBlankNode<S, P, S>();
     }
 
     @Override
-    public BlankNode<S, P, O> createBlankNode(String nodeID) {
+    public BlankNode<S, P, O> newBlankNode(String nodeID) {
         return (BlankNode<S, P, O>) new SimpleBlankNode<S, P, S>(nodeID);
     }
 
     @Override
-    public S createSubject(Object subject) {
+    public S toSubject(Object subject) {
         if (subject instanceof URI) {
             URI uri = (URI) subject;
             if (BlankNode.PREFIX.equals(uri.getScheme())) {
@@ -98,18 +88,18 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
     }
 
     @Override
-    public O createObject(Object object) {
+    public O toObject(Object object) {
         return object == null ? null
                 : object instanceof Literal ? (O) object
                 : object instanceof URI
                 ? BlankNode.PREFIX.equals(((URI) object).getScheme())
                 ? (O) new SimpleBlankNode((URI) object)
                 : (O) new SimpleResource((URI) object)
-                : (O) new SimpleLiteral<String>(object.toString());
+                : (O) new SimpleLiteral(object.toString());
     }
 
     @Override
-    public Statement<S, P, O> createStatement(S subject, P predicate, O object) {
+    public Statement<S, P, O> newStatement(S subject, P predicate, O object) {
         if (subject == null) {
             throw new IllegalArgumentException("subject is null");
         }
@@ -119,18 +109,18 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
         if (object == null) {
             throw new IllegalArgumentException("object is null");
         }
-        return new SimpleStatement<S, P, O>(subject, predicate, object);
+        return new SimpleStatement(subject, predicate, object);
     }
 
     @Override
     public int compareTo(Resource<S, P, O> o) {
-        return getIdentifier() == null ? -1 : getIdentifier().toString().compareTo(o.getIdentifier().toString());
+        return id() == null ? -1 : id().toString().compareTo(o.id().toString());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + (getIdentifier() != null ? getIdentifier().hashCode() : 0);
+        hash = 67 * hash + (id() != null ? id().hashCode() : 0);
         return hash;
     }
 

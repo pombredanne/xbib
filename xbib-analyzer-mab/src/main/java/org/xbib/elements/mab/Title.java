@@ -16,7 +16,7 @@ public class Title extends MABElement {
 
     @Override
     public void build(MABBuilder b, FieldCollection key, String value) {
-        b.context().getResource(b.context().resource(), TITLE).addProperty(XBIB_TITLE, value);
+        b.context().getResource(b.context().resource(), TITLE).property(XBIB_TITLE, value);
     }
 
 }

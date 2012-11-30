@@ -33,10 +33,7 @@ package org.xbib.elasticsearch.mock;
 
 import java.net.URI;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.ElasticsearchSession;
-import org.xbib.elasticsearch.MockWrite;
-import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
+import org.xbib.elasticsearch.ElasticsearchIndexerMockDAO;
 import org.xbib.io.Mode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
@@ -52,41 +49,39 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
 
     @Test
     public void testWrite() throws Exception {
-        String s = "es://hostname:9300";
-        final Connection<ElasticsearchSession> conn = (Connection<ElasticsearchSession>)ConnectionManager.getConnection(s);
-        final ElasticsearchSession session = conn.createSession();
-        session.open(Mode.SIMULATED_WRITE);
-        MockWrite op = new MockWrite("testindex","testtype");
+        
+        final ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+                .setIndex("test")
+                .setType("test");
         try {
-            op.write(session, createResource());
+            es.write(createResource());
         } finally {
-            session.close();
-            conn.close();
+            es.shutdown();
         }
     }
 
     private Resource<S,P,O> createResource() {
         Resource<S,P,O> resource = new SimpleResource();
-        resource.setIdentifier(URI.create("urn:document"));
-        resource.addProperty("dc:title", "Hello");
-        resource.addProperty("dc:title", "World");
-        resource.addProperty("xbib:person", "Jörg Prante");
-        resource.addProperty("dc:subject", "An");
-        resource.addProperty("dc:subject", "example");
-        resource.addProperty("dc:subject", "for");
-        resource.addProperty("dc:subject", "subject");
-        resource.addProperty("dc:subject", "sequence");
-        resource.addProperty("http://purl.org/dc/terms/place", "Köln");
+        resource.id(URI.create("urn:document"));
+        resource.property("dc:title", "Hello");
+        resource.property("dc:title", "World");
+        resource.property("xbib:person", "Jörg Prante");
+        resource.property("dc:subject", "An");
+        resource.property("dc:subject", "example");
+        resource.property("dc:subject", "for");
+        resource.property("dc:subject", "subject");
+        resource.property("dc:subject", "sequence");
+        resource.property("http://purl.org/dc/terms/place", "Köln");
         // sequence optimized for turtle output
-        Resource<S,P,O> r1 = resource.createResource(resource.createPredicate("urn:res1"));
-        r1.addProperty("property1", "value1");
-        r1.addProperty("property2", "value2");
-        Resource<S,P,O> r2 = resource.createResource(resource.createPredicate("urn:res1"));
-        r2.addProperty("property3", "value3");
-        r2.addProperty("property4", "value4");
-        Resource<S,P,O> r3 = resource.createResource(resource.createPredicate("urn:res1"));
-        r3.addProperty("property5", "value5");
-        r3.addProperty("property6", "value6");
+        Resource<S,P,O> r1 = resource.newResource("urn:res1");
+        r1.property("property1", "value1");
+        r1.property("property2", "value2");
+        Resource<S,P,O> r2 = resource.newResource("urn:res1");
+        r2.property("property3", "value3");
+        r2.property("property4", "value4");
+        Resource<S,P,O> r3 = resource.newResource("urn:res1");
+        r3.property("property5", "value5");
+        r3.property("property6", "value6");
         return resource;
     }
 }

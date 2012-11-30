@@ -71,7 +71,7 @@ public class ResourceGenerator implements LIA, Visitor {
     @Override
     public void visit(Root lia) {
         stack.push(resource);
-        resource = resource.createResource(LIA);
+        resource = resource.newResource(LIA);
         for (Access access : lia.getAccesses()) {
             access.accept(this);
         }
@@ -81,9 +81,9 @@ public class ResourceGenerator implements LIA, Visitor {
     @Override
     public void visit(Access access) {
         stack.push(resource);
-        resource = resource.createResource(ACCESS);
-        resource.addProperty(NAME, access.getName());
-        resource.addProperty(AUTHORITY, access.getAuthority().getToken());
+        resource = resource.newResource(ACCESS);
+        resource.property(NAME, access.getName());
+        resource.property(AUTHORITY, access.getAuthority().getToken());
         for (Library library : access.getLibraries()) {
             library.accept(this);
         }
@@ -99,38 +99,38 @@ public class ResourceGenerator implements LIA, Visitor {
     @Override
     public void visit(Library library) {
         stack.push(resource);
-        resource = resource.createResource(LIBRARY);
-        resource.addProperty(NAME, library.getName());
-        resource.addProperty(AUTHORITY, library.getAuthority().getToken());
+        resource = resource.newResource(LIBRARY);
+        resource.property(NAME, library.getName());
+        resource.property(AUTHORITY, library.getAuthority().getToken());
         resource = stack.pop();
     }
 
     @Override
     public void visit(Service service) {
-        resource.addProperty(SERVICE, service.getToken());
+        resource.property(SERVICE, service.getToken());
     }
 
     @Override
     public void visit(Item item) {
         stack.push(resource);
-        resource = resource.createResource(ITEM);
-        resource.addProperty(ITEM_ID, item.getIdentifier());
-        resource.addProperty(ITEM_TYPE, item.getType().getToken()  );
-        resource.addProperty(ITEM_PREFERRED_TRANSPORT, item.getTransport().getToken() );
-        resource.addProperty(ITEM_PREFERRED_DELIVERY, item.getDelivery().getToken() );
+        resource = resource.newResource(ITEM);
+        resource.property(ITEM_ID, item.getIdentifier());
+        resource.property(ITEM_TYPE, item.getType().getToken()  );
+        resource.property(ITEM_PREFERRED_TRANSPORT, item.getTransport().getToken() );
+        resource.property(ITEM_PREFERRED_DELIVERY, item.getDelivery().getToken() );
         if (item instanceof PhysicalItem) {
             PhysicalItem physical = (PhysicalItem) item;
-            resource.addProperty(ITEM_COLLECTION, physical.getCollection());
-            resource.addProperty(ITEM_DESCRIPTION, physical.getDescription());
-            resource.addProperty(ITEM_SHELFMARK, physical.getShelfMark());
+            resource.property(ITEM_COLLECTION, physical.getCollection());
+            resource.property(ITEM_DESCRIPTION, physical.getDescription());
+            resource.property(ITEM_SHELFMARK, physical.getShelfMark());
             for (String number : physical.getNumbers()) {
-                resource.addProperty(ITEM_NUMBER, number);
+                resource.property(ITEM_NUMBER, number);
             }
         } else if (item instanceof LocatorItem) {
             LocatorItem locatorItem = (LocatorItem) item;
             Locator locator = locatorItem.getLocator();
-            resource.addProperty(ITEM_ADDRESS, locator.getAddress().toExternalForm()  );
-            resource.addProperty(ITEM_LABEL, locator.getLabel());
+            resource.property(ITEM_ADDRESS, locator.getAddress().toExternalForm()  );
+            resource.property(ITEM_LABEL, locator.getLabel());
         }
         resource = stack.pop();
     }

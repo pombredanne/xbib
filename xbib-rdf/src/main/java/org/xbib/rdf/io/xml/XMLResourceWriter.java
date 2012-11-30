@@ -70,7 +70,7 @@ public class XMLResourceWriter<S extends Resource<?, ?, ?>, P extends Property, 
     public void toXML(Resource<S, P, O> resource, Writer w)
             throws XMLStreamException {
         XMLEventWriter xew = XMLOutputFactory.newInstance().createXMLEventWriter(w);
-        URI resourceURI = URI.create(resource.getIdentifier().toString());
+        URI resourceURI = URI.create(resource.id().toString());
         // copy all resource statements, this will reconstruct the structure
         SimpleResource<S, P, O> xmlResource = new SimpleResource<S, P, O>(resourceURI);
         Iterator<Statement<S, P, O>> it = resource.iterator(true);
@@ -129,7 +129,7 @@ public class XMLResourceWriter<S extends Resource<?, ?, ?>, P extends Property, 
         if (object instanceof BlankNode) {
             writeResource(consumer, (Resource<S, P, O>) object, new QName(nsURI, name, nsPrefix));
         } else if (object instanceof Literal) {
-            String literal = object.getValue().toString();
+            String literal = object.object().toString();
             consumer.add(eventFactory.createStartElement(nsPrefix, nsURI, name));
             consumer.add(eventFactory.createCharacters(literal));
             consumer.add(eventFactory.createEndElement(nsPrefix, nsURI, name));

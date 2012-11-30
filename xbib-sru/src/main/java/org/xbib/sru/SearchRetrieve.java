@@ -43,7 +43,6 @@ public class SearchRetrieve extends AbstractSRURequest {
     private int maxRecords;
     private int ttl;
     private String sortKeys;
-    private String stylesheet;
     private String data;
     private String encoding;
     private String path;
@@ -157,15 +156,6 @@ public class SearchRetrieve extends AbstractSRURequest {
 
     public String getSortKeys() {
         return sortKeys;
-    }   
-
-    public SearchRetrieve setStylesheet(String stylesheet) {
-        this.stylesheet = stylesheet;
-        return this;
-    }
-
-    public String getStylesheet() {
-        return stylesheet;
     }
 
     public SearchRetrieve setEncoding(String encoding) {

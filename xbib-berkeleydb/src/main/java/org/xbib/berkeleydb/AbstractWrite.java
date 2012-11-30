@@ -49,7 +49,7 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
         if (resource == null) {
             return;
         }
-        String key = resource.getIdentifier().toString();
+        String key = resource.id().toString();
         if (isTransactionalWrite() && session.getConfig().getTransactional() && !session.transactionStarted()) {
             session.beginTransaction();
         }

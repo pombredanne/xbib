@@ -61,6 +61,6 @@ public class FormatCarrier extends MARCElement {
 
     @Override
     public void build(MARCBuilder b, FieldCollection key, String value) {
-        b.context().getResource(b.context().resource(), DublinCoreTerms.FORMAT).addProperty(DCTERMS_MEDIUM, value);
+        b.context().getResource(b.context().resource(), DublinCoreTerms.FORMAT).property(DCTERMS_MEDIUM, value);
     }
 }

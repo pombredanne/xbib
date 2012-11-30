@@ -65,12 +65,12 @@ public abstract class AbstractSequence<S extends Resource<?,?,?>, P extends Prop
     }
     
     @Override
-    public Multimap<P, O> createProperties() {
+    public Multimap<P, O> newProperties() {
         return LinkedHashMultimap.create();
     }
 
     @Override
-    public Multimap<P, Resource<S, P, O>> createResources() {
+    public Multimap<P, Resource<S, P, O>> newResources() {
         return LinkedHashMultimap.create();
     }
 }

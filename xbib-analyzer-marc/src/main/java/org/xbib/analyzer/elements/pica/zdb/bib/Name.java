@@ -44,7 +44,7 @@ public class Name extends PicaElement {
 
     @Override
     public void field(ElementBuilder builder, Field field, String subfieldType) {
-        builder.context().resource().addProperty(LA_NAME, field.getData());
+        builder.context().resource().property(LA_NAME, field.getData());
     }
 
 }

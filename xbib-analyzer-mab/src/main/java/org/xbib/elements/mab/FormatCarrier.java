@@ -44,7 +44,7 @@ public class FormatCarrier extends MABElement {
 
     @Override
     public void build(MABBuilder b, FieldCollection key, String value) {
-        b.context().getResource(b.context().resource(), FORMAT).addProperty(DCTERMS_MEDIUM, value);
+        b.context().getResource(b.context().resource(), FORMAT).property(DCTERMS_MEDIUM, value);
     }
     
 }

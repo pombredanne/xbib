@@ -169,7 +169,7 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         Iterator<Statement<S, P, O>> it = resource.iterator(true);
         while (it.hasNext()) {
             Statement<S, P, O> stmt = it.next();
-            String[] s = context.inContext(stmt.getSubject().getIdentifier());
+            String[] s = context.inContext(stmt.getSubject().id());
             if (s != null) {
                 newContext.addNamespace(s[0], s[1]);
             }
@@ -179,12 +179,12 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             }
             O o = stmt.getObject();
             if (o instanceof Resource) {
-                s = context.inContext(((Resource) o).getIdentifier());
+                s = context.inContext(((Resource) o).id());
                 if (s != null) {
                     newContext.addNamespace(s[0], s[1]);
                 }
             } else if (o instanceof Literal) {
-                s = context.inContext(o.getType());
+                s = context.inContext(o.type());
                 if (s != null) {
                     newContext.addNamespace(s[0], s[1]);
                 }
@@ -363,7 +363,7 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             sameSubject = false;
             openResource((BlankNode<S, P, O>) object);
         } else if (object instanceof Resource) {
-            writeURI(((Resource<S, P, O>) object).getIdentifier());
+            writeURI(((Resource<S, P, O>) object).id());
         } else if (object instanceof Literal) {
             writeLiteral((Literal<?>) object);
         } else {
@@ -414,7 +414,7 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     }
 
     private void writeLiteral(Literal<?> literal) throws IOException {
-        String value = literal.getValue().toString();
+        String value = literal.object().toString();
         if (value.indexOf('\n') > 0 || value.indexOf('\r') > 0 || value.indexOf('\t') > 0) {
             // Write label as long string
             writer.write("\"\"\"");
@@ -426,14 +426,14 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             writer.write(encodeString(value));
             writer.write("\"");
         }
-        if (literal.getType() != null) {
+        if (literal.type() != null) {
             // Append the literal's type
             writer.write("^^");
-            writeURI(literal.getType());
-        } else if (literal.getLanguage() != null) {
+            writeURI(literal.type());
+        } else if (literal.language() != null) {
             // Append the literal's language
             writer.write("@");
-            writer.write(literal.getLanguage());
+            writer.write(literal.language());
         }
     }
 

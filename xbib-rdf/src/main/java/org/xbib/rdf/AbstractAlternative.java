@@ -49,8 +49,7 @@ import java.net.URI;
  * @param <O>
  */
 public abstract class AbstractAlternative<S extends Resource<?,?,?>, P extends Property, O extends Literal<?>>
-         extends AbstractResource<S, P, O>
-        implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
+        extends AbstractResource<S, P, O> implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
 
     public AbstractAlternative() {
         super();
@@ -61,12 +60,12 @@ public abstract class AbstractAlternative<S extends Resource<?,?,?>, P extends P
     }
 
     @Override
-    public Multimap<P, O> createProperties() {
+    public Multimap<P, O> newProperties() {
         return LinkedHashMultimap.create();
     }
 
     @Override
-    public Multimap<P, Resource<S, P, O>> createResources() {
+    public Multimap<P, Resource<S, P, O>> newResources() {
         return LinkedHashMultimap.create();
     }
 }

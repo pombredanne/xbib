@@ -1,5 +1,6 @@
 package org.xbib.marc.addons;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.mab.MABBuilder;
@@ -20,9 +21,7 @@ public class ConcurrentMABTarReaderTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(4).setFactory(factory).execute(
-                "tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"
-        );
+        new ImportService().setThreads(4).setFactory(factory).execute();
     }
     
     private Importer createImporter() {
@@ -35,8 +34,9 @@ public class ConcurrentMABTarReaderTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
+            public boolean output(MABContext context) {
                 counter++;
+                return true;
             }
 
             @Override
@@ -48,7 +48,9 @@ public class ConcurrentMABTarReaderTest {
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
-        return new MABTarReader().setListener(kv);
+        return new MABTarReader()
+                .setURI(URI.create("tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"))
+                .setListener(kv);
     }
     
 }

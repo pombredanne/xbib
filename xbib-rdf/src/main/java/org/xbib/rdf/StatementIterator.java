@@ -51,7 +51,7 @@ public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> 
 
     public StatementIterator(Resource<S, P, O> resource, boolean recursion) {
         this.recursion = recursion;
-        this.statements = resource != null ? unfoldStatements(resource) : new LinkedList();
+        this.statements = resource != null ? unfold(resource) : new LinkedList();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> 
         }
         Statement<S, P, O> statement = statements.poll();
         if (recursion && statement.getObject() instanceof BlankNode) {
-            statements.addAll(0, unfoldStatements((Resource<S, P, O>) statement.getObject()));
+            statements.addAll(0, unfold((Resource<S, P, O>) statement.getObject()));
         }
         return statement;
     }
@@ -76,12 +76,12 @@ public class StatementIterator<S, P, O> implements Iterator<Statement<S, P, O>> 
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private LinkedList<Statement<S, P, O>> unfoldStatements(Resource<S, P, O> resource) {
+    private LinkedList<Statement<S, P, O>> unfold(Resource<S, P, O> resource) {
         LinkedList<Statement<S, P, O>> list = new LinkedList<Statement<S, P, O>>();
-        S subj = resource.getSubject();
+        S subj = resource.subject();
         for (P pred : resource.predicateSet(subj)) {
             for (O obj : resource.objectSet(pred)) {
-                list.offer(resource.createStatement(subj, pred, obj));
+                list.offer(resource.newStatement(subj, pred, obj));
             }
         }
         return list;

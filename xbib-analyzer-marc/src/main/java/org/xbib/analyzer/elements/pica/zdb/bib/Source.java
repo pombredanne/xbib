@@ -43,7 +43,7 @@ public class Source extends PicaElement {
     }
 
     public void build(PicaBuilder builder, FieldCollection key, String value) {
-        builder.context().resource().addProperty("adr:", value);
+        builder.context().resource().property("adr:", value);
         
     }
 

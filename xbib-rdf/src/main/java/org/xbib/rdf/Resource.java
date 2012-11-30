@@ -54,36 +54,50 @@ public interface Resource<S,P,O>
      *
      * @param identifier a resource identifier
      */
-    void setIdentifier(URI identifier);
+    Resource<S,P,O> id(URI identifier);
 
+    /**
+     * Set the resource identifier
+     *
+     * @param identifier a resource identifier
+     */
+    Resource<S,P,O> id(String identifier);
+    
     /**
      * Get the resource identifier
      * @return the resource identifier
      */
-    URI getIdentifier();
+    URI id();
 
     /**
      * Set the subject of this resource
      * @param subject
      */
-    void setSubject(S subject);
+    Resource<S,P,O> subject(S subject);
 
     /**
      * Get subject of this resource
      * @return the subject
      */
-    S getSubject();
+    S subject();
 
     /**
      * Add a property to this resource.
-     * Depreceated - use addProperty(P predicate, O object) instead
      *
      * @param predicate a predicate identifier in its string representation form
      * @param object an object in its string representation form
      * @return the new resource with the property added
      */
-    @Deprecated
-    Resource<S,P,O> addProperty(String predicate, String object);
+    Resource<S,P,O> property(String predicate, String object);
+    
+    /**
+     * Add a property to this resource.
+     *
+     * @param predicate a predicate identifier in its string representation form
+     * @param object an object in its string representation form
+     * @return the new resource with the property added
+     */
+    Resource<S,P,O> property(String predicate, O object);
 
     /**
      * Add a property to this resource with a string object value
@@ -92,7 +106,7 @@ public interface Resource<S,P,O>
      * @param object an object in its string representation form
      * @return the new resource with the property added
      */
-    Resource<S,P,O> addProperty(P predicate, String object);
+    Resource<S,P,O> property(P predicate, String object);
 
     /**
      * Add a property to this resource
@@ -101,31 +115,8 @@ public interface Resource<S,P,O>
      * @param object a literal
      * @return the new resource with the property added
      */
-    Resource<S,P,O> addProperty(P predicate, O object);
+    Resource<S,P,O> property(P predicate, O object);
 
-    /**
-     * Get a property from this resource
-     * 
-     * @param predicate
-     * @return a collection of objects
-     */
-    Collection<O> getProperty(P predicate);
-
-    /**
-     * Remove a property from this
-     * @param predicate a predicate identifier
-     * @return a collection of objects
-     */
-    Collection<O> removeProperty(P predicate);
-    
-    /**
-     * Update a property. If it does not exits, it as added.
-     * @param predicate
-     * @param oldObject
-     * @param newObject 
-     */
-    Resource<S, P, O>  updateProperty(P predicate, O oldObject, O newObject);
-    
     /**
      * Add a statement to this resource
      * @param statement
@@ -139,7 +130,7 @@ public interface Resource<S,P,O>
      * @param predicate
      * @param resource
      */
-    boolean addResource(P predicate, Resource<S,P,O> resource);
+    boolean add(P predicate, Resource<S,P,O> resource);
     
     /**
      * Remove all properties and resources from this resource
@@ -154,7 +145,7 @@ public interface Resource<S,P,O>
     /**
      * Set marker for resource deletion
      */
-    void delete(boolean delete);
+    Resource<S,P,O> setDeleted(boolean delete);
     
     /**
      * Check if marker for resource deletion is set
@@ -168,30 +159,23 @@ public interface Resource<S,P,O>
      * If the resource under the given resource identifier already exists, the
      * existing resource is returned.
      *
-     * @param predicate the predicate for the resource
+     * @param predicate the predicate ID for the resource
      * @return the new anonymous resource
      */
-    Resource<S,P,O> createResource(String predicate);
+    Resource<S,P,O> newResource(String predicate);
 
-    /**
-     * Create a resource
-     * @param predicate
-     * @return a resource
-     */
-    Resource<S,P,O> createResource(P predicate);
-    
     /**
      * Create an anomymous blank node
      * @return a blank node
      */
-    BlankNode<S,P,O> createBlankNode();
+    BlankNode<S,P,O> newBlankNode();
 
     /**
      * Create a named blank node
      * @param nodeID
      * @return a blank node
      */
-    BlankNode<S,P,O> createBlankNode(String nodeID);
+    BlankNode<S,P,O> newBlankNode(String nodeID);
 
     /**
      * Create a literal
@@ -199,25 +183,7 @@ public interface Resource<S,P,O>
      * @param value
      * @return a literal
      */
-    Literal<?> createLiteral(String value);
-
-    /**
-     * Create a literal
-     *
-     * @param value
-     * @param language
-     * @return a literal
-     */
-    Literal<?> createLiteral(String value, String language);
-
-    /**
-     * Create literal
-     *
-     * @param value
-     * @param encodingScheme
-     * @return a literal
-     */
-    Literal<?> createLiteral(String value, URI encodingScheme);
+    Literal<?> newLiteral(String value);
 
     /**
      * Create a statement
@@ -227,7 +193,7 @@ public interface Resource<S,P,O>
      * @param object
      * @return a statement
      */
-    Statement<S,P,O> createStatement(S subject, P predicate, O object);
+    Statement<S,P,O> newStatement(S subject, P predicate, O object);
 
     /**
      * Return the map of predicates for all associated resources
@@ -250,45 +216,45 @@ public interface Resource<S,P,O>
     Collection<O> objectSet(P predicate);
     
     /**
-     * Get iterator over properties only (no recursion) or over
-     * properties and resources (recursion)
+     * Get iterator over properties only or over
+     * properties and resources (full)
      * @param recursion
      * @return iterator over statements
      */
-    Iterator<Statement<S,P,O>> iterator(boolean recursion);
+    Iterator<Statement<S,P,O>> iterator(boolean full);
 
     /**
      * Create a fresh properties multimap
      * @return properties multimap
      */
-    Multimap<P, O> createProperties();
+    Multimap<P, O> newProperties();
 
     /**
      * Create a resource multimap
      * @return a multimap
      */
-    Multimap<P, Resource<S, P, O>> createResources();
+    Multimap<P, Resource<S, P, O>> newResources();
 
     /**
      * Create a subject
      * @param subject
      * @return a subject
      */
-    S createSubject(Object subject);
+    S toSubject(Object subject);
 
     /**
      * Create a predicate
      * @param predicate
      * @return a predicate
      */
-    P createPredicate(Object predicate);
+    P toPredicate(Object predicate);
 
     /**
      * Create an object
      * @param object
      * @return an object
      */
-    O createObject(Object object);
+    O toObject(Object object);
     
     /**
      * Compact a predicate. Under the predicate, there is a single blank node object

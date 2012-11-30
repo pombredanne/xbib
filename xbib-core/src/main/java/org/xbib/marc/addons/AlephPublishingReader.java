@@ -90,7 +90,6 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
     public AlephPublishingReader() {
     }
 
-    @Override
     public AlephPublishingReader setURI(URI uri) {
         this.uri = uri;
         return this;

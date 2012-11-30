@@ -41,7 +41,7 @@ package org.xbib.rdf;
  */
 public interface ResourceContext<R extends Resource> extends ResourceFactory<R> {
         
-    void setResource(R resource);
+    ResourceContext<R> resource(R resource);
     
     R resource();
     

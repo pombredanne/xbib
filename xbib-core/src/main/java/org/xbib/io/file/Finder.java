@@ -44,14 +44,14 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 public class Finder extends SimpleFileVisitor<Path> {
 
     private final PathMatcher matcher;
-    private final LinkedList<URI> input = new LinkedList();
+    private final ConcurrentLinkedQueue<URI> input = new ConcurrentLinkedQueue();
     private final EnumSet opts;
     private FileTime modifiedSince;
 

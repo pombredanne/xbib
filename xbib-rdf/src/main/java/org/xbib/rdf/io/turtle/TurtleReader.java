@@ -309,14 +309,14 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         if (ch == 'a') {
             char ch2 = read();
             if (isWhitespace(ch2)) {
-                return resource.createPredicate("rdf:type");
+                return resource.toPredicate("rdf:type");
             }
             reader.unread(ch2);
         }
         reader.unread(ch);
         O obj = parseValue();
         if (obj instanceof Resource) {
-            return resource.createPredicate(obj.toString());
+            return resource.toPredicate(obj.toString());
         } else {
             throw new IOException(baseURI + ": illegal predicate value: " + obj);
         }
@@ -347,12 +347,12 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             // Send record events. A record is grouped by a sequence of same non-blank subjects
             if (lastsubject == null) {
                 if (listener != null) {
-                    listener.newIdentifier(subject.getIdentifier());
+                    listener.newIdentifier(subject.id());
                 }
                 lastsubject = subject;
-            } else if (!subject.getIdentifier().equals(lastsubject.getIdentifier())) {
+            } else if (!subject.id().equals(lastsubject.id())) {
                 if (listener != null) {
-                    listener.newIdentifier(subject.getIdentifier());
+                    listener.newIdentifier(subject.id());
                 }
                 lastsubject = subject;
             }
@@ -462,7 +462,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             if (ch != ':') {
                 String value = sb.toString();
                 if (value.equals("true") || value.equals("false")) {
-                    return (O) resource.createLiteral(value, URI.create("xsd:boolean"));
+                    return (O) resource.newLiteral(value).type(URI.create("xsd:boolean"));
                 }
             }
             validate(ch, ':');
@@ -529,21 +529,21 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         if (ch == ')') {
             reader.read();
             SimpleResource<S, P, O> r = new SimpleResource();
-            r.setIdentifier(URI.create("rdf:nil"));
+            r.id(URI.create("rdf:nil"));
             return r;
         } else {
             BlankNode<S, P, O> root = new SimpleBlankNode();
             S oldsubject = subject;
             P oldpredicate = predicate;
-            subject = root.getSubject();
-            predicate = root.createPredicate("rdf:first");
+            subject = root.subject();
+            predicate = root.toPredicate("rdf:first");
             parseObject();
             ch = skipWhitespace();
             BlankNode<S, P, O> blanknode = root;
             while (ch != ')') {
                 BlankNode<S, P, O> value = new SimpleBlankNode();
                 if (listener != null) {
-                    listener.statement(new SimpleStatement(blanknode, blanknode.createPredicate("rdf:rest"), value));
+                    listener.statement(new SimpleStatement(blanknode, blanknode.toPredicate("rdf:rest"), value));
                 }
                 subject = (S) value;
                 blanknode = value;
@@ -552,7 +552,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             }
             reader.read();
             if (listener != null) {
-                listener.statement(new SimpleStatement(blanknode, blanknode.createPredicate("rdf:rest"), blanknode.createObject(URI.create("rdf:null"))));
+                listener.statement(new SimpleStatement(blanknode, blanknode.toPredicate("rdf:rest"), blanknode.toObject(URI.create("rdf:null"))));
             }
             subject = oldsubject;
             predicate = oldpredicate;
@@ -614,12 +614,12 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
                 ch = read();
             }
             reader.unread(ch);
-            return new SimpleLiteral(value, sb.toString());
+            return new SimpleLiteral(value).language(sb.toString());
         } else if (ch == '^') {
             reader.read();
             validate(reader.read(), '^');
             URI dataType = parseURI();
-            return new SimpleLiteral(value, dataType);
+            return new SimpleLiteral(value).type(dataType);
         } else {
             return new SimpleLiteral(value);
         }
@@ -739,7 +739,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             }
         }
         reader.unread(ch);
-        return new SimpleLiteral(sb.toString(), datatype);
+        return new SimpleLiteral(sb.toString()).type(datatype);
     }
 
     private char skipWhitespace() throws IOException {

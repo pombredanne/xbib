@@ -53,7 +53,7 @@ public class RdfXmlReaderTest {
         
         @Override
         public void newIdentifier(URI uri) {
-            resource.setIdentifier(uri);
+            resource.id(uri);
         }
 
         @Override

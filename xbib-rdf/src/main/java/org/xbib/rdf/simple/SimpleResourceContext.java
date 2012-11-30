@@ -40,12 +40,14 @@ public class SimpleResourceContext implements ResourceContext<Resource> {
 
     @Override
     public Resource newResource() {
-        return new SimpleResource();
+        this.resource = new SimpleResource();
+        return resource;
     }
 
     @Override
-    public void setResource(Resource resource) {
+    public ResourceContext<Resource> resource(Resource resource) {
         this.resource = resource;
+        return this;
     }
 
     @Override

@@ -95,15 +95,15 @@ public class MARCElementsTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
         MARCBuilder builder = new MARCBuilder();
-        builder.addOutput(new ElementOutput() {
+        builder.addOutput(new ElementOutput<ResourceContext>() {
             @Override
             public boolean enabled() {
                 return true;
             }
 
             @Override
-            public void output(ResourceContext context, Object info) {
-               // logger.info("resource = {} info = {}", context.resource(), info);
+            public boolean output(ResourceContext context) {
+                return true;
             }
 
             @Override

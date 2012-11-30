@@ -7,37 +7,33 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-rdf</artifactId>
-    <name>xbib - Resource Description Framework</name>
+    <name>xbib-rdf</name>
+    <description>xbib - Resource Description Framework</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>12.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <version>2.7.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>serializer</artifactId>
-            <version>2.7.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-logging</artifactId>
-            <version>${project.version}</version>
             <type>jar</type>
             <optional>true</optional>
         </dependency>

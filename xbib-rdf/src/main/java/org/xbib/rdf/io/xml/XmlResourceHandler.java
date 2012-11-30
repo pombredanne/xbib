@@ -66,7 +66,7 @@ public abstract class XmlResourceHandler extends XmlHandler {
     public void openPredicate(QName parent, QName name, int level) {
         URI uri = URI.create(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
         // always create resource (will compact later)
-        Resource r = stack.peek().getResource().createResource(resourceContext.resource().createPredicate(uri));
+        Resource r = stack.peek().getResource().newResource(uri.toString());
         stack.push(new Element(r));
     }
 
@@ -81,14 +81,14 @@ public abstract class XmlResourceHandler extends XmlHandler {
         Element element = stack.pop();
         if (level < 0) {
             // it's a resource
-            stack.peek().getResource().addResource(resourceContext.resource().createPredicate(uri), element.getResource());
+            stack.peek().getResource().add(resourceContext.resource().toPredicate(uri), element.getResource());
         } else {
             // it's a property
             if (content() != null) {
-                element.getResource().addProperty(resourceContext.resource().createPredicate(uri),
-                        resourceContext.resource().createObject(content()));
+                element.getResource().property(resourceContext.resource().toPredicate(uri),
+                        resourceContext.resource().toObject(content()));
                 // compact predicate because it has only a single value
-                stack.peek().getResource().compact(resourceContext.resource().createPredicate(uri));
+                stack.peek().getResource().compact(resourceContext.resource().toPredicate(uri));
             }
         }
     }

@@ -55,7 +55,7 @@ public class OAIMARCElementsTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         InputSource source = new InputSource(br);
         MARCBuilder builder = new MARCBuilder();
-        builder.addOutput(new ElementOutput() {
+        builder.addOutput(new ElementOutput<ResourceContext>() {
 
             @Override
             public boolean enabled() {
@@ -63,8 +63,9 @@ public class OAIMARCElementsTest {
             }
 
             @Override
-            public void output(ResourceContext context, Object info) {
-                logger.info("resource = {}", context.resource());
+            public boolean output(ResourceContext context) {
+                logger.debug("resource = {}", context.resource());
+                return true;
             }
 
             @Override

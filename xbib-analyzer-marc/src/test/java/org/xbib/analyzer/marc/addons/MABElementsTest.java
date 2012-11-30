@@ -99,9 +99,7 @@ public class MABElementsTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(1).setFactory(factory).execute(
-            "tarbz2:src/test/resources/20120805_20120806"
-        );
+        new ImportService().setThreads(1).setFactory(factory).execute();
     }
     
     private Importer createImporter() {
@@ -115,9 +113,10 @@ public class MABElementsTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
-                logger.info("resource = {} info = {}", context.resource(), info);
+            public boolean output(MABContext context) {
+                logger.info("resource = {}", context.resource());
                 counter++;
+                return true;
             }
 
             @Override
@@ -128,7 +127,9 @@ public class MABElementsTest {
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new MABElementMapper("mab").addBuilder(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
-        return new MABTarReader().setListener(kv);
+        return new MABTarReader()
+                .setURI(URI.create("tarbz2:src/test/resources/20120805_20120806"))
+                .setListener(kv);
     }
     
 }

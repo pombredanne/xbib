@@ -7,14 +7,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-federator</artifactId>
-    <name>xbib - Bibliographic Search Federator</name>
+    <name>xbib-federator</name>
+    <description>xbib - Bibliographic Search Federator</description>
     <packaging>war</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -47,7 +47,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
                 <configuration>
                     <warName>federator</warName>
                     <warSourceDirectory>${project.basedir}/src/main/webapp</warSourceDirectory>
@@ -58,47 +57,38 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-charset</artifactId>
-            <version>1.0-SNAPSHOT</version>            
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-sru</artifactId>
-            <version>1.0-SNAPSHOT</version>            
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-iso23950</artifactId>
-            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-bundle</artifactId>
-            <version>1.12</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.0.5</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
     <properties>

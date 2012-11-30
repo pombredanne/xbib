@@ -61,7 +61,7 @@ public class DNBPICAElementsTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         InputSource source = new InputSource(br);
         PicaBuilder builder = new PicaBuilder();
-        builder.addOutput(new ElementOutput() {
+        builder.addOutput(new ElementOutput<ResourceContext>() {
 
             @Override
             public boolean enabled() {
@@ -69,8 +69,9 @@ public class DNBPICAElementsTest {
             }
 
             @Override
-            public void output(ResourceContext context, Object info) {
+            public boolean output(ResourceContext context) {
                 logger.info("resource = {}", context.resource());
+                return true;
             }
 
             @Override

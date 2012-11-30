@@ -21,9 +21,9 @@ public class Leader extends MABElement {
         char satztyp;
         if (s.length() == 24) {
             satztyp = s.charAt(23);
-            b.context().getResource(b.context().resource(), TYPE).addProperty(XBIB_TYPE_RECORD, String.valueOf(satztyp));
+            b.context().getResource(b.context().resource(), TYPE).property(XBIB_TYPE_RECORD, String.valueOf(satztyp));
             if (satztyp == 'u') {
-                b.context().resource().addProperty(BOOST, "0.5");
+                b.context().resource().property(BOOST, "0.5");
             }
         } else {
             // invalid leader

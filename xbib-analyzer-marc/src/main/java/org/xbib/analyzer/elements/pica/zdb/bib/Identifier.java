@@ -47,7 +47,7 @@ public class Identifier extends PicaElement implements LibraryAddressProperties 
 
     @Override
     public void field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
-        builder.context().resource().addProperty(Property.create(LA_NS_URI + subfieldType), field.getData());
+        builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
         logger.info("got identifier = {}", builder.context().resource());
     }
 

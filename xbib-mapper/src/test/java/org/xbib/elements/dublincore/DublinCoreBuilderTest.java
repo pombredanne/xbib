@@ -58,9 +58,10 @@ public class DublinCoreBuilderTest extends Assert {
             }
 
             @Override
-            public void output(DublinCoreContext context, Object info) {
-                logger.info("resource = {} info = {}", context.resource(), info);
+            public boolean output(DublinCoreContext context) {
+                logger.info("resource = {}", context.resource());
                 counter++;
+                return true;
             }
 
             @Override

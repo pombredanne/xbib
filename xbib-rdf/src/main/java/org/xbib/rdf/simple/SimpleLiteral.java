@@ -59,39 +59,36 @@ public class SimpleLiteral<O extends Object>
         this.lang = lang;
     }
 
-    public SimpleLiteral(O value, URI type) {
-        this.value = value;
-        this.type = type;
-    }
-
     @Override
-    public SimpleLiteral<O> setValue(O value) {
+    public SimpleLiteral<O> object(O value) {
         this.value = value;
         return this;
     }
 
     @Override
-    public O getValue() {
+    public O object() {
         return value;
     }
 
     @Override
-    public void setType(URI type) {
+    public SimpleLiteral<O> type(URI type) {
         this.type = type;
+        return this;
     }
 
     @Override
-    public URI getType() {
+    public URI type() {
         return type;
     }
 
     @Override
-    public void setLanguage(String lang) {
+    public SimpleLiteral<O> language(String lang) {
         this.lang = lang;
+        return this;
     }
 
     @Override
-    public String getLanguage() {
+    public String language() {
         return lang;
     }
 
@@ -115,9 +112,9 @@ public class SimpleLiteral<O extends Object>
             return false;
         }
         final Literal that = (Literal) obj;
-        return Objects.equal(this.value, that.getValue())
-                && Objects.equal(this.lang, that.getLanguage())
-                && Objects.equal(this.type, that.getType());
+        return Objects.equal(this.value, that.object())
+                && Objects.equal(this.lang, that.language())
+                && Objects.equal(this.type, that.type());
     }
 
     @Override

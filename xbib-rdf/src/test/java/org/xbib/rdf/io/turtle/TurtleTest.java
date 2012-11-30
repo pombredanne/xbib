@@ -62,18 +62,18 @@ public class TurtleTest<S extends Resource<S, P, O>, P extends Property, O exten
     private SimpleResource createResource() {
         SimpleResource<S, P, O> resource = new SimpleResource();
         String id = "urn:doc1";
-        resource.setIdentifier(URI.create(id));
-        resource.addProperty("dc:creator", "Smith");
-        resource.addProperty("dc:creator", "Jones");
-        Resource r = resource.createResource(resource.createPredicate("dcterms:hasPart"));
-        r.addProperty("dc:title", "This is a part");
-        r.addProperty("dc:title", "of the sample title");
-        r.addProperty("dc:creator", "Jörg Prante");
-        r.addProperty("dc:date", "2009");
-        resource.addProperty("dc:title", "A sample title");
-        r = resource.createResource(resource.createPredicate("dcterms:isPartOf"));
-        r.addProperty("dc:title", "another");
-        r.addProperty("dc:title", "title");
+        resource.id(URI.create(id));
+        resource.property("dc:creator", "Smith");
+        resource.property("dc:creator", "Jones");
+        Resource r = resource.newResource("dcterms:hasPart");
+        r.property("dc:title", "This is a part");
+        r.property("dc:title", "of the sample title");
+        r.property("dc:creator", "Jörg Prante");
+        r.property("dc:date", "2009");
+        resource.property("dc:title", "A sample title");
+        r = resource.newResource("dcterms:isPartOf");
+        r.property("dc:title", "another");
+        r.property("dc:title", "title");
         return resource;
     }
     
@@ -91,26 +91,26 @@ public class TurtleTest<S extends Resource<S, P, O>, P extends Property, O exten
     
     private Resource<S,P,O> createResource2() {
         Resource<S,P,O> resource = new SimpleResource();
-        resource.setIdentifier(URI.create("urn:resource"));
-        resource.addProperty("dc:title", "Hello");
-        resource.addProperty("dc:title", "World");
-        resource.addProperty("xbib:person", "Jörg Prante");
-        resource.addProperty("dc:subject", "An");
-        resource.addProperty("dc:subject", "example");
-        resource.addProperty("dc:subject", "for");
-        resource.addProperty("dc:subject", "a");
-        resource.addProperty("dc:subject", "sequence");
-        resource.addProperty("http://purl.org/dc/terms/place", "Köln");
+        resource.id(URI.create("urn:resource"));
+        resource.property("dc:title", "Hello");
+        resource.property("dc:title", "World");
+        resource.property("xbib:person", "Jörg Prante");
+        resource.property("dc:subject", "An");
+        resource.property("dc:subject", "example");
+        resource.property("dc:subject", "for");
+        resource.property("dc:subject", "a");
+        resource.property("dc:subject", "sequence");
+        resource.property("http://purl.org/dc/terms/place", "Köln");
         // sequence optimized for turtle output
-        Resource<S,P,O> r1 = resource.createResource(resource.createPredicate("urn:res1"));
-        r1.addProperty("property1", "value1");
-        r1.addProperty("property2", "value2");
-        Resource<S,P,O> r2 = resource.createResource(resource.createPredicate("urn:res2"));
-        r2.addProperty("property3", "value3");
-        r2.addProperty("property4", "value4");
-        Resource<S,P,O> r3 = resource.createResource(resource.createPredicate("urn:res3"));
-        r3.addProperty("property5", "value5");
-        r3.addProperty("property6", "value6");
+        Resource<S,P,O> r1 = resource.newResource("urn:res1");
+        r1.property("property1", "value1");
+        r1.property("property2", "value2");
+        Resource<S,P,O> r2 = resource.newResource("urn:res2");
+        r2.property("property3", "value3");
+        r2.property("property4", "value4");
+        Resource<S,P,O> r3 = resource.newResource("urn:res3");
+        r3.property("property5", "value5");
+        r3.property("property6", "value6");
         return resource;
     }
 }

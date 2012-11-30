@@ -76,7 +76,6 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
     public MABTarReader() {
     }
 
-    @Override
     public MABTarReader setURI(URI uri) {
         this.uri = uri;
         return this;

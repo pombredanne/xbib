@@ -49,7 +49,7 @@ public class RecordIdentifier extends PicaElement {
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
         for (Field field : fields) {
             URI id = URI.create(LA_NS_URI + field.getData());
-            builder.context().resource().setIdentifier(id);
+            builder.context().resource().id(id);
             logger.info("got record identifier = {}", id);
         }
     }

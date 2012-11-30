@@ -95,12 +95,15 @@ identifier = "9783923126590*"
 dc.identifier =/bib.identifierAuthority=isbn "0201563177"
 dc.identifier =/bib.identifierAuthority=isbn "0201563177" and dc.title=unix sortby date
 
-# ranges
+# ranges (dates)
 dc.date > 2007-09-30 and dc.date < "2007-10-30T12:34:56"
 date > 2007-01-01
 dc.date <= 2006-07-01
 dc.date >= 2005-02-31
 dc.date within "2006-01-01 2007-01-01"
+dc.date > 2011
+dc.date = "> 2003"
+dc.date = "20012010"
 
 # filter
 test and filter.collection = "test"

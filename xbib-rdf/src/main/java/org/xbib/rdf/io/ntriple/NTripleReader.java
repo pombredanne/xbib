@@ -141,32 +141,32 @@ public class NTripleReader<S extends Resource<S, P, O>, P extends Property, O ex
         }
         // subject
         if (matcher.group(2) != null) {
-            subject = (S) resource.createBlankNode(matcher.group(1));
+            subject = (S) resource.newBlankNode(matcher.group(1));
         } else {
             // resource node
             String subj = matcher.group(1);
             URI subjURI = URI.create(subj.substring(1, subj.length() - 1));
             resource = new SimpleResource<>(subjURI);
-            resource.setSubject(resource.createSubject(subjURI.toASCIIString()));
-            subject = resource.getSubject();
+            resource.subject(resource.toSubject(subjURI.toASCIIString()));
+            subject = resource.subject();
         }
         // predicate
         String p = matcher.group(4);
-        predicate = resource.createPredicate(p.substring(1, p.length() - 1));
+        predicate = resource.toPredicate(p.substring(1, p.length() - 1));
         // object
         if (matcher.group(7) != null) {
             // anonymous node
-            object = (O) resource.createBlankNode(matcher.group(6));
+            object = (O) resource.newBlankNode(matcher.group(6));
         } else if (matcher.group(8) != null) {
             // resource node
             String obj = matcher.group(6);
-            object = resource.createObject(URI.create(obj.substring(1, obj.length() - 1)));
+            object = resource.toObject(URI.create(obj.substring(1, obj.length() - 1)));
         } else {
             // literal node
             // 10 is without quotes or apostrophs
             // with quotes or apostrophes. to have the value without them you need to look at groups 12 and 15
             String literal = matcher.group(10);
-            object = (O) resource.createLiteral(literal);
+            object = (O) resource.newLiteral(literal);
         }
         if (listener != null) {
             Statement stmt = new SimpleStatement<>(subject, predicate, object);

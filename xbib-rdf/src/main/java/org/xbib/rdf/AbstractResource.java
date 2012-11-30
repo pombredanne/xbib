@@ -55,88 +55,99 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     private boolean deleted;
 
     public AbstractResource() {
-        this.properties = createProperties();
-        this.resources = createResources();
+        this.properties = newProperties();
+        this.resources = newResources();
     }
 
     protected AbstractResource(URI identifier) {
         this();
-        setIdentifier(identifier);
+        id(identifier);
     }
 
     protected AbstractResource(O value) {
         this();
-        setValue(value);
+        object(value);
     }
 
     @Override
-    public final void setIdentifier(URI identifier) {
+    public final AbstractResource<S,P,O> id(URI identifier) {
         this.identifier = identifier;
-        setSubject(createSubject(identifier));
-    }
-
-    public final void setIdentifier(String identifier) {
-        setIdentifier(URI.create("id:" + identifier));
+        subject(toSubject(identifier));
+        return this;
     }
 
     @Override
-    public URI getIdentifier() {
+    public final AbstractResource<S,P,O> id(String identifier) {
+        this.identifier = URI.create(identifier);
+        subject(toSubject(this.identifier));
+        return this;
+    }
+    
+    
+    @Override
+    public URI id() {
         return identifier;
     }
 
     @Override
-    public void setSubject(S subject) {
+    public Resource<S,P,O> subject(S subject) {
         this.subject = subject;
+        return this;
     }
 
     @Override
-    public S getSubject() {
+    public S subject() {
         return subject;
     }
 
     @Override
-    public AbstractResource<S,P,O> setValue(O object) {
+    public Resource<S,P,O> object(O object) {
         this.object = object;
         return this;
     }
 
     @Override
-    public O getValue() {
+    public O object() {
         return object;
     }
 
     @Override
-    public void setType(URI type) {
+    public Literal<O> type(URI type) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public URI getType() {
+    public URI type() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setLanguage(String lang) {
+    public Literal<O> language(String lang) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getLanguage() {
+    public String language() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Resource<S, P, O> addProperty(String predicate, String value) {
-        return addProperty(createPredicate(predicate), value);
+    public Resource<S, P, O> property(String predicate, String value) {
+        return property(toPredicate(predicate), value);
     }
 
     @Override
-    public Resource<S, P, O> addProperty(P predicate, String value) {
-        return addProperty(predicate, createObject(value));
+    public Resource<S, P, O> property(String predicate, O value) {
+        return property(toPredicate(predicate), value);
     }
 
     @Override
-    public Resource<S, P, O> addProperty(P predicate, O object) {
+    public Resource<S, P, O> property(P predicate, String value) {
+        return property(predicate, toObject(value));
+    }
+
+    @Override
+    public Resource<S, P, O> property(P predicate, O object) {
         if (predicate == null) {
             throw new IllegalArgumentException("unable to add null predicate");
         }
@@ -148,31 +159,9 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public Collection<O> getProperty(P predicate) {
-        return properties.get(predicate);
-    }
-
-    @Override
-    public Collection<O> removeProperty(P predicate) {
-        return properties.removeAll(predicate);
-    }
-
-    @Override
-    public Resource<S, P, O>  updateProperty(P predicate, O object1, O object2) {
-        if (properties.remove(predicate, object1)) {
-            properties.put(predicate, object2);
-        }
-        return this;
-    }
-
-    @Override
-    public Resource<S, P, O> createResource(String predicateStr) {
-        return createResource(createPredicate(predicateStr));
-    }
-
-    @Override
-    public Resource<S, P, O> createResource(P predicate) {
-        BlankNode<S, P, O> bNode = createBlankNode();
+    public Resource<S, P, O> newResource(String predicateStr) {
+        P predicate = toPredicate(predicateStr);
+        BlankNode<S, P, O> bNode = newBlankNode();
         resources.put(predicate, bNode);
         properties.put(predicate, (O) bNode);
         return bNode;
@@ -187,14 +176,14 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     public boolean add(Statement<S, P, O> statement) {
         // auto-create a subject if this resource does not have one.
         // Can also be a blank node.
-        if (getSubject() == null && statement.getSubject() != null) {
-            setSubject(statement.getSubject());
-            setIdentifier(statement.getSubject().getIdentifier());
+        if (subject() == null && statement.getSubject() != null) {
+            subject(statement.getSubject());
+            id(statement.getSubject().id());
         }
         if (statement.getSubject() instanceof BlankNode) {
             // accept only blank node subjects as property if this resource
             // blank node identifier matches
-            boolean b = statement.getSubject().getIdentifier().equals(getSubject().getIdentifier());
+            boolean b = statement.getSubject().id().equals(subject().id());
             if (b) {
                 // this belongs to us
                 properties.put(statement.getPredicate(), statement.getObject());
@@ -224,13 +213,13 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public boolean addResource(P predicate, Resource<S, P, O> resource) {
+    public boolean add(P predicate, Resource<S, P, O> resource) {
         if (resource == null) {
             throw new IllegalArgumentException("unable to add null resource");
         }
-        if (resource.getIdentifier() == null) {
-            resource.setIdentifier(identifier);
-            BlankNode<S, P, O> bNode = createBlankNode();
+        if (resource.id() == null) {
+            resource.id(identifier);
+            BlankNode<S, P, O> bNode = newBlankNode();
             resources.put(predicate, bNode);
             properties.put(predicate, (O) bNode);
             // take over all statements from resource
@@ -253,8 +242,8 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public P createPredicate(final Object predicate) {
-        return (P) new Property(predicate instanceof URI ? (URI) predicate
+    public P toPredicate(final Object predicate) {
+        return (P) Property.create(predicate instanceof URI ? (URI) predicate
                 : URI.create(predicate.toString()));
     }
 
@@ -263,7 +252,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         if (subject == null) {
             return new HashSet();
         }
-        if (getSubject().equals(subject)) {
+        if (subject().equals(subject)) {
             return properties.keySet();
         } else {
             for (Resource<S, P, O> r : resources.values()) {
@@ -323,8 +312,9 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public void delete(boolean delete) {
+    public Resource<S,P,O> setDeleted(boolean delete) {
         this.deleted = delete;
+        return this;
     }
 
     @Override

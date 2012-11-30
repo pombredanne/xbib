@@ -90,8 +90,9 @@ public class MABDisketteTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
+            public boolean output(MABContext context) {
                 counter++;
+                return true;
             }
 
             @Override

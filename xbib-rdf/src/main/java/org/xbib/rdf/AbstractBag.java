@@ -46,8 +46,7 @@ import java.net.URI;
  * @param <O>
  */
 public abstract class AbstractBag<S extends Resource<?,?,?>, P extends Property, O extends Literal<?>>
-          extends AbstractResource<S, P, O>
-        implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
+        extends AbstractResource<S, P, O> implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
 
 
     public AbstractBag() {
@@ -59,12 +58,12 @@ public abstract class AbstractBag<S extends Resource<?,?,?>, P extends Property,
     }
 
     @Override
-    public Multimap<P, O> createProperties() {
+    public Multimap<P, O> newProperties() {
         return HashMultimap.create();
     }
 
     @Override
-    public Multimap<P, Resource<S, P, O>> createResources() {
+    public Multimap<P, Resource<S, P, O>> newResources() {
         return HashMultimap.create();
     }
 }

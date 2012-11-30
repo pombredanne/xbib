@@ -36,6 +36,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import org.xbib.elasticsearch.ElasticsearchIndexerMockDAO;
 import org.xbib.io.EmptyWriter;
 import org.xbib.io.util.DateUtil;
 import org.xbib.logging.Logger;
@@ -72,8 +73,9 @@ public class ElasticsearchOAITest {
 
     public void testDNBOAI() throws Exception {
 
-        final ElasticsearchResourceOutput es = new ElasticsearchResourceOutput();
-        es.connect("test", "test");
+        final ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+                .setIndex("test")
+                .setType("test");
 
         OAIClient client = OAIClientFactory.getClient("DNB");
         ListRecordsRequest request = new OAIListRecordsRequest(client.getURI());
@@ -89,7 +91,7 @@ public class ElasticsearchOAITest {
 
                 @Override
                 public void newIdentifier(URI uri) {
-                    getResource().setIdentifier(uri);
+                    getResource().id(uri);
                 }
 
                 @Override
@@ -110,7 +112,7 @@ public class ElasticsearchOAITest {
                 @Override
                 public void endDocument() throws SAXException {
                     handler.endDocument();
-                    es.output(null, null); // resource
+                    es.output(null); // resource
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();
                     try {
@@ -149,7 +151,7 @@ public class ElasticsearchOAITest {
             client.setMetadataReader(metadataReader);
             client.prepareListRecords(request, response).execute();
         } while (request.getResumptionToken() != null);
-        es.disconnect();
+        es.shutdown();
     }
     
     class OAIListRecordsRequest extends ListRecordsRequest {

@@ -52,7 +52,7 @@ public class RDFBuilder<S extends Resource<?, ?, ?>, P extends Property, O exten
     public void build(XContentBuilder builder, Resource<S, P, O> resource)
             throws IOException, URISyntaxException {
         // iterate over properties
-        Iterator<P> it = resource.predicateSet(resource.getSubject()).iterator();
+        Iterator<P> it = resource.predicateSet(resource.subject()).iterator();
         while (it.hasNext()) {
             P predicate = it.next();
             Collection<O> values = resource.objectSet(predicate);
@@ -66,8 +66,7 @@ public class RDFBuilder<S extends Resource<?, ?, ?>, P extends Property, O exten
                 // single value
                 O value = values.iterator().next();
                 if (!(value instanceof BlankNode)) {
-                    builder.field(context.abbreviate(predicate.getURI()), 
-                            /*value.toString()*/ ((Literal)value).nativeValue() );
+                    builder.field(context.abbreviate(predicate.getURI()), value.nativeValue() );
                 }
             } else if (values.size() > 1) {
                 // array of values
@@ -75,7 +74,7 @@ public class RDFBuilder<S extends Resource<?, ?, ?>, P extends Property, O exten
                 if (!properties.isEmpty()) {
                     builder.startArray(context.abbreviate(predicate.getURI()));
                     for (O value : properties) {
-                        builder.value(/*value.toString()*/((Literal)value).nativeValue());
+                        builder.value(value.nativeValue());
                     }
                     builder.endArray();
                 }

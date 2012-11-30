@@ -34,7 +34,6 @@ package org.xbib.tools.oai;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import org.xbib.builders.elasticsearch.ElasticsearchResourceOutput;
 import org.xbib.io.EmptyWriter;
 import org.xbib.io.util.DateUtil;
 import org.xbib.oai.ListRecordsRequest;
@@ -51,6 +50,8 @@ import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import static org.xbib.tools.opt.util.DateConverter.*;
+
+import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -87,8 +88,9 @@ public final class ElasticsearchOAIHarvester {
         if (options == null) {
             throw new IllegalArgumentException("no options");
         }
-        final ElasticsearchResourceOutput es = new ElasticsearchResourceOutput();
-        es.connect(options.valueOf("index").toString(), options.valueOf("type").toString());
+        final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO()
+                .setIndex(options.valueOf("index").toString())
+                .setType(options.valueOf("type").toString());
         final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());
         final ListRecordsRequest request = new OAIListRecordsRequest(client.getURI(), options);
         StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
@@ -102,7 +104,7 @@ public final class ElasticsearchOAIHarvester {
 
                 @Override
                 public void newIdentifier(URI uri) {
-                    getResource().setIdentifier(uri);
+                    getResource().id(uri);
                 }
 
                 @Override
@@ -123,7 +125,7 @@ public final class ElasticsearchOAIHarvester {
                 @Override
                 public void endDocument() throws SAXException {
                     handler.endDocument();
-                    es.output(null, DateUtil.formatNow());
+                    es.output(null); // TODO
                 }
 
                 @Override
@@ -154,7 +156,8 @@ public final class ElasticsearchOAIHarvester {
             client.setMetadataReader(metadataReader);
             client.prepareListRecords(request, response).execute();
         } while (request.getResumptionToken() != null);
-        es.disconnect();
+        es.flush();
+        es.shutdown();
     }
 
     class OAIListRecordsRequest extends ListRecordsRequest {

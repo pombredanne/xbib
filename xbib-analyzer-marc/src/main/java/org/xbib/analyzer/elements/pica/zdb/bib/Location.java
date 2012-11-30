@@ -47,7 +47,7 @@ public class Location extends PicaElement {
     @Override
     public void field(ElementBuilder builder, Field field, String subfieldType) {
         if (subfieldType != null) {
-            builder.context().resource().addProperty(Property.create(LA_NS_URI + subfieldType), field.getData());
+            builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
         }
     }
 }

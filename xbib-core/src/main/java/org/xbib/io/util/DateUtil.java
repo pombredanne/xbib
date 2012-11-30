@@ -32,6 +32,7 @@
 package org.xbib.io.util;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,46 +41,56 @@ import java.util.TimeZone;
 public class DateUtil {
 
     private static final String ISO_FORMAT_SECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String ISO_FORMAT_DAYS = "yyyy-MM-dd";
     private static final String RFC_FORMAT = "EEE, dd MMM yyyy HH:mm:ss 'GMT'";
-    private static final SimpleDateFormat isoFormat = new SimpleDateFormat();
-    private static final SimpleDateFormat rfcFormat = new SimpleDateFormat();
     private static final TimeZone tz = TimeZone.getTimeZone("GMT");
     private static final Calendar cal = Calendar.getInstance();
+    /**
+     * the date masks
+     */
+    private static final String[] DATE_MASKS = {"yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd",
+        "yyyy"};
 
-    static {
-        isoFormat.applyPattern(ISO_FORMAT_SECONDS);
-        isoFormat.setTimeZone(tz);
-        isoFormat.setLenient(true);
-        rfcFormat.applyPattern(RFC_FORMAT);
-        rfcFormat.setTimeZone(tz);
-        rfcFormat.setLenient(true);
-    }
-    
     public static String formatNow() {
         return formatDateISO(new Date());
     }
-    
+
+    public synchronized static String formatDate(Date date, String format) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(format);
+        sdf.setTimeZone(tz);
+        return sdf.format(date);
+    }
+
     public synchronized static String formatDateISO(Date date) {
         if (date == null) {
             return null;
         }
-        isoFormat.applyPattern(ISO_FORMAT_SECONDS);
-        return isoFormat.format(date);
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(ISO_FORMAT_SECONDS);
+        sdf.setTimeZone(tz);
+        return sdf.format(date);
     }
 
     public synchronized static Date parseDateISO(String value) {
         if (value == null) {
             return null;
         }
-        isoFormat.applyPattern(ISO_FORMAT_SECONDS);
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(ISO_FORMAT_SECONDS);
+        sdf.setTimeZone(tz);
+        sdf.setLenient(true);
         try {
-            return isoFormat.parse(value);
+            return sdf.parse(value);
         } catch (ParseException pe) {
             // skip
         }
-        isoFormat.applyPattern("yyyy-MM-dd");
+        sdf.applyPattern(ISO_FORMAT_DAYS);
         try {
-            return isoFormat.parse(value);
+            return sdf.parse(value);
         } catch (ParseException pe) {
             return null;
         }
@@ -89,16 +100,21 @@ public class DateUtil {
         if (date == null) {
             return null;
         }
-        return rfcFormat.format(date);
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(RFC_FORMAT);
+        sdf.setTimeZone(tz);
+        return sdf.format(date);
     }
-    
-    
+
     public synchronized static Date parseDateRFC(String value) {
         if (value == null) {
             return null;
         }
         try {
-            return rfcFormat.parse(value);
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern(RFC_FORMAT);
+            sdf.setTimeZone(tz);
+            return sdf.parse(value);
         } catch (ParseException pe) {
             return null;
         }
@@ -147,7 +163,7 @@ public class DateUtil {
         cal.add(Calendar.YEAR, years);
         return cal.getTime();
     }
-    
+
     public synchronized static Date months(int months) {
         return DateUtil.months(new Date(), months);
     }
@@ -157,7 +173,7 @@ public class DateUtil {
         cal.add(Calendar.MONTH, months);
         return cal.getTime();
     }
-    
+
     public static Date weeks(int weeks) {
         return DateUtil.weeks(new Date(), weeks);
     }
@@ -187,7 +203,7 @@ public class DateUtil {
         cal.add(Calendar.HOUR_OF_DAY, hours);
         return cal.getTime();
     }
-    
+
     public static Date minutes(int minutes) {
         return DateUtil.minutes(new Date(), minutes);
     }
@@ -197,7 +213,7 @@ public class DateUtil {
         cal.add(Calendar.MINUTE, minutes);
         return cal.getTime();
     }
-    
+
     public static Date seconds(int seconds) {
         return DateUtil.seconds(new Date(), seconds);
     }
@@ -208,4 +224,30 @@ public class DateUtil {
         return cal.getTime();
     }
 
+    public synchronized static Date parseDate(Object o) {
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.setTimeZone(tz);
+        sdf.setLenient(true);
+        if (o instanceof Date) {
+            return (Date) o;
+        } else if (o instanceof Long) {
+            Long longvalue = (Long) o;
+            String s = Long.toString(longvalue);
+            sdf.applyPattern(DATE_MASKS[3]);
+            Date d = sdf.parse(s, new ParsePosition(0));
+            if (d != null) {
+                return d;
+            }
+        } else if (o instanceof String) {
+            String value = (String) o;
+            for (int n = 0; n < DATE_MASKS.length; n++) {
+                sdf.applyPattern(DATE_MASKS[n]);
+                Date d = sdf.parse(value, new ParsePosition(0));
+                if (d != null) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
 }

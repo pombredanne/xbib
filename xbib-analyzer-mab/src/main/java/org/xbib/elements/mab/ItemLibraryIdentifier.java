@@ -62,7 +62,7 @@ public class ItemLibraryIdentifier extends MABElement {
     }
 
     private void createISIL(MABBuilder b, String isil, String provider) {
-        b.context().getResource(b.context().resource(), IDENTIFIER).addProperty(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
+        b.context().getResource(b.context().resource(), IDENTIFIER).property(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
         if (provider == null) {
             provider = defaultProvider;
         }

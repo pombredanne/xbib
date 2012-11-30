@@ -7,7 +7,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-analyzer-mab</artifactId>
-    <name>xbib - Maschinelles Austauschformat (MAB)</name>
+    <name>xbib-analyzer-mab</name>
+    <description>xbib - Maschinelles Austauschformat (MAB)</description>
     <packaging>jar</packaging>
     <build>
         <plugins>

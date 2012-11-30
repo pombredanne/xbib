@@ -42,6 +42,6 @@ public class CQLTest extends Assert {
     private void process(String line) throws Exception {
         CQLParser parser = new CQLParser(new StringReader(line));
         parser.parse();
-        parser.getCQLQuery();
+        logger.info("{} ===> {}", line, parser.getCQLQuery());
     }
 }

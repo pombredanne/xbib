@@ -62,8 +62,8 @@ public class ESGeneratorTest extends Assert {
                 ESGenerator generator = new ESGenerator();
                 parser.getCQLQuery().accept(generator);
                 String q = generator.getQueryResult();
-                //logger.log(Level.INFO, "INPUT: {0} DSL: {1} RESULT: {2}", 
-                //        new Object[]{s[0], q, generator.getRequestResult()});
+                logger.info("{} --> {} --> {}", 
+                        new Object[]{s[0], q, generator.getRequestResult()});
                 
                 //String pq = QueryParserService.parseQuery(q);                
                 

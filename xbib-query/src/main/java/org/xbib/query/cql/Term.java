@@ -19,6 +19,9 @@
  */
 package org.xbib.query.cql;
 
+import java.util.Date;
+import org.xbib.io.util.DateUtil;
+
 /**
  * A CQL Term 
  *
@@ -30,14 +33,18 @@ public class Term extends AbstractNode {
     private Long longvalue;
     private Double doublevalue;
     private Identifier identifier;
+    private Date datevalue;
     private SimpleName name;
 
-    /**
-     * Constructor for terms, also for filter terms
-     * @param value
-     */
     public Term(String value) {
         this.value = value;
+        try {
+            // check for hidden dates. CQL does not support ISO dates.
+            this.datevalue = DateUtil.parseDateISO(value);
+            this.value = null;
+        } catch (Exception e) {
+            
+        }
     }
 
     public Term(Identifier identifier) {
@@ -100,6 +107,10 @@ public class Term extends AbstractNode {
     public boolean isIdentifier() {
         return identifier != null;
     }
+    
+    public boolean isDate() {
+        return datevalue != null;
+    }
 
     public void accept(Visitor visitor) {
         visitor.visit(this);
@@ -109,6 +120,7 @@ public class Term extends AbstractNode {
     public String toString() {
         return longvalue != null ? Long.toString(longvalue)
                 : doublevalue != null ? Double.toString(doublevalue)
+                : datevalue != null ? DateUtil.formatDateISO(datevalue)
                 : value != null ? value.startsWith("\"") && value.endsWith("\"") ? value
                     : "\"" + value.replaceAll("\"", "\\\\\"") + "\""
                 : identifier != null ? identifier.toString()

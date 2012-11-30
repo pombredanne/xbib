@@ -93,7 +93,7 @@ public class Job {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public Result execute() throws InterruptedException, ExecutionException {
+    public FederatorResult execute() throws InterruptedException, ExecutionException {
         long count = 0L;
         LinkedList<XMLEvent> events = new LinkedList();
         for (Future<Action> f : service.invokeAll(actions)) {
@@ -104,6 +104,6 @@ public class Job {
                 listener.onResponse(action);
             }
         }
-        return new Result(count, events);
+        return new FederatorResult(count, events);
     }
 }

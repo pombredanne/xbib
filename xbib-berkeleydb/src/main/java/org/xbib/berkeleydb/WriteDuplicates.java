@@ -60,7 +60,7 @@ public class WriteDuplicates extends AbstractWrite {
 
     @Override
     public void write(BerkeleyDBSession session, Resource resource) throws IOException {
-        String key = resource.getIdentifier().toString();
+        String key = resource.id().toString();
         SecondaryCursor secondarycursor = null;
         Transaction transaction = null;
         try {

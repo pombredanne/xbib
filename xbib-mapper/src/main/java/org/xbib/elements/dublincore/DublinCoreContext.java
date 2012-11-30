@@ -50,7 +50,7 @@ public class DublinCoreContext extends AbstractResourceContext
         
     public Resource getResource(Resource resource, String name) {
         if (!resources.containsKey(name)) {
-            resources.put(name, resource.createResource(name));
+            resources.put(name, resource.newResource(name));
         }
         return resources.get(name);
     }

@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -99,9 +100,7 @@ public class MABElementsTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(1).setFactory(factory).execute(
-            "tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"
-        );
+        new ImportService().setThreads(1).setFactory(factory).execute();
     }
     
     private Importer createImporter() {
@@ -115,9 +114,10 @@ public class MABElementsTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
-                logger.info("resource = {} info = {}", context.resource(), info);
+            public boolean output(MABContext context) {
+                logger.info("resource = {}", context.resource());
                 counter++;
+                return true;
             }
 
             @Override
@@ -128,7 +128,9 @@ public class MABElementsTest {
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
-        return new MABTarReader().setListener(kv);
+        return new MABTarReader()
+                .setURI(URI.create("tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"))
+                .setListener(kv);
     }
     
 }

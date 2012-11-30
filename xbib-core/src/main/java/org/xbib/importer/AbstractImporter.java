@@ -36,20 +36,8 @@ import java.util.Iterator;
 
 public abstract class AbstractImporter<T,R> implements Importer<T,R> {
 
-    private URI uri;
     private ImportResultListener<T,R> listener;
-    
-    @Override
-    public AbstractImporter<T,R> setURI(URI uri) {
-        this.uri = uri;
-        return this;
-    }
-    
-    @Override
-    public URI getURI() {
-        return uri;
-    }
-    
+        
     public AbstractImporter<T,R> setListener(ImportResultListener<T,R> listener) {
         this.listener = listener;
         return this;

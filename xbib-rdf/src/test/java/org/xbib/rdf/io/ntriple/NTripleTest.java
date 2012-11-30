@@ -43,10 +43,10 @@ public class NTripleTest<S extends Resource<S, P, O>, P extends Property, O exte
     @Test
     public void testNTripleWriteInt() throws Exception {
         SimpleResource<S, P, O> resource = new SimpleResource();
-        resource.setIdentifier(URI.create("urn:doc1"));
-        resource.addProperty(
-                resource.createPredicate("http://purl.org/dc/elements/1.1/date"),
-                (O)new SimpleLiteral("2010", URI.create("http://www.w3.org/2001/XMLSchema#integer")));
+        resource.id(URI.create("urn:doc1"));
+        resource.property(
+                resource.toPredicate("http://purl.org/dc/elements/1.1/date"),
+                (O)new SimpleLiteral("2010").type(URI.create("http://www.w3.org/2001/XMLSchema#integer")));
         StringWriter w = new StringWriter();
         NTripleWriter t = new NTripleWriter();
         t.write(resource, w);
@@ -58,19 +58,19 @@ public class NTripleTest<S extends Resource<S, P, O>, P extends Property, O exte
     private SimpleResource<S, P, O> createResource() {
         SimpleResource<S, P, O> m = new SimpleResource();
         String id = "urn:doc1";
-        m.setIdentifier(URI.create(id));
+        m.id(URI.create(id));
         //m.setPrimaryKey(URIKey.create(id));
-        m.addProperty("http://purl.org/dc/elements/1.1/creator", "Smith");
-        m.addProperty("http://purl.org/dc/elements/1.1/creator", "Jones");
-        Resource r = m.createResource(m.createPredicate("dcterms:hasPart"));
-        r.addProperty("http://purl.org/dc/elements/1.1/title", "This is a part");
-        r.addProperty("http://purl.org/dc/elements/1.1/title", "of a title");
-        r.addProperty("http://purl.org/dc/elements/1.1/creator", "Jörg Prante");
-        r.addProperty("http://purl.org/dc/elements/1.1/date", "2009");
-        m.addProperty("http://purl.org/dc/elements/1.1/title", "A sample title");
-        r = m.createResource(m.createPredicate("http://purl.org/dc/terms/isPartOf"));
-        r.addProperty("http://purl.org/dc/elements/1.1/title", "another");
-        r.addProperty("http://purl.org/dc/elements/1.1/title", "title");
+        m.property("http://purl.org/dc/elements/1.1/creator", "Smith");
+        m.property("http://purl.org/dc/elements/1.1/creator", "Jones");
+        Resource r = m.newResource("dcterms:hasPart");
+        r.property("http://purl.org/dc/elements/1.1/title", "This is a part");
+        r.property("http://purl.org/dc/elements/1.1/title", "of a title");
+        r.property("http://purl.org/dc/elements/1.1/creator", "Jörg Prante");
+        r.property("http://purl.org/dc/elements/1.1/date", "2009");
+        m.property("http://purl.org/dc/elements/1.1/title", "A sample title");
+        r = m.newResource("http://purl.org/dc/terms/isPartOf");
+        r.property("http://purl.org/dc/elements/1.1/title", "another");
+        r.property("http://purl.org/dc/elements/1.1/title", "title");
         return m;
     }
 }

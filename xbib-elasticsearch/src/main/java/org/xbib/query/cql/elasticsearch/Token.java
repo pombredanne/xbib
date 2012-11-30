@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
+import org.xbib.io.util.DateUtil;
 import org.xbib.query.Filter;
 import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.UnterminatedQuotedStringException;
@@ -56,17 +57,6 @@ public class Token implements Node {
     public enum TokenClass {
 
         NORMAL, ALL, WILDCARD, BOUNDARY, PROTECTED
-    }
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
-    /**
-     * the date masks
-     */
-    private static final String[] DATE_MASKS = {"yyyy-MM-dd'T'HH:mm:ssz", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd",
-        "yyyy"};
-
-    static {
-        SDF.setTimeZone(TimeZone.getTimeZone("GMT"));
-        SDF.setLenient(true);
     }
     private TokenType type;
     private String value;
@@ -107,19 +97,20 @@ public class Token implements Node {
                 tokenClass.add(TokenClass.PROTECTED);
             }
             // wildcard?
-            if (this.value.indexOf('*') > 0 || this.value.indexOf('?') > 0) {
+            if (this.value.indexOf('*') >= 0 || this.value.indexOf('?') >= 0) {
                 tokenClass.add(TokenClass.WILDCARD);
                 // all?
                 if (this.value.length() == 1) {
                     tokenClass.add(TokenClass.ALL);
                 }
+                this.value = value.toLowerCase(); // wildcard does not analyze, but lowercase is expected
             }
             // prefix?
             if (this.value.charAt(0) == '^') {
                 tokenClass.add(TokenClass.BOUNDARY);
                 this.value = this.value.substring(1);
             }
-        }
+        }        
     }
 
     public Token(Boolean value) {
@@ -142,11 +133,13 @@ public class Token implements Node {
 
     public Token(Date value) {
         this.datevalue = value;
+        // this will enforce dates to get formatted as long values (years)
+        this.longvalue = Long.parseLong(DateUtil.formatDate(datevalue, "yyyy"));
         this.type = TokenType.DATETIME;
         this.tokenClass = EnumSet.of(TokenClass.NORMAL);
     }
 
-    public String getString() {
+    public String getString() {        
         return value;
     }
 
@@ -192,16 +185,16 @@ public class Token implements Node {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (value != null) {
-            sb.append(value);
-        } else if (booleanvalue != null) {
+        if (booleanvalue != null) {
             sb.append(booleanvalue);
         } else if (longvalue != null) {
             sb.append(longvalue);
         } else if (doublevalue != null) {
             sb.append(doublevalue);
         } else if (datevalue != null) {
-            sb.append(formatDate());
+            sb.append(DateUtil.formatDateISO(datevalue));
+        } else if (value != null) {
+            sb.append(value);
         }
         return sb.toString();
     }
@@ -222,77 +215,6 @@ public class Token implements Node {
         return tokenClass.contains(TokenClass.ALL);
     }
 
-    /**
-     * Format date
-     *
-     * @param date the date
-     *
-     * @return the formatted date
-     */
-    private synchronized String formatDate() {
-        StringBuffer sb = new StringBuffer();
-        if (datevalue != null) {
-            // yyyy-MM-dd is the default format for FQL
-            SDF.applyPattern(DATE_MASKS[2]);
-            SDF.format(datevalue, sb, new FieldPosition(0));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Parse dates
-     *
-     * @return a list of dates in this literal
-     */
-    private synchronized List<Date> parseDates() {
-        dates = new ArrayList();
-        if (datevalue != null) {
-            dates.add(datevalue);
-        } else {
-            if (longvalue != null) {
-                // year in integer?
-                String s = Long.toString(longvalue);
-                SDF.applyPattern(DATE_MASKS[3]);
-                Date d = SDF.parse(s, new ParsePosition(0));
-                if (d != null) {
-                    dates.add(d);
-                }
-            } else {
-                if (value != null) {
-                    // dates in string literal?
-                    for (String s : value.replaceAll("\"", "").split(" ")) {
-                        int n = 0;
-                        for (; n < DATE_MASKS.length; n++) {
-                            SDF.applyPattern(DATE_MASKS[n]);
-                            Date d = SDF.parse(s, new ParsePosition(0));
-                            if (d != null) {
-                                dates.add(d);
-                                break;
-                            }
-                        }
-                        if (n == DATE_MASKS.length) {
-                            throw new SyntaxException("invalid date expression: " + s);
-                        }
-                    }
-                }
-            }
-        }
-        return dates;
-    }
-
-    private List<String> parseQuotedString(String value) {
-        List<String> result = new ArrayList();
-        QuotedStringTokenizer tokenizer = new QuotedStringTokenizer(value);
-        try {
-            while (tokenizer.hasMoreTokens()) {
-                result.add(tokenizer.nextToken());
-            }
-        } catch (IllegalArgumentException e) {
-            //
-        }
-        return result;
-    }
-    
     private List<String> parseQuot(String s) {
         LinkedList l = new LinkedList();
         try {
@@ -301,17 +223,14 @@ public class Token implements Node {
         }
         return l;
     }
-    
-    private static class IsWordPredicate implements Filter.Predicate<String,String> {
+
+    private static class IsWordPredicate implements Filter.Predicate<String, String> {
 
         @Override
         public String apply(String s) {
             return s == null || s.length() == 0 || word.matcher(s).matches() ? null : s;
         }
     }
-    
     private final static IsWordPredicate isWordPred = new IsWordPredicate();
-    
     private final static Pattern word = Pattern.compile("[\\P{IsWord}]");
-
 }

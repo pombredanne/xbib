@@ -42,7 +42,7 @@ public class Update<S extends Resource<?, ?, ?>, P extends Property, O extends L
         if (resource == null) {
             return;
         }
-        String key = resource.getIdentifier().toString();
+        String key = resource.id().toString();
         try {
             keyEntry.setData(key.getBytes("UTF-8"));
             // before update, enforce a commit() and begin a new transaction

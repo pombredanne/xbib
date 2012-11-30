@@ -70,7 +70,7 @@ public class ConcurrentAlephPublishingReaderTest {
                     public Importer newImporter() {
                         return createImporter();
                     }
-                }).execute(uris);
+                }).execute();
         logger.info("count = " + count + " result = " + service.getResults());
     }
 
@@ -83,8 +83,9 @@ public class ConcurrentAlephPublishingReaderTest {
             }
 
             @Override
-            public void output(MABContext context, Object info) {
+            public boolean output(MABContext context) {
                 count.incrementAndGet();
+                return true;
             }
 
             @Override

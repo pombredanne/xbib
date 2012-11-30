@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>org.xbib</groupId>
     <artifactId>xbib</artifactId>
     <name>xbib</name>
     <version>1.0-SNAPSHOT</version>
+
     <packaging>pom</packaging>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <elasticsearch.version>0.19.11</elasticsearch.version>
+        <lucene.version>3.6.1</lucene.version>
     </properties>
+
     <scm>
         <connection>scm:git:git@github.com:xbib/xbib.git</connection>
         <developerConnection>scm:git:git@github.com:xbib/xbib.git</developerConnection>
         <url>http://github.com/xbib/xbib</url>
     </scm>
+
     <distributionManagement>
-          <repository>
-            <id>repo</id>
+        <repository>
+            <id>github-release-repo</id>
             <url>https://github.com/xbib/maven-repo/raw/master/releases</url>
-          </repository>
-          <snapshotRepository>
-            <id>snapshot-repo</id>
+        </repository>
+        <snapshotRepository>
+            <id>github-snapshot-repo</id>
             <url>https://github.com/xbib/maven-repo/raw/master/snapshots</url>
-          </snapshotRepository>
+        </snapshotRepository>
     </distributionManagement>
+
     <build>
+        
+        <!-- declare plugin versions -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -60,7 +70,7 @@
                         <execution>
                             <id>attach-sources</id>
                             <goals>
-                                 <goal>jar</goal>
+                                <goal>jar</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -118,8 +128,19 @@
                         <excludePackageNames>asn1.*,z3950.*</excludePackageNames>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>            
             </plugins>
         </pluginManagement>
+
+        <!-- enable these plugins by default -->
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -137,20 +158,250 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
         </plugins>
+
     </build>
+    
+    <!-- declare dependency versions -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-charset</artifactId>
+                <version>${project.version}</version>            
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-elasticsearch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-sru</artifactId>
+                <version>${project.version}</version>            
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-mapper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-iso23950</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-rdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-compress</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-oai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-query</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-berkeleydb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-analyzer-mab</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>13.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-smile</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <!-- NOTE: take care of a netty jar that does not contain jboss-beans.xml
+                or you can not deploy xbib war's on JBoss -->
+                <groupId>io.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>3.5.3.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ning</groupId>
+                <artifactId>async-http-client</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>1.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-bundle</artifactId>
+                <version>1.12</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.abdera</groupId>
+                <artifactId>abdera-server</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sleepycat</groupId>
+                <artifactId>je</artifactId>
+                <version>4.1.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>   
+                <version>2.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queries</artifactId>
+                <version>${lucene.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta-regexp</groupId>
+                        <artifactId>jakarta-regexp</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-memory</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-highlighter</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.8</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.9.1</version>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>serializer</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>11gR2</version>
+        </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.3.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
     <modules>
         <module>xbib-logging</module>
         <module>xbib-charset</module>
@@ -168,6 +419,7 @@
         <module>xbib-berkeleydb</module>
         <module>xbib-lia</module>
         <module>xbib-objectstorage</module>
+        <module>xbib-sessionstorage</module>
         <module>xbib-iso23950</module>
         <module>xbib-atom</module>
         <module>xbib-federator</module>

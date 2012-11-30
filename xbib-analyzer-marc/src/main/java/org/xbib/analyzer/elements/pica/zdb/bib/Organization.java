@@ -48,10 +48,10 @@ public class Organization extends PicaElement {
     @Override
     public void field(ElementBuilder builder, Field field, String subfieldType) {
         if (subfieldType != null) {
-            builder.context().resource().addProperty(Property.create(LA_NS_URI + subfieldType), field.getData());
+            builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
             Map<String,String> map = (Map<String,String>) getSettings().get(subfieldType);
             if (map != null) {
-                builder.context().resource().addProperty(Property.create(LA_NS_URI + subfieldType + "Value"), 
+                builder.context().resource().property(Property.create(LA_NS_URI + subfieldType + "Value"), 
                          map.get(field.getData()));
             }
         }

@@ -44,7 +44,7 @@ public class PicaContext extends DublinCoreContext {
     
     public Resource address(String resourceID) {
         if (!addresses.containsKey(resourceID)) {
-            addresses.put(resourceID, resource().createResource(resourceID));
+            addresses.put(resourceID, resource().newResource(resourceID));
         }
         address = addresses.get(resourceID);
         return address;

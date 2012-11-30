@@ -7,7 +7,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-analyzer-marc</artifactId>
-    <name>xbib - Analyzer for MARC format family</name>
+    <name>xbib-analyzer-marc</name>
+    <description>xbib - Analyzer for MARC format family</description>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -23,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-core</artifactId>   
+            <artifactId>xbib-core</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>

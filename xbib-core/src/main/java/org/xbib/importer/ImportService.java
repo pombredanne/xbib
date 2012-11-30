@@ -31,14 +31,10 @@
  */
 package org.xbib.importer;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -75,55 +71,19 @@ public class ImportService<T, R> {
     }
 
     /**
-     * Submit URIs and wait for results
-     * @param uriStrings
-     * @return
+     * Submit tasks and wait for results
      * @throws InterruptedException
      * @throws ExecutionException 
      */
-    public ImportService execute(String... uriStrings)
-            throws InterruptedException, ExecutionException {
-        List<URI> uris = new ArrayList();
-        for (String s : uriStrings) {
-            uris.add(URI.create(s));
-        }
-        int l = uris.size();
-        return execute(uris.toArray(new URI[0]));
-    }
-
-    /**
-     * Submit URIs and wait for results
-     * @param uris
-     * @return
-     * @throws InterruptedException
-     * @throws ExecutionException 
-     */
-    public ImportService execute(Queue<URI> uris)
-            throws InterruptedException, ExecutionException {
-        return execute(uris.toArray(new URI[0]));
-    }
-
-    /**
-     * Submit URIs and wait for results
-     * @param uris
-     * @return
-     * @throws InterruptedException
-     * @throws ExecutionException 
-     */
-    public ImportService execute(URI... uris)
-            throws InterruptedException, ExecutionException {
-        submit(uris);
+    public ImportService execute() throws InterruptedException, ExecutionException {
+        submit();
         return waitFor();
     }
 
     /**
-     * Submit URIs for later invocation
-     * @param uris 
+     * Submit tasks for later invocation
      */
-    public ImportService submit(URI... uris) {
-        if (uris == null) {
-            throw new IllegalArgumentException("no uris set");
-        }
+    public ImportService submit() {
         if (factory == null) {
             throw new IllegalArgumentException("no factory set");
         }
@@ -133,20 +93,8 @@ public class ImportService<T, R> {
         if (tasks == null) {
             this.tasks = new LinkedList();
         }
-        for (URI uri : uris) {
-            Importer<T, R> importer = factory.newImporter();
-            importer.setURI(uri);
-            tasks.add(importer);
-        }
-        // fill up tasks to threadnum
-        int length = uris.length;        
-        if (length > 0 && length < threadnum) {
-            for (int i = length; i < threadnum; i++) {
-                URI uri = uris[i % length];
-                Importer<T, R> importer = factory.newImporter();
-                importer.setURI(uri);
-                tasks.add(importer);
-            }
+        for (int i = 0; i < threadnum; i++) {
+            tasks.add(factory.newImporter());
         }
         return this;
     }

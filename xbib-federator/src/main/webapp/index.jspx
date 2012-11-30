@@ -36,7 +36,7 @@ input.textarea { border: 1px solid grey; width: 80em; margin: .5em }
         </head>
         <body>
           <div id="container">
-            <h2>Federator Service (MarcXchange)</h2>
+            <h2>MarcXchange Federator Service</h2>
             <div id="main">
                 <form enctype="application/x-www-form-urlencoded; charset=UTF-8"
                       accept-charset="UTF-8"

@@ -7,13 +7,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>xbib-query</artifactId>
-    <name>xbib - Contextual Query Language</name>
+    <name>xbib-query</name>
+    <description>xbib - Contextual Query Language</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-core</artifactId>
-            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
     </dependencies>
