@@ -32,7 +32,7 @@
 package org.xbib.rdf;
 
 import java.io.Serializable;
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 /**
  *  A literal is a value with a type and/or a language
@@ -41,11 +41,11 @@ import java.net.URI;
  */
 public interface Literal<O> extends Serializable {
 
-    URI XSD_BOOLEAN = URI.create("xsd:boolean");
-    URI XSD_INT = URI.create("xsd:int");
-    URI XSD_DOUBLE = URI.create("xsd:double");
-    URI XSD_FLOAT = URI.create("xsd:float");
-    URI XSD_STRING = URI.create("xsd:string");
+    IRI XSD_BOOLEAN = IRI.create("xsd:boolean");
+    IRI XSD_INT = IRI.create("xsd:int");
+    IRI XSD_DOUBLE = IRI.create("xsd:double");
+    IRI XSD_FLOAT = IRI.create("xsd:float");
+    IRI XSD_STRING = IRI.create("xsd:string");
     
     /**
      * Set the value for the literal
@@ -64,13 +64,13 @@ public interface Literal<O> extends Serializable {
      * 
      * @param type 
      */
-    Literal<O> type(URI type);
+    Literal<O> type(IRI type);
     
     /**
      * Get type of the literal
      * @return the type
      */
-    URI type();
+    IRI type();
 
     /**
      * Set the lianguage of the literal

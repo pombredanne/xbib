@@ -3,27 +3,31 @@ package org.xbib.elasticsearch;
 import java.io.IOException;
 import java.net.URI;
 import org.elasticsearch.common.settings.Settings;
-import org.xbib.rdf.Resource;
 
 public interface ElasticsearchIndexerInterface {
 
     ElasticsearchIndexerInterface settings(Settings settings);
 
-    ElasticsearchIndexerInterface newClient(URI uri, boolean force);
-
-    void shutdown();
+    ElasticsearchIndexerInterface newClient(URI uri, boolean forceNew);
 
     ElasticsearchIndexerInterface setIndex(String index);
 
+    String index();
+
     ElasticsearchIndexerInterface setType(String type);
+
+    String type();
 
     ElasticsearchIndexerInterface setBulkSize(int bulkSize);
     
     ElasticsearchIndexerInterface setMaxActiveRequests(int maxActiveRequests);
-    
-    ElasticsearchIndexerInterface setMillisBeforeContinue(long millis);
 
-    ElasticsearchIndexerInterface write(Resource resource) throws IOException;
+    ElasticsearchIndexerInterface index(String index, String type, String id, String source);
 
-    ElasticsearchIndexerInterface flush() throws IOException;
+    ElasticsearchIndexerInterface delete(String index, String type, String id);
+
+    ElasticsearchIndexerInterface flush();
+
+    void shutdown();
+
 }

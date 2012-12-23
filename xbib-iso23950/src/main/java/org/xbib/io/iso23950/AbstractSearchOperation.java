@@ -40,7 +40,6 @@ import asn1.ASN1Sequence;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
-import org.xbib.io.operator.QueryOperator;
 import z3950.v3.DatabaseName;
 import z3950.v3.InternationalString;
 import z3950.v3.OtherInformation1;
@@ -55,7 +54,7 @@ import z3950.v3.SearchResponse;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public abstract class AbstractSearchOperation implements QueryOperator<ZSession> {
+public abstract class AbstractSearchOperation {
 
     private long timeout;
     private long millis;
@@ -72,12 +71,6 @@ public abstract class AbstractSearchOperation implements QueryOperator<ZSession>
         this.count = 0;
     }
 
-    @Override
-    public void execute(ZSession session) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void query(ZSession session, String query) throws IOException {
         long t0 = System.currentTimeMillis();
         long t1;

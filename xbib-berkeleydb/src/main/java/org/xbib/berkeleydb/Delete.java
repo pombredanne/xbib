@@ -22,15 +22,12 @@ package org.xbib.berkeleydb;
 import com.sleepycat.je.DatabaseEntry;
 import java.io.IOException;
 import org.xbib.io.Identifiable;
-import org.xbib.io.operator.DeleteOperator;
 
-public class Delete
-        implements DeleteOperator<BerkeleyDBSession, Identifiable> {
+public class Delete {
 
     protected final DatabaseEntry keyEntry = new DatabaseEntry();
     protected final DatabaseEntry valueEntry = new DatabaseEntry();
 
-    @Override
     public void delete(BerkeleyDBSession session, Identifiable identifier) throws IOException {
         String key = identifier.getIdentifier().toString();
         if (session.getConfig().getTransactional() && !session.transactionStarted()) {
@@ -40,11 +37,9 @@ public class Delete
         session.getDatabase().delete(session.getTransaction(), keyEntry);
     }
 
-    @Override
     public void flush(BerkeleyDBSession session) throws IOException {
     }
 
-    @Override
     public void execute(BerkeleyDBSession session) throws IOException {
         if (session.getConfig().getTransactional() && session.transactionStarted()) {
             session.commitTransaction();

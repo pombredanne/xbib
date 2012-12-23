@@ -35,7 +35,7 @@ import asn1.ASN1BitString;
 import asn1.ASN1GeneralString;
 import asn1.ASN1Integer;
 import java.io.IOException;
-import org.xbib.io.SessionExecutor;
+
 import z3950.v3.IdAuthentication;
 import z3950.v3.IdAuthentication_idPass;
 import z3950.v3.InitializeRequest;
@@ -50,7 +50,7 @@ import z3950.v3.ProtocolVersion;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class InitOperation implements SessionExecutor<ZSession> {
+public class InitOperation {
 
     private String targetInfo;
     private int targetVersion;
@@ -68,7 +68,6 @@ public class InitOperation implements SessionExecutor<ZSession> {
         this.group = group;
     }
 
-    @Override
     public void execute(ZSession session) throws IOException {
         if (session == null) {
             throw new IOException("no session");

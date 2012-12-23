@@ -36,9 +36,11 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import org.xbib.elasticsearch.ElasticsearchIndexerMockDAO;
+
+import org.xbib.elasticsearch.ElasticsearchIndexerMock;
 import org.xbib.io.EmptyWriter;
 import org.xbib.io.util.DateUtil;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.ListRecordsRequest;
@@ -49,8 +51,8 @@ import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
@@ -73,7 +75,7 @@ public class ElasticsearchOAITest {
 
     public void testDNBOAI() throws Exception {
 
-        final ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+        final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
                 .setIndex("test")
                 .setType("test");
 
@@ -90,7 +92,7 @@ public class ElasticsearchOAITest {
             final StatementListener stmt = new StatementListener() {
 
                 @Override
-                public void newIdentifier(URI uri) {
+                public void newIdentifier(IRI uri) {
                     getResource().id(uri);
                 }
 
@@ -112,7 +114,7 @@ public class ElasticsearchOAITest {
                 @Override
                 public void endDocument() throws SAXException {
                     handler.endDocument();
-                    es.output(null); // resource
+                    //es.output(null); // TODO
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();
                     try {

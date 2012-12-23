@@ -33,9 +33,9 @@ package org.xbib.elements.dublincore;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.elements.AbstractResourceContext;
-import org.xbib.rdf.ResourceContext;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.context.AbstractResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
 
 public class DublinCoreContext extends AbstractResourceContext 

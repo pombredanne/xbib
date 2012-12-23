@@ -35,27 +35,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.URINamespaceContext;
+import org.xbib.xml.CompactingNamespaceContext;
+import org.xbib.rdf.context.IRINamespaceContext;
 
 /**
  * RDF Turtle serialization
  *
  * See <a href="http://www.w3.org/TeamSubmission/turtle/">Turtle - Terse RDF
  * Triple Language</a>
- * 
+ *
  * Warning, many bugs ahead.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
@@ -71,7 +70,7 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     /**
      * A Namespace context with URI-related methods
      */
-    private URINamespaceContext context;
+    private IRINamespaceContext context;
     /**
      * Flag for write start
      */
@@ -103,30 +102,30 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     private long tripleCounter;
 
     public TurtleWriter() {
-        this(URINamespaceContext.getInstance());
+        this(IRINamespaceContext.getInstance());
     }
 
-    public TurtleWriter(URINamespaceContext context) {
+    public TurtleWriter(IRINamespaceContext context) {
         this.context = context;
     }
 
     /**
-     * 
+     *
      * @param resource
      * @param withPrefixes
      * @param out
-     * @throws IOException 
+     * @throws IOException
      */
     public void write(Resource<S, P, O> resource, boolean withPrefixes, OutputStream out) throws IOException {
         write(resource, withPrefixes, new OutputStreamWriter(out, "UTF-8"));
     }
 
     /**
-     * 
+     *
      * @param resource
      * @param withPrefixes
      * @param writer
-     * @throws IOException 
+     * @throws IOException
      */
     public void write(Resource<S, P, O> resource, boolean withPrefixes, Writer writer) throws IOException {
         if (resource == null) {
@@ -146,14 +145,14 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         writeResource(resource);
         end();
     }
-    
-    public void writeNamespaces(NamespaceContext context) throws IOException {
+
+    public void writeNamespaces(CompactingNamespaceContext context) throws IOException {
         boolean written = false;
         for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             if (entry.getValue().length() > 0) {
-                String nsURI =  entry.getValue().toString();
+                String nsURI = entry.getValue().toString();
                 if (!RDF.NS_URI.equals(nsURI)) {
-                    writeNamespace(entry.getKey(),nsURI);
+                    writeNamespace(entry.getKey(), nsURI);
                     written = true;
                 }
             }
@@ -161,11 +160,11 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         if (written) {
             writer.write(LF);
         }
-    }    
+    }
 
-    private void writeNamespaces(URINamespaceContext context, Resource<S, P, O> resource) throws IOException {
+    private void writeNamespaces(IRINamespaceContext context, Resource<S, P, O> resource) throws IOException {
         // first, collect namespace URIs and prefixes
-        URINamespaceContext newContext = URINamespaceContext.newInstance();
+        IRINamespaceContext newContext = IRINamespaceContext.newInstance();
         Iterator<Statement<S, P, O>> it = resource.iterator(true);
         while (it.hasNext()) {
             Statement<S, P, O> stmt = it.next();
@@ -392,15 +391,11 @@ public class TurtleWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         }
     }
 
-    private void writeURI(URI uri) throws IOException {
-        try {
-            String abbrev = context.abbreviate(uri, ':', false);
-            if (!abbrev.equals(uri.toString())) {
-                writer.write(abbrev);
-                return;
-            }
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
+    private void writeURI(IRI uri) throws IOException {
+        String abbrev = context.compact(uri, ':', false);
+        if (!abbrev.equals(uri.toString())) {
+            writer.write(abbrev);
+            return;
         }
         if (context.getNamespaceURI(uri.getScheme()) != null) {
             writer.write(uri.toString());

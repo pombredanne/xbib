@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.addons.PicaElement;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.marc.Field;
 
@@ -43,8 +43,9 @@ public class Name extends PicaElement {
     }
 
     @Override
-    public void field(ElementBuilder builder, Field field, String subfieldType) {
+    public Name field(ElementBuilder builder, Field field, String subfieldType) {
         builder.context().resource().property(LA_NAME, field.getData());
+        return this;
     }
 
 }

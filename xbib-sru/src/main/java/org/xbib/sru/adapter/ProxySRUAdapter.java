@@ -32,7 +32,7 @@
 package org.xbib.sru.adapter;
 
 import java.io.IOException;
-import org.xbib.io.http.netty.HttpOperation;
+
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Scan;
 import org.xbib.sru.ScanResponse;
@@ -57,13 +57,12 @@ public abstract class ProxySRUAdapter extends AbstractSRUAdapter {
                 request.getURI() != null ? request.getURI().toASCIIString() : "undefined");
         SimpleSRUClient client = new SimpleSRUClient();
         client.setStylesheetTransformer(transformer);
-        HttpOperation op = client.searchRetrieve(request, response);
+        client.searchRetrieve(request, response);
         getLogger().info("[response={}ms] [uri={}] [status={}] [contenttype={}] [query={}]",
-                // TODO total number of results
-                op.getResponseMillis(),
+                "unknown",
                 request.getURI(), 
-                op.getResults().get(request.getURI()).getStatusCode(), 
-                op.getContentType(request.getURI()), 
+                response.getHttpResponse().getStatusCode(),
+                response.getHttpResponse().getURI(),
                 request.getQuery());
     }
 

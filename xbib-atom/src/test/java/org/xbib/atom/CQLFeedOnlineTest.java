@@ -30,7 +30,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 /**
- * Test CQL Feed controller
+ * BulkIndexerTest CQL Feed controller
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */

@@ -29,8 +29,8 @@ import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.namespace.QName;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+
+import org.xbib.xml.XMLNamespaceContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -55,7 +55,7 @@ public class JsonSaxAdapter {
     private static final AttributesImpl EMPTY_ATTRIBUTES = new AttributesImpl();
     private final JsonParser jsonParser;
     private final ContentHandler contentHandler;
-    private final SimpleNamespaceContext context = SimpleNamespaceContext.getInstance();
+    private final XMLNamespaceContext context = XMLNamespaceContext.getInstance();
     private final QName root;
 
     public JsonSaxAdapter(final InputSource source, final ContentHandler contentHandler,
@@ -191,7 +191,7 @@ public class JsonSaxAdapter {
         }
     }
 
-    private void writeNamespaceDeclarations(NamespaceContext context) throws SAXException {
+    private void writeNamespaceDeclarations(XMLNamespaceContext context) throws SAXException {
         Set<String> keys = new TreeSet(context.getNamespaces().keySet());
         if (root != null && !keys.contains(root.getPrefix())) {
             contentHandler.startPrefixMapping(root.getPrefix(), root.getNamespaceURI());

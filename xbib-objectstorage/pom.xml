@@ -10,6 +10,13 @@
     <name>xbib-objectstorage</name>
     <description>xbib - Object Storage</description>
     <packaging>war</packaging>
+    <properties>
+        <src.dir>${project.build.sourceDirectory}</src.dir>
+        <package.dir>org/xbib/util</package.dir>
+        <package.name>org.xbib.util</package.name>
+        <buildtime>${maven.build.timestamp}</buildtime>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -35,10 +42,6 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <property name="src.dir" value="${project.build.sourceDirectory}" />
-                                <property name="package.dir" value="org/xbib/util" />
-                                <property name="package.name" value="org.xbib.util" />
-                                <property name="buildtime" value="${maven.build.timestamp}" />
                                 <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
                                 <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
                                 <echo file="${src.dir}/${package.dir}/Version.java" append="true" message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
@@ -105,7 +108,4 @@
             <version>1.6</version>
         </dependency>
     </dependencies>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
-    </properties>
 </project>

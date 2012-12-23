@@ -126,7 +126,7 @@ public class DNBPICAXmlReaderTest {
 
             @Override
             public void keyValue(FieldCollection fields, String value) {
-                logger.info(fields.getDesignators());
+                logger.debug(fields.getDesignators());
                 for (Field field : fields) {
                     logger.debug("field = {}", field);
                 }

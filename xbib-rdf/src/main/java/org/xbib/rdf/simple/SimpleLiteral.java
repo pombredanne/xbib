@@ -32,7 +32,7 @@
 package org.xbib.rdf.simple;
 
 import com.google.common.base.Objects;
-import java.net.URI;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 
 /**
@@ -44,7 +44,7 @@ public class SimpleLiteral<O extends Object>
         implements Literal<O>, Comparable<Literal<O>> {
 
     private O value;
-    private URI type;
+    private IRI type;
     private String lang;
 
     public SimpleLiteral() {
@@ -71,13 +71,13 @@ public class SimpleLiteral<O extends Object>
     }
 
     @Override
-    public SimpleLiteral<O> type(URI type) {
+    public SimpleLiteral<O> type(IRI type) {
         this.type = type;
         return this;
     }
 
     @Override
-    public URI type() {
+    public IRI type() {
         return type;
     }
 

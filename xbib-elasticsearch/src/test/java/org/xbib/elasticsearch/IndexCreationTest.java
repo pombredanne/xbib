@@ -32,19 +32,26 @@
 package org.xbib.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.testng.annotations.Test;
 
 public class IndexCreationTest {
 
-    @Test
-    public void testDeleteCreate() throws Exception {
-        final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO()
+    public void testCreate() throws Exception {
+        Settings settings = ImmutableSettings.settingsBuilder()
+                .put("cluster.name", "test").build();
+        
+        final ElasticsearchIndexer es = new ElasticsearchIndexer()
+                .settings(settings)
                 .setIndex("test")
                 .setType("test");
         try {
             es.deleteIndex();
-            es.createIndex(null);
+            es.newIndex(null); // no mapping
+            es.deleteIndex();
         } catch (NoNodeAvailableException e) {
+            // if no node, just skip
         } finally {
             es.shutdown();
         }

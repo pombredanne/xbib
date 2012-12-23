@@ -31,8 +31,7 @@
  */
 package org.xbib.rdf;
 
-import java.io.Serializable;
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 /**
  * An RDF property
@@ -40,46 +39,8 @@ import java.net.URI;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * 
  */
-public class Property implements Serializable, Comparable<Property> {
+public interface Property {
 
-    private URI uri;
+    public IRI getURI();
 
-    public Property(URI uri) {
-        if (uri == null) {
-            throw new IllegalArgumentException("uri must not be null");
-        }
-        this.uri = uri;
-    }
-
-    public static Property create(URI uri) {
-        return new Property(uri);
-    }
-    
-    public static Property create(String uri) {
-        return new Property(URI.create(uri));
-    }
-
-    public URI getURI() {
-        return uri;
-    }
-
-    @Override
-    public String toString() {
-        return uri.toASCIIString();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return uri.equals(((Property) other).getURI());
-    }
-
-    @Override
-    public int hashCode() {
-        return uri.hashCode();
-    }
-
-    @Override
-    public int compareTo(Property that) {
-        return uri.compareTo(that.getURI());
-    }
 }

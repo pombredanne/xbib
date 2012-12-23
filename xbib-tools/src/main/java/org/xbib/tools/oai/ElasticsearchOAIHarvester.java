@@ -31,11 +31,15 @@
  */
 package org.xbib.tools.oai;
 
+import static org.xbib.tools.opt.util.DateConverter.*;
+
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+
+import org.xbib.elasticsearch.ElasticsearchIndexer;
 import org.xbib.io.EmptyWriter;
-import org.xbib.io.util.DateUtil;
+import org.xbib.iri.IRI;
 import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListRecordsResponse;
 import org.xbib.oai.MetadataReader;
@@ -44,14 +48,11 @@ import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import static org.xbib.tools.opt.util.DateConverter.*;
-
-import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -88,7 +89,7 @@ public final class ElasticsearchOAIHarvester {
         if (options == null) {
             throw new IllegalArgumentException("no options");
         }
-        final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO()
+        final ElasticsearchIndexer es = new ElasticsearchIndexer()
                 .setIndex(options.valueOf("index").toString())
                 .setType(options.valueOf("type").toString());
         final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());
@@ -103,7 +104,7 @@ public final class ElasticsearchOAIHarvester {
             final StatementListener stmt = new StatementListener() {
 
                 @Override
-                public void newIdentifier(URI uri) {
+                public void newIdentifier(IRI uri) {
                     getResource().id(uri);
                 }
 
@@ -125,7 +126,7 @@ public final class ElasticsearchOAIHarvester {
                 @Override
                 public void endDocument() throws SAXException {
                     handler.endDocument();
-                    es.output(null); // TODO
+                    //es.output(null); // TODO
                 }
 
                 @Override

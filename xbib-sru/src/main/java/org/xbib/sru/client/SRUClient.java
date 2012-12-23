@@ -33,7 +33,8 @@ package org.xbib.sru.client;
 
 import java.io.IOException;
 import java.net.URI;
-import org.xbib.io.http.netty.HttpOperation;
+
+import org.xbib.io.http.netty.HttpResponse;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.ExplainResponse;
 import org.xbib.sru.SearchRetrieve;
@@ -60,14 +61,16 @@ public interface SRUClient {
     
     void setStylesheetTransformer(StylesheetTransformer transformer);
     
-    // @todo scan
-    
-    HttpOperation explain(Explain explain, ExplainResponse response)
+    void explain(Explain explain, ExplainResponse response)
             throws IOException, SyntaxException;
     
-    HttpOperation searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
+    void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
             throws IOException, SyntaxException;
             
     void close() throws IOException;
+
+    HttpResponse getResponse();
+
+    long getResponseMillis();
         
 }

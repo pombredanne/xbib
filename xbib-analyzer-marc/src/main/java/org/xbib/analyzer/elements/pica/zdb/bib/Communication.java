@@ -31,12 +31,11 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.addons.PicaContext;
-import org.xbib.analyzer.marc.addons.PicaElement;
+import org.xbib.analyzer.marc.extensions.pica.PicaContext;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
-import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 
 public class Communication extends PicaElement {
@@ -48,7 +47,7 @@ public class Communication extends PicaElement {
     }
 
     @Override
-    public void field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
+    public Communication field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
         if (subfieldType != null) {
             Resource resource = builder.context().address();
             if ("code".equals(subfieldType)) {
@@ -70,8 +69,9 @@ public class Communication extends PicaElement {
                 resource = builder.context().address(LA_NS_URI + type);
             }
             if (resource != null) {
-                resource.property(Property.create(LA_NS_URI + subfieldType), field.getData());
+                resource.property(LA_NS_URI + subfieldType, field.getData());
             }
         }
+        return this;
     }
 }

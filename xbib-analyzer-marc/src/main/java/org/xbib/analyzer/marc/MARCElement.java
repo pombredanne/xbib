@@ -31,9 +31,6 @@
  */
 package org.xbib.analyzer.marc;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
 import org.xbib.elements.Element;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.bibliographic.BibliographicProperties;
@@ -46,6 +43,10 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
 
 public abstract class MARCElement
         implements Element<FieldCollection, String, MARCBuilder>,
@@ -60,8 +61,9 @@ public abstract class MARCElement
     protected Map<String, Object> params;
 
     @Override
-    public void setSettings(Map params) {
+    public MARCElement setSettings(Map params) {
         this.params = params;
+        return this;
     }
 
     @Override
@@ -70,20 +72,27 @@ public abstract class MARCElement
     }
 
     @Override
-    public void begin() {
+    public MARCElement begin() {
+        return this;
     }
 
     @Override
-    public void build(MARCBuilder builder, FieldCollection key, String value) {
-        // unused
+    public MARCElement build(MARCBuilder builder, FieldCollection key, String value) {
+        return this;
     }
+
+    @Override
+    public MARCElement end() {
+        return this;
+    }
+
 
     /**
      * Process mapped element. Empty by default.
      *
      * @param builder
      * @param fields
-     * @param subfieldType
+     * @param value
      */
     public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
         // overridden 
@@ -98,10 +107,6 @@ public abstract class MARCElement
      */
     public void field(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, Field field, String subfieldType) {
         // overridden
-    }
-
-    @Override
-    public void end() {
     }
 
     protected String cleanRAKCharacters(String value) {

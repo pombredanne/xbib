@@ -35,9 +35,14 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 public class MultiClientTest {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(MultiClientTest.class.getName());
+
+
     @Test
     public void testSimpleClient() throws Exception {
         URI[] uris = new URI[]{
@@ -82,9 +87,9 @@ public class MultiClientTest {
             });
         }
         latch.await();
-        System.err.println("got channels = " +channels);
+        logger.info("got channels = {}", channels);
         channels.close().awaitUninterruptibly();
-        System.err.println("channels closed");
+        logger.info("channels closed");
         factory.releaseExternalResources();
     }
     

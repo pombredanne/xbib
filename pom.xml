@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>org.xbib</groupId>
     <artifactId>xbib</artifactId>
     <name>xbib</name>
@@ -36,13 +37,13 @@
     </distributionManagement>
 
     <build>
-        
+
         <!-- declare plugin versions -->
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>2.5.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>${maven.compiler.source}</source>
@@ -52,7 +53,7 @@
                         <optimize>true</optimize>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
-                        <compilerArgument>-Xlint:all,-serial,-unchecked,-path,-rawtypes</compilerArgument>
+                        <compilerArgument>-Xlint:all,-serial,-path,-rawtypes,-unchecked</compilerArgument>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -63,7 +64,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
                     <executions>
@@ -77,33 +77,34 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <!-- we need 2.12 for testing custom TransformerFactory.newInstance (StylesheetTransformer)-->
-                    <version>2.12</version>
+                    <!-- we need >=2.12 for testing custom TransformerFactory.newInstance (StylesheetTransformer)-->
+                    <version>2.12.4</version>
                     <configuration>
+                        <skip>false</skip>
                         <!-- systemPropertyVariables only work with forkMode none -->
                         <systemPropertyVariables>
                             <file.encoding>UTF-8</file.encoding>
+                            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
                         </systemPropertyVariables>
-                        <encoding>UTF-8</encoding>
-                        <inputEncoding>UTF-8</inputEncoding>
-                        <outputEncoding>UTF-8</outputEncoding>
-                        <skip>false</skip>
                         <reportFormat>plain</reportFormat>
                         <disableXmlReport>false</disableXmlReport>
                         <forkMode>once</forkMode>
+                        <!-- no custom char sets by default-->
                         <useSystemClassLoader>false</useSystemClassLoader>
                         <!-- we fork, so we need system properties on argLine. Override Mac OSX JVM default encoding and override logging -->
                         <argLine>-Dfile.encoding=UTF-8</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>2.4.1</version>
                     <configuration>
                         <filesets>
                             <fileset>
                                 <directory>logs</directory>
+                            </fileset>
+                            <fileset>
+                                <directory>lib</directory>
                             </fileset>
                         </filesets>
                     </configuration>
@@ -133,10 +134,9 @@
                     <version>2.1.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.7</version>
-                </plugin>            
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -160,7 +160,7 @@
         </plugins>
 
     </build>
-    
+
     <!-- declare dependency versions -->
     <dependencyManagement>
         <dependencies>
@@ -172,7 +172,7 @@
             <dependency>
                 <groupId>org.xbib</groupId>
                 <artifactId>xbib-charset</artifactId>
-                <version>${project.version}</version>            
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
@@ -182,7 +182,7 @@
             <dependency>
                 <groupId>org.xbib</groupId>
                 <artifactId>xbib-sru</artifactId>
-                <version>${project.version}</version>            
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
@@ -226,7 +226,7 @@
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-analyzer-mab</artifactId>
+                <artifactId>xbib-analyzer-marc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -308,7 +308,7 @@
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>   
+                <artifactId>groovy-all</artifactId>
                 <version>2.0.0</version>
             </dependency>
             <dependency>
@@ -382,26 +382,27 @@
                 <artifactId>serializer</artifactId>
                 <version>2.7.1</version>
             </dependency>
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>11gR2</version>
-        </dependency>
+            <dependency>
+                <groupId>oracle</groupId>
+                <artifactId>ojdbc</artifactId>
+                <version>11gR2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-    
+
     <modules>
         <module>xbib-logging</module>
         <module>xbib-charset</module>
@@ -410,7 +411,6 @@
         <module>xbib-core</module>
         <module>xbib-mapper</module>
         <module>xbib-elasticsearch</module>
-        <module>xbib-analyzer-mab</module>
         <module>xbib-analyzer-marc</module>
         <module>xbib-query</module>
         <module>xbib-sru</module>
@@ -424,5 +424,7 @@
         <module>xbib-atom</module>
         <module>xbib-federator</module>
         <module>xbib-filetransfer</module>
+        <module>xbib-swingx</module>
+        <module>xbib-printclient</module>
     </modules>
 </project>

@@ -37,13 +37,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.testng.Assert;
 
 /**
  * Generator test
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public abstract class ParserTest {
+public abstract class ParserTest extends Assert {
 
     /**
      * Helper method for reading a text file with queries

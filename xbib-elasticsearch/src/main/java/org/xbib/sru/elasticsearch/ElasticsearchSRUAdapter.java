@@ -36,9 +36,10 @@ import java.net.URI;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.Elasticsearch;
+import org.xbib.elasticsearch.Elasticsearch;
+import org.xbib.elasticsearch.Formatter;
 import org.xbib.elasticsearch.OutputFormat;
-import org.xbib.elasticsearch.OutputProcessor;
 import org.xbib.elasticsearch.OutputStatus;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -121,18 +122,20 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         transformer.addParameter("recordSchema", getRecordSchema());
         try {
             String mediaType = "application/x-mods";
-            ElasticsearchDAO dao = new ElasticsearchDAO()
-                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName()))
+            Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName());
+            new Elasticsearch()
                     .newClient(false).newRequest()
-                    .setIndex(getIndex(request)).setType(getType(request))
-                    .setFrom(request.getStartRecord() - 1).setSize(request.getMaximumRecords())
-                    .fromCQL(getQuery(request)) /*.filter(filter).facets(facets)*/
-                    .execute()
-                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .setIndex(getIndex(request))
+                    .setType(getType(request))
+                    .setFrom(request.getStartRecord() - 1)
+                    .setSize(request.getMaximumRecords())
+                    .cql(getQuery(request))
+                    .execute(logger)
+                    .format(OutputFormat.formatOf(mediaType))
                     .styleWith(transformer, getStylesheet(), response.getOutput())
-                    .dispatchTo(new OutputProcessor() {
+                    .dispatchTo(new Formatter() {
                 @Override
-                public void process(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
+                public void format(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
                     response.getOutput().write(message);
                 }
             });

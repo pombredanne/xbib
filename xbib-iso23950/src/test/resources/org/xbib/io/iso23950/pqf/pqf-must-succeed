@@ -6,6 +6,7 @@ dylan
 @set Result-1
 @and @set seta @set setb
 @attr 1=4 computer
+@attr 1=12 @attr 5=1 "abc1234567"
 @attr 1=4 @attr 4=1 "self portrait"
 @attrset exp1 @attr 1=1 CategoryList
 @attr gils 1=2008 Copenhagen
@@ -14,4 +15,3 @@ dylan
 @or @and bob dylan @set Result-1
 @attr 4=1 @and @attr 1=1 "bob dylan" @attr 1=4 "slow train coming"
 @and @attr 2=4 @attr gils 1=2038 -114 @attr 2=2 @attr gils 1=2039 -109
-

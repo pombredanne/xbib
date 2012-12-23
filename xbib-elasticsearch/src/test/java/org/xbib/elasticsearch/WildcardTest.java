@@ -18,7 +18,7 @@ public class WildcardTest {
     private static final String FIELD = "field";
     private static Client client;
 
-    @Test
+
     public void test() throws Exception {
         initializeClient();
         //deleteIndex();

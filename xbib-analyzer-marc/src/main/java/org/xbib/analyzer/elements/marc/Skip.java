@@ -16,7 +16,8 @@ public class Skip extends MARCElement {
     }
 
     @Override
-    public void build(MARCBuilder b, FieldCollection key, String value) {
+    public Skip build(MARCBuilder b, FieldCollection key, String value) {
+        return this;
     }
 
 }

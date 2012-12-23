@@ -40,7 +40,7 @@ public interface Visitor {
     /**
      * Visit PQF
      *
-     * @param tree the tree to visit
+     * @param pqf the tree to visit
      */
     void visit(PQF pqf);
 
@@ -58,8 +58,12 @@ public interface Visitor {
      */
     void visit(Expression expression);
 
-    void visit(AttrSpec attrspec);
+    void visit(AttrStr attrspec);
 
+    void visit(Term term);
+
+    void visit(Setname name);
+    
     void visit(String str);
     
     void visit(Integer i);

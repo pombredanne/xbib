@@ -33,7 +33,7 @@ package org.xbib.rdf;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 /**
  * The rdf:Alt class is the class of RDF 'Alternative' containers.
@@ -55,7 +55,7 @@ public abstract class AbstractAlternative<S extends Resource<?,?,?>, P extends P
         super();
     }
 
-    protected AbstractAlternative(URI identifier) {
+    protected AbstractAlternative(IRI identifier) {
         super(identifier);
     }
 

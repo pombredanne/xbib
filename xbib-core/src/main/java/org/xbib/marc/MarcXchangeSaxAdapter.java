@@ -398,7 +398,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                         }
                         endDataField(designator);
                         endRecord(); // close record
-                    // fall through
+                    // fall through is ok
                     case '\u0000': // start of stream
                         position = 0;
                         // skip line-feed (OCLC PICA quirk)

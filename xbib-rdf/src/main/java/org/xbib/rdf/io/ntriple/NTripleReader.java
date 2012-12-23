@@ -36,17 +36,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.xbib.iri.IRI;
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
 import org.xbib.rdf.io.Triplifier;
-import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.rdf.simple.SimpleStatement;
 
 /**
@@ -71,7 +71,7 @@ public class NTripleReader<S extends Resource<S, P, O>, P extends Property, O ex
     public static final Pattern NTRIPLE_PATTERN = Pattern.compile(tripleExpression);
     private BufferedReader reader;
     private boolean eof;
-    private SimpleResource<S, P, O> resource;
+    private final Factory<S,P,O> factory = Factory.getInstance();
     /**
      * An optional statement listener
      */
@@ -141,32 +141,30 @@ public class NTripleReader<S extends Resource<S, P, O>, P extends Property, O ex
         }
         // subject
         if (matcher.group(2) != null) {
-            subject = (S) resource.newBlankNode(matcher.group(1));
+            subject = (S)factory.newBlankNode(matcher.group(1));
         } else {
             // resource node
             String subj = matcher.group(1);
-            URI subjURI = URI.create(subj.substring(1, subj.length() - 1));
-            resource = new SimpleResource<>(subjURI);
-            resource.subject(resource.toSubject(subjURI.toASCIIString()));
-            subject = resource.subject();
+            IRI subjURI = IRI.create(subj.substring(1, subj.length() - 1));
+            subject =factory.asSubject(subjURI);
         }
         // predicate
         String p = matcher.group(4);
-        predicate = resource.toPredicate(p.substring(1, p.length() - 1));
+        predicate = (P) factory.newProperty(IRI.create(p.substring(1, p.length() - 1)));
         // object
         if (matcher.group(7) != null) {
             // anonymous node
-            object = (O) resource.newBlankNode(matcher.group(6));
+            object = (O) factory.newBlankNode(matcher.group(6));
         } else if (matcher.group(8) != null) {
             // resource node
             String obj = matcher.group(6);
-            object = resource.toObject(URI.create(obj.substring(1, obj.length() - 1)));
+            object = factory.asObject(IRI.create(obj.substring(1, obj.length() - 1)));
         } else {
             // literal node
             // 10 is without quotes or apostrophs
             // with quotes or apostrophes. to have the value without them you need to look at groups 12 and 15
             String literal = matcher.group(10);
-            object = (O) resource.newLiteral(literal);
+            object = (O) factory.newLiteral(literal);
         }
         if (listener != null) {
             Statement stmt = new SimpleStatement<>(subject, predicate, object);

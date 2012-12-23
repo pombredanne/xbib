@@ -19,6 +19,66 @@
                     <useSystemClassLoader>true</useSystemClassLoader>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>de.jflex</groupId>
+                        <artifactId>jflex</artifactId>
+                        <version>1.4.3</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.xbib</groupId>
+                        <artifactId>xbib-jacc</artifactId>
+                        <version>${project.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="jflex" classname="JFlex.anttask.JFlexTask">
+                                    <classpath>
+                                        <path refid="maven.compile.classpath" />
+                                    </classpath>
+                                </taskdef>
+                                <taskdef name="jacc" classname="jacc.ant.JaccTask">
+                                    <classpath>
+                                        <path refid="maven.compile.classpath" />
+                                    </classpath>
+                                </taskdef>
+                                <jflex file="src/main/jflex/PQF.jflex" destdir="target/generated-sources" />
+                                <jacc file="src/main/jacc/PQF.jacc" destdir="target/generated-sources" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -44,8 +104,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>javax.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

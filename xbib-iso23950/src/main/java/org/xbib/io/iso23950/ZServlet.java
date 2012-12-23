@@ -94,7 +94,7 @@ public class ZServlet extends HttpServlet {
             int size = Integer.parseInt(
                     request.getParameter("size") != null
                     ? request.getParameter("size") : "10");
-            AbstractSearchRetrieve op = new CQLSearchRetrieve();
+            CQLSearchRetrieve op = new CQLSearchRetrieve();
             op.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
             adapter.searchRetrieve(op, new SearchRetrieveResponse(response, responseEncoding));
         } finally {

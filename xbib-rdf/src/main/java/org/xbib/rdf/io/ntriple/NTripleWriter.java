@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
@@ -98,7 +98,7 @@ public class NTripleWriter<S extends Resource<?, ?, ?>, P extends Property, O ex
             Literal<?> value = (Literal<?>) object;
             String s = "\"" + escape(value.object().toString()) + "\"";
             String lang = value.language();
-            URI type = value.type();
+            IRI type = value.type();
             if (lang != null) {
                 return s + "@" + lang;
             }

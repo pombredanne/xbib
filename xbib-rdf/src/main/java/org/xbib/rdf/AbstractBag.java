@@ -33,7 +33,7 @@ package org.xbib.rdf;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 /**
  * The rdf:Bag class is the class of RDF 'Bag' containers.
@@ -53,7 +53,7 @@ public abstract class AbstractBag<S extends Resource<?,?,?>, P extends Property,
         super();
     }
 
-    protected AbstractBag(URI identifier) {
+    protected AbstractBag(IRI identifier) {
         super(identifier);
     }
 

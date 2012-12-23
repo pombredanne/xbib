@@ -1,15 +1,16 @@
 package org.xbib.marc.addons;
 
-import java.net.URI;
-import java.util.concurrent.ExecutionException;
+import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
+import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
-import org.xbib.elements.mab.MABBuilder;
-import org.xbib.elements.mab.MABContext;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
+
+import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
 public class ConcurrentMABTarReaderTest {
         

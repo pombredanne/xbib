@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import org.xbib.io.Connection;
 import org.xbib.io.Session;
+import org.xbib.iri.IRI;
 
 /**
  * A Berkeley DB connection
@@ -55,7 +56,7 @@ public class BerkeleyDBConnection implements Connection<BerkeleyDBSession> {
      */
     @Override
     public BerkeleyDBSession createSession() throws IOException {
-        BerkeleyDBSession session = new BerkeleyDBSession(uri);
+        BerkeleyDBSession session = new BerkeleyDBSession(IRI.create(uri.toString()));
         sessions.add(session);
         return session;
     }

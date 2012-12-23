@@ -16,7 +16,8 @@ public class Error extends MARCElement {
     }
 
     @Override
-    public void build(MARCBuilder b, FieldCollection key, String value) {
+    public Error build(MARCBuilder b, FieldCollection key, String value) {
+        return this;
     }
 
 }

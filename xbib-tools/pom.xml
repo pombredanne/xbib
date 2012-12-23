@@ -23,12 +23,14 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <appendAssemblyId>true</appendAssemblyId>
+                    <outputDirectory>${basedir}/lib</outputDirectory>
                     <descriptors>
                         <descriptor>${basedir}/src/main/assemblies/source.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/alephseq2marcxml.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearchgndindexer.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearchmedline.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearchcatalogenrichment.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearchezb.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -46,43 +48,35 @@
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-mapper</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-elasticsearch</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-oai</artifactId>   
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-charset</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-compress</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-logging</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-berkeleydb</artifactId>   
-            <type>jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-analyzer-mab</artifactId>   
-            <type>jar</type>
+            <artifactId>xbib-analyzer-marc</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

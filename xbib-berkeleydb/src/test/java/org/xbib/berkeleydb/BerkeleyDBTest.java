@@ -19,11 +19,11 @@
  */
 package org.xbib.berkeleydb;
 
-import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.testng.annotations.Test;
-import org.xbib.io.Mode;
+import org.xbib.io.Session;
+import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -31,31 +31,31 @@ import org.xbib.rdf.simple.SimpleResource;
 
 public class BerkeleyDBTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> {
 
-    private static final Logger logger = Logger.getLogger(BerkeleyDBTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(BerkeleyDBTest.class.getName());
     
     @Test
     public void testBerkeleyDB() throws Exception {
-        URI uri = URI.create("bdbresource:target/localhost/testdb");
+        IRI uri = IRI.create("bdbresource:target/localhost/testdb");
         BerkeleyDBSession session = new BerkeleyDBSession(uri);
-        session.open(Mode.WRITE);
+        session.open(Session.Mode.WRITE);
         Write write = new Write();
         Resource resource = createResource();
-        logger.log(Level.INFO, "resource before write = " + resource );
+        logger.info("resource before write = " + resource );
         // write a resource
         write.write(session, resource);
         write.execute(session);
         session.close();
         // and read it again
-        session.open(Mode.READ);
+        session.open(Session.Mode.READ);
         Read read = new Read();
         read.query(session, "urn:resource");
-        logger.log(Level.INFO, "resource read = " + read.getResource() );
+        logger.info("resource read = " + read.getResource() );
         session.close();
     }
     
     private Resource<S,P,O> createResource() {
         Resource<S,P,O> resource = new SimpleResource();
-        resource.id(URI.create("urn:resource"));
+        resource.id(IRI.create("urn:resource"));
         resource.property("dc:title", "Hello")
         .property("dc:title", "World")
         .property("xbib:person", "Jörg Prante")

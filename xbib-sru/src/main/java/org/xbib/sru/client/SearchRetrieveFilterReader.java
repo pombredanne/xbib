@@ -43,7 +43,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.sru.SRU;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 public class SearchRetrieveFilterReader extends XMLFilterReader {
 
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    private final SimpleNamespaceContext namespaceContext = SimpleNamespaceContext.newInstance();
+    private final XMLNamespaceContext namespaceContext = XMLNamespaceContext.newInstance();
     private final SearchRetrieve request;
     private final SearchRetrieveResponse response;
     private String recordPacking;
@@ -257,7 +257,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
         return list.listIterator();
     }
 
-    private ListIterator<Namespace> getNamespaces(SimpleNamespaceContext namespaceContext) {
+    private ListIterator<Namespace> getNamespaces(XMLNamespaceContext namespaceContext) {
         List<Namespace> namespaces = new LinkedList();
         String defaultNamespaceUri = namespaceContext.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
         if (defaultNamespaceUri != null && defaultNamespaceUri.length() > 0) {

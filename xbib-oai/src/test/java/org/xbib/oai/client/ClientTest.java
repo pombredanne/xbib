@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
 import org.xbib.io.EmptyWriter;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.IdentifyRequest;
@@ -47,7 +48,6 @@ import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListRecordsResponse;
 import org.xbib.oai.MetadataPrefixService;
 import org.xbib.oai.MetadataReader;
-import org.xbib.oai.OAIOperation;
 import org.xbib.oai.ResumptionToken;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
@@ -100,7 +100,7 @@ public class ClientTest {
             final StatementListener listener = new StatementListener() {
 
                 @Override
-                public void newIdentifier(URI uri) {
+                public void newIdentifier(IRI uri) {
                     getResource().id(uri);
                 }
 
@@ -123,7 +123,7 @@ public class ClientTest {
                 public void endDocument() throws SAXException {
                     handler.endDocument();
                     if (resource.id() == null) {
-                        resource.id(URI.create(getHeader().getIdentifier()));
+                        resource.id(IRI.create(getHeader().getIdentifier()));
                     }
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();
@@ -163,8 +163,8 @@ public class ClientTest {
             client.setMetadataReader(metadataReader);
             try {
                 client.prepareListRecords(request, response);
-                OAIOperation op = client.execute(30, TimeUnit.SECONDS);
-                logger.info("OAI results " + op.getResults());
+                client.execute(30, TimeUnit.SECONDS);
+                logger.info("OAI HTTP result body " + client.getResponse().getBody());
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
                 failure = true;

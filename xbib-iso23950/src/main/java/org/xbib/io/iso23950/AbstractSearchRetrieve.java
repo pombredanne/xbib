@@ -34,19 +34,14 @@ package org.xbib.io.iso23950;
 import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
-import org.xbib.io.ErrorResultProcessor;
-import org.xbib.io.Mode;
-import org.xbib.io.Request;
-import org.xbib.io.ResultProcessor;
-import org.xbib.io.operator.ResultOperator;
+import org.xbib.io.Session;
 
 /**
  * Init / Search / Present operation with result processing
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public abstract class AbstractSearchRetrieve implements Request,
-        ResultOperator<ZSession, Record>, ResultProcessor<Record>, ErrorResultProcessor<Record> {
+public abstract class AbstractSearchRetrieve {
 
     private static final ResourceBundle recordSyntaxBundle =
             ResourceBundle.getBundle("org.xbib.io.iso23950.recordsyntax");
@@ -60,8 +55,6 @@ public abstract class AbstractSearchRetrieve implements Request,
     private String resultSetName;
     private String elementSetName;
     private String preferredRecordSyntax;
-    private ResultProcessor<Record> handler;
-    private ErrorResultProcessor<Record> errorHandler;
     private int resultCount;
 
     public AbstractSearchRetrieve setUser(String user) {
@@ -123,23 +116,7 @@ public abstract class AbstractSearchRetrieve implements Request,
         return this;
     }
 
-    public AbstractSearchRetrieve setHandler(ResultProcessor<Record> handler) {
-        this.handler = handler;
-        return this;
-    }
-
-    public AbstractSearchRetrieve setErrorHandler(ErrorResultProcessor<Record> errorHandler) {
-        this.errorHandler = errorHandler;
-        return this;
-    }
-
-    @Override
-    public void setResultProcessor(ResultProcessor<Record> recordResultProcessor) {
-        setHandler(recordResultProcessor);
-    }
-
-    @Override
-    public void execute(ZSession session) throws IOException {
+    public void execute(ZSession session, RecordHandler handler) throws IOException {
         if (session == null) {
             throw new IOException("no session?");
         }
@@ -156,7 +133,7 @@ public abstract class AbstractSearchRetrieve implements Request,
         this.resultCount = -1;
         long t0 = System.currentTimeMillis();
         if (!session.isOpen()) {
-            session.open(Mode.READ);
+            session.open(Session.Mode.READ);
             if (!session.isOpen()) {
                 session.getSessionLogger().error("{} unable to open session [{}]", databases, query);
                 throw new IOException("session not open");
@@ -180,10 +157,8 @@ public abstract class AbstractSearchRetrieve implements Request,
         } else {
             PresentOperation present = new PresentOperation(
                     resultSetName, elementSetName, preferredRecordSyntax,
-                    offset, length,
-                    handler != null ? handler : this,
-                    errorHandler != null ? errorHandler : this);
-            present.execute(session);
+                    offset, length);
+            present.execute(session, handler);
             presentMillis = present.getMillis();
         }
         long t1 = System.currentTimeMillis();
@@ -193,18 +168,6 @@ public abstract class AbstractSearchRetrieve implements Request,
         if (!search.isSuccess()) {
             throw new IOException("search was not a success");
         }
-    }
-
-    @Override
-    public void process(Record result) throws IOException {
-        int pos = result.getNumber();
-        byte[] record = result.getContent();
-    }
-
-    @Override
-    public void processError(Record result) throws IOException {
-        int pos = result.getNumber();
-        byte[] record = result.getContent();
     }
 
     public int getResultCount() {

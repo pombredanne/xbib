@@ -31,23 +31,16 @@
  */
 package org.xbib.sru.client;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URI;
-import java.text.Normalizer;
-import java.text.Normalizer.Form;
-import java.util.concurrent.TimeUnit;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-import org.xbib.io.Mode;
-import org.xbib.io.http.netty.HttpOperation;
+import org.xbib.io.Session;
 import org.xbib.io.http.netty.HttpRequest;
-import org.xbib.io.http.netty.HttpResult;
+import org.xbib.io.http.netty.HttpResponse;
+import org.xbib.io.http.netty.HttpResponseListener;
 import org.xbib.io.http.netty.HttpSession;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.ExplainResponse;
 import org.xbib.sru.SRU;
-import org.xbib.sru.SRUResultProcessor;
 import org.xbib.sru.SearchRetrieve;
 import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.sru.explain.Explain;
@@ -55,74 +48,89 @@ import org.xbib.xml.XMLFilterReader;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+
 public class SimpleSRUClient implements SRUClient {
 
+    private final Logger logger = LoggerFactory.getLogger(SimpleSRUClient.class.getName());
     private HttpSession session = new HttpSession();
-
+    private SRUHttpResponseListener listener;
     private StylesheetTransformer transformer;
-    
-    
+
     @Override
     public URI getURI() {
         return null;
     }
-    
+
     @Override
     public String getVersion() {
-        return null;        
+        return null;
     }
 
     @Override
     public String getRecordSchema() {
-        return null;        
+        return null;
     }
 
     @Override
     public String getRecordPacking() {
-        return null;        
+        return null;
     }
 
     @Override
     public String getEncoding() {
-        return null;        
+        return null;
     }
 
     @Override
     public String getStylesheet() {
-        return null;        
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return null;        
+        return null;
     }
-    
+
     @Override
     public String getPassword() {
         return null;
     }
-    
+
     @Override
     public void setStylesheetTransformer(StylesheetTransformer transformer) {
         this.transformer = transformer;
     }
 
-    @Override
-    public HttpOperation explain(Explain explain, ExplainResponse response)
-            throws IOException, SyntaxException {
-        open();
-        HttpRequest req = new HttpRequest("GET").setURI(explain.getURI()).addParameter(SRU.OPERATION_PARAMETER, "explain");
-        session.addRequest(req);
-        ExplainProcessor processor = new ExplainProcessor(explain, response);
-        HttpOperation operation = new HttpOperation();
-        operation.addProcessor(processor);
-        operation.prepareExecution(session);
-        operation.execute(30L, TimeUnit.SECONDS);
-        return operation;
+    public HttpResponse getResponse() {
+        return listener.getResponse();
+    }
+
+    public long getResponseMillis() {
+        return session.getResponseMillis();
     }
 
     @Override
-    public HttpOperation searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
+    public void explain(Explain explain, ExplainResponse response)
+            throws IOException, SyntaxException {
+        open();
+        HttpRequest req = new HttpRequest("GET").setURI(explain.getURI()).addParameter(SRU.OPERATION_PARAMETER, "explain");
+        session.add(req);
+        ExplainListener listener = new ExplainListener(explain, response);
+        session.addListener(listener);
+        session.execute();
+        listener.close();
+        session.removeListener(listener);
+    }
+
+    @Override
+    public void searchRetrieve(SearchRetrieve request, SearchRetrieveResponse response)
             throws IOException, SyntaxException {
         if (request == null) {
             throw new IOException("request not set");
@@ -145,7 +153,7 @@ public class SimpleSRUClient implements SRUClient {
         transformer.addParameter("origin", request.getURI());
 
         response.setOrigin(request.getURI());
-        
+
         open();
         HttpRequest req = new HttpRequest("GET").setURI(request.getURI())
                 .addParameter(SRU.OPERATION_PARAMETER, "searchRetrieve")
@@ -160,102 +168,14 @@ public class SimpleSRUClient implements SRUClient {
         if (request.getRecordSchema() != null && !request.getRecordSchema().isEmpty()) {
             req.addParameter(SRU.RECORD_SCHEMA_PARAMETER, request.getRecordSchema());
         }
-        /*if (getEncoding() != null && !getEncoding().isEmpty()) {
-            req.setEncoding(getEncoding());
-        }*/
-        session.addRequest(req);        
-        SearchRetrieveProcessor processor = new SearchRetrieveProcessor(request, response);
-        HttpOperation operation = new HttpOperation();
-        operation.addProcessor(processor);
-        operation.prepareExecution(session); 
-        operation.execute(30L, TimeUnit.SECONDS);
-        return operation;
-    }
-
-    private class SearchRetrieveProcessor implements SRUResultProcessor {
-
-        final private SearchRetrieve request;
-        final private SearchRetrieveResponse response;
-
-        SearchRetrieveProcessor(SearchRetrieve request, SearchRetrieveResponse response) {
-            this.request = request;
-            this.response = response;
-        }
-
-        @Override
-        public void process(HttpResult result) throws IOException {
-            if (result.getBody() == null) {
-                throw new IOException("empty result");
-            }
-            try {
-                XMLFilterReader reader = new SearchRetrieveFilterReader(request, response);
-                InputSource source = new InputSource(new StringReader(Normalizer.normalize(result.getBody(), Form.NFC)));
-                StreamResult target = response.getOutput() != null
-                        ? new StreamResult(response.getOutput())
-                        : new StreamResult(response.getWriter());
-                transformer.setSource(reader, source).setTarget(target).apply();                
-            } catch (TransformerException e) {
-                throw new IOException(e);
-            }
-        }
-
-        @Override
-        public void processError(HttpResult result) throws IOException {
-            throw new IOException(result.getStatusCode() + " " + result.getBody());
-        }
-        
-        @Override
-        public void close() throws IOException {
-            if (response.getOutput() != null) {
-                response.getOutput().close();
-            }
-            if (response.getWriter() != null) {
-                response.getWriter().close();
-            }
-        }
-    }
-
-    private class ExplainProcessor implements SRUResultProcessor {
-
-        private final Explain request;
-        private final ExplainResponse response;
-
-        ExplainProcessor(Explain request, ExplainResponse response) {
-            this.request = request;
-            this.response = response;
-        }
-
-        @Override
-        public void process(HttpResult result) throws IOException {
-            if (result.getBody() == null) {
-                throw new IOException("empty result");
-            }
-            try {
-                XMLFilterReader reader = new ExplainFilterReader(request, response);
-                InputSource source = new InputSource(new StringReader(result.getBody()));
-                StreamResult target = response.getOutput() != null
-                        ? new StreamResult(response.getOutput())
-                        : new StreamResult(response.getWriter());
-                transformer.setSource(reader, source).setTarget(target).apply();
-            } catch (TransformerException e) {
-                throw new IOException(e);
-            }
-        }
-
-        @Override
-        public void processError(HttpResult result) throws IOException {
-            throw new IOException(result.getStatusCode() + " " + result.getBody());
-        }
-                
-        @Override
-        public void close() throws IOException {
-            if (response.getOutput() != null) {
-                response.getOutput().close();
-            }
-            if (response.getWriter() != null) {
-                response.getWriter().close();
-            }
-        }
+        session.add(req);
+        listener = new SearchRetrieveListener(request, response);
+        session.addListener(listener);
+        session.addListener(response);
+        session.execute();
+        listener.close();
+        session.removeListener(listener);
+        session.removeListener(response);
     }
 
     private void open() throws IOException {
@@ -263,7 +183,7 @@ public class SimpleSRUClient implements SRUClient {
             return;
         }
         session = new HttpSession();
-        session.open(Mode.READ);
+        session.open(Session.Mode.READ);
     }
 
     @Override
@@ -271,6 +191,98 @@ public class SimpleSRUClient implements SRUClient {
         if (session != null) {
             session.close();
             session = null;
+        }
+    }
+
+    private class SearchRetrieveListener implements SRUHttpResponseListener {
+
+        final private SearchRetrieve request;
+        final private SearchRetrieveResponse response;
+        private HttpResponse httpResponse;
+
+        SearchRetrieveListener(SearchRetrieve request, SearchRetrieveResponse response) {
+            this.request = request;
+            this.response = response;
+        }
+
+        @Override
+        public void receivedResponse(HttpResponse result) {
+            this.httpResponse = result;
+            if (result != null && result.getBody() != null) {
+                try {
+                    XMLFilterReader reader = new SearchRetrieveFilterReader(request, response);
+                    InputSource source = new InputSource(new StringReader(Normalizer.normalize(result.getBody(), Form.NFC)));
+                    StreamResult target = response.getOutput() != null
+                            ? new StreamResult(response.getOutput())
+                            : new StreamResult(response.getWriter());
+                    transformer.setSource(reader, source).setTarget(target).apply();
+                } catch (TransformerException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        public HttpResponse getResponse() {
+            return httpResponse;
+        }
+
+        public void close() {
+            try {
+                if (response.getOutput() != null) {
+                    response.getOutput().close();
+                }
+                if (response.getWriter() != null) {
+                    response.getWriter().close();
+                }
+            } catch (IOException e) {
+
+            }
+        }
+    }
+
+    private class ExplainListener implements HttpResponseListener {
+
+        private final Explain request;
+        private final ExplainResponse response;
+        private HttpResponse httpResponse;
+
+        ExplainListener(Explain request, ExplainResponse response) {
+            this.request = request;
+            this.response = response;
+        }
+
+        @Override
+        public void receivedResponse(HttpResponse result) {
+            this.httpResponse = result;
+            if (result != null && result.getBody() != null) {
+                try {
+                    XMLFilterReader reader = new ExplainFilterReader(request, response);
+                    InputSource source = new InputSource(new StringReader(result.getBody()));
+                    StreamResult target = response.getOutput() != null
+                            ? new StreamResult(response.getOutput())
+                            : new StreamResult(response.getWriter());
+                    transformer.setSource(reader, source).setTarget(target).apply();
+                } catch (TransformerException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        public HttpResponse getResponse() {
+            return httpResponse;
+        }
+
+        public void close() {
+            try {
+                if (response.getOutput() != null) {
+                    response.getOutput().close();
+                }
+                if (response.getWriter() != null) {
+                    response.getWriter().close();
+                }
+            } catch (IOException e) {
+
+            }
         }
     }
 }

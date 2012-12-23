@@ -94,7 +94,6 @@ public class CharStreamTest {
 
             @Override
             public void markFile() {
-                // logger.log(Level.INFO, "mark FILE");
                 incFileCount();
             }
         };
@@ -109,7 +108,7 @@ public class CharStreamTest {
         } finally {
             stream.close();
         }
-        logger.info("data = {0} unit = {1} record = {2} group = {3} file = {4}", 
+        logger.info("data = {} unit = {} record = {} group = {} file = {}",
                 dataCount, unitCount, recordCount, groupCount, fileCount);
         
         assertEquals(dataCount, 380);

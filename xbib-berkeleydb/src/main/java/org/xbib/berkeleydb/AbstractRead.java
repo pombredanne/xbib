@@ -23,16 +23,14 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import java.io.IOException;
-import org.xbib.io.operator.QueryOperator;
 import org.xbib.rdf.Resource;
 
-public abstract class AbstractRead implements QueryOperator<BerkeleyDBSession> {
+public abstract class AbstractRead {
 
     protected final DatabaseEntry keyEntry = new DatabaseEntry();
     protected final DatabaseEntry valueEntry = new DatabaseEntry();
     protected Resource resource;
     
-    @Override
     public void query(BerkeleyDBSession session, String key) throws IOException {
        try {
             keyEntry.setData(key.getBytes("UTF-8"));
@@ -44,11 +42,6 @@ public abstract class AbstractRead implements QueryOperator<BerkeleyDBSession> {
         }        
     }
 
-    @Override
-    public void execute(BerkeleyDBSession session) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
     public Resource getResource() {
         return resource;
     }

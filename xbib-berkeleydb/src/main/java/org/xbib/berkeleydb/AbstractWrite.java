@@ -23,13 +23,11 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus;
 import java.io.IOException;
 import org.xbib.io.Identifiable;
-import org.xbib.io.operator.CreateOperator;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 
-public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
-        implements CreateOperator<BerkeleyDBSession, Identifiable, Resource<S, P, O>> {
+public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>> {
 
     protected final DatabaseEntry keyEntry = new DatabaseEntry();
     protected final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -41,7 +39,6 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
      * @param session the session
      * @param resource the resource
      */
-    @Override
     public void write(BerkeleyDBSession session, Resource resource) throws IOException {
         if (session == null || !session.isOpen()) {
             return;
@@ -61,13 +58,10 @@ public abstract class AbstractWrite<S extends Resource<?, ?, ?>, P extends Prope
         }
     }
 
-    @Override
     public void create(BerkeleyDBSession session, Identifiable identifier, Resource resource) throws IOException {
         write(session, resource);
     }
     
-    
-    @Override
     public void execute(BerkeleyDBSession session) throws IOException {
         if (isTransactionalWrite() && session.getConfig().getTransactional()) {
             session.commitTransaction();

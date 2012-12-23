@@ -39,8 +39,9 @@ public abstract class DublinCoreElement implements Element {
     protected Map<String, Object> params;
     
     @Override
-    public void setSettings(Map params) {
+    public DublinCoreElement setSettings(Map params) {
         this.params = params;
+        return this;
     }
     
     @Override
@@ -49,12 +50,13 @@ public abstract class DublinCoreElement implements Element {
     }
     
     @Override
-    public void begin() {
+    public DublinCoreElement begin() {
+        return this;
         
     }
     
     @Override
-    public void end() {
-        
+    public DublinCoreElement end() {
+        return this;
     }
 }

@@ -130,7 +130,7 @@ public class ClientTest {
             });
             StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
             client.setStylesheetTransformer(transformer);
-            client.searchRetrieve(request, response).execute(30L, TimeUnit.SECONDS);     
+            client.searchRetrieve(request, response);
             client.close();
         }
     }

@@ -47,10 +47,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.Mode;
+import org.xbib.io.ConnectionService;
 import org.xbib.io.Packet;
-import org.xbib.io.tar.TarEntryReadOperator;
+import org.xbib.io.Session;
 import org.xbib.io.tar.TarSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -65,7 +64,6 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
     private URI uri;
     private Connection<TarSession> connection;
     private TarSession session;
-    private TarEntryReadOperator op;
     private Packet packet;
     private boolean prepared;
     private boolean inRecord = false;
@@ -196,10 +194,7 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
             if (session == null) {
                 createSession();
             }
-            if (op == null) {
-                op = new TarEntryReadOperator();
-            }
-            this.packet = op.read(session);
+            this.packet = session.read();
             this.prepared = packet != null;
             if (prepared) {
                 String num = nextNumber();
@@ -344,23 +339,25 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
     }
 
     private void createSession() throws IOException {
-        this.connection = (Connection<TarSession>) ConnectionManager.getConnection(uri);
+        this.connection = ConnectionService.getInstance()
+                .getConnectionFactory(uri.getScheme())
+                .getConnection(uri);
         this.session = connection.createSession();
-        session.open(Mode.READ);
+        session.open(Session.Mode.READ);
         if (!session.isOpen()) {
             throw new IOException("session could not be opened");
         }
     }
 
     private String nextNumber() throws IOException {
-        String name = packet.getName();
+        String name = packet.name();
         int pos = name == null ? -1 : name.lastIndexOf('/');
         String numberStr = pos >= 0 ? name.substring(pos + 1) : null;
         while ((pos < 0) || (numberStr == null) || numberStr.length() == 0) {
             logger.warn("skipping packet {}", name);
             // next message
-            packet = op.read(session);
-            name = packet.getName();
+            packet = session.read();
+            name = packet.name();
             pos = name == null ? -1 : name.lastIndexOf('/');
             numberStr = pos >= 0 ? name.substring(pos + 1) : null;
         }

@@ -42,7 +42,13 @@ import java.io.Serializable;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface Session extends Serializable {
+public interface Session<P extends Packet> extends Serializable {
+
+
+    enum Mode {
+
+        READ, WRITE, READ_WRITE, APPEND, DEFERRED_WRITE, DRY, CONTROL, DELETE;
+    }
 
     /**
      * Open valve with a given input/output mode
@@ -52,7 +58,7 @@ public interface Session extends Serializable {
     void open(Mode mode) throws IOException;
 
     /**
-     * Close valve
+     * Close
      *
      * @throws IOException if valve can not be closed
      */
@@ -64,4 +70,25 @@ public interface Session extends Serializable {
      * @return true if the session is open
      */
     boolean isOpen();
+
+    /**
+     * Create new session packet
+     * @return
+     */
+    P newPacket();
+
+    /**
+     * Read packet from session
+     * @return
+     * @throws IOException
+     */
+    P read() throws IOException;
+
+    /**
+     * Write packet to session
+     * @param packet
+     * @throws IOException
+     */
+    void write(P packet) throws IOException;
+
 }

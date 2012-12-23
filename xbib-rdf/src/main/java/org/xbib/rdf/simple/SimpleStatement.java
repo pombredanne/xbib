@@ -31,39 +31,33 @@
  */
 package org.xbib.rdf.simple;
 
+import org.xbib.iri.IRI;
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 
 /**
- *  A simple statement
+ * A simple statement
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleStatement<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
-        implements Statement<S,P,O>, Comparable<Statement<S,P,O>> {
-    
+        implements Statement<S, P, O>, Comparable<Statement<S, P, O>> {
+
     private S subject;
     private P predicate;
     private O object;
+    
+    private final Factory<S,P,O> factory = Factory.getInstance();
 
     public SimpleStatement() {
-        
     }
-    
-    public static <S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>> 
-            SimpleStatement<S,P,O> createStatement(Object subject, Object predicate, Object object) {
-        SimpleResource<S,P,O> resource = new SimpleResource();
-        return new SimpleStatement(
-                resource.toSubject(subject),
-                resource.toPredicate(predicate),
-                resource.toObject(object)
-                );
-    }
-    
+
     /**
      * Create a new Statement
+     *
      * @param subject
      * @param predicate
      * @param object
@@ -73,7 +67,12 @@ public class SimpleStatement<S extends Resource<?, ?, ?>, P extends Property, O 
         this.predicate = predicate;
         this.object = object;
     }
-
+    
+    public SimpleStatement(Object subject, Object predicate, Object object) {
+        this.subject = factory.asSubject(subject);
+        this.predicate = factory.asPredicate(predicate);
+        this.object = factory.asObject(object);
+    }
 
     public void setSubject(S subject) {
         this.subject = subject;
@@ -104,20 +103,20 @@ public class SimpleStatement<S extends Resource<?, ?, ?>, P extends Property, O 
 
     @Override
     public String toString() {
-        return    (subject != null ? subject : " <null>")
+        return (subject != null ? subject : " <null>")
                 + (predicate != null ? " " + predicate : " <null>")
                 + (object != null ? " " + object : " <null>");
     }
 
     @Override
     public int hashCode() {
-        return (subject != null ? subject.hashCode() : 0) 
+        return (subject != null ? subject.hashCode() : 0)
                 + (predicate != null ? predicate.hashCode() : 0)
                 + (object != null ? object.hashCode() : 0);
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -125,12 +124,11 @@ public class SimpleStatement<S extends Resource<?, ?, ?>, P extends Property, O 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        return compareTo((Statement<S,P,O>) obj) == 0;
+        return compareTo((Statement<S, P, O>) obj) == 0;
     }
 
     @Override
-    public int compareTo(Statement<S,P,O> statement) {
+    public int compareTo(Statement<S, P, O> statement) {
         return toString().compareTo(statement.toString());
     }
-
 }

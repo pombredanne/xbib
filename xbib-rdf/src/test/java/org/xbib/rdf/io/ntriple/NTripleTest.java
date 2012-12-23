@@ -1,29 +1,10 @@
-/*
- * Licensed to Jörg Prante and xbib under one or more contributor 
- * license agreements. See the NOTICE.txt file distributed with this work
- * for additional information regarding copyright ownership.
- * 
- * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 3 of the License, or 
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses/
- *
- */
+
 package org.xbib.rdf.io.ntriple;
 
-import org.xbib.rdf.io.ntriple.NTripleWriter;
 import java.io.StringWriter;
-import java.net.URI;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -43,10 +24,10 @@ public class NTripleTest<S extends Resource<S, P, O>, P extends Property, O exte
     @Test
     public void testNTripleWriteInt() throws Exception {
         SimpleResource<S, P, O> resource = new SimpleResource();
-        resource.id(URI.create("urn:doc1"));
+        resource.id(IRI.create("urn:doc1"));
         resource.property(
-                resource.toPredicate("http://purl.org/dc/elements/1.1/date"),
-                (O)new SimpleLiteral("2010").type(URI.create("http://www.w3.org/2001/XMLSchema#integer")));
+                "http://purl.org/dc/elements/1.1/date",
+                (O)new SimpleLiteral("2010").type(IRI.create("http://www.w3.org/2001/XMLSchema#integer")));
         StringWriter w = new StringWriter();
         NTripleWriter t = new NTripleWriter();
         t.write(resource, w);
@@ -58,7 +39,7 @@ public class NTripleTest<S extends Resource<S, P, O>, P extends Property, O exte
     private SimpleResource<S, P, O> createResource() {
         SimpleResource<S, P, O> m = new SimpleResource();
         String id = "urn:doc1";
-        m.id(URI.create(id));
+        m.id(IRI.create(id));
         //m.setPrimaryKey(URIKey.create(id));
         m.property("http://purl.org/dc/elements/1.1/creator", "Smith");
         m.property("http://purl.org/dc/elements/1.1/creator", "Jones");

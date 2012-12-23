@@ -38,10 +38,16 @@ package org.xbib.io.iso23950.pqf;
  */
 public class PQF extends Node {
 
-    private Query query;
-
+    private final String attrset;
+    private final Query query;
+    
+    public PQF(String attrset, Query query) {
+        this.attrset = attrset;
+        this.query = query;
+    }
 
     public PQF(Query query) {
+        this.attrset = null; // default
         this.query = query;
     }
     
@@ -49,9 +55,13 @@ public class PQF extends Node {
         query.accept(visitor);
         visitor.visit(this);
     }
+
+    public String getAttrSet() {
+        return attrset;
+    }
     
     @Override
     public String toString() {
-        return "[PQF:" + query + "]";
+        return "[PQF: attrset=" + attrset + " query=" + query + "]";
     }
 }

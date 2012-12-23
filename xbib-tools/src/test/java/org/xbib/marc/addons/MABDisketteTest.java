@@ -31,6 +31,23 @@
  */
 package org.xbib.marc.addons;
 
+import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
+import org.xbib.analyzer.marc.extensions.mab.MABContext;
+import org.xbib.elements.ElementMapper;
+import org.xbib.elements.output.ElementOutput;
+import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.marc.Iso2709Reader;
+import org.xbib.marc.MarcXchange2KeyValue;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,23 +56,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-import org.testng.annotations.Test;
-import org.xbib.elements.ElementMapper;
-import org.xbib.elements.mab.MABBuilder;
-import org.xbib.elements.mab.MABContext;
-import org.xbib.elements.output.ElementOutput;
-import org.xbib.keyvalue.KeyValueStreamListener;
-import org.xbib.marc.Iso2709Reader;
-import org.xbib.marc.MarcXchange2KeyValue;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class MABDisketteTest {
     

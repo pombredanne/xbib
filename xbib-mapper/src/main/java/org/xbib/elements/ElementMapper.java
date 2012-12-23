@@ -40,7 +40,7 @@ import javax.script.ScriptException;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
 public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         implements KeyValueStreamListener<K, V> {

@@ -52,7 +52,7 @@ public class XmlReader<S extends Resource<S, P, O>, P extends Property, O extend
 
     private InputSource source;
     private StatementListener listener;
-    private XmlHandler handler;
+    private AbstractXmlHandler handler;
     private boolean namespaces = true;
     private boolean validate = false;
 
@@ -137,13 +137,13 @@ public class XmlReader<S extends Resource<S, P, O>, P extends Property, O extend
         return this;
     }
 
-    public XmlReader setHandler(XmlHandler handler) {
+    public XmlReader setHandler(AbstractXmlHandler handler) {
         this.handler = handler;
         return this;
     }
 
     @Override
-    public XmlHandler getHandler() {
+    public AbstractXmlHandler getHandler() {
         return handler;
     }
 

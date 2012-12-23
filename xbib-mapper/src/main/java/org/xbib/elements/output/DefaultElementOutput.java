@@ -31,7 +31,7 @@
  */
 package org.xbib.elements.output;
 
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
 public abstract class DefaultElementOutput<C extends ResourceContext> 
     implements ElementOutput<C> {

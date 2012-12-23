@@ -1,22 +1,4 @@
-/*
- * Licensed to Jörg Prante and xbib under one or more contributor 
- * license agreements. See the NOTICE.txt file distributed with this work
- * for additional information regarding copyright ownership.
- * 
- * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 3 of the License, or 
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses/
- *
- */
+
 package org.xbib.rdf.io.turtle;
 
 import java.io.BufferedReader;
@@ -24,9 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URI;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -62,7 +44,7 @@ public class TurtleTest<S extends Resource<S, P, O>, P extends Property, O exten
     private SimpleResource createResource() {
         SimpleResource<S, P, O> resource = new SimpleResource();
         String id = "urn:doc1";
-        resource.id(URI.create(id));
+        resource.id(IRI.create(id));
         resource.property("dc:creator", "Smith");
         resource.property("dc:creator", "Jones");
         Resource r = resource.newResource("dcterms:hasPart");
@@ -91,7 +73,7 @@ public class TurtleTest<S extends Resource<S, P, O>, P extends Property, O exten
     
     private Resource<S,P,O> createResource2() {
         Resource<S,P,O> resource = new SimpleResource();
-        resource.id(URI.create("urn:resource"));
+        resource.id(IRI.create("urn:resource"));
         resource.property("dc:title", "Hello");
         resource.property("dc:title", "World");
         resource.property("xbib:person", "Jörg Prante");

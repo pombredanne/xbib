@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.logging.Logger;
@@ -16,7 +15,7 @@ public class CQLTest extends Assert {
     private final static Logger logger = LoggerFactory.getLogger(CQLTest.class.getName());
 
     @Test
-    public void testQueries() throws UnsupportedEncodingException, IOException {
+    public void testQueries() throws IOException {
         int ok = 0;
         int errors = 0;
         String path = "org/xbib/query/cql/elasticsearch/valid";
@@ -42,6 +41,6 @@ public class CQLTest extends Assert {
     private void process(String line) throws Exception {
         CQLParser parser = new CQLParser(new StringReader(line));
         parser.parse();
-        logger.info("{} ===> {}", line, parser.getCQLQuery());
+        //logger.info("{} ===> {}", line, parser.getCQLQuery());
     }
 }

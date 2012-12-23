@@ -9,10 +9,11 @@ import it.sauronsoftware.ftp4j.FTPListParseException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import org.xbib.io.Mode;
-import org.xbib.io.Session;
 
-public class FTPSession implements Session {
+import org.xbib.io.Session;
+import org.xbib.io.StringPacket;
+
+public class FTPSession implements Session<StringPacket> {
 
     private URI uri;
     private FTPClient client;
@@ -51,7 +52,21 @@ public class FTPSession implements Session {
     public boolean isOpen() {
         return open;
     }
-    
+
+    @Override
+    public StringPacket newPacket() {
+        return null;
+    }
+
+    @Override
+    public StringPacket read() throws IOException {
+        return null;
+    }
+
+    @Override
+    public void write(StringPacket packet) throws IOException {
+    }
+
     public String[] list(String path) throws IOException {
         try {
             if (client != null) {

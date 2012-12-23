@@ -35,11 +35,12 @@ import com.sleepycat.je.SecondaryDatabase;
 import com.sleepycat.je.Transaction;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.xbib.io.Mode;
+
+import org.xbib.io.Packet;
 import org.xbib.io.Session;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class BerkeleyDBSession implements Session {
 
     private static final Logger logger = LoggerFactory.getLogger(BerkeleyDBSession.class.getName());
 
-    private URI uri;
+    private IRI uri;
 
     /**
      * is this session open
@@ -110,7 +111,7 @@ public class BerkeleyDBSession implements Session {
     /**
      * Creates a new BerkeleyDBSession object.
      */
-    public BerkeleyDBSession(URI uri) {
+    public BerkeleyDBSession(IRI uri) {
         this.uri = uri;
         this.commitCounter = 0;
         this.iterators = new ArrayList();
@@ -242,6 +243,21 @@ public class BerkeleyDBSession implements Session {
     @Override
     public boolean isOpen() {
         return isOpen;
+    }
+
+    @Override
+    public Packet newPacket() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Packet read() throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void write(Packet packet) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean transactionStarted() {

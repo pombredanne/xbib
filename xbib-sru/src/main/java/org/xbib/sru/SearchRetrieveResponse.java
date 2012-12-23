@@ -41,21 +41,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.AbstractResponse;
 import org.xbib.io.Request;
+import org.xbib.io.http.netty.HttpResponse;
+import org.xbib.io.http.netty.HttpResponseListener;
 
 public class SearchRetrieveResponse extends AbstractResponse
-        implements SRUResponseListener {
+        implements SRUResponseListener, HttpResponseListener {
 
     private HttpServletResponse response;
     private SRUResponseListener listener;
     private URI origin;
     private Collection<XMLEvent> events;
+    private HttpResponse httpResponse;
 
     public SearchRetrieveResponse(Writer writer) {
         super(writer);
     }
 
     public SearchRetrieveResponse(HttpServletResponse response, String encoding)
-            throws UnsupportedEncodingException, IOException {
+            throws IOException {
         this(response.getOutputStream(), encoding);
         this.response = response;
     }
@@ -74,6 +77,14 @@ public class SearchRetrieveResponse extends AbstractResponse
             response.addHeader(key, value);
         }
         return this;
+    }
+
+    public void receivedResponse(HttpResponse response) {
+        this.httpResponse = response;
+    }
+
+    public HttpResponse getHttpResponse() {
+        return httpResponse;
     }
 
     public void setListener(SRUResponseListener listener) {

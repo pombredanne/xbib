@@ -31,9 +31,8 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.addons.PicaBuilder;
-import org.xbib.analyzer.marc.addons.PicaElement;
-import org.xbib.elements.ElementBuilder;
+import org.xbib.analyzer.marc.extensions.pica.PicaBuilder;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 
@@ -45,7 +44,7 @@ public class ShortName extends PicaElement {
     }
 
     @Override
-    public void build(PicaBuilder builder, FieldCollection fields, String value) {
+    public ShortName build(PicaBuilder builder, FieldCollection fields, String value) {
         boolean valid = false;
         for (Field field : fields) {
             if (valid) {
@@ -56,6 +55,7 @@ public class ShortName extends PicaElement {
                 valid = field.getSubfieldId().equals("4") && field.getData().equals("c");
             }
         }
+        return this;
     }     
 
 }

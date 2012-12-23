@@ -31,6 +31,7 @@
  */
 package org.xbib.elements.dublincore;
 
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Property;
 
 /**
@@ -38,19 +39,21 @@ import org.xbib.rdf.Property;
  */
 public interface DublinCoreProperties extends DC {
 
-    Property DC_CREATOR = Property.create(NS_URI + "creator");
-    Property DC_CONTRIBUTOR = Property.create(NS_URI + "contributor");
-    Property DC_COVERAGE = Property.create(NS_URI + "coverage");
-    Property DC_DATE = Property.create(NS_URI  + "date");
-    Property DC_DESCRIPTION = Property.create(NS_URI + "description");
-    Property DC_FORMAT =Property.create( NS_URI + "format");
-    Property DC_IDENTIFIER = Property.create(NS_URI + "identifier");
-    Property DC_LANGUAGE = Property.create(NS_URI + "language");
-    Property DC_PUBLISHER = Property.create(NS_URI + "publisher");
-    Property DC_SOURCE = Property.create(NS_URI + "source");
-    Property DC_SUBJECT = Property.create(NS_URI + "subject");
-    Property DC_RELATION = Property.create(NS_URI + "relation");
-    Property DC_RIGHTS = Property.create(NS_URI + "rights");
-    Property DC_TITLE = Property.create(NS_URI + "title");
-    Property DC_TYPE = Property.create(NS_URI + "type");
+    final Factory factory = Factory.getInstance();
+    
+    Property DC_CREATOR = factory.create(NS_URI + "creator");
+    Property DC_CONTRIBUTOR = factory.create(NS_URI + "contributor");
+    Property DC_COVERAGE = factory.create(NS_URI + "coverage");
+    Property DC_DATE = factory.create(NS_URI  + "date");
+    Property DC_DESCRIPTION = factory.create(NS_URI + "description");
+    Property DC_FORMAT =factory.create( NS_URI + "format");
+    Property DC_IDENTIFIER = factory.create(NS_URI + "identifier");
+    Property DC_LANGUAGE = factory.create(NS_URI + "language");
+    Property DC_PUBLISHER = factory.create(NS_URI + "publisher");
+    Property DC_SOURCE = factory.create(NS_URI + "source");
+    Property DC_SUBJECT = factory.create(NS_URI + "subject");
+    Property DC_RELATION = factory.create(NS_URI + "relation");
+    Property DC_RIGHTS = factory.create(NS_URI + "rights");
+    Property DC_TITLE = factory.create(NS_URI + "title");
+    Property DC_TYPE = factory.create(NS_URI + "type");
 }

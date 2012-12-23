@@ -34,6 +34,8 @@ package org.xbib.query.cql.elasticsearch;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+
+import com.google.common.io.LineProcessor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.logging.Logger;
@@ -41,7 +43,7 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
 
 /**
- * Test Elasticsearch query language generation
+ * BulkIndexerTest Elasticsearch query language generation
 
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -62,18 +64,15 @@ public class ESGeneratorTest extends Assert {
                 ESGenerator generator = new ESGenerator();
                 parser.getCQLQuery().accept(generator);
                 String q = generator.getQueryResult();
-                logger.info("{} --> {} --> {}", 
-                        new Object[]{s[0], q, generator.getRequestResult()});
-                
-                //String pq = QueryParserService.parseQuery(q);                
-                
-                //logger.log(Level.INFO, "ES PARSER: " + pq );                
+                //logger.info("{} --> {} --> {}", s[0], q, generator.getRequestResult() );
+                //String pq = QueryParserService.parseQuery(q);
+                //logger.log(Level.INFO, "ES PARSER: " + pq );
                 //if (s.length > 1) {
                     //assertEquals(s[1], generator.getResult());
                 //}
-                
                 return true;
             }
+
         };
         t.execute("org/xbib/query/cql/elasticsearch/valid", p);
         assertEquals(t.getErrors(), 0);

@@ -37,16 +37,16 @@ import java.sql.SQLException;
 import org.xbib.io.ResultProcessor;
 
 /**
- *  SQL result set processor taht allows delayed close() method
+ *  SQL result set processor with delayed close() method
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SQLResultWithDelayedCloseProcessor implements ResultProcessor<ResultSet> {
+public class SQLResultWithDelayedCloseProcessor implements ResultSetListener {
 
     private ResultSet resultset;
 
     @Override
-    public void process(ResultSet resultset) throws IOException {
+    public void received(ResultSet resultset) throws SQLException, IOException {
         this.resultset = resultset;
     }
 
@@ -54,12 +54,16 @@ public class SQLResultWithDelayedCloseProcessor implements ResultProcessor<Resul
         return resultset;
     }
 
+    public void close(ResultSet results) throws SQLException, IOException {
+    }
+
     public void close() {
         try {
             if (resultset != null) {
                 resultset.close();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
+
         }
     }
 }

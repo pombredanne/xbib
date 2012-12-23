@@ -41,7 +41,7 @@ public enum OutputFormat {
     MODS("application/x-mods"),
     XHTML("application/xhtml+xml");
     
-    String mime;
+    private String mime;
     private static Map<String, OutputFormat> map;
 
     private static void map(String mime, OutputFormat format) {

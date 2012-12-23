@@ -27,7 +27,8 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.Elasticsearch;
+import org.xbib.elasticsearch.Elasticsearch;
 import org.xbib.elasticsearch.OutputFormat;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
@@ -94,9 +95,6 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
      * Create Atom feed
      *
      * @param abdera the Abdera instance
-     * @param feedURI the feed URI
-     * @param feedAuthor the feed author
-     * @param feedConfigLocation the feed config location
      * @param query the query
      * @return the Atom feed or null
      * @throws IOException if Atom feed can not be created
@@ -146,20 +144,20 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             long t0 = System.currentTimeMillis();
             this.builder = new AbderaFeedBuilder(config, query);
             String mediaType = "application/xml";
-            ElasticsearchDAO dao = new ElasticsearchDAO()
-                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName()))
+            Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
+            new Elasticsearch()
                     .newClient(false).newRequest()
                     .setIndex(index)
                     .setType(type)
                     .setFrom(config.getFrom()).setSize(config.getSize())
-                    .fromCQL(query)
-                    .execute()
-                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .cql(query)
+                    .execute(logger)
+                    .format(OutputFormat.formatOf(mediaType))
                     .xmlEventConsumer(builder)
-                    .dispatch();
+                    .dispatchTo(null);
             long t1 = System.currentTimeMillis();
             return builder.getFeed(query, t1 - t0,
-                    dao.getTookInMillis(), config.getFrom(), config.getSize());
+                    -1L, config.getFrom(), config.getSize());
         } catch (IOException e) {
             logger.error("atom feed query " + query + " session is unresponsive", e);
             throw e;

@@ -31,32 +31,16 @@
  */
 package org.xbib.query.cql.elasticsearch;
 
-import java.io.IOException;
-import java.util.ResourceBundle;
-import java.util.Stack;
 import org.xbib.io.util.DateUtil;
-import org.xbib.query.cql.BooleanGroup;
-import org.xbib.query.cql.BooleanOperator;
-import org.xbib.query.cql.Comparitor;
-import org.xbib.query.cql.Identifier;
-import org.xbib.query.cql.Index;
-import org.xbib.query.cql.Modifier;
-import org.xbib.query.cql.ModifierList;
-import org.xbib.query.cql.PrefixAssignment;
-import org.xbib.query.cql.Query;
-import org.xbib.query.cql.Relation;
-import org.xbib.query.cql.ScopedClause;
-import org.xbib.query.cql.SearchClause;
-import org.xbib.query.cql.SimpleName;
-import org.xbib.query.cql.SingleSpec;
-import org.xbib.query.cql.SortSpec;
-import org.xbib.query.cql.SortedQuery;
-import org.xbib.query.cql.SyntaxException;
-import org.xbib.query.cql.Term;
+import org.xbib.query.cql.*;
 import org.xbib.query.cql.Visitor;
 import org.xbib.query.cql.elasticsearch.model.Facet;
 import org.xbib.query.cql.elasticsearch.model.Filter;
 import org.xbib.query.cql.elasticsearch.model.QueryModel;
+
+import java.io.IOException;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 /**
  * Generate Elasticsearch QueryModel DSL from CQL abstract syntax tree
@@ -263,7 +247,7 @@ public class ESGenerator implements Visitor {
         if (node.getBooleanGroup() != null) {
             node.getBooleanGroup().accept(this);
         }
-        // process disjunctive or conjunctive filters
+        // format disjunctive or conjunctive filters
         if (node.getSearchClause().getIndex() != null
                 && model.isFilterContext(node.getSearchClause().getIndex().getContext())) {
             // assume that each operator-less filter is a conjunctive filter
@@ -317,7 +301,7 @@ public class ESGenerator implements Visitor {
         if (node.getIndex() != null) {
             node.getIndex().accept(this);
             String context = node.getIndex().getContext();
-            // process options and facets
+            // format options and facets
             if (model.isOptionContext(context)) {
                 model.addOption(node.getIndex().getName(), node.getTerm().getValue());
             } else if (model.isFacetContext(context)) {

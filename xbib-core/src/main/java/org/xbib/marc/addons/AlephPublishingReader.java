@@ -56,9 +56,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.Mode;
-import org.xbib.io.sql.Query;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
+import org.xbib.io.sql.operator.Query;
 import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
 import org.xbib.io.sql.SQLSession;
 import org.xbib.logging.Logger;
@@ -272,7 +272,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
                     new String[]{"docNumber"}, params);
             SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
             try {
-                query.setResultProcessor(p);
+                query.addListener(p);
                 query.execute(session);
                 ResultSet results = p.getResultSet();
                 if ((results != null) && results.next()) {
@@ -429,9 +429,11 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
     }
 
     private void createSession() throws IOException {
-        this.connection = (Connection<SQLSession>) ConnectionManager.getConnection(uri, false, true);
+        this.connection = ConnectionService.getInstance()
+                .getConnectionFactory(uri.getScheme())
+                .getConnection(uri);
         this.session = connection.createSession();
-        session.open(Mode.READ);
+        session.open(Session.Mode.READ);
         if (!session.isOpen()) {
             throw new IOException("session could not be opened");
         }

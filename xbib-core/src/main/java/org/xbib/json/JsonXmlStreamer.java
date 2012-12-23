@@ -47,8 +47,7 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 
 /**
  * Write JSON stream to XML stream. This is realized by transforming
@@ -59,21 +58,19 @@ import org.xbib.xml.SimpleNamespaceContext;
  */
 public class JsonXmlStreamer {
 
-    //private static final Logger logger = Logger.getLogger(JsonXmlStreamer.class.getName());
-
     private final static JsonFactory jsonFactory = new JsonFactory();
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-    private NamespaceContext context;
+    private XMLNamespaceContext context;
     private QName root;
     private Stack<QName> elements;
     private JsonXmlValueMode mode;
 
     public JsonXmlStreamer(JsonXmlValueMode mode) {
-        this(SimpleNamespaceContext.getInstance(), mode);
+        this(XMLNamespaceContext.getInstance(), mode);
     }
     
-    public JsonXmlStreamer(NamespaceContext context, JsonXmlValueMode mode) {
+    public JsonXmlStreamer(XMLNamespaceContext context, JsonXmlValueMode mode) {
         this.context = context;
         this.elements = new Stack();
         this.mode = mode;

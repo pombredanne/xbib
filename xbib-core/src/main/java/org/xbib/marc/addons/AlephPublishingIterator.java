@@ -38,9 +38,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.Mode;
-import org.xbib.io.sql.Query;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
+import org.xbib.io.sql.operator.Query;
 import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
 import org.xbib.io.sql.SQLSession;
 import org.xbib.logging.Logger;
@@ -166,12 +166,14 @@ public class AlephPublishingIterator implements Closeable, Iterator<Integer> {
         this.count = 0;
         SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
         try {
-            this.connection = (Connection<SQLSession>) ConnectionManager.getConnection(uri);
+            this.connection = ConnectionService.getInstance()
+                    .getConnectionFactory("jdbc")
+                    .getConnection(uri);
             this.session = connection.createSession();
-            session.open(Mode.READ);
+            session.open(Session.Mode.READ);
             Query query = new Query("select /*+ index(z00p z00p_id5) */ z00p_doc_number from " + library
                     + ".z00p where z00p_set = '" + name + "' and z00p_timestamp between '" + fromTime + "' and '" + toTime + "'");
-            query.setResultProcessor(p);
+            query.addListener(p);
             query.execute(session);
             this.results = p.getResultSet();
         } catch (IOException e) {

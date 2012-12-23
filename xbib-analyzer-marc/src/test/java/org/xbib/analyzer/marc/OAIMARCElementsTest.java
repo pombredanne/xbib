@@ -43,7 +43,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
 public class OAIMARCElementsTest {

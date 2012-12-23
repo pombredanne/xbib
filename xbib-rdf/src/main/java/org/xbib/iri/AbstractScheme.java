@@ -17,10 +17,12 @@
  */
 package org.xbib.iri;
 
+import java.io.Serializable;
+
 /**
  * Base implementation for IRI scheme providers
  */
-public abstract class AbstractScheme implements Scheme {
+public abstract class AbstractScheme implements Scheme, Serializable {
 
     protected final String name;
     protected final int port;

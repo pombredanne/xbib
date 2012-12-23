@@ -29,7 +29,6 @@ public class BulkWrite extends AbstractWrite {
         return false;
     }
 
-    @Override
     public void flush(Session session) throws IOException {
         // not required
     }

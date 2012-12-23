@@ -33,9 +33,10 @@ package org.xbib.marc.addons;
 
 import java.io.IOException;
 import java.net.URI;
+
+import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
+import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
-import org.xbib.elements.mab.MABBuilder;
-import org.xbib.elements.mab.MABContext;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.io.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;

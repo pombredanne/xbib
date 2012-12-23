@@ -31,23 +31,24 @@
  */
 package org.xbib.rdf.io.xml;
 
-import java.net.URI;
 import java.util.Stack;
 import javax.xml.namespace.QName;
+import org.xbib.rdf.Factory;
+import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.ResourceContext;
-import org.xbib.xml.NamespaceContext;
+import org.xbib.rdf.context.ResourceContext;
 
-public abstract class XmlResourceHandler extends XmlHandler {
+/**
+ * The XML resource handler can create nested RDF resources from arbitrary XML.
+ */
+public abstract class XmlResourceHandler extends AbstractXmlHandler {
+
+    private final Factory factory = Factory.getInstance();
 
     private Stack<Element> stack = new Stack();
 
     public XmlResourceHandler(ResourceContext resourceContext) {
         super(resourceContext);
-    }
-
-    public XmlResourceHandler(ResourceContext resourceContext, NamespaceContext context) {
-        super(resourceContext, context);
     }
 
     @Override
@@ -64,9 +65,11 @@ public abstract class XmlResourceHandler extends XmlHandler {
 
     @Override
     public void openPredicate(QName parent, QName name, int level) {
-        URI uri = URI.create(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
-        // always create resource (will compact later)
-        Resource r = stack.peek().getResource().newResource(uri.toString());
+        // nested resource creation
+        // always create newResource, even if there will be only a single literal. We will compact later.
+        Resource r = stack.peek()
+                .getResource()
+                .newResource(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
         stack.push(new Element(r));
     }
 
@@ -77,26 +80,26 @@ public abstract class XmlResourceHandler extends XmlHandler {
 
     @Override
     public void closePredicate(QName parent, QName name, int level) {
-        URI uri = URI.create(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
+        Property p = (Property)factory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
         Element element = stack.pop();
         if (level < 0) {
-            // it's a resource
-            stack.peek().getResource().add(resourceContext.resource().toPredicate(uri), element.getResource());
+            // it's a newResource
+            stack.peek().getResource().add(p, element.getResource());
         } else {
             // it's a property
             if (content() != null) {
-                element.getResource().property(resourceContext.resource().toPredicate(uri),
+                element.getResource().property(p,
                         resourceContext.resource().toObject(content()));
-                // compact predicate because it has only a single value
-                stack.peek().getResource().compact(resourceContext.resource().toPredicate(uri));
+                // compact because it has only a single value
+                stack.peek().getResource().compact(p);
             }
         }
     }
 
     class Element {
 
-        final Resource resource;
-        Object value;
+        private final Resource resource;
+        private Object value;
 
         Element(Resource resource) {
             this.resource = resource;

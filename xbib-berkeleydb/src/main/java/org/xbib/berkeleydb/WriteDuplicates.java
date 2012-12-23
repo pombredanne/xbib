@@ -99,7 +99,6 @@ public class WriteDuplicates extends AbstractWrite {
         }
     }
 
-    @Override
     public void flush(Session session) throws IOException {
         // not needed
     }

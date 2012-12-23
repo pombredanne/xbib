@@ -34,7 +34,9 @@ package org.xbib.oai.client;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
-import org.xbib.io.Mode;
+
+import org.xbib.io.Session;
+import org.xbib.io.http.netty.HttpResponse;
 import org.xbib.io.http.netty.HttpSession;
 import org.xbib.io.util.DateUtil;
 import org.xbib.oai.GetRecordRequest;
@@ -48,16 +50,15 @@ import org.xbib.oai.ListSetsRequest;
 import org.xbib.oai.ListSetsResponse;
 import org.xbib.oai.MetadataReader;
 import org.xbib.oai.OAI;
-import org.xbib.oai.OAIOperation;
 import org.xbib.oai.OAIRequest;
 import org.xbib.oai.OAIResponse;
-import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SimpleOAIClient implements OAIClient {
 
     private HttpSession session;
-    private AbstractResponseProcessor processor;
+    private AbstractResponseListener listener;
+    private OAIResponse response;
     private StylesheetTransformer transformer;
     private URI uri;
     private String proxyhost;
@@ -105,46 +106,46 @@ public class SimpleOAIClient implements OAIClient {
     public SimpleOAIClient prepareIdentify(IdentifyRequest request, IdentifyResponse response)
             throws IOException {
         open();
-        session.addRequest(new OAIRequest(uri).addParameter(OAI.VERB_PARAMETER, "Identify"));
-        processor = new IdentifyResponseProcessor(request, response, transformer);
+        session.add(new OAIRequest(uri).addParameter(OAI.VERB_PARAMETER, "Identify"));
+        listener = new IdentifyResponseListener(request, response, transformer);
         return this;
     }
 
     @Override
     public SimpleOAIClient prepareListIdentifiers(ListIdentifiersRequest request, OAIResponse response)
-            throws OAIException, IOException {
+            throws IOException {
         open();
         OAIRequest oai = new OAIRequest(uri).addParameter(OAI.VERB_PARAMETER, "ListIdentifiers");
-        session.addRequest(oai);
+        session.add(oai);
         return this;
     }
 
     @Override
     public SimpleOAIClient prepareListMetadataFormats(ListMetadataFormatsRequest request, OAIResponse response)
-            throws OAIException, IOException {
+            throws IOException {
         open();
         OAIRequest oai = new OAIRequest(uri).addParameter(OAI.VERB_PARAMETER, "ListMetadataFormats");
-        session.addRequest(oai);
+        session.add(oai);
         return this;
     }
 
     @Override
     public SimpleOAIClient prepareListSets(ListSetsRequest request, ListSetsResponse response)
-            throws OAIException, IOException {
+            throws IOException {
         open();
         final OAIRequest oai = request.getResumptionToken() != null
                 ? new OAIRequest(uri).addParameter(OAI.RESUMPTION_TOKEN_PARAMETER, request.getResumptionToken().toString())
                 : new OAIRequest(uri);
         oai.addParameter(OAI.VERB_PARAMETER, "ListSets");
-        session.addRequest(oai);
-        ListSetsResponseProcessor p = new ListSetsResponseProcessor(request, response, transformer);
-        this.processor = p;
+        session.add(oai);
+        ListSetsResponseListener p = new ListSetsResponseListener(request, response, transformer);
+        this.listener = p;
         return this;
     }
 
     @Override
     public SimpleOAIClient prepareListRecords(ListRecordsRequest request, ListRecordsResponse response)
-            throws OAIException, IOException {
+            throws IOException {
         open();
         final OAIRequest oai = request.getResumptionToken() != null
                 ? new OAIRequest(uri).addParameter(OAI.RESUMPTION_TOKEN_PARAMETER, request.getResumptionToken().toString())
@@ -152,44 +153,47 @@ public class SimpleOAIClient implements OAIClient {
         oai.addParameter(OAI.VERB_PARAMETER, "ListRecords");
         oai.setProxy(proxyhost, proxyport);
         oai.setTimeout(timeout);
-        session.addRequest(oai);
-        ListRecordsResponseProcessor p = new ListRecordsResponseProcessor(request, response, transformer);
+        session.add(oai);
+        ListRecordsResponseListener p = new ListRecordsResponseListener(request, response, transformer);
         p.setMetadataReader(metadataReader);
-        this.processor = p;
+        this.listener = p;
         return this;
     }
 
     @Override
     public SimpleOAIClient prepareGetRecord(GetRecordRequest request, OAIResponse response)
-            throws OAIException, IOException {
+            throws IOException {
         open();
         OAIRequest oai = new OAIRequest(uri).addParameter(OAI.VERB_PARAMETER, "GetRecord");
-        session.addRequest(oai);
+        session.add(oai);
+        // TODO
         return this;
     }
 
     @Override
-    public OAIOperation execute() throws IOException, OAIException {
-        OAIOperation op = new OAIOperation();
+    public void execute() throws IOException {
         if (session != null && session.isOpen()) {
-            op.addProcessor(processor);
-            op.prepareExecution(session);
-            op.execute();
-            processor = null;
-        }
-        return op;
+            if (listener != null) {
+                session.addListener(listener);
+            }
+            session.execute();
+            if (listener != null) {
+                session.removeListener(listener);
+            }
+        } else throw new IOException("can't execute");
     }
 
     @Override
-    public OAIOperation execute(long l, TimeUnit tu) throws IOException {
-        OAIOperation op = new OAIOperation();
+    public void execute(long l, TimeUnit tu) throws IOException {
         if (session != null && session.isOpen()) {
-            op.addProcessor(processor);
-            op.prepareExecution(session);
-            op.execute(l, tu);
-            processor = null;
-        }
-        return op;
+            if (listener != null) {
+                session.addListener(listener);
+            }
+            session.execute(l, tu);
+            if (listener != null) {
+                session.removeListener(listener);
+            }
+        } else throw new IOException("can't execute");
     }
 
     private void open() throws IOException {
@@ -197,7 +201,7 @@ public class SimpleOAIClient implements OAIClient {
             return;
         }
         session = new HttpSession();
-        session.open(Mode.READ);
+        session.open(Session.Mode.READ);
     }
 
     public void close() throws IOException {
@@ -205,5 +209,9 @@ public class SimpleOAIClient implements OAIClient {
             session.close();
             session = null;
         }
+    }
+
+    public HttpResponse getResponse() {
+        return session.getResult(uri);
     }
 }

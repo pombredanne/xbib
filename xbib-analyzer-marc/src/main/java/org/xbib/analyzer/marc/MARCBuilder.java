@@ -31,14 +31,13 @@
  */
 package org.xbib.analyzer.marc;
 
-import java.net.URI;
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ElementContextFactory;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.rdf.Property;
 
@@ -93,7 +92,7 @@ public class MARCBuilder
     
     private void checkForIdentifierPresent() {
         if (context().resource().id() == null) {
-            context().resource().id(URI.create("http://xbib.org#"+context().increment()));
+            context().resource().id(IRI.create("http://xbib.org#"+context().increment()));
         }
     }
     

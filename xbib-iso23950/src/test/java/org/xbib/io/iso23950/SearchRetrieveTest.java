@@ -32,7 +32,9 @@
 package org.xbib.io.iso23950;
 
 import org.testng.annotations.Test;
-import org.xbib.io.ConnectionManager;
+import org.xbib.io.Connection;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -50,13 +52,20 @@ public class SearchRetrieveTest {
         int from = 1;
         int length = 10;
 
-        ZConnection connection = (ZConnection) ConnectionManager.getConnection(URI.create(address));
-        ZSession session = connection.createSession();
-        PQFSearchRetrieve op = new PQFSearchRetrieve();
-        op.setDatabase(Arrays.asList(database))
-                .setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName)
-                .setPreferredRecordSyntax(preferredRecordSyntax).setFrom(from).setSize(length);
-        op.execute(session);
+        URI uri = URI.create(address);
+        Connection<Session> connection = ConnectionService.getInstance()
+                .getConnectionFactory(uri.getScheme())
+                .getConnection(uri);
+        ZSession session = (ZSession) connection.createSession();
+        PQFSearchRetrieve searchRetrieve = new PQFSearchRetrieve();
+        searchRetrieve.setDatabase(Arrays.asList(database))
+                .setQuery(query)
+                .setResultSetName(resultSetName)
+                .setElementSetName(elementSetName)
+                .setPreferredRecordSyntax(preferredRecordSyntax)
+                .setFrom(from)
+                .setSize(length);
+        searchRetrieve.execute(session, null);
         session.close();
         connection.close();
     }

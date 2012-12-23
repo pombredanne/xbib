@@ -1,5 +1,0 @@
-org.xbib.io.NullConnectionFactory
-org.xbib.io.file.FileConnectionFactory
-org.xbib.io.sql.SQLConnectionFactory
-org.xbib.io.http.netty.HTTPConnectionFactory
-org.xbib.io.tar.TarConnectionFactory

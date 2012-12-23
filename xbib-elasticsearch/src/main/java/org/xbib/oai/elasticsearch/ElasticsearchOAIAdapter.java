@@ -38,9 +38,10 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.ElasticsearchDAO;
+import org.xbib.elasticsearch.Elasticsearch;
+import org.xbib.elasticsearch.Elasticsearch;
+import org.xbib.elasticsearch.Formatter;
 import org.xbib.elasticsearch.OutputFormat;
-import org.xbib.elasticsearch.OutputProcessor;
 import org.xbib.elasticsearch.OutputStatus;
 import org.xbib.io.util.DateUtil;
 import org.xbib.logging.Logger;
@@ -108,18 +109,21 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
         String mediaType = "application/x-mods";
         String query = getQuery(request);        
         try {
-            ElasticsearchDAO dao = new ElasticsearchDAO()
-                    .logger(LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName()))
-                    .newClient(false).newRequest()
-                    .setIndex(getIndex(request)).setType(getType(request))
-                    .setFrom(request.getResumptionToken().getPosition()).setSize(1000)
+            Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName());
+            new Elasticsearch()
+                    .newClient(false)
+                    .newRequest()
+                    .setIndex(getIndex(request))
+                    .setType(getType(request))
+                    .setFrom(request.getResumptionToken().getPosition())
+                    .setSize(1000)
                     .query(query)
-                    .execute()
-                    .outputFormat(OutputFormat.formatOf(mediaType))
+                    .execute(logger)
+                    .format(OutputFormat.formatOf(mediaType))
                     .styleWith(transformer, getStylesheet(), response.getOutput())
-                    .dispatchTo(new OutputProcessor() {
+                    .dispatchTo(new Formatter() {
                 @Override
-                public void process(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
+                public void format(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
                     response.getOutput().write(message);
                 }
             });

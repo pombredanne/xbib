@@ -24,10 +24,11 @@ import java.net.URI;
 import org.xbib.berkeleydb.BerkeleyDBSession;
 import org.xbib.berkeleydb.Write;
 import org.xbib.elements.output.DefaultElementOutput;
-import org.xbib.io.Mode;
+import org.xbib.io.Session;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
 public class BerkeleyDBResourceOutput<C extends ResourceContext>
     extends DefaultElementOutput<C> {
@@ -38,14 +39,14 @@ public class BerkeleyDBResourceOutput<C extends ResourceContext>
     private long counter;
 
     public void connect(URI uri) throws IOException {
-         this.session =  new BerkeleyDBSession(uri);
+         this.session =  new BerkeleyDBSession(IRI.create(uri.toString()));
          this.write = new Write();
          connect();
      }
 
     private void connect() {
         try {
-            session.open(Mode.WRITE);
+            session.open(Session.Mode.WRITE);
             if (!session.isOpen()) {
                 logger.error("unable to open session {}", session);
             } else {

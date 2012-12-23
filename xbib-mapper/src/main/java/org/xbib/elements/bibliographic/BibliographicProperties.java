@@ -31,6 +31,7 @@
  */
 package org.xbib.elements.bibliographic;
 
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Property;
 
 /**
@@ -38,42 +39,44 @@ import org.xbib.rdf.Property;
  */
 public interface BibliographicProperties extends BIB {
 
-    Property BIB_TITLE_ABBREVIATED = Property.create(NS_URI + "/titleAbbreviated");
-    Property BIB_TITLE_UNIFORM = Property.create(NS_URI + "/titleUniform");
-    Property BIB_TITLE_TRANSLATED = Property.create(NS_URI + "/titleTranslated");
-    Property BIB_TITLE_ALTERNATIVE = Property.create(NS_URI + "/titleAlternative");
-    Property BIB_TITLE_SERIES = Property.create(NS_URI + "/titleSeries");
-
-    Property BIB_NAME = Property.create(NS_URI + "/name");
-    Property BIB_NAME_PERSONAL = Property.create(NS_URI + "/namePersonal");
-    Property BIB_NAME_PERSONAL_FAMILY = Property.create(NS_URI +"/namePersonalFamily");
-    Property BIB_NAME_PERSONAL_GIVEN = Property.create(NS_URI + "/namePersonalGiven");
-    Property BIB_NAME_CORPORATE = Property.create(NS_URI + "/nameCorporate");
-    Property BIB_NAME_CONFERENCE = Property.create(NS_URI + "/nameConference");
+    final Factory factory = Factory.getInstance();
     
-    Property BIB_SUBJECT = Property.create(NS_URI + "/subject");
-    Property BIB_SUBJECT_PLACE = Property.create(NS_URI + "/subjectPlace");
-    Property BIB_SUBJECT_TITLE = Property.create(NS_URI + "/subjectTitle");
-    Property BIB_SUBJECT_NAME = Property.create(NS_URI + "/subjectName");
-    Property BIB_SUBJECT_OCCUPATION = Property.create(NS_URI +"/subjectOccupation");
-    
-    Property BIB_DATE = Property.create(NS_URI + "/date");
-    Property BIB_DATE_ISSUED = Property.create(NS_URI + "/dateIssued");
-    Property BIB_DATE_CREATED = Property.create(NS_URI + "/dateCreated");
-    Property BIB_DATE_VALID = Property.create(NS_URI + "/dateValid");
-    Property BIB_DATE_MODIFIED = Property.create(NS_URI + "/dateModified");
-    Property BIB_DATE_COPYRIGHT = Property.create(NS_URI + "/dateCopyright");
+    Property BIB_TITLE_ABBREVIATED = factory.create(NS_URI + "/titleAbbreviated");
+    Property BIB_TITLE_UNIFORM = factory.create(NS_URI + "/titleUniform");
+    Property BIB_TITLE_TRANSLATED = factory.create(NS_URI + "/titleTranslated");
+    Property BIB_TITLE_ALTERNATIVE = factory.create(NS_URI + "/titleAlternative");
+    Property BIB_TITLE_SERIES = factory.create(NS_URI + "/titleSeries");
 
-    Property BIB_VOLUME = Property.create(NS_URI + "/volume");
-    Property BIB_ISSUE = Property.create(NS_URI + "/issue");
-    Property BIB_STARTPAGE = Property.create(NS_URI + "/startPage");
-    Property BIB_ENDPAGE = Property.create(NS_URI + "/endPage");
-    Property BIB_GENRE = Property.create(NS_URI + "/genre");
-    Property BIB_AUDIENCE = Property.create(NS_URI + "/audience");
-    Property BIB_CLASSIFICATION = Property.create(NS_URI +"/classification");
-    Property BIB_ORIGINPLACE = Property.create(NS_URI + "/originPlace");
-    Property BIB_EDITION = Property.create(NS_URI + "/edition");
-    Property BIB_ISSUANCE = Property.create(NS_URI + "/issuance");
+    Property BIB_NAME = factory.create(NS_URI + "/name");
+    Property BIB_NAME_PERSONAL = factory.create(NS_URI + "/namePersonal");
+    Property BIB_NAME_PERSONAL_FAMILY = factory.create(NS_URI +"/namePersonalFamily");
+    Property BIB_NAME_PERSONAL_GIVEN = factory.create(NS_URI + "/namePersonalGiven");
+    Property BIB_NAME_CORPORATE = factory.create(NS_URI + "/nameCorporate");
+    Property BIB_NAME_CONFERENCE = factory.create(NS_URI + "/nameConference");
+    
+    Property BIB_SUBJECT = factory.create(NS_URI + "/subject");
+    Property BIB_SUBJECT_PLACE = factory.create(NS_URI + "/subjectPlace");
+    Property BIB_SUBJECT_TITLE = factory.create(NS_URI + "/subjectTitle");
+    Property BIB_SUBJECT_NAME = factory.create(NS_URI + "/subjectName");
+    Property BIB_SUBJECT_OCCUPATION = factory.create(NS_URI +"/subjectOccupation");
+    
+    Property BIB_DATE = factory.create(NS_URI + "/date");
+    Property BIB_DATE_ISSUED = factory.create(NS_URI + "/dateIssued");
+    Property BIB_DATE_CREATED = factory.create(NS_URI + "/dateCreated");
+    Property BIB_DATE_VALID = factory.create(NS_URI + "/dateValid");
+    Property BIB_DATE_MODIFIED = factory.create(NS_URI + "/dateModified");
+    Property BIB_DATE_COPYRIGHT = factory.create(NS_URI + "/dateCopyright");
+
+    Property BIB_VOLUME = factory.create(NS_URI + "/volume");
+    Property BIB_ISSUE = factory.create(NS_URI + "/issue");
+    Property BIB_STARTPAGE = factory.create(NS_URI + "/startPage");
+    Property BIB_ENDPAGE = factory.create(NS_URI + "/endPage");
+    Property BIB_GENRE = factory.create(NS_URI + "/genre");
+    Property BIB_AUDIENCE = factory.create(NS_URI + "/audience");
+    Property BIB_CLASSIFICATION = factory.create(NS_URI +"/classification");
+    Property BIB_ORIGINPLACE = factory.create(NS_URI + "/originPlace");
+    Property BIB_EDITION = factory.create(NS_URI + "/edition");
+    Property BIB_ISSUANCE = factory.create(NS_URI + "/issuance");
     
    
 }

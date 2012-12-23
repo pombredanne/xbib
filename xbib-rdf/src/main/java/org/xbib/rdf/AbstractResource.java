@@ -32,7 +32,10 @@
 package org.xbib.rdf;
 
 import com.google.common.collect.Multimap;
-import java.net.URI;
+import org.xbib.iri.IRI;
+import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.simple.SimpleResource;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +50,11 @@ import java.util.Set;
 public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
         implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
 
-    protected URI identifier;
+    protected transient final Factory<S, P, O> factory = Factory.getInstance();
+    protected final P TYPE;
+    protected final P LANG;
+    protected ResourceContext context;
+    protected IRI identifier;
     protected S subject;
     protected O object;
     protected Multimap<P, O> properties;
@@ -57,9 +64,11 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     public AbstractResource() {
         this.properties = newProperties();
         this.resources = newResources();
+        TYPE = factory.asPredicate(RDF.RDF_TYPE);
+        LANG = factory.asPredicate(RDF.RDF_LANGUAGE);
     }
 
-    protected AbstractResource(URI identifier) {
+    protected AbstractResource(IRI identifier) {
         this();
         id(identifier);
     }
@@ -69,28 +78,36 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         object(value);
     }
 
+    public AbstractResource<S, P, O> context(ResourceContext context) {
+        this.context = context;
+        return this;
+    }
+
+    public ResourceContext context() {
+        return context;
+    }
+
     @Override
-    public final AbstractResource<S,P,O> id(URI identifier) {
+    public final AbstractResource<S, P, O> id(IRI identifier) {
         this.identifier = identifier;
         subject(toSubject(identifier));
         return this;
     }
 
     @Override
-    public final AbstractResource<S,P,O> id(String identifier) {
-        this.identifier = URI.create(identifier);
+    public final AbstractResource<S, P, O> id(String identifier) {
+        this.identifier = IRI.create(identifier);
         subject(toSubject(this.identifier));
         return this;
     }
-    
-    
+
     @Override
-    public URI id() {
+    public IRI id() {
         return identifier;
     }
 
     @Override
-    public Resource<S,P,O> subject(S subject) {
+    public Resource<S, P, O> subject(S subject) {
         this.subject = subject;
         return this;
     }
@@ -101,7 +118,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public Resource<S,P,O> object(O object) {
+    public Resource<S, P, O> object(O object) {
         this.object = object;
         return this;
     }
@@ -112,33 +129,41 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public Literal<O> type(URI type) {
-        throw new UnsupportedOperationException();
+    public Resource<S, P, O> type(IRI type) {
+        add(TYPE, new SimpleResource().id(type));
+        return this;
     }
 
     @Override
-    public URI type() {
-        throw new UnsupportedOperationException();
+    public IRI type() {
+        Collection<Resource<S, P, O>> c = resources.get(TYPE);
+        return c != null ? c.iterator().hasNext() ?
+                c.iterator().next().id()
+                : null : null;
     }
 
     @Override
-    public Literal<O> language(String lang) {
-        throw new UnsupportedOperationException();
+    public Resource<S, P, O> language(String lang) {
+        property(LANG, lang);
+        return this;
     }
 
     @Override
     public String language() {
-        throw new UnsupportedOperationException();
+        Collection<O> c = properties.get(LANG);
+        return c != null ? c.iterator().hasNext() ?
+                c.iterator().next().nativeValue().toString()
+                : null : null;
     }
 
     @Override
     public Resource<S, P, O> property(String predicate, String value) {
-        return property(toPredicate(predicate), value);
+        return property(factory.asPredicate(predicate), value);
     }
 
     @Override
     public Resource<S, P, O> property(String predicate, O value) {
-        return property(toPredicate(predicate), value);
+        return property(factory.asPredicate(predicate), value);
     }
 
     @Override
@@ -149,7 +174,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     @Override
     public Resource<S, P, O> property(P predicate, O object) {
         if (predicate == null) {
-            throw new IllegalArgumentException("unable to add null predicate");
+            throw new IllegalArgumentException("unable to add a null predicate");
         }
         // drop null objects silently
         if (object != null) {
@@ -159,11 +184,11 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public Resource<S, P, O> newResource(String predicateStr) {
-        P predicate = toPredicate(predicateStr);
+    public Resource<S, P, O> newResource(String predicate) {
+        P p = factory.asPredicate(predicate);
         BlankNode<S, P, O> bNode = newBlankNode();
-        resources.put(predicate, bNode);
-        properties.put(predicate, (O) bNode);
+        resources.put(p, bNode);
+        properties.put(p, (O) bNode);
         return bNode;
     }
 
@@ -183,7 +208,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         if (statement.getSubject() instanceof BlankNode) {
             // accept only blank node subjects as property if this resource
             // blank node identifier matches
-            boolean b = statement.getSubject().id().equals(subject().id());
+            boolean b = subject().id() != null && subject().id().equals(statement.getSubject().id());
             if (b) {
                 // this belongs to us
                 properties.put(statement.getPredicate(), statement.getObject());
@@ -201,7 +226,6 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
             }
         }
         if (statement.getObject() instanceof BlankNode) {
-            //if (!properties.containsKey(statement.getPredicate())) {
             resources.put(statement.getPredicate(),
                     (BlankNode<S, P, O>) statement.getObject());
             properties.put(statement.getPredicate(), statement.getObject());
@@ -222,7 +246,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
             BlankNode<S, P, O> bNode = newBlankNode();
             resources.put(predicate, bNode);
             properties.put(predicate, (O) bNode);
-            // take over all statements from resource
+            // copy statements from resource
             Iterator<Statement<S, P, O>> it = resource.iterator();
             while (it.hasNext()) {
                 Statement<S, P, O> stmt = it.next();
@@ -231,7 +255,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
         } else {
             resources.put(predicate, resource);
             properties.put(predicate, (O) resource);
-            // take over all statements from resource
+            // copy all statements from resource
             Iterator<Statement<S, P, O>> it = resource.iterator();
             while (it.hasNext()) {
                 Statement<S, P, O> stmt = it.next();
@@ -242,9 +266,8 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public P toPredicate(final Object predicate) {
-        return (P) Property.create(predicate instanceof URI ? (URI) predicate
-                : URI.create(predicate.toString()));
+    public boolean add(String predicate, Resource<S, P, O> resource) {
+        return add(factory.asPredicate(predicate), resource);
     }
 
     @Override
@@ -266,10 +289,20 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
+    public Set<P> predicateSet(String subject) {
+        return predicateSet(toSubject(subject));
+    }
+
+    @Override
     public Collection<O> objectSet(P predicate) {
         return properties.get(predicate);
     }
-    
+
+    @Override
+    public Collection<O> objectSet(String predicate) {
+        return properties.get(factory.asPredicate(predicate));
+    }
+
     /**
      * Compact a predicate. Under the predicate, there is a single blank node
      * object with a single value for the same predicate. In such case, the
@@ -312,7 +345,7 @@ public abstract class AbstractResource<S extends Resource<?, ?, ?>, P extends Pr
     }
 
     @Override
-    public Resource<S,P,O> setDeleted(boolean delete) {
+    public Resource<S, P, O> setDeleted(boolean delete) {
         this.deleted = delete;
         return this;
     }

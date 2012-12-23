@@ -48,7 +48,7 @@ public interface Element<K,V,B extends ElementBuilder>  {
      * Set settings for this element from configuration
      * @param settings 
      */
-    void setSettings(Map settings);
+    Element<K,V,B> setSettings(Map settings);
     
     /**
      * Get settings.
@@ -59,7 +59,7 @@ public interface Element<K,V,B extends ElementBuilder>  {
     /**
      * Begin building the element
      */
-    void begin();
+    Element<K,V,B> begin();
     
     /**
      * Build an element by adding a key/value information using a builder
@@ -67,10 +67,10 @@ public interface Element<K,V,B extends ElementBuilder>  {
      * @param key
      * @param value 
      */
-    void build(B builder, K key, V value);
+    Element<K,V,B> build(B builder, K key, V value);
 
     /**
      * End building the element
      */
-    void end();
+    Element<K,V,B> end();
 }

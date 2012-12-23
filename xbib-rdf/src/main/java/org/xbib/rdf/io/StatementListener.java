@@ -31,12 +31,12 @@
  */
 package org.xbib.rdf.io;
 
-import java.net.URI;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Statement;
 
 public interface StatementListener<S,P,O> {
     
-    void newIdentifier(URI identifier);
+    void newIdentifier(IRI identifier);
     
     void statement(Statement<S,P,O> statement);
     

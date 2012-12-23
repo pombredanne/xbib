@@ -36,12 +36,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.xml.stream.events.XMLEvent;
 import org.testng.annotations.Test;
 import org.xbib.io.Request;
-import org.xbib.io.http.netty.HttpOperation;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUResponseAdapter;
@@ -119,9 +117,11 @@ public class AsyncClientTest {
             });
             StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
             client.setStylesheetTransformer(transformer);
-            HttpOperation op = client.searchRetrieve(request, response);
-            op.execute(30L, TimeUnit.SECONDS);
-            logger.info("client " + client.getURI() + " took " + op.getResponseMillis() + "ms");
+            client.searchRetrieve(request, response);
+            logger.info("client {} took {}ms",
+                    client.getURI(),
+                    client.getResponseMillis()
+            );
             client.close();
         }
     }

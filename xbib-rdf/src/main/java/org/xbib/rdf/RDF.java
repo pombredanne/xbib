@@ -31,7 +31,7 @@
  */
 package org.xbib.rdf;
 
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 public interface RDF {
 
@@ -39,23 +39,24 @@ public interface RDF {
     
     String NS_PREFIX = "rdf";
     
-    URI RDF = URI.create(NS_URI);
-    URI RDF_RDF = URI.create(NS_URI + "RDF");
-    URI RDF_DESCRIPTION = URI.create(NS_URI + "Description");
-    URI RDF_ABOUT = URI.create(NS_URI + "about");
-    URI RDF_RESOURCE = URI.create(NS_URI + "resource");
-    URI RDF_NODE_ID = URI.create(NS_URI + "nodeID");
-    URI RDF_ID = URI.create(NS_URI + "ID");
-    URI RDF_LI = URI.create(NS_URI + "li");
-    URI RDF_TYPE = URI.create(NS_URI + "type");    
-    URI RDF_SUBJECT = URI.create(NS_URI + "subject");    
-    URI RDF_PREDICATE = URI.create(NS_URI + "predicate");    
-    URI RDF_OBJECT = URI.create(NS_URI + "object");    
-    URI RDF_STATEMENT = URI.create(NS_URI + "Statement"); 
-    URI RDF_XMLLITERAL = URI.create(NS_URI + "XMLLiteral"); 
-    URI RDF_NIL = URI.create(NS_URI + "nil"); 
-    URI RDF_FIRST = URI.create(NS_URI + "first"); 
-    URI RDF_REST = URI.create(NS_URI + "rest"); 
-    
-    
+    IRI RDF = IRI.create(NS_URI);
+    IRI RDF_RDF = IRI.create(NS_URI + "RDF");
+    IRI RDF_DESCRIPTION = IRI.create(NS_URI + "Description");
+    IRI RDF_ABOUT = IRI.create(NS_URI + "about");
+    IRI RDF_RESOURCE = IRI.create(NS_URI + "resource");
+    IRI RDF_NODE_ID = IRI.create(NS_URI + "nodeID");
+    IRI RDF_ID = IRI.create(NS_URI + "ID");
+    IRI RDF_LI = IRI.create(NS_URI + "li");
+    IRI RDF_TYPE = IRI.create(NS_URI + "type");    
+    IRI RDF_SUBJECT = IRI.create(NS_URI + "subject");    
+    IRI RDF_PREDICATE = IRI.create(NS_URI + "predicate");    
+    IRI RDF_OBJECT = IRI.create(NS_URI + "object");    
+    IRI RDF_STATEMENT = IRI.create(NS_URI + "Statement"); 
+    IRI RDF_XMLLITERAL = IRI.create(NS_URI + "XMLLiteral"); 
+    IRI RDF_NIL = IRI.create(NS_URI + "nil"); 
+    IRI RDF_FIRST = IRI.create(NS_URI + "first"); 
+    IRI RDF_REST = IRI.create(NS_URI + "rest");
+    // non-standard tag for language
+    IRI RDF_LANGUAGE = IRI.create(NS_URI + "language");
+
 }

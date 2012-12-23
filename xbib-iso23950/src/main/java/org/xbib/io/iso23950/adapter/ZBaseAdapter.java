@@ -31,24 +31,16 @@
  */
 package org.xbib.io.iso23950.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.ErrorResultProcessor;
-import org.xbib.io.ResultProcessor;
+import org.xbib.io.Connection;
+import org.xbib.io.ConnectionService;
 import org.xbib.io.iso23950.AbstractSearchRetrieve;
 import org.xbib.io.iso23950.Diagnostics;
+import org.xbib.io.iso23950.ErrorRecord;
 import org.xbib.io.iso23950.InitOperation;
 import org.xbib.io.iso23950.Record;
+import org.xbib.io.iso23950.RecordHandler;
 import org.xbib.io.iso23950.RecordIdentifierSetter;
 import org.xbib.io.iso23950.ZAdapter;
-import org.xbib.io.iso23950.ZConnection;
 import org.xbib.io.iso23950.ZSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -59,10 +51,19 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
 public abstract class ZBaseAdapter implements ZAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(ZBaseAdapter.class.getName());
-    private ZConnection connection;
+    private Connection<ZSession> connection;
     private ZSession session;
     private boolean connected;
     private boolean authenticated;
@@ -89,7 +90,7 @@ public abstract class ZBaseAdapter implements ZAdapter {
         this.transformer = transformer;
         return this;
     }
-    
+
     @Override
     public ZAdapter setRecordIdentifierSetter(RecordIdentifierSetter setter) {
         this.setter = setter;
@@ -107,19 +108,28 @@ public abstract class ZBaseAdapter implements ZAdapter {
      * @throws IOException
      */
     @Override
-    public ZAdapter searchRetrieve(AbstractSearchRetrieve request, OutputStream records, OutputStream errors)
-            throws Diagnostics, IOException {
+    public ZAdapter searchRetrieve(AbstractSearchRetrieve request, final OutputStream records, final OutputStream errors)
+            throws IOException {
         try {
             connectInternal();
             if (!authenticated) {
                 throw new Diagnostics(2, "authentication failed, check adapter URI for username/password");
             }
-            final ResponseHelper helper = new ResponseHelper(records, errors);
-            request.setHandler(helper);
-            request.setErrorHandler(helper);
-            request.setTimeout(getTimeout());
-            // execute search
-            request.execute(session);
+            request.execute(session, new RecordHandler() {
+
+                @Override
+                public void receivedRecord(Record record) {
+                    try {
+                        if (record instanceof ErrorRecord) {
+                            errors.write(record.getContent());
+                        } else {
+                            records.write(record.getContent());
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            });
         } finally {
             disconnectInternal();
         }
@@ -145,14 +155,23 @@ public abstract class ZBaseAdapter implements ZAdapter {
             if (!authenticated) {
                 throw new Diagnostics(2, "authentication failed, check adapter URI for username/password");
             }
-            ByteArrayOutputStream records = new ByteArrayOutputStream();
-            ByteArrayOutputStream errors = new ByteArrayOutputStream();
-            final ResponseHelper r = new ResponseHelper(records, errors);
-            request.setHandler(r);
-            request.setErrorHandler(r);
-            request.setTimeout(getTimeout());
-            // execute search
-            request.execute(session);
+            final ByteArrayOutputStream records = new ByteArrayOutputStream();
+            final ByteArrayOutputStream errors = new ByteArrayOutputStream();
+            request.execute(session, new RecordHandler() {
+
+                @Override
+                public void receivedRecord(Record record) {
+                    try {
+                        if (record instanceof ErrorRecord) {
+                            errors.write(record.getContent());
+                        } else {
+                            records.write(record.getContent());
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            });
             response.setOrigin(session.getConnection().getURI());
             // get result count for caller and for stylesheet
             response.numberOfRecords(request.getResultCount());
@@ -166,9 +185,9 @@ public abstract class ZBaseAdapter implements ZAdapter {
             reader.setProperty(Iso2709Reader.FORMAT, getFormat());
             reader.setProperty(Iso2709Reader.TYPE, getType());
             transformer.setSource(new SAXSource(reader, source))
-                        .setTarget(response.getOutput() != null
-                        ? new StreamResult(response.getOutput())
-                        : new StreamResult(response.getWriter())).apply();
+                    .setTarget(response.getOutput() != null
+                            ? new StreamResult(response.getOutput())
+                            : new StreamResult(response.getWriter())).apply();
         } catch (SAXNotSupportedException | SAXNotRecognizedException | TransformerException ex) {
             logger.error(getURI().getHost() + ": " + ex.getMessage(), ex);
         } finally {
@@ -181,7 +200,9 @@ public abstract class ZBaseAdapter implements ZAdapter {
         if (connected) {
             return;
         }
-        this.connection = (ZConnection) ConnectionManager.getConnection(getURI());
+        this.connection = ConnectionService.getInstance()
+                .getConnectionFactory(getURI().getScheme())
+                .getConnection(getURI());
         this.session = connection.createSession();
         this.connected = true;
         this.authenticated = authenticate(session);
@@ -193,14 +214,18 @@ public abstract class ZBaseAdapter implements ZAdapter {
         }
         authenticated = false;
         connected = false;
-        if (session != null) {
-            session.close();
+        try {
+            if (session != null) {
+                session.close();
+                session = null;
+            }
+            if (connection != null) {
+                connection.close();
+                connection = null;
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
-        session = null;
-        if (connection != null) {
-            connection.close();
-        }
-        connection = null;
     }
 
     protected boolean authenticate(ZSession session) throws IOException {
@@ -236,30 +261,4 @@ public abstract class ZBaseAdapter implements ZAdapter {
 
     protected abstract int getTimeout();
 
-    class ResponseHelper implements ResultProcessor<Record>, ErrorResultProcessor<Record> {
-
-        private OutputStream records;
-        private OutputStream errors;
-
-        ResponseHelper(OutputStream records, OutputStream errors) {
-            this.records = records;
-            this.errors = errors;
-        }
-
-        @Override
-        public void process(Record result) throws IOException {
-            if (result.getContent() == null) {
-                throw new IOException("no result");
-            }
-            records.write(result.getContent());
-        }
-
-        @Override
-        public void processError(Record result) throws IOException {
-            if (result.getContent() == null) {
-                throw new IOException("no result");
-            }
-            errors.write(result.getContent());
-        }
-    }
 }

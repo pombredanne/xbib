@@ -29,7 +29,6 @@ public class Write extends AbstractWrite {
         return true;
     }
 
-    @Override
     public void flush(Session session) throws IOException {
         // not required
     }

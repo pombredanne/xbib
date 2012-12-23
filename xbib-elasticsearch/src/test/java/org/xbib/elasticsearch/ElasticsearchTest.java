@@ -52,14 +52,15 @@ public class ElasticsearchTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchTest.class.getName());
 
-    @Test
     public void testQuery() {
+        Settings settings = ImmutableSettings.settingsBuilder()
+                .put("cluster.name", "test").build();
 
         String index = "test";
         String type = "test";
         Node node = null;
         try {
-            node = nodeBuilder().client(true).node();
+            node = nodeBuilder().settings(settings).client(true).node();
             Client client = node.client();
             SearchResponse response = client.prepareSearch().setIndices(index).
                     setTypes(type).
@@ -74,10 +75,9 @@ public class ElasticsearchTest {
         }
     }
 
-    @Test
     public void testSniff() {
         Settings settings = ImmutableSettings.settingsBuilder()
-                .put("cluster.name", "elasticsearch")
+                .put("cluster.name", "test")
                 .put("client.transport.sniff", false).build();
         try {
             TransportClient client = new TransportClient(settings);

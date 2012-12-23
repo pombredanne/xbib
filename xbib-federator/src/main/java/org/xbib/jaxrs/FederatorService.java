@@ -5,9 +5,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,6 +17,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.xbib.federator.Federator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.xml.transform.StylesheetTransformer;
 
 @Path("/")
 public class FederatorService {
@@ -88,7 +86,8 @@ public class FederatorService {
                                 .setStylesheetPath("xsl");
                     }
                     // write SRU XML response
-                    federator.bibliographic(query).execute().toSRUResponse("1.2", writer, stylesheet);
+                    StylesheetTransformer transformer = new StylesheetTransformer("xsl");
+                    federator.bibliographic(query).execute().toSRUResponse("1.2", writer, transformer, stylesheet);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     throw new IOException(e);

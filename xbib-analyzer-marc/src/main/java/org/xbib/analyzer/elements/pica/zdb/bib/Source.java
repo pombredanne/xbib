@@ -31,8 +31,8 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.addons.PicaBuilder;
-import org.xbib.analyzer.marc.addons.PicaElement;
+import org.xbib.analyzer.marc.extensions.pica.PicaBuilder;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.marc.FieldCollection;
 
 public class Source extends PicaElement {
@@ -42,9 +42,9 @@ public class Source extends PicaElement {
         return instance;
     }
 
-    public void build(PicaBuilder builder, FieldCollection key, String value) {
+    public Source build(PicaBuilder builder, FieldCollection key, String value) {
         builder.context().resource().property("adr:", value);
-        
+        return this;
     }
 
 }

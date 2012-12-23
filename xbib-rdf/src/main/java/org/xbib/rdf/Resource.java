@@ -32,12 +32,12 @@
 package org.xbib.rdf;
 
 import com.google.common.collect.Multimap;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.xbib.io.Data;
+import org.xbib.iri.IRI;
+import org.xbib.rdf.context.ResourceContext;
 
 /**
  * A Resource is an iterable over statements of
@@ -47,14 +47,14 @@ import org.xbib.io.Data;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Resource<S,P,O>
-        extends Literal<O>, Iterable<Statement<S,P,O>>, Data {
+        extends Literal<O>, Iterable<Statement<S,P,O>> {
 
     /**
      * Set the resource identifier
      *
      * @param identifier a resource identifier
      */
-    Resource<S,P,O> id(URI identifier);
+    Resource<S,P,O> id(IRI identifier);
 
     /**
      * Set the resource identifier
@@ -67,7 +67,20 @@ public interface Resource<S,P,O>
      * Get the resource identifier
      * @return the resource identifier
      */
-    URI id();
+    IRI id();
+
+    /**
+     * Set resource context
+     *
+     * @param context
+     */
+    Resource<S,P,O> context(ResourceContext context);
+
+    /**
+     * Get resource context
+     * @return the resource context
+     */
+    ResourceContext context();
 
     /**
      * Set the subject of this resource
@@ -131,6 +144,8 @@ public interface Resource<S,P,O>
      * @param resource
      */
     boolean add(P predicate, Resource<S,P,O> resource);
+    
+    boolean add(String predicate,  Resource<S,P,O> resource);
     
     /**
      * Remove all properties and resources from this resource
@@ -207,6 +222,8 @@ public interface Resource<S,P,O>
      * @return set of predicates
      */
     Set<P> predicateSet(S subject);
+    
+    Set<P> predicateSet(String subject);
 
     /**
      * Return object set for a given predicate
@@ -215,10 +232,12 @@ public interface Resource<S,P,O>
      */
     Collection<O> objectSet(P predicate);
     
+    Collection<O> objectSet(String predicate);
+    
     /**
      * Get iterator over properties only or over
      * properties and resources (full)
-     * @param recursion
+     * @param full
      * @return iterator over statements
      */
     Iterator<Statement<S,P,O>> iterator(boolean full);
@@ -247,7 +266,7 @@ public interface Resource<S,P,O>
      * @param predicate
      * @return a predicate
      */
-    P toPredicate(Object predicate);
+    //P toPredicate(Object predicate);
 
     /**
      * Create an object

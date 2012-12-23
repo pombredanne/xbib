@@ -47,7 +47,6 @@ import z3950.v3.Operator;
 import z3950.v3.RPNQuery;
 import z3950.v3.RPNStructure;
 import z3950.v3.RPNStructure_rpnRpnOp;
-import z3950.v3.Term;
 
 /**
  * PQF abstract syntax tree
@@ -72,9 +71,13 @@ public class RPNGenerator implements Visitor {
         if (!result.isEmpty()) {
             this.rpnQuery = new RPNQuery();
             rpnQuery.s_rpn = (RPNStructure) result.pop();
-            // Z39.50 BIB-1: urn:oid:1.2.840.10003.3.1
-            rpnQuery.s_attributeSet = new AttributeSetId();
-            rpnQuery.s_attributeSet.value = new ASN1ObjectIdentifier(new int[]{1, 2, 840, 10003, 3, 1});
+            if (pqf.getAttrSet() == null) {
+                // Z39.50 BIB-1: urn:oid:1.2.840.10003.3.1
+                rpnQuery.s_attributeSet = new AttributeSetId();
+                rpnQuery.s_attributeSet.value = new ASN1ObjectIdentifier(new int[]{1, 2, 840, 10003, 3, 1});
+            } else {
+                // TODO: known attr set and their OIDs
+            }
         } else {
             throw new SyntaxException("no valid PQF found");
         }
@@ -84,8 +87,8 @@ public class RPNGenerator implements Visitor {
     public void visit(Query query) {
         Operand operand = new Operand();
         operand.c_attrTerm = new AttributesPlusTerm();
-        operand.c_attrTerm.s_term = new Term();
-        operand.c_attrTerm.s_term.c_general = new ASN1OctetString(query.getName());
+        operand.c_attrTerm.s_term = new z3950.v3.Term();
+        operand.c_attrTerm.s_term.c_general = new ASN1OctetString(query.getTerm().getValue());
         Stack<AttributeElement> attrs = new Stack();
         ASN1Any any = !result.isEmpty() && result.peek() instanceof AttributeElement ? result.pop() : null;
         while (any != null) {
@@ -122,12 +125,22 @@ public class RPNGenerator implements Visitor {
     }
 
     @Override
-    public void visit(AttrSpec attrspec) {
+    public void visit(AttrStr attrspec) {
         AttributeElement ae = new AttributeElement();
         ae.s_attributeType = (ASN1Integer) result.pop();
         ae.s_attributeValue = new AttributeElement_attributeValue();
         ae.s_attributeValue.c_numeric = (ASN1Integer) result.pop();
         result.push(ae);
+    }
+
+    @Override
+    public void visit(Term term) {
+        result.push(new ASN1OctetString(term.getValue()));
+    }
+
+    @Override
+    public void visit(Setname name) {
+        result.push(new ASN1OctetString(name.getValue()));
     }
 
     @Override

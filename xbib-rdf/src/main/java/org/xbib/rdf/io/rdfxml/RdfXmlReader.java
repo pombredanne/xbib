@@ -41,12 +41,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import org.xbib.iri.IRI;
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
@@ -79,9 +80,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
         implements RDF, XmlTriplifier<S,P,O> {
 
+    private final Factory<S,P,O> factory = Factory.getInstance();
+
     private StatementListener<S,P,O> listener;
     // counter for blank node generation
     private int bn = 0;
+    
+    // for conversion only
+    //private final Resource<S,P,O> resource = new SimpleResource();
 
     public RdfXmlReader() {
     }
@@ -149,10 +155,12 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
         return new Handler();
     }
 
-    // produce a triple for the listener
-    private void yield(Object s, Object p, Object o) {
-        Statement<S, P, O> statement = SimpleStatement.createStatement(s, p, o);
-        yield(statement);
+    private void yield(Object s, IRI p, Object o) {
+        yield(new SimpleStatement(factory.asSubject(s),factory.asPredicate(p), factory.asObject(o)));
+    }
+
+    private void yield(S s, P p, O o) {
+        yield(new SimpleStatement(s, p, o));
     }
 
     // produce a triple for the listener
@@ -163,7 +171,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     // produce a (possibly) reified triple
-    private void yield(Object s, Object p, Object o, URI reified) {
+    private void yield(Object s, IRI p, Object o, IRI reified) {
         yield(s, p, o);
         if (reified != null) {
             yield(reified, RDF_TYPE, RDF_STATEMENT);
@@ -229,7 +237,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     // get the uriRef of the predicate we're in
-    private URI parentPredicate(Stack<Frame> stack) throws SAXException {
+    private IRI parentPredicate(Stack<Frame> stack) throws SAXException {
         Frame ppFrame = parentPredicateFrame(stack);
         return ppFrame != null ? ppFrame.node : null;
     }
@@ -246,7 +254,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     // get the nearest ancestor subject
-    private URI ancestorSubject(Stack<Frame> stack) throws SAXException {
+    private IRI ancestorSubject(Stack<Frame> stack) throws SAXException {
         Frame subjectFrame = ancestorSubjectFrame(stack);
         return subjectFrame != null ? subjectFrame.node : null;
     }
@@ -270,13 +278,13 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     // resolve relative uri's against the in-scope xml:base URI
-    private URI resolve(String uriString, Stack<Frame> stack) {
-        URI uri;
+    private IRI resolve(String uriString, Stack<Frame> stack) {
+        IRI uri;
         try {
-            uri = URI.create(uriString);
+            uri = IRI.create(uriString);
         } catch (IllegalArgumentException e) {
             // illegal URI, try repair
-            uri = URI.create(uriString
+            uri = IRI.create(uriString
                   .replace(" ", "%20")
                   .replace("\"", "%22")
                   .replace("[", "%5B")
@@ -288,7 +296,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
         if (uri.isAbsolute()) {
             return uri;
         } else {
-            return URI.create(getBase(stack) + uriString);
+            return IRI.create(getBase(stack) + uriString);
         }
     }
 
@@ -313,7 +321,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
             if (frame.node != null) {
                 throw new SAXException("ambiguous use of rdf:ID");
             }
-            frame.node = URI.create(getBase(stack) + "#" + rdfId);
+            frame.node = IRI.create(getBase(stack) + "#" + rdfId);
         }
         if (frame.node == null) {
             frame.node = blankNode().id();
@@ -322,8 +330,8 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     // the complicated logic to deal with attributes with rdf:resource, nodeID attrs
-    private URI getObjectNode(Stack<Frame> stack, Attributes attrs) throws SAXException {
-        URI node = null;
+    private IRI getObjectNode(Stack<Frame> stack, Attributes attrs) throws SAXException {
+        IRI node = null;
         String resource = attrs.getValue(RDF.toString(), "resource");
         if (resource != null) {
             node = resolve(resource, stack);
@@ -384,12 +392,12 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
 
     class Frame {
 
-        public URI node = null; // the subject/object
+        public IRI node = null; // the subject/object
         public String lang = null; // the language tag
         public String base = null; // the xml:base
         public String datatype = null; // a predicate's datatype
-        public URI reification = null; // when reifying, the triple's uriRef
-        public List<URI> collection = null; // for parseType=Collection, the items
+        public IRI reification = null; // when reifying, the triple's uriRef
+        public List<IRI> collection = null; // for parseType=Collection, the items
         public Statement<S, P, O> collectionHead = null; // for parseType=Collection, the head triple
         public boolean isSubject = false; // is there a subject at this frame
         public boolean isPredicate = false; // is there a predicate at this frame
@@ -412,7 +420,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                 xmlLiteralStart(xmlLiteral, ns, qn, attrs);
             } else { // we're in RDF
                 Frame frame = new Frame();
-                URI uri = URI.create(ns + name);
+                IRI uri = IRI.create(ns + name);
                 frame.lang = attrs.getValue("xml:lang");
                 frame.base = attrs.getValue("xml:base");
                 if (expectSubject(stack)) {
@@ -433,7 +441,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                                     || aQn.startsWith("xml:")) {
                                 // skip
                             } else {
-                                yield(frame.node, aUri, aVal);
+                                yield(frame.node, IRI.create(aUri), aVal);
                             }
                         }
                         // is this node the value of some enclosing predicate?
@@ -456,16 +464,16 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                     // handle reification
                     String reification = attrs.getValue(RDF.toString(), "ID");
                     if (reification != null) {
-                        frame.reification = URI.create(getBase(stack) + "#" + reification);
+                        frame.reification = IRI.create(getBase(stack) + "#" + reification);
                     }
                     // handle container items
                     if (uri.equals(RDF_LI)) {
                         Frame asf = ancestorSubjectFrame(stack);
-                        frame.node = URI.create(RDF + "_" + asf.li);
+                        frame.node = IRI.create(RDF + "_" + asf.li);
                         asf.li++;
                     }
                     // parse attrs to see if the value of this pred is a uriref
-                    URI object = getObjectNode(stack, attrs);
+                    IRI object = getObjectNode(stack, attrs);
                     if (object != null) {
                         yield(ancestorSubject(stack), frame.node, object, frame.reification);
                     } else {
@@ -486,7 +494,10 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                             case "Collection":
                                 frame.isCollection = true;
                                 frame.collection = new LinkedList();
-                                frame.collectionHead = SimpleStatement.createStatement(ancestorSubject(stack), frame.node, blankNode());
+                                S s = factory.asSubject(ancestorSubject(stack));
+                                P p = factory.asPredicate(frame.node);
+                                O o = factory.asObject(blankNode());
+                                frame.collectionHead = new SimpleStatement(s,p,o);
                                 pcdata = null;
                                 break;
                             case "Literal":
@@ -506,7 +517,7 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                     object = null;
                     for (int i = 0; i < attrs.getLength(); i++) {
                         String aQn = attrs.getQName(i);
-                        URI aUri = URI.create(attrs.getURI(i) + attrs.getLocalName(i));
+                        IRI aUri = IRI.create(attrs.getURI(i) + attrs.getLocalName(i));
                         String aVal = attrs.getValue(i);
                         if ((!aUri.toString().equals(RDF_TYPE.toString()) && aUri.toString().startsWith(RDF.toString()))
                                 || aQn.startsWith("xml:")) {
@@ -552,10 +563,10 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                         yield(ancestorSubject(stack), parentPredicate(stack), value);
                         xmlLiteral = null;
                     } else if (pcdata != null) { // we have an RDF literal
-                        URI u = ppFrame.datatype == null ? null : URI.create(ppFrame.datatype);
+                        IRI u = ppFrame.datatype == null ? null : IRI.create(ppFrame.datatype);
                         Literal value = withLanguageTag(new SimpleLiteral(pcdata.toString()).type(u), stack);
                         // deal with reification
-                        URI reification = ppFrame.reification;
+                        IRI reification = ppFrame.reification;
                         yield(ancestorSubject(stack), ppFrame.node, value, reification);
                         // no longer collect pcdata
                         pcdata = null;
@@ -564,12 +575,12 @@ public class RdfXmlReader<S extends Resource<S, P, O>, P extends Property, O ext
                             // in this case, the value of this property is rdf:nil
                             yield(ppFrame.collectionHead.getSubject(),
                                     ppFrame.collectionHead.getPredicate(),
-                                    RDF_NIL);
+                                    factory.asObject(RDF_NIL));
                         } else {
                             yield(ppFrame.collectionHead);
                             Object prevNode = null;
                             Object node = ppFrame.collectionHead.getObject();
-                            for (URI item : ppFrame.collection) {
+                            for (IRI item : ppFrame.collection) {
                                 if (prevNode != null) {
                                     yield(prevNode, RDF_REST, node);
                                 }

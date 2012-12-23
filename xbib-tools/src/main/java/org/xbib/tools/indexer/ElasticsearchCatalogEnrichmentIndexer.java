@@ -1,5 +1,22 @@
 package org.xbib.tools.indexer;
 
+import org.xbib.elasticsearch.ElasticsearchIndexer;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elements.output.ElementOutput;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
+import org.xbib.io.file.TextFileConnectionFactory;
+import org.xbib.io.file.Finder;
+import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.simple.SimpleResourceContext;
+import org.xbib.tools.opt.OptionParser;
+import org.xbib.tools.opt.OptionSet;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,20 +25,6 @@ import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
-import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.AbstractImporter;
-import org.xbib.importer.ImportService;
-import org.xbib.importer.Importer;
-import org.xbib.importer.ImporterFactory;
-import org.xbib.io.file.FileConnectionFactory;
-import org.xbib.io.file.Finder;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.simple.SimpleResourceContext;
-import org.xbib.tools.opt.OptionParser;
-import org.xbib.tools.opt.OptionSet;
 
 public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long, AtomicLong> {
 
@@ -66,7 +69,7 @@ public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long
             logger.info("found {} input files", input.size() );
             final Integer threads = (Integer) options.valueOf("threads");
 
-            final ElasticsearchIndexerDAO es = new ElasticsearchIndexerDAO();
+            final ElasticsearchIndexer es = new ElasticsearchIndexer();
                     es.newClient(URI.create(options.valueOf("elasticsearch").toString()), false)
                     .setIndex(options.valueOf("index").toString())
                     .setType(options.valueOf("type").toString())
@@ -76,16 +79,19 @@ public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long
             logger.info("connected to ES with bulk size {} and max bulks {}",
                     (Integer)options.valueOf("bulksize"),
                     (Integer)options.valueOf("bulks"));
-            
+
+            final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+
             ImportService service = new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
-                            return new ElasticsearchCatalogEnrichmentIndexer(es);
+                            return new ElasticsearchCatalogEnrichmentIndexer(sink);
                         }
                     }).execute();
             
-            logger.info("finished, number of files = {}, docs indexed = {}", fileCounter, es.getCounter());
+            logger.info("finished, number of files = {}, resources indexed = {}",
+                    fileCounter, sink.getCounter());
             
             es.flush();
             es.shutdown();
@@ -133,7 +139,7 @@ public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long
         }
         return fileCounter;
     }
-    FileConnectionFactory factory = new FileConnectionFactory();
+    TextFileConnectionFactory factory = new TextFileConnectionFactory();
 
     private void push(URI uri) throws Exception {
         if (uri == null) {
@@ -168,7 +174,7 @@ public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long
                 id = pos >= 0 ? id.substring(pos + 1) : id;
                 // remove .txt and force uppercase
                 id = id.substring(0, id.length() - 4).toUpperCase();
-                URI identifier = URI.create("urn:hbz#" + id);
+                IRI identifier = IRI.create("urn:hbz#" + id);
                 Resource resource = ctx.newResource();
                 resource.id(identifier)
                         .property("dc:title", title)

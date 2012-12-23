@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
 public abstract class AbstractElementBuilder<K, V, E extends Element, C extends ResourceContext>
         implements ElementBuilder<K, V, E, C> {
@@ -77,7 +77,7 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     @Override
     public void begin() {
         C c = getContextFactory().newContext(); 
-        c.resource(c.newResource());
+        c.newResource(c.newResource());
         context.set(c);
     }
 

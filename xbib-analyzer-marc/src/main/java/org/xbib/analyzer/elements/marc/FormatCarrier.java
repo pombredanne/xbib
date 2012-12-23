@@ -31,12 +31,13 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import java.util.Map;
 import org.xbib.analyzer.marc.MARCBuilder;
 import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.analyzer.marc.MARCValueMapper;
 import org.xbib.elements.dublincore.DublinCoreTerms;
 import org.xbib.marc.FieldCollection;
+
+import java.util.Map;
 
 public class FormatCarrier extends MARCElement {
 
@@ -60,7 +61,8 @@ public class FormatCarrier extends MARCElement {
     }
 
     @Override
-    public void build(MARCBuilder b, FieldCollection key, String value) {
+    public FormatCarrier build(MARCBuilder b, FieldCollection key, String value) {
         b.context().getResource(b.context().resource(), DublinCoreTerms.FORMAT).property(DCTERMS_MEDIUM, value);
+        return this;
     }
 }

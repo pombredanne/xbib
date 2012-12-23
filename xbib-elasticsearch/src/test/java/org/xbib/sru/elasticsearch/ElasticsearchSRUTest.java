@@ -48,14 +48,12 @@ public class ElasticsearchSRUTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUTest.class.getName());
 
-    @Test
     public void testAdapterInit() throws Exception {
         SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
         adapter.connect();
         adapter.disconnect();
     }
 
-    @Test
     public void testAdapterExplain() throws Exception {
         SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
         adapter.connect();
@@ -71,7 +69,6 @@ public class ElasticsearchSRUTest {
         }
     }    
     
-    @Test
     public void testAdapterSearchRetrieve() throws Exception {
         SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
         adapter.connect();

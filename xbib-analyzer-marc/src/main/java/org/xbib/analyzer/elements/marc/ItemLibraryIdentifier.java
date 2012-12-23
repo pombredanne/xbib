@@ -1,20 +1,15 @@
 package org.xbib.analyzer.elements.marc;
 
-import java.util.List;
-import java.util.Map;
 import org.xbib.analyzer.marc.MARCBuilder;
 import org.xbib.analyzer.marc.MARCContext;
 import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.elements.ValueMapFactory;
-import org.xbib.elements.items.Access;
-import org.xbib.elements.items.Authority;
-import org.xbib.elements.items.DeliveryMethod;
-import org.xbib.elements.items.ItemType;
-import org.xbib.elements.items.Library;
-import org.xbib.elements.items.Service;
-import org.xbib.elements.items.TransportMethod;
+import org.xbib.elements.items.*;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
+
+import java.util.List;
+import java.util.Map;
 
 public class ItemLibraryIdentifier extends MARCElement {
 
@@ -32,7 +27,7 @@ public class ItemLibraryIdentifier extends MARCElement {
     }
 
     @Override
-    public void build(MARCBuilder b, FieldCollection key, String value) {
+    public ItemLibraryIdentifier build(MARCBuilder b, FieldCollection key, String value) {
         boolean servicecreated = false;
         for (Field d : key) {
             switch (d.getSubfieldId()) {
@@ -48,6 +43,7 @@ public class ItemLibraryIdentifier extends MARCElement {
         if (!servicecreated) {
             createItemService(b, null);            
         }
+        return this;
     }
 
     private String resolveIdentifier(MARCBuilder b, String value) {

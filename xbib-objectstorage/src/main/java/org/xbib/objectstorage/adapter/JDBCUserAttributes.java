@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.xbib.io.sql.Query;
+import org.xbib.io.sql.operator.Query;
 import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
 import org.xbib.io.sql.SQLSession;
 
@@ -67,7 +67,7 @@ public class JDBCUserAttributes implements UserAttributes {
         String[] keys = bundle.getString("userattributes").split(",");
         SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
         try {
-            query.setResultProcessor(p);
+            query.addListener(p);
             query.execute(session);
             ResultSet result = p.getResultSet();
             SQLWarning warning = result.getWarnings();

@@ -31,8 +31,8 @@
  */
 package org.xbib.rdf.simple;
 
-import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -55,18 +55,18 @@ public class SimpleBlankNode<S extends Resource<?, ?, ?>, P extends Property, O 
     }
 
     public SimpleBlankNode(String nodeID) {
-        this(URI.create(PREFIX + ":" + nodeID));
+        this(IRI.create(PREFIX + ":" + nodeID));
     }
     
     public static void reset() {
         counter.set(0L);
     }    
 
-    public SimpleBlankNode(URI nodeURI) {
+    public SimpleBlankNode(IRI nodeURI) {
         if (nodeURI == null) {
             throw new IllegalArgumentException();
         }
-        this.nodeID = nodeURI.getRawSchemeSpecificPart();
+        this.nodeID = nodeURI.getSchemeSpecificPart();
         this.identifier = nodeURI;
         this.subject = (S) this;
         object(toObject(nodeURI.toASCIIString()));

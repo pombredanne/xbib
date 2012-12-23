@@ -12,9 +12,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.ElementMapper;
 import org.xbib.keyvalue.KeyValueStreamListener;
-import org.xbib.elements.mab.MABBuilder;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xml.sax.InputSource;

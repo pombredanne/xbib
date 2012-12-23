@@ -31,6 +31,8 @@
  */
 package org.xbib.io.sql;
 
+import org.xbib.io.ResultProcessor;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,11 +43,11 @@ import java.sql.Types;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SQLSingleResult implements SQLResultProcessor {
+public class SQLSingleResult implements ResultSetListener {
 
-    private String s;
     private int type;
     private int n;
+    private String value;
 
     public SQLSingleResult(int type, int n) {
         this.type = type;
@@ -53,19 +55,19 @@ public class SQLSingleResult implements SQLResultProcessor {
     }
 
     @Override
-    public void process(ResultSet result) throws IOException {
-        try {
+    public void received(ResultSet result) throws SQLException, IOException {
             switch (type) {
                 case Types.VARCHAR:
-                    s = result.next() ? result.getString(n) : null;
+                   value = result.next() ? result.getString(n) : null;
                     break;
             }
-        } catch (SQLException ex) {
-            throw new IOException(ex.getMessage());
-        }
     }
 
-    public String queryForString() {
-        return s;
+    public void close(ResultSet result) throws SQLException, IOException{
+        result.close();
+    }
+
+    public String value() {
+        return value;
     }
 }

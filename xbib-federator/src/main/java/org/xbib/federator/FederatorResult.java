@@ -163,9 +163,7 @@ public class FederatorResult {
         ew.add(eventFactory.createEndDocument());
     }
     
-    public void toSRUResponse(String version, Writer writer, 
-            StylesheetTransformer transformer,
-            String stylesheet) throws XMLStreamException {
+    public void toSRUResponse(String version, Writer writer, StylesheetTransformer transformer, String stylesheet) throws XMLStreamException {
         StringWriter sw = new StringWriter();
         toSRUResponse(version, sw);
         

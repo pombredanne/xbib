@@ -32,26 +32,16 @@
 package org.xbib.rdf.simple;
 
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.AbstractResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
-public class SimpleResourceContext implements ResourceContext<Resource> {
-
-    private Resource resource;
+public class SimpleResourceContext 
+    extends AbstractResourceContext<Resource>
+    implements ResourceContext<Resource> {
 
     @Override
     public Resource newResource() {
         this.resource = new SimpleResource();
-        return resource;
-    }
-
-    @Override
-    public ResourceContext<Resource> resource(Resource resource) {
-        this.resource = resource;
-        return this;
-    }
-
-    @Override
-    public Resource resource() {
         return resource;
     }
 

@@ -79,7 +79,7 @@ import org.xbib.tools.opt.util.KeyValuePair;
  *   hyphens, question marks, or dots. A hyphen cannot be the first character of a long option specification when
  *   configuring the parser.</li>
  *
- *   <li>You can abbreviate long options, so long as the abbreviation is unique.</li>
+ *   <li>You can compact long options, so long as the abbreviation is unique.</li>
  *
  *   <li>Long options can accept single arguments.  The argument can be made required or optional.  The option's
  *   argument can occur:

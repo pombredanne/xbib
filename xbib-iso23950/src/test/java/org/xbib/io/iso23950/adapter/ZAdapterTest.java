@@ -31,6 +31,7 @@
  */
 package org.xbib.io.iso23950.adapter;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -61,7 +62,8 @@ public class ZAdapterTest {
                 int from = 1;
                 int size = 10;
                 ZAdapter adapter = ZAdapterFactory.getAdapter(adapterName);
-                FileOutputStream out = new FileOutputStream("target/" + adapter.getURI().getHost() + ".xml");
+                File tmp = File.createTempFile(adapter.getURI().getHost(), "xml");
+                FileOutputStream out = new FileOutputStream(tmp);
                 try (Writer sw = new OutputStreamWriter(out, "UTF-8")) {
                     StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources");
                     try {
@@ -74,6 +76,8 @@ public class ZAdapterTest {
                         adapter.disconnect();
                     }
                 }
+                // TODO validate tmp file here
+                tmp.delete();
             } catch (Diagnostics d) {
                 d.printStackTrace();
             } catch (IOException e) {

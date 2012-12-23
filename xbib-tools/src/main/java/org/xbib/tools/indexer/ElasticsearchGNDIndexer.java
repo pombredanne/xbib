@@ -31,20 +31,24 @@
  */
 package org.xbib.tools.indexer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import org.xbib.elasticsearch.ElasticsearchIndexerDAO;
+import org.xbib.elasticsearch.ElasticsearchIndexer;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.io.InputStreamService;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.StatementListener;
 import org.xbib.rdf.io.turtle.TurtleReader;
-import org.xbib.rdf.simple.SimpleResource;
+import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * Elasticsearch GND indexer
@@ -86,8 +90,7 @@ public class ElasticsearchGNDIndexer {
             if (in == null) {
                 throw new IOException("file not found: " + uriStr);
             }
-            Resource root = new SimpleResource();
-            final ElasticResourceBuilder builder = new ElasticResourceBuilder(root, elasticsearch, index, type);
+            final ElasticBuilder builder = new ElasticBuilder(elasticsearch, index, type);
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
                 @Override
@@ -101,7 +104,7 @@ public class ElasticsearchGNDIndexer {
                     }
                 }
             });
-            TurtleReader reader = new TurtleReader(URI.create("http://d-nb.info/gnd/"));
+            TurtleReader reader = new TurtleReader(IRI.create("http://d-nb.info/gnd/"));
             reader.setListener(builder);
             reader.parse(in);
             builder.close();
@@ -113,34 +116,29 @@ public class ElasticsearchGNDIndexer {
         System.exit(0);
     }
 
-    private static class ElasticResourceBuilder implements StatementListener {
+    private static class ElasticBuilder implements StatementListener {
 
-        private final ElasticsearchIndexerDAO elasticsearch = new ElasticsearchIndexerDAO();
-        private final Resource resource;
+        private final ElasticsearchResourceSink sink;
+        private final ResourceContext context = new SimpleResourceContext();
         private long triplecounter;
+        private Resource resource;
+        private IRI iri;
 
-        ElasticResourceBuilder(Resource resource, String esURI, String index, String type) throws IOException {
-            this.resource = resource;
+        ElasticBuilder(String esURI, String index, String type) throws IOException {
+            ElasticsearchIndexer elasticsearch = new ElasticsearchIndexer();
             elasticsearch.newClient(URI.create(esURI),false).setIndex(index).setType(type);
-        }
-
-        private void write(Resource resource) {
-            try {
-                elasticsearch.write(resource);
-            } catch (IOException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
+            sink = new ElasticsearchResourceSink(elasticsearch);
+            resource = context.newResource();
         }
 
         public void close() throws IOException {
-            write(resource);
-            elasticsearch.flush();
+            flush();
+            sink.flush();
         }
 
         @Override
-        public void newIdentifier(URI uri) {
-            write(resource);
-            resource.clear();
+        public void newIdentifier(IRI uri) {
+            flush();
             resource.id(uri);
         }
 
@@ -153,5 +151,12 @@ public class ElasticsearchGNDIndexer {
         public long getTripleCounter() {
             return triplecounter;
         }
+
+        private void flush() {
+            sink.output(context);
+            context.reset();
+            resource = context.newResource();
+        }
+
     }
 }

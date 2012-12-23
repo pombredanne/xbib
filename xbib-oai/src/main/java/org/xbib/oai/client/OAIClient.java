@@ -34,6 +34,9 @@ package org.xbib.oai.client;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
+
+import org.xbib.io.http.netty.HttpResponse;
+import org.xbib.io.http.netty.HttpResponseListener;
 import org.xbib.oai.GetRecordRequest;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
@@ -44,7 +47,6 @@ import org.xbib.oai.ListRecordsResponse;
 import org.xbib.oai.ListSetsRequest;
 import org.xbib.oai.ListSetsResponse;
 import org.xbib.oai.MetadataReader;
-import org.xbib.oai.OAIOperation;
 import org.xbib.oai.OAIResponse;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.transform.StylesheetTransformer;
@@ -74,7 +76,7 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareIdentify(IdentifyRequest request, IdentifyResponse response)
-            throws IOException, OAIException;
+            throws IOException;
     
     /**
      * This verb is an abbreviated form of ListRecords, retrieving only 
@@ -88,7 +90,7 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareListIdentifiers(ListIdentifiersRequest request, OAIResponse response) 
-            throws IOException, OAIException;
+            throws IOException;
 
     /**
      * This verb is used to retrieve the metadata formats available 
@@ -98,7 +100,7 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareListMetadataFormats(ListMetadataFormatsRequest request, OAIResponse response) 
-            throws IOException, OAIException;
+            throws IOException;
     
     /**
      * This verb is used to retrieve the set structure of a repository, 
@@ -107,7 +109,7 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareListSets(ListSetsRequest request, ListSetsResponse response) 
-            throws IOException, OAIException;
+            throws IOException;
 
     /**
      * This verb is used to harvest records from a repository. 
@@ -122,7 +124,7 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareListRecords(ListRecordsRequest request, ListRecordsResponse response) 
-            throws IOException, OAIException;
+            throws IOException;
     
     /**
      * This verb is used to retrieve an individual metadata record from 
@@ -138,10 +140,11 @@ public interface OAIClient {
      * @throws OAIException 
      */
     OAIClient prepareGetRecord(GetRecordRequest request, OAIResponse response) 
-            throws IOException, OAIException;
+            throws IOException;
 
-    OAIOperation execute() throws IOException;
+    void execute() throws IOException;
 
-    OAIOperation execute(long l, TimeUnit tu) throws IOException;
+    void execute(long l, TimeUnit tu) throws IOException;
 
+    HttpResponse getResponse();
 }

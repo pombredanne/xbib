@@ -1,17 +1,16 @@
 package org.xbib.rdf.io.rdfxml;
 
-import org.xbib.rdf.io.turtle.TurtleWriter;
-import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import org.testng.annotations.Test;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.URINamespaceContext;
+import org.xbib.rdf.context.IRINamespaceContext;
 import org.xml.sax.InputSource;
 
 public class RdfXmlReaderTest {
@@ -30,7 +29,7 @@ public class RdfXmlReaderTest {
         reader.parse(new InputSource(in));
         //logger.log(Level.INFO, root.toString());
         StringWriter sw = new StringWriter();
-        URINamespaceContext context = URINamespaceContext.getInstance();
+        IRINamespaceContext context = IRINamespaceContext.getInstance();
         context.addNamespace("gnd", "http://d-nb.info/gnd/");
         context.addNamespace("rdagr2", "http://RDVocab.info/ElementsGr2/");
         context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");
@@ -52,7 +51,7 @@ public class RdfXmlReaderTest {
         }
         
         @Override
-        public void newIdentifier(URI uri) {
+        public void newIdentifier(IRI uri) {
             resource.id(uri);
         }
 

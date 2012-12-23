@@ -70,7 +70,6 @@ public class Finder extends SimpleFileVisitor<Path> {
     }
 
     public Finder modifiedSince(long modifiedSince, TimeUnit tu) {
-        
         this.modifiedSince = FileTime.from(modifiedSince, tu);
         return this;
     }

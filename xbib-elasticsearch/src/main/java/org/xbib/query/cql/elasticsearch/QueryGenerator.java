@@ -63,10 +63,6 @@ public class QueryGenerator implements Visitor {
         builder.startObject("filtered").startObject("query");
     }
 
-    public void endFiltered() throws IOException {
-        builder.endObject().endObject();
-    }
-
     public XContentBuilder getBuilder() throws IOException {
         return builder;
     }
@@ -146,6 +142,7 @@ public class QueryGenerator implements Visitor {
                             break;
                         }
                     }
+                    break;
                 }
                 case 1: {
                     // unary operators

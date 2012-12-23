@@ -33,8 +33,9 @@ package org.xbib.io.iso23950;
 
 import java.io.IOException;
 import java.util.Properties;
-import org.xbib.io.Mode;
+
 import org.xbib.io.Session;
+import org.xbib.io.StringPacket;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -43,7 +44,7 @@ import org.xbib.logging.LoggerFactory;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ZSession implements Session {
+public class ZSession implements Session<ZPacket> {
 
     private ZConnection connection;
     private Properties properties = new Properties();
@@ -69,6 +70,20 @@ public class ZSession implements Session {
     @Override
     public boolean isOpen() {
         return isOpen;
+    }
+
+    @Override
+    public ZPacket newPacket() {
+        return null;
+    }
+
+    @Override
+    public ZPacket read() throws IOException {
+        return null;
+    }
+
+    @Override
+    public void write(ZPacket packet) throws IOException {
     }
 
     @Override

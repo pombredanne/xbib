@@ -43,7 +43,7 @@ class HttpScheme extends AbstractScheme {
         String ui = iri.getUserInfo();
         iri.buildAuthority(buf, ui, host, port);
         String authority = buf.toString();
-        return new IRI(iri._scheme, iri.getScheme(), authority, ui, host, port, IRI.normalize(iri.getPath()),
+        return new IRI(iri.schemeClass, iri.getScheme(), authority, ui, host, port, IRI.normalize(iri.getPath()),
                        UrlEncoding.encode(UrlEncoding.decode(iri.getQuery()), Profile.IQUERY.filter()), UrlEncoding
                            .encode(UrlEncoding.decode(iri.getFragment()), Profile.IFRAGMENT.filter()));
     }

@@ -11,17 +11,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 import org.xbib.xml.XMLUtil;
 
 public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
@@ -31,18 +30,18 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
     private boolean writingStarted;
     private boolean headerWritten;
     private S lastWrittenSubject;
-    private NamespaceContext context;
+    private XMLNamespaceContext context;
 
-    public void write(Resource resource, OutputStream out, NamespaceContext context) throws IOException {
+    public void write(Resource resource, OutputStream out, XMLNamespaceContext context) throws IOException {
         write(resource, new OutputStreamWriter(out, "UTF-8"), context);
     }
 
-    public void write(Resource resource, Writer writer, NamespaceContext context) throws IOException {
+    public void write(Resource resource, Writer writer, XMLNamespaceContext context) throws IOException {
         this.writer = writer;
         this.writingStarted = false;
         this.headerWritten = false;
         this.lastWrittenSubject = null;
-        this.context = context == null ? SimpleNamespaceContext.getInstance() : context;
+        this.context = context == null ? XMLNamespaceContext.getInstance() : context;
         // make RDF name spaces
         for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             handleNamespace(entry.getKey(), entry.getValue());
@@ -192,8 +191,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
                 BlankNode bNode = (BlankNode) objRes;
                 writeAttribute(NS_URI, "nodeID", bNode.id().toString());
             } else {
-                URI uri = objRes.id();
-                writeAttribute(NS_URI, "resource", uri.toString());
+                writeAttribute(NS_URI, "resource", objRes.id().toString());
             }
             writer.write("/>");
         } else if (obj instanceof Literal) {
@@ -204,7 +202,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             }
             // datatype attribute
             boolean isXMLLiteral = false;
-            URI datatype = objLit.type();
+            IRI datatype = objLit.type();
             if (datatype != null) {
                 // Check if datatype is rdf:XMLLiteral
                 isXMLLiteral = datatype.equals(RDF_XMLLITERAL);

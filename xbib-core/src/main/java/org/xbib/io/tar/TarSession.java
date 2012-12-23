@@ -1,78 +1,57 @@
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor 
- * license agreements. See the NOTICE.txt file distributed with this work
- * for additional information regarding copyright ownership.
+ * Licensed to ElasticSearch and Shay Banon under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. ElasticSearch licenses this
+ * file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation; either version 3 of the License, or 
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Affero General Public License for more details.
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Affero General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses 
- * or write to the Free Software Foundation, Inc., 51 Franklin Street, 
- * Fifth Floor, Boston, MA 02110-1301 USA.
- * 
- * The interactive user interfaces in modified source and object code 
- * versions of this program must display Appropriate Legal Notices, 
- * as required under Section 5 of the GNU Affero General Public License.
- * 
- * In accordance with Section 7(b) of the GNU Affero General Public 
- * License, these Appropriate Legal Notices must retain the display of the 
- * "Powered by xbib" logo. If the display of the logo is not reasonably 
- * feasible for technical reasons, the Appropriate Legal Notices must display
- * the words "Powered by xbib".
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.xbib.io.tar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.xbib.io.Identifiable;
-import org.xbib.io.Mode;
-import org.xbib.io.Packet;
-import org.xbib.io.PacketSession;
+import java.net.URI;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.xbib.io.Session;
 import org.xbib.io.StreamCodecService;
-import org.xbib.io.operator.CreateOperator;
-import org.xbib.io.operator.ReadOperator;
+import org.xbib.io.StringPacket;
 
 /**
  * Tar Session
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class TarSession implements PacketSession<TarSession> {
+public class TarSession implements Session<StringPacket> {
 
-    private final StreamCodecService factory = StreamCodecService.getInstance();
-    private final ReadOperator<TarSession, Identifiable, Packet> readOp = new TarEntryReadOperator();
-    private final CreateOperator<TarSession, Identifiable, Packet> writeOp = new TarEntryWriteOperator();
+    private final StreamCodecService codecFactory = StreamCodecService.getInstance();
     private boolean isOpen;
     private FileInputStream fin;
     private FileOutputStream fout;
     private TarInputStream in;
     private TarOutputStream out;
-    private String scheme;
-    private String part;
+    private URI uri;
+    private String encoding = System.getProperty("file.encoding");
 
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
-    }
-
-    public void setName(String name) {
-        this.part = name;
-    }
-
-    @Override
-    public String getName() {
-        return part;
+    public void setURI(URI uri) {
+        this.uri = uri;
     }
 
     @Override
@@ -80,69 +59,45 @@ public class TarSession implements PacketSession<TarSession> {
         if (isOpen) {
             return;
         }
+        String scheme = uri.getScheme();
         switch (mode) {
             case READ:
-                if (scheme.startsWith("targz")) {
-                    String s = part + ".tar.gz";
-                    File f = new File(s);
-                    if (f.isFile() && f.canRead()) {
-                        this.fin = new FileInputStream(f);
-                        this.in = new TarInputStream(factory.getCodec("gz").decode(fin));
-                        this.isOpen = true;
-                    } else {
-                        throw new FileNotFoundException("check existence or access rights: " + s);
-                    }
-                } else if (scheme.startsWith("tarbz2")) {
-                    String s = part + ".tar.bz2";
-                    File f = new File(s);
-                    if (f.isFile() && f.canRead()) {
-                        this.fin = new FileInputStream(f);
-                        this.in = new TarInputStream(factory.getCodec("bz2").decode(fin));
-                        this.isOpen = true;
-                    } else {
-                        throw new FileNotFoundException("check existence or access rights: " + s);
-                    }
-                } else if (scheme.startsWith("tarxz")) {
-                    String s = part + ".tar.xz";
-                    File f = new File(s);
-                    if (f.isFile() && f.canRead()) {
-                        this.fin = new FileInputStream(f);
-                        this.in = new TarInputStream(factory.getCodec("xz").decode(fin));
-                        this.isOpen = true;
-                    } else {
-                        throw new FileNotFoundException("check existence or access rights: " + s);
-                    }
+                if (scheme.equals("targz")) {
+                    FileInputStream fin = createFileInputStream(".tar.gz");
+                    this.in = new TarInputStream(codecFactory.getCodec("gz").decode(fin));
+                    this.isOpen = true;
+                } else if (scheme.equals("tarbz2")) {
+                    FileInputStream fin = createFileInputStream(".tar.bz2");
+                    this.in = new TarInputStream(codecFactory.getCodec("bz2").decode(fin));
+                    this.isOpen = true;
+                } else if (scheme.equals("tarxz")) {
+                    FileInputStream fin = createFileInputStream(".tar.xz");
+                    this.in = new TarInputStream(codecFactory.getCodec("xz").decode(fin));
+                    this.isOpen = true;
                 } else {
-                    String s = part + ".tar";
-                    File f = new File(s);
-                    if (f.isFile() && f.canRead()) {
-                        this.fin = new FileInputStream(f);
-                        this.in = new TarInputStream(fin);
-                        this.isOpen = true;
-                    } else {
-                        throw new FileNotFoundException("check existence or access rights: " + s);
-                    }
+                    FileInputStream fin = createFileInputStream(".tar");
+                    this.in = new TarInputStream(fin);
+                    this.isOpen = true;
                 }
                 break;
             case WRITE:
-                if (scheme.startsWith("targz")) {
-                    createFileOutputStream(".tar.gz");
-                    this.out = new TarOutputStream(factory.getCodec("gz").encode(fout));
+                if (scheme.equals("targz")) {
+                    FileOutputStream fout = createFileOutputStream(".tar.gz");
+                    this.out = new TarOutputStream(codecFactory.getCodec("gz").encode(fout));
                     out.setLongFileMode(TarOutputStream.LONGFILE_GNU);
                     this.isOpen = true;
-                } else if (scheme.startsWith("tarbz2")) {
-                    createFileOutputStream(".tar.bz2");
-                    // bzip2 is a memory hog
-                    this.out = new TarOutputStream(factory.getCodec("bz2").encode(fout));
+                } else if (scheme.equals("tarbz2")) {
+                    FileOutputStream fout = createFileOutputStream(".tar.bz2");
+                    this.out = new TarOutputStream(codecFactory.getCodec("bz2").encode(fout));
                     out.setLongFileMode(TarOutputStream.LONGFILE_GNU);
                     this.isOpen = true;
-                } else if (scheme.startsWith("tarxz")) {
-                    createFileOutputStream(".tar.xz");
-                    this.out = new TarOutputStream(factory.getCodec("xz").encode(fout));
+                } else if (scheme.equals("tarxz")) {
+                    FileOutputStream fout = createFileOutputStream(".tar.xz");
+                    this.out = new TarOutputStream(codecFactory.getCodec("xz").encode(fout));
                     out.setLongFileMode(TarOutputStream.LONGFILE_GNU);
                     this.isOpen = true;
                 } else {
-                    createFileOutputStream(".tar");
+                    FileOutputStream fout = createFileOutputStream(".tar");
                     this.out = new TarOutputStream(fout);
                     out.setLongFileMode(TarOutputStream.LONGFILE_GNU);
                     this.isOpen = true;
@@ -175,39 +130,91 @@ public class TarSession implements PacketSession<TarSession> {
         return isOpen;
     }
 
-    public TarInputStream getInputStream() {
-        return in;
-    }
-
-    public TarOutputStream getOutputStream() {
-        return out;
-    }
-
-    /**
-     * Helper method for creating the FileOutputStream. Creates the directory if
-     * it doesnot exist.
-     *
-     * @param s
-     * @throws IOException
-     */
-    private synchronized void createFileOutputStream(String s)
-            throws IOException {
-        File f = new File(part + s);
+    private synchronized FileOutputStream createFileOutputStream(String suffix) throws IOException {
+        String part = uri.getSchemeSpecificPart();
+        String name = part.endsWith(suffix) ? part : part + suffix;
+        File f = new File(name);
         if (!f.getAbsoluteFile().getParentFile().exists()
                 && !f.getAbsoluteFile().getParentFile().mkdirs()) {
             throw new RuntimeException(
                     "Could not create directories to store file: " + f);
         }
-        this.fout = new FileOutputStream(f);
+        if (f.exists()) {
+            throw new IOException("file " + f.getAbsolutePath() + " already exists");
+        }
+        return new FileOutputStream(f);
+    }
+
+    private synchronized FileInputStream createFileInputStream(String suffix) throws IOException {
+        String part = uri.getSchemeSpecificPart();
+        String name = part.endsWith(suffix) ? part : part + suffix;
+        File f = new File(name);
+        if (f.isFile() && f.canRead()) {
+            return new FileInputStream(f);
+        }
+        throw new FileNotFoundException("check existence or access rights: " + f.getAbsolutePath());
     }
 
     @Override
-    public ReadOperator<TarSession, Identifiable, Packet> createPacketReadOperator() {
-        return readOp;
+    public StringPacket read() throws IOException {
+        if (!isOpen()) {
+            throw new IOException(" not open");
+        }
+        if (in == null) {
+            throw new IOException("no input stream");
+        }
+        TarEntry entry = in.getNextEntry();
+        if (entry == null) {
+            return null;
+        }
+        StringPacket packet = new StringPacket();
+        String name = entry.getName();
+        packet.name(name);
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        in.copyEntryContents(bout);
+        packet.packet(new String(bout.toByteArray(), encoding));
+        return packet;
     }
 
     @Override
-    public CreateOperator<TarSession, Identifiable, Packet> createPacketWriteOperator() {
-        return writeOp;
+    public void write(StringPacket packet) throws IOException {
+        if (packet == null || packet.packet() == null) {
+            throw new IOException("no packet to write");
+        }
+        byte[] buf = packet.packet().getBytes();
+        if (buf.length > 0) {
+            String name = createEntryName(packet.name(), packet.number());
+            System.err.println("PACKET WRITE!!! "+ new String(buf));
+            TarEntry entry = new TarEntry(name);
+            entry.setModTime(new Date());
+            entry.setSize(buf.length);
+            out.putNextEntry(entry);
+            out.write(buf);
+            out.closeEntry();
+        }
+    }
+
+    private AtomicLong counter = new AtomicLong();
+
+    private static final NumberFormat nf = DecimalFormat.getIntegerInstance();
+
+    static {
+        nf.setGroupingUsed(false);
+        nf.setMinimumIntegerDigits(12);
+    }
+
+    private String createEntryName(String name, long number) {
+        // distribute files over directories (0-9999 = 10.000 per directory)
+        String d = nf.format(counter.incrementAndGet());
+        String nameComponent = name != null && name.length() > 0 ? name + "/" : "";
+        String numberComponent =  "/" + number;
+        StringBuilder sb = new StringBuilder();
+        sb.append(nameComponent).append(d.substring(0, 4)).append("/").append(d.substring(4, 8)).append(numberComponent);
+        return sb.toString();
+    }
+
+    @Override
+    public StringPacket newPacket() {
+        return new StringPacket();
     }
 }

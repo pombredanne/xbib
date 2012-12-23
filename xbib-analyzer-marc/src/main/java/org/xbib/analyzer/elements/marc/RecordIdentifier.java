@@ -34,6 +34,7 @@ package org.xbib.analyzer.elements.marc;
 import java.net.URI;
 import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.elements.ElementBuilder;
+import org.xbib.iri.IRI;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 
@@ -48,7 +49,7 @@ public class RecordIdentifier extends MARCElement {
     @Override
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
         for (Field field : fields) {
-            URI id =  URI.create("http://xbib.org#" +field.getData().trim());
+            IRI id = IRI.create("http://xbib.org#" +field.getData().trim());
             builder.context().resource().id(id);
         }
     }

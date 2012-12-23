@@ -26,8 +26,7 @@ import org.xbib.query.cql.AbstractNode;
 import org.xbib.query.cql.BooleanOperator;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.query.cql.Term;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 
 /**
  * A CQL query model.
@@ -88,8 +87,8 @@ public final class CQLQueryModel {
     private static final String AND_OP = " and ";
     private static final String OR_OP = " or ";
     /** the namespace context for this CQL generator */
-    private final SimpleNamespaceContext nsContext = 
-            SimpleNamespaceContext.newInstance("org.xbib.query.cql.context") ;
+    private final XMLNamespaceContext nsContext = 
+            XMLNamespaceContext.newInstance("org.xbib.query.cql.context") ;
     /** the CQL query string*/
     private String query;
     /** breadcrumb trail for facets*/
@@ -118,7 +117,7 @@ public final class CQLQueryModel {
         }
     }
 
-    public NamespaceContext getNamespaceContext() {
+    public XMLNamespaceContext getNamespaceContext() {
         return nsContext;
     }
 

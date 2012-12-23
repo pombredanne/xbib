@@ -31,57 +31,63 @@
  */
 package org.xbib.elasticsearch.mock;
 
-import java.net.URI;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.ElasticsearchIndexerMockDAO;
-import org.xbib.io.Mode;
+import org.xbib.elasticsearch.ElasticsearchIndexerMock;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
+import org.xbib.rdf.simple.SimpleResourceContext;
 
 /**
  * Elasticsearch Index mock test
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>  {
+public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> {
 
     @Test
     public void testWrite() throws Exception {
-        
-        final ElasticsearchIndexerMockDAO es = new ElasticsearchIndexerMockDAO()
+
+        final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
                 .setIndex("test")
                 .setType("test");
+
+        final ElasticsearchResourceSink<ResourceContext, Resource> indexer = new ElasticsearchResourceSink(es);
+
         try {
-            es.write(createResource());
+            indexer.output(createContext());
         } finally {
             es.shutdown();
         }
     }
 
-    private Resource<S,P,O> createResource() {
-        Resource<S,P,O> resource = new SimpleResource();
-        resource.id(URI.create("urn:document"));
-        resource.property("dc:title", "Hello");
-        resource.property("dc:title", "World");
-        resource.property("xbib:person", "Jörg Prante");
-        resource.property("dc:subject", "An");
-        resource.property("dc:subject", "example");
-        resource.property("dc:subject", "for");
-        resource.property("dc:subject", "subject");
-        resource.property("dc:subject", "sequence");
-        resource.property("http://purl.org/dc/terms/place", "Köln");
-        // sequence optimized for turtle output
-        Resource<S,P,O> r1 = resource.newResource("urn:res1");
-        r1.property("property1", "value1");
-        r1.property("property2", "value2");
-        Resource<S,P,O> r2 = resource.newResource("urn:res1");
-        r2.property("property3", "value3");
-        r2.property("property4", "value4");
-        Resource<S,P,O> r3 = resource.newResource("urn:res1");
-        r3.property("property5", "value5");
-        r3.property("property6", "value6");
-        return resource;
+    private ResourceContext createContext() {
+        Resource<S, P, O> resource = new SimpleResource()
+                .id(IRI.create("urn:document"))
+                .property("dc:title", "Hello")
+                .property("dc:title", "World")
+                .property("xbib:person", "Jörg Prante")
+                .property("dc:subject", "An")
+                .property("dc:subject", "example")
+                .property("dc:subject", "for")
+                .property("dc:subject", "subject")
+                .property("dc:subject", "sequence")
+                .property("http://purl.org/dc/terms/place", "Köln");
+        resource.newResource("urn:res1")
+                .property("property1", "value1")
+                .property("property2", "value2");
+        resource.newResource("urn:res1")
+                .property("property3", "value3")
+                .property("property4", "value4");
+        resource.newResource("urn:res1")
+                .property("property5", "value5")
+                .property("property6", "value6");
+        ResourceContext context = new SimpleResourceContext();
+        context.newResource(resource);
+        return context;
     }
 }

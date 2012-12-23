@@ -31,7 +31,7 @@
  */
 package org.xbib.rdf.simple;
 
-import java.net.URI;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.AbstractSequence;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
@@ -51,7 +51,7 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
         super();
     }
 
-    public SimpleResource(URI identifier) {
+    public SimpleResource(IRI identifier) {
         super(identifier);
     }
     
@@ -76,8 +76,8 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
 
     @Override
     public S toSubject(Object subject) {
-        if (subject instanceof URI) {
-            URI uri = (URI) subject;
+        if (subject instanceof IRI) {
+            IRI uri = (IRI) subject;
             if (BlankNode.PREFIX.equals(uri.getScheme())) {
                 return (S) new SimpleBlankNode<S, P, S>(uri);
             }
@@ -91,10 +91,10 @@ public class SimpleResource<S extends Resource<?, ?, ?>, P extends Property, O e
     public O toObject(Object object) {
         return object == null ? null
                 : object instanceof Literal ? (O) object
-                : object instanceof URI
-                ? BlankNode.PREFIX.equals(((URI) object).getScheme())
-                ? (O) new SimpleBlankNode((URI) object)
-                : (O) new SimpleResource((URI) object)
+                : object instanceof IRI
+                ? BlankNode.PREFIX.equals(((IRI) object).getScheme())
+                ? (O) new SimpleBlankNode((IRI) object)
+                : (O) new SimpleResource((IRI) object)
                 : (O) new SimpleLiteral(object.toString());
     }
 

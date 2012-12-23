@@ -32,30 +32,31 @@
 package org.xbib.io;
 
 import java.io.FileInputStream;
+import java.net.URI;
 import java.util.zip.GZIPInputStream;
-import static org.testng.AssertJUnit.*;
 import org.testng.annotations.Test;
-import org.xbib.io.operator.CreateOperator;
+import org.testng.Assert;
 
 /**
  * Test packet write
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class PacketTest {
+public class PacketTest extends Assert {
+
 
     @Test
-    public void testPacketDemoWrite() throws Exception {
-        ConnectionManager.getConnection("null://localhost");
+    public void testPacketWrite() throws Exception {
         String uri = "filegz:target/packetdemo";
-        PacketSession session = (PacketSession) ConnectionManager.getConnection(uri, false).createSession();
-        session.open(Mode.WRITE);
-        CreateOperator op = session.createPacketWriteOperator(); 
-        Packet data = new Packet();
-        data.setName("demopacket");
-        data.setObject("Hello World");
-        op.write(session, data);
-        op.flush(session);
+        Connection<Session<StringPacket>> c = ConnectionService.getInstance()
+                .getConnectionFactory("file")
+                .getConnection(URI.create(uri));
+        Session<StringPacket> session = c.createSession();
+        session.open(Session.Mode.WRITE);
+        StringPacket data = session.newPacket();
+        data.name("demopacket");
+        data.packet("Hello World");
+        session.write(data);
         session.close();
         // check file
         FileInputStream in = new FileInputStream("target/packetdemo.gz");
@@ -63,7 +64,7 @@ public class PacketTest {
         byte[] buf = new byte[11];
         gz.read(buf);
         gz.close();
-           assertEquals("Hello World", new String(buf));
+        assertEquals(new String(buf), "Hello World");
     }
 
 }

@@ -31,11 +31,11 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import java.util.Map;
-import org.xbib.analyzer.marc.addons.PicaElement;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.marc.Field;
-import org.xbib.rdf.Property;
+
+import java.util.Map;
 
 public class Organization extends PicaElement {
 
@@ -46,14 +46,15 @@ public class Organization extends PicaElement {
     }
 
     @Override
-    public void field(ElementBuilder builder, Field field, String subfieldType) {
+    public Organization field(ElementBuilder builder, Field field, String subfieldType) {
         if (subfieldType != null) {
-            builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
+            builder.context().resource().property(LA_NS_URI + subfieldType, field.getData());
             Map<String,String> map = (Map<String,String>) getSettings().get(subfieldType);
             if (map != null) {
-                builder.context().resource().property(Property.create(LA_NS_URI + subfieldType + "Value"), 
+                builder.context().resource().property(LA_NS_URI + subfieldType + "Value", 
                          map.get(field.getData()));
             }
         }
+        return this;
     }
 }

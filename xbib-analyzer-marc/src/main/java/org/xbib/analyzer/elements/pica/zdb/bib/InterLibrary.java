@@ -31,10 +31,9 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.addons.PicaElement;
+import org.xbib.analyzer.marc.extensions.pica.PicaElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.marc.Field;
-import org.xbib.rdf.Property;
 
 public class InterLibrary extends PicaElement {
     private final static InterLibrary instance = new InterLibrary();
@@ -44,8 +43,9 @@ public class InterLibrary extends PicaElement {
     }
 
     @Override
-    public void field(ElementBuilder builder, Field field, String subfieldType) {
-        builder.context().resource().property(Property.create(LA_NS_URI + subfieldType), field.getData());
+    public InterLibrary field(ElementBuilder builder, Field field, String subfieldType) {
+        builder.context().resource().property(LA_NS_URI + subfieldType, field.getData());
+        return this;
     }
 
 }

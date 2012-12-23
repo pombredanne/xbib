@@ -36,103 +36,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * A packet is data with a given name and some package information
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class Packet implements Data {
+public interface Packet<P> {
 
-    private static final long serialVersionUID = 1L;
-    private String name;
-    private String number;
-    private String link;
-    private Object object;
-    private final MessageDigest md;
+    String name();
 
-    public Packet() {
-        this(null);
-    }
+    long number();
 
-    public Packet(Object object) {
-        setObject(object);
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException ex) {
-            digest = null;
-        }
-        this.md = digest;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public final void setObject(Object object) {
-        this.object = object;
-    }
-
-    public MessageDigest createDigest() throws UnsupportedEncodingException {
-        return createDigest(null);
-    }
-
-    public MessageDigest createDigest(MessageDigest old) throws UnsupportedEncodingException {
-        md.reset();
-        if (old != null) {
-            md.update(old.digest());
-        }
-        if (name != null) {
-            md.update(name.getBytes("UTF-8"));
-        }
-        if (number != null) {
-            md.update(number.getBytes("UTF-8"));
-        }
-        if (object != null) {
-            md.update(object.toString().getBytes("UTF-8"));
-        }
-        return md;
-    }
-
-    public MessageDigest getDigest() {
-        return md;
-    }
-
-    public String getDigestString() {
-        return bytesToHex(md.digest());
-    }
-
-    @Override
-    public String toString() {
-        return object.toString();
-    }
-    private char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-    private String bytesToHex(byte[] b) {
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < b.length; i++) {
-            buf.append(hexDigit[(b[i] >> 4) & 0x0f]).append(hexDigit[b[i] & 0x0f]);
-        }
-        return buf.toString();
-    }
+    P packet();
 }

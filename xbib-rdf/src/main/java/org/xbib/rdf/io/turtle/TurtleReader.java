@@ -38,14 +38,14 @@ import java.io.InputStreamReader;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Stack;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.BlankNode;
+import org.xbib.rdf.Factory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -56,8 +56,7 @@ import org.xbib.rdf.simple.SimpleBlankNode;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.rdf.simple.SimpleStatement;
-import org.xbib.xml.NamespaceContext;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 
 /**
  * Turtle - Terse RDF Triple Parser
@@ -70,11 +69,11 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         implements Triplifier<S, P, O> {
 
     private static final Logger logger = LoggerFactory.getLogger(TurtleReader.class.getName());
-    private final Resource<S, P, O> resource = new SimpleResource<>();
+    private final Factory<S,P,O> factory = Factory.getInstance();
     /**
      * The base URI
      */
-    private URI baseURI;
+    private IRI baseURI;
     /**
      * The push back reader for reading input streams of turtle statements.
      */
@@ -115,18 +114,18 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
     /**
      * The namespace context
      */
-    private NamespaceContext context;
+    private XMLNamespaceContext context;
     /**
      * An optional statement listener
      */
     private StatementListener<S, P, O> listener;
     private boolean strict = false;
 
-    public TurtleReader(URI uri) {
-        this(uri, SimpleNamespaceContext.getInstance());
+    public TurtleReader(IRI uri) {
+        this(uri, XMLNamespaceContext.getInstance());
     }
 
-    public TurtleReader(URI uri, NamespaceContext context) {
+    public TurtleReader(IRI uri, XMLNamespaceContext context) {
         this.baseURI = uri;
         this.context = context;
     }
@@ -235,7 +234,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             String prefix = sb.toString();
             reader.read();
             skipWhitespace();
-            URI nsURI = parseURI();
+            IRI nsURI = parseURI();
             if ("".equals(prefix)) {
                 this.baseURI = nsURI;
             }
@@ -309,14 +308,14 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         if (ch == 'a') {
             char ch2 = read();
             if (isWhitespace(ch2)) {
-                return resource.toPredicate("rdf:type");
+                return factory.asPredicate("rdf:type");
             }
             reader.unread(ch2);
         }
         reader.unread(ch);
         O obj = parseValue();
         if (obj instanceof Resource) {
-            return resource.toPredicate(obj.toString());
+            return factory.asPredicate(obj.toString());
         } else {
             throw new IOException(baseURI + ": illegal predicate value: " + obj);
         }
@@ -392,12 +391,12 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
     }
 
     /**
-     * Parse URI
+     * Parse IRI
      *
-     * @return Turtle URI
+     * @return an IRI
      * @throws IOException
      */
-    private URI parseURI() throws IOException {
+    private IRI parseURI() throws IOException {
         char ch = read();
         validate(ch, '<');
         sb.setLength(0);
@@ -421,17 +420,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         } while (!ended);
         //decoded = decodeTurtleString(decoded)              
         String decoded = decode(sb.toString(), "UTF-8");
-        URI u;
-        try {
-            u = new URI(decoded);
-        } catch (URISyntaxException e) {
-            // work-around for Java URI exception "Illegal character in opaque part"
-            // URL-encode scheme-specific part 
-            int pos = decoded.indexOf(':');
-            String scheme = pos > 0 ? decoded.substring(0, pos) : "";
-            String part = pos > 0 ? decoded.substring(pos + 1) : decoded;
-            u = URI.create(scheme + ":" + URLEncoder.encode(part, "UTF-8"));
-        }
+        IRI u = IRI.create(decoded);
         u = baseURI.resolve(u);
         //System.err.println(u);
         return u;
@@ -462,7 +451,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             if (ch != ':') {
                 String value = sb.toString();
                 if (value.equals("true") || value.equals("false")) {
-                    return (O) resource.newLiteral(value).type(URI.create("xsd:boolean"));
+                    return (O)factory.newLiteral(value).type(IRI.create("xsd:boolean"));
                 }
             }
             validate(ch, ':');
@@ -483,7 +472,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         }
         reader.unread(ch);
         // namespace is already resolved
-        return (O) new SimpleResource(URI.create(ns + sb));
+        return (O) new SimpleResource(IRI.create(ns + sb));
     }
 
     /**
@@ -529,21 +518,21 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         if (ch == ')') {
             reader.read();
             SimpleResource<S, P, O> r = new SimpleResource();
-            r.id(URI.create("rdf:nil"));
+            r.id(IRI.create("rdf:nil"));
             return r;
         } else {
             BlankNode<S, P, O> root = new SimpleBlankNode();
             S oldsubject = subject;
             P oldpredicate = predicate;
             subject = root.subject();
-            predicate = root.toPredicate("rdf:first");
+            predicate = factory.asPredicate("rdf:first");
             parseObject();
             ch = skipWhitespace();
             BlankNode<S, P, O> blanknode = root;
             while (ch != ')') {
                 BlankNode<S, P, O> value = new SimpleBlankNode();
                 if (listener != null) {
-                    listener.statement(new SimpleStatement(blanknode, blanknode.toPredicate("rdf:rest"), value));
+                    listener.statement(new SimpleStatement(blanknode, factory.asPredicate("rdf:rest"), value));
                 }
                 subject = (S) value;
                 blanknode = value;
@@ -552,7 +541,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             }
             reader.read();
             if (listener != null) {
-                listener.statement(new SimpleStatement(blanknode, blanknode.toPredicate("rdf:rest"), blanknode.toObject(URI.create("rdf:null"))));
+                listener.statement(new SimpleStatement(blanknode,factory.asPredicate("rdf:rest"), blanknode.toObject(IRI.create("rdf:null"))));
             }
             subject = oldsubject;
             predicate = oldpredicate;
@@ -618,8 +607,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
         } else if (ch == '^') {
             reader.read();
             validate(reader.read(), '^');
-            URI dataType = parseURI();
-            return new SimpleLiteral(value).type(dataType);
+            return new SimpleLiteral(value).type(parseURI());
         } else {
             return new SimpleLiteral(value);
         }
@@ -692,7 +680,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
 
     private Literal<O> parseNumber() throws IOException {
         sb.setLength(0);
-        URI datatype = URI.create("xsd:integer");
+        IRI datatype = IRI.create("xsd:integer");
         char ch = read();
         if (ch == '+' || ch == '-') {
             sb.append(ch);
@@ -703,7 +691,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
             ch = read();
         }
         if (ch == '.' || ch == 'e' || ch == 'E') {
-            datatype = URI.create("xsd:decimal");
+            datatype = IRI.create("xsd:decimal");
             if (ch == '.') {
                 sb.append(ch);
                 ch = read();
@@ -720,7 +708,7 @@ public class TurtleReader<S extends Resource<S, P, O>, P extends Property, O ext
                 }
             }
             if (ch == 'e' || ch == 'E') {
-                datatype = URI.create("xsd:double");
+                datatype = IRI.create("xsd:double");
                 sb.append(ch);
                 ch = read();
                 if (ch == '+' || ch == '-') {

@@ -25,7 +25,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URI;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
@@ -49,7 +49,7 @@ public class ResourceTupleBinding extends TupleBinding
     private long readChars;
     private Resource resource;
 
-    public ResourceTupleBinding(URI baseURI) {
+    public ResourceTupleBinding(IRI baseURI) {
         this.writer = new TurtleWriter();
         this.reader = new TurtleReader(baseURI);
         this.writtenChars = 0;
@@ -100,7 +100,7 @@ public class ResourceTupleBinding extends TupleBinding
     }
 
     @Override
-    public void newIdentifier(URI identifier) {
+    public void newIdentifier(IRI identifier) {
         // ignore
     }
 }

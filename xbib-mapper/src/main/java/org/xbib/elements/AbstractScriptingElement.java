@@ -46,16 +46,13 @@ public abstract class AbstractScriptingElement implements Element {
     private Map settings;
     private String script;
 
-    public AbstractScriptingElement() {
-    }
-
     public AbstractScriptingElement(String script) throws ScriptException {
         this.script = script;
         engine.eval(script);
     }
 
     @Override
-    public void setSettings(Map settings) {
+    public AbstractScriptingElement setSettings(Map settings) {
         try {
             this.settings = settings;
             ScriptContext context = new SimpleScriptContext();
@@ -64,7 +61,8 @@ public abstract class AbstractScriptingElement implements Element {
             engine.eval(script, bindings);
         } catch (ScriptException ex) {
             throw new RuntimeException(ex);
-        }        
+        }
+        return this;
     }
 
     @Override
@@ -73,7 +71,7 @@ public abstract class AbstractScriptingElement implements Element {
     }
 
     @Override
-    public void begin() {
+    public AbstractScriptingElement begin() {
         Invocable inv = (Invocable) engine;
         Object obj = engine.get("Element");
         try {
@@ -81,10 +79,11 @@ public abstract class AbstractScriptingElement implements Element {
         } catch (ScriptException | NoSuchMethodException ex) {
             throw new RuntimeException(ex);
         }
+        return this;
     }
 
     @Override
-    public void build(ElementBuilder builder, Object key, Object value) {
+    public AbstractScriptingElement build(ElementBuilder builder, Object key, Object value) {
         Invocable inv = (Invocable) engine;
         Object obj = engine.get("Element");
         try {
@@ -92,10 +91,11 @@ public abstract class AbstractScriptingElement implements Element {
         } catch (ScriptException | NoSuchMethodException ex) {
             throw new RuntimeException(ex);
         }
+        return this;
     }
 
     @Override
-    public void end() {
+    public AbstractScriptingElement end() {
         Invocable inv = (Invocable) engine;
         Object obj = engine.get("Element");
         try {
@@ -103,6 +103,7 @@ public abstract class AbstractScriptingElement implements Element {
         } catch (ScriptException | NoSuchMethodException ex) {
             throw new RuntimeException(ex);
         }
+        return this;
     }
 
     abstract protected String getScriptEngineName();

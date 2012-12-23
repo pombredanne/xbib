@@ -22,9 +22,9 @@ package org.xbib.io.tar;
 import java.net.URI;
 import org.testng.annotations.Test;
 import org.xbib.io.Connection;
-import org.xbib.io.ConnectionManager;
-import org.xbib.io.Mode;
-import org.xbib.io.Packet;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
+import org.xbib.io.StringPacket;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -34,14 +34,15 @@ public class TarSessionTest {
 
     @Test
     public void readFromTar() throws Exception {
-        Connection<TarSession> conn = (Connection<TarSession>)ConnectionManager.getConnection(URI.create("tarbz2:src/test/resources/test/test"));
-        TarSession session = conn.createSession();
-        session.open(Mode.READ);
-        TarEntryReadOperator op = new TarEntryReadOperator();
-        Packet message = op.read(session);
-        logger.info("name = {0} number = {1} link = {2} object = {3}", 
-                message.getName(), message.getNumber(), message.getLink(), message.toString());
+        Connection<Session<StringPacket>> c = ConnectionService.getInstance()
+                .getConnectionFactory("tarbz2")
+                .getConnection(URI.create("tarbz2:src/test/resources/test/test"));
+        Session<StringPacket> session = c.createSession();
+        session.open(Session.Mode.READ);
+        StringPacket message = session.read();
+        logger.info("name = {} number = {} object = {}",
+                message.name(), message.number(), message.packet());
         session.close();
-        conn.close();
+        c.close();
     }
 }

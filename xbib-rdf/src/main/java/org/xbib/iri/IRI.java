@@ -32,11 +32,12 @@ import org.xbib.text.Normalizer;
 import org.xbib.text.UrlEncoding;
 import org.xbib.text.data.UnicodeCharacterDatabase;
 
-public final class IRI implements Serializable, Cloneable {
+public class IRI implements Serializable, Cloneable, Comparable<IRI> {
 
     private static final long serialVersionUID = -4530530782760282284L;
-    protected Scheme _scheme;
+    protected Scheme schemeClass;
     private String scheme;
+    private String schemeSpecificPart;
     private String authority;
     private String userinfo;
     private String host;
@@ -44,7 +45,6 @@ public final class IRI implements Serializable, Cloneable {
     private String path;
     private String query;
     private String fragment;
-
     private String a_host;
     private String a_fragment;
     private String a_path;
@@ -64,6 +64,10 @@ public final class IRI implements Serializable, Cloneable {
         parse(CharUtils.stripBidi(iri));
         init();
     }
+    
+    public IRI(String scheme, String schemeSpecificPart, String fragment) {
+        
+    }
 
     public IRI(String iri, Normalizer.Form nf) throws IOException {
         this(Normalizer.normalize(CharUtils.stripBidi(iri), nf).toString());
@@ -71,7 +75,7 @@ public final class IRI implements Serializable, Cloneable {
 
     public IRI(String scheme, String userinfo, String host, int port, String path, String query, String fragment) {
         this.scheme = scheme;
-        this._scheme = SchemeRegistry.getInstance().getScheme(scheme);
+        this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
         this.userinfo = userinfo;
         this.host = host;
         this.port = port;
@@ -86,7 +90,7 @@ public final class IRI implements Serializable, Cloneable {
 
     public IRI(String scheme, String authority, String path, String query, String fragment) {
         this.scheme = scheme;
-        this._scheme = SchemeRegistry.getInstance().getScheme(scheme);
+        this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
         this.authority = authority;
         this.path = path;
         this.query = query;
@@ -100,15 +104,15 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     IRI(Scheme _scheme,
-        String scheme,
-        String authority,
-        String userinfo,
-        String host,
-        int port,
-        String path,
-        String query,
-        String fragment) {
-        this._scheme = _scheme;
+            String scheme,
+            String authority,
+            String userinfo,
+            String host,
+            int port,
+            String path,
+            String query,
+            String fragment) {
+        this.schemeClass = _scheme;
         this.scheme = scheme;
         this.authority = authority;
         this.userinfo = userinfo;
@@ -118,6 +122,10 @@ public final class IRI implements Serializable, Cloneable {
         this.query = query;
         this.fragment = fragment;
         init();
+    }
+
+    public static IRI create(String iri) {
+        return new IRI(iri);
     }
 
     private void init() {
@@ -131,6 +139,8 @@ public final class IRI implements Serializable, Cloneable {
         a_query = UrlEncoding.encode(query, Profile.QUERY.filter(), Profile.PATH.filter());
         a_userinfo = UrlEncoding.encode(userinfo, Profile.USERINFO.filter());
         a_authority = buildASCIIAuthority();
+
+        schemeSpecificPart = buildSchemeSpecificPart(authority, path, query, fragment);
     }
 
     @Override
@@ -150,50 +160,68 @@ public final class IRI implements Serializable, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        final IRI other = (IRI)obj;
+        }
+        final IRI other = (IRI) obj;
         if (authority == null) {
-            if (other.authority != null)
+            if (other.authority != null) {
                 return false;
-        } else if (!authority.equals(other.authority))
+            }
+        } else if (!authority.equals(other.authority)) {
             return false;
+        }
         if (fragment == null) {
-            if (other.fragment != null)
+            if (other.fragment != null) {
                 return false;
-        } else if (!fragment.equals(other.fragment))
+            }
+        } else if (!fragment.equals(other.fragment)) {
             return false;
+        }
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
+        }
         if (path == null) {
-            if (other.path != null)
+            if (other.path != null) {
                 return false;
-        } else if (!path.equals(other.path))
+            }
+        } else if (!path.equals(other.path)) {
             return false;
-        if (port != other.port)
+        }
+        if (port != other.port) {
             return false;
+        }
         if (query == null) {
-            if (other.query != null)
+            if (other.query != null) {
                 return false;
-        } else if (!query.equals(other.query))
+            }
+        } else if (!query.equals(other.query)) {
             return false;
+        }
         if (scheme == null) {
-            if (other.scheme != null)
+            if (other.scheme != null) {
                 return false;
-        } else if (!scheme.equals(other.scheme))
+            }
+        } else if (!scheme.equals(other.scheme)) {
             return false;
+        }
         if (userinfo == null) {
-            if (other.userinfo != null)
+            if (other.userinfo != null) {
                 return false;
-        } else if (!userinfo.equals(other.userinfo))
+            }
+        } else if (!userinfo.equals(other.userinfo)) {
             return false;
+        }
         return true;
     }
 
@@ -234,7 +262,7 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     public String getSchemeSpecificPart() {
-        return buildSchemeSpecificPart(authority, path, query, fragment);
+        return schemeSpecificPart;
     }
 
     public String getUserInfo() {
@@ -256,7 +284,7 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     private String buildASCIIAuthority() {
-        if (_scheme instanceof HttpScheme) {
+        if (schemeClass instanceof HttpScheme) {
             StringBuilder buf = new StringBuilder();
             String aui = getASCIIUserInfo();
             String ah = getASCIIHost();
@@ -317,7 +345,7 @@ public final class IRI implements Serializable, Cloneable {
             return super.clone();
         } catch (CloneNotSupportedException e) {
             return new IRI(toString()); // not going to happen, but we have to
-                                        // catch it
+            // catch it
         }
     }
 
@@ -330,23 +358,27 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     public static IRI relativize(IRI b, IRI c) {
-        if (c.isOpaque() || b.isOpaque())
+        if (c.isOpaque() || b.isOpaque()) {
             return c;
+        }
         if ((b.scheme == null && c.scheme != null) || (b.scheme != null && c.scheme == null)
-            || (b.scheme != null && c.scheme != null && !b.scheme.equalsIgnoreCase(c.scheme)))
+                || (b.scheme != null && c.scheme != null && !b.scheme.equalsIgnoreCase(c.scheme))) {
             return c;
+        }
         String bpath = normalize(b.getPath());
         String cpath = normalize(c.getPath());
         bpath = (bpath != null) ? bpath : "/";
         cpath = (cpath != null) ? cpath : "/";
         if (!bpath.equals(cpath)) {
-            if (bpath.charAt(bpath.length() - 1) != '/')
+            if (bpath.charAt(bpath.length() - 1) != '/') {
                 bpath += "/";
-            if (!cpath.startsWith(bpath))
+            }
+            if (!cpath.startsWith(bpath)) {
                 return c;
+            }
         }
         IRI iri =
-            new IRI(null, null, null, null, null, -1, normalize(cpath.substring(bpath.length())), c.getQuery(), c
+                new IRI(null, null, null, null, null, -1, normalize(cpath.substring(bpath.length())), c.getQuery(), c
                 .getFragment());
         return iri;
     }
@@ -362,8 +394,8 @@ public final class IRI implements Serializable, Cloneable {
 
     public boolean isSameDocumentReference() {
         return scheme == null && authority == null
-            && (path == null || path.length() == 0 || path.equals("."))
-            && query == null;
+                && (path == null || path.length() == 0 || path.equals("."))
+                && query == null;
     }
 
     public static IRI resolve(IRI b, String c) throws IOException {
@@ -372,31 +404,36 @@ public final class IRI implements Serializable, Cloneable {
 
     public static IRI resolve(IRI b, IRI c) {
 
-        if (c == null)
+        if (c == null) {
             return null;
+        }
         if ("".equals(c.toString()) || "#".equals(c.toString())
-            || ".".equals(c.toString())
-            || "./".equals(c.toString()))
+                || ".".equals(c.toString())
+                || "./".equals(c.toString())) {
             return b;
-        if (b == null)
+        }
+        if (b == null) {
             return c;
+        }
 
-        if (c.isOpaque() || b.isOpaque())
+        if (c.isOpaque() || b.isOpaque()) {
             return c;
+        }
         if (c.isSameDocumentReference()) {
             String cfragment = c.getFragment();
             String bfragment = b.getFragment();
             if ((cfragment == null && bfragment == null) || (cfragment != null && cfragment.equals(bfragment))) {
-                return (IRI)b.clone();
+                return (IRI) b.clone();
             } else {
-                return new IRI(b._scheme, b.getScheme(), b.getAuthority(), b.getUserInfo(), b.getHost(), b.getPort(),
-                               normalize(b.getPath()), b.getQuery(), cfragment);
+                return new IRI(b.schemeClass, b.getScheme(), b.getAuthority(), b.getUserInfo(), b.getHost(), b.getPort(),
+                        normalize(b.getPath()), b.getQuery(), cfragment);
             }
         }
-        if (c.isAbsolute())
+        if (c.isAbsolute()) {
             return c;
+        }
 
-        Scheme _scheme = b._scheme;
+        Scheme _scheme = b.schemeClass;
         String scheme = b.scheme;
         String query = c.getQuery();
         String fragment = c.getFragment();
@@ -430,23 +467,27 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     public static IRI normalize(IRI iri) {
-        if (iri.isOpaque() || iri.getPath() == null)
+        if (iri.isOpaque() || iri.getPath() == null) {
             return iri;
+        }
         IRI normalized = null;
-        if (iri._scheme != null)
-            normalized = iri._scheme.normalize(iri);
-        return (normalized != null) ? normalized : new IRI(iri._scheme, iri.getScheme(), iri.getAuthority(), iri
-            .getUserInfo(), iri.getHost(), iri.getPort(), normalize(iri.getPath()), UrlEncoding.encode(UrlEncoding
-            .decode(iri.getQuery()), Profile.IQUERY.filter()), UrlEncoding
-            .encode(UrlEncoding.decode(iri.getFragment()), Profile.IFRAGMENT.filter()));
+        if (iri.schemeClass != null) {
+            normalized = iri.schemeClass.normalize(iri);
+        }
+        return (normalized != null) ? normalized : new IRI(iri.schemeClass, iri.getScheme(), iri.getAuthority(), iri
+                .getUserInfo(), iri.getHost(), iri.getPort(), normalize(iri.getPath()), UrlEncoding.encode(UrlEncoding
+                .decode(iri.getQuery()), Profile.IQUERY.filter()), UrlEncoding
+                .encode(UrlEncoding.decode(iri.getFragment()), Profile.IFRAGMENT.filter()));
     }
 
     protected static String normalize(String path) {
-        if (path == null || path.length() == 0)
+        if (path == null || path.length() == 0) {
             return "/";
+        }
         String[] segments = path.split("/");
-        if (segments.length < 2)
+        if (segments.length < 2) {
             return path;
+        }
         StringBuilder buf = new StringBuilder("/");
         for (int n = 0; n < segments.length; n++) {
             String segment = segments[n].intern();
@@ -456,41 +497,50 @@ public final class IRI implements Serializable, Cloneable {
                 segments[n] = null;
                 int i = n;
                 while (--i > -1) {
-                    if (segments[i] != null)
+                    if (segments[i] != null) {
                         break;
+                    }
                 }
-                if (i > -1)
+                if (i > -1) {
                     segments[i] = null;
+                }
             }
         }
         for (int n = 0; n < segments.length; n++) {
             if (segments[n] != null) {
-                if (buf.length() > 1)
+                if (buf.length() > 1) {
                     buf.append('/');
+                }
                 buf.append(UrlEncoding.encode(UrlEncoding.decode(segments[n]), Profile.IPATHNODELIMS_SEG.filter()));
             }
         }
-        if (path.endsWith("/") || path.endsWith("/."))
+        if (path.endsWith("/") || path.endsWith("/.")) {
             buf.append('/');
+        }
         return buf.toString();
     }
 
     private static String resolve(String bpath, String cpath) {
-        if (bpath == null && cpath == null)
+        if (bpath == null && cpath == null) {
             return null;
+        }
         if (bpath == null && cpath != null) {
             return (!cpath.startsWith("/")) ? "/" + cpath : cpath;
         }
-        if (bpath != null && cpath == null)
+        if (bpath != null && cpath == null) {
             return bpath;
+        }
         StringBuilder buf = new StringBuilder("");
         int n = bpath.lastIndexOf('/');
-        if (n > -1)
+        if (n > -1) {
             buf.append(bpath.substring(0, n + 1));
-        if (cpath.length() != 0)
+        }
+        if (cpath.length() != 0) {
             buf.append(cpath);
-        if (buf.charAt(0) != '/')
+        }
+        if (buf.charAt(0) != '/') {
             buf.insert(0, '/');
+        }
         return normalize(buf.toString());
     }
 
@@ -542,10 +592,11 @@ public final class IRI implements Serializable, Cloneable {
             if (auth.find()) {
                 userinfo = auth.group(1);
                 host = auth.group(2);
-                if (auth.group(3) != null)
+                if (auth.group(3) != null) {
                     port = Integer.parseInt(auth.group(3));
-                else
+                } else {
                     port = -1;
+                }
             }
             try {
                 CharUtils.verify(userinfo, Profile.IUSERINFO);
@@ -562,7 +613,7 @@ public final class IRI implements Serializable, Cloneable {
             Matcher irim = IRIPATTERN.matcher(iri);
             if (irim.find()) {
                 scheme = irim.group(1);
-                _scheme = reg.getScheme(scheme);
+                schemeClass = reg.getScheme(scheme);
                 authority = irim.group(2);
                 path = irim.group(3);
                 query = irim.group(4);
@@ -585,12 +636,10 @@ public final class IRI implements Serializable, Cloneable {
             throw new IRISyntaxException(e);
         }
     }
-
     private static final Pattern IRIPATTERN =
-        Pattern.compile("^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\\?([^#]*))?(?:#(.*))?");
-
+            Pattern.compile("^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\\?([^#]*))?(?:#(.*))?");
     private static final Pattern AUTHORITYPATTERN =
-        Pattern.compile("^(?:(.*)?@)?((?:\\[.*\\])|(?:[^:]*))?(?::(\\d+))?");
+            Pattern.compile("^(?:(.*)?@)?((?:\\[.*\\])|(?:[^:]*))?(?::(\\d+))?");
 
     public static void preinit() {
         UnicodeCharacterDatabase.getCanonicalClass(1);
@@ -598,11 +647,105 @@ public final class IRI implements Serializable, Cloneable {
     }
 
     /**
-     * Returns a new IRI with a trailing slash appended to the path, if necessary
+     * Returns a new IRI with a trailing slash appended to the path, if
+     * necessary
      */
     public IRI trailingSlash() {
-        return new IRI(_scheme, scheme, authority, userinfo, host, port, path.endsWith("/") ? path : path + "/", query,
-                       fragment);
+        return new IRI(schemeClass, scheme, authority, userinfo, host, port, path.endsWith("/") ? path : path + "/", query,
+                fragment);
     }
 
+    @Override
+    public int compareTo(IRI that) {
+        int c;
+
+        if ((c = compareIgnoringCase(this.scheme, that.scheme)) != 0) {
+            return c;
+        }
+
+        if (this.isOpaque()) {
+            if (that.isOpaque()) {
+                // Both opaque
+                if ((c = compare(this.schemeSpecificPart,
+                        that.schemeSpecificPart)) != 0) {
+                    return c;
+                }
+                return compare(this.fragment, that.fragment);
+            }
+            return +1;
+        } else if (that.isOpaque()) {
+            return -1;
+        }
+
+        // Hierarchical
+        if ((this.host != null) && (that.host != null)) {
+            // Both server-based
+            if ((c = compare(this.userinfo, that.userinfo)) != 0) {
+                return c;
+            }
+            if ((c = compareIgnoringCase(this.host, that.host)) != 0) {
+                return c;
+            }
+            if ((c = this.port - that.port) != 0) {
+                return c;
+            }
+        } else {
+            if ((c = compare(this.authority, that.authority)) != 0) {
+                return c;
+            }
+        }
+
+        if ((c = compare(this.path, that.path)) != 0) {
+            return c;
+        }
+        if ((c = compare(this.query, that.query)) != 0) {
+            return c;
+        }
+        return compare(this.fragment, that.fragment);
+    }
+
+    private static int compare(String s, String t) {
+        if (s == t) {
+            return 0;
+        }
+        if (s != null) {
+            if (t != null) {
+                return s.compareTo(t);
+            } else {
+                return +1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    private static int compareIgnoringCase(String s, String t) {
+        if (s == t) {
+            return 0;
+        }
+        if (s != null) {
+            if (t != null) {
+                int sn = s.length();
+                int tn = t.length();
+                int n = sn < tn ? sn : tn;
+                for (int i = 0; i < n; i++) {
+                    int c = toLower(s.charAt(i)) - toLower(t.charAt(i));
+                    if (c != 0) {
+                        return c;
+                    }
+                }
+                return sn - tn;
+            }
+            return +1;
+        } else {
+            return -1;
+        }
+    }
+
+    private static int toLower(char c) {
+        if ((c >= 'A') && (c <= 'Z')) {
+            return c + ('a' - 'A');
+        }
+        return c;
+    }
 }

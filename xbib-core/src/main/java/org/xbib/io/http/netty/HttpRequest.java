@@ -11,7 +11,7 @@ import com.ning.http.client.providers.netty.NettyAsyncHttpProvider;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpRequest {
+public class HttpRequest extends HttpPacket {
 
     private String method;
     private URI uri;
@@ -99,4 +99,5 @@ public class HttpRequest {
     public Request buildRequest() {
         return builder.setUrl(uri.toASCIIString()).setRealm(realmBuilder.build()).build();
     }
+
 }

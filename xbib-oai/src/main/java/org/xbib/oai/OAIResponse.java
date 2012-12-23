@@ -31,25 +31,25 @@
  */
 package org.xbib.oai;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.Date;
+import org.xbib.io.AbstractResponse;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
-import org.xbib.io.AbstractResponse;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.Date;
 
-public class OAIResponse extends AbstractResponse
-        implements XMLEventConsumer {
+public class OAIResponse extends AbstractResponse implements XMLEventConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(OAIResponse.class.getName());
-    private static final XMLOutputFactory outputFactory =  XMLOutputFactory.newInstance();
+    private static final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
     private XMLEventWriter eventWriter;
     private String errorCode;
     private Date responseDate;
@@ -95,28 +95,27 @@ public class OAIResponse extends AbstractResponse
             eventWriter.add(xmle);
         }
     }
-    
+
     public void setError(String errorCode) {
         this.errorCode = errorCode;
     }
-    
+
     public String getError() {
         return errorCode;
     }
 
-    
     public void setResponseDate(Date date) {
         this.responseDate = date;
     }
-    
+
     public Date getResponseDate() {
         return responseDate;
     }
-    
+
     public void setExpire(long millis) {
         this.expire = millis;
     }
-    
+
     public long getExpire() {
         return expire;
     }

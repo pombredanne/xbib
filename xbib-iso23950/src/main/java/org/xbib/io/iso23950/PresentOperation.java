@@ -39,9 +39,6 @@ import asn1.ASN1ObjectIdentifier;
 import asn1.BEREncoding;
 import java.io.IOException;
 import java.util.LinkedList;
-import org.xbib.io.ErrorResultProcessor;
-import org.xbib.io.ResultProcessor;
-import org.xbib.io.SessionExecutor;
 import z3950.v3.ElementSetNames;
 import z3950.v3.InternationalString;
 import z3950.v3.NamePlusRecord;
@@ -57,7 +54,7 @@ import z3950.v3.ResultSetId;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class PresentOperation implements SessionExecutor<ZSession> {
+public class PresentOperation {
 
     private long millis;
     private int nReturned;
@@ -67,25 +64,18 @@ public class PresentOperation implements SessionExecutor<ZSession> {
     public int offset;
     public int length;
     public String preferredRecordSyntax;
-    private ResultProcessor<Record> resultHandler;
-    private ErrorResultProcessor<Record> errorHandler;
+
 
     public PresentOperation(String resultSetName, String elementSetName,
-            String preferredRecordSyntax, int offset, int length,
-            ResultProcessor<Record> resultHandler,
-            ErrorResultProcessor<Record> errorHandler
-    ) {
+            String preferredRecordSyntax, int offset, int length) {
         this.resultSetName = resultSetName;
         this.elementSetName = elementSetName;
         this.preferredRecordSyntax = preferredRecordSyntax;
         this.offset = offset;
         this.length = length;
-        this.resultHandler = resultHandler;
-        this.errorHandler = errorHandler;
     }
 
-    @Override
-    public void execute(ZSession session) throws IOException {
+    public void execute(ZSession session, RecordHandler handler) throws IOException {
         PresentRequest pr = new PresentRequest();
         pr.s_resultSetId = new ResultSetId();
         pr.s_resultSetId.value = new InternationalString();
@@ -115,14 +105,14 @@ public class PresentOperation implements SessionExecutor<ZSession> {
                     if (nr.s_record.c_retrievalRecord != null) {
                         ASN1External asn1External = new ASN1External(nr.s_record.c_retrievalRecord.ber_encode(), true);
                         Record record = new Record(offset + n, asn1External.c_octetAligned.get_bytes());
-                        if (resultHandler != null) {
-                            resultHandler.process(record);
+                        if (handler != null) {
+                            handler.receivedRecord(record);
                         }                        
                     } else if (nr.s_record.c_surrogateDiagnostic != null) {
                         ASN1External asn1External = new ASN1External(nr.s_record.c_surrogateDiagnostic.c_defaultFormat.ber_encode(), true);
-                        Record record = new Record(offset + n, asn1External.c_octetAligned.get_bytes());
-                        if (errorHandler != null) {
-                            errorHandler.processError(record);
+                        ErrorRecord record = new ErrorRecord(offset + n, asn1External.c_octetAligned.get_bytes());
+                        if (handler != null) {
+                            handler.receivedRecord(record);
                         }
                     }
                 } catch (ASN1Exception e) {

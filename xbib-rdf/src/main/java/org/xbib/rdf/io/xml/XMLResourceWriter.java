@@ -32,7 +32,6 @@
 package org.xbib.rdf.io.xml;
 
 import java.io.Writer;
-import java.net.URI;
 import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -41,13 +40,14 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.BlankNode;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Statement;
 import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.SimpleNamespaceContext;
+import org.xbib.xml.XMLNamespaceContext;
 
 /**
  * Write resource to XML stream
@@ -60,7 +60,7 @@ public class XMLResourceWriter<S extends Resource<?, ?, ?>, P extends Property, 
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     public XMLResourceWriter() {
-        this(SimpleNamespaceContext.getInstance());
+        this(XMLNamespaceContext.getInstance());
     }
 
     public XMLResourceWriter(NamespaceContext context) {
@@ -70,7 +70,7 @@ public class XMLResourceWriter<S extends Resource<?, ?, ?>, P extends Property, 
     public void toXML(Resource<S, P, O> resource, Writer w)
             throws XMLStreamException {
         XMLEventWriter xew = XMLOutputFactory.newInstance().createXMLEventWriter(w);
-        URI resourceURI = URI.create(resource.id().toString());
+        IRI resourceURI = IRI.create(resource.id().toString());
         // copy all resource statements, this will reconstruct the structure
         SimpleResource<S, P, O> xmlResource = new SimpleResource<S, P, O>(resourceURI);
         Iterator<Statement<S, P, O>> it = resource.iterator(true);

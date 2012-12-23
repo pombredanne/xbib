@@ -33,7 +33,7 @@ package org.xbib.rdf;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import java.net.URI;
+import org.xbib.iri.IRI;
 
 /**
  * The rdf:Seq class is the class of RDF 'Sequence' containers.
@@ -56,7 +56,7 @@ public abstract class AbstractSequence<S extends Resource<?,?,?>, P extends Prop
         super();
     }
 
-    protected AbstractSequence(URI identifier) {
+    protected AbstractSequence(IRI identifier) {
         super(identifier);
     }
 

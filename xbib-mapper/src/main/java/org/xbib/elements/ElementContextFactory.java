@@ -31,7 +31,7 @@
  */
 package org.xbib.elements;
 
-import org.xbib.rdf.ResourceContext;
+import org.xbib.rdf.context.ResourceContext;
 
 public interface ElementContextFactory<C extends ResourceContext> {
     C newContext();

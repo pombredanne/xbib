@@ -46,8 +46,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.xbib.io.Mode;
+
+import org.xbib.io.ObjectPacket;
+import org.xbib.io.Packet;
 import org.xbib.io.Session;
+import org.xbib.io.sql.operator.Query;
 
 /**
  * SQL Session
@@ -60,8 +63,6 @@ public class SQLSession implements Session {
     //private static final Logger logger = Logger.getLogger(SQLSession.class.getName());
     /** default encoding */
     public static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
-    /** statement cache */
-    private static final Map<String, PreparedStatement> cache = new HashMap<>();
     /** connection */
     private transient Connection connection = null;
     /** locale */
@@ -96,6 +97,22 @@ public class SQLSession implements Session {
         return isOpen;
     }
 
+    @Override
+    public Packet read() throws IOException {
+        //return readOp.read(this);
+        return null;
+    }
+
+    @Override
+    public void write(Packet packet) throws IOException {
+        //writeOp.write(this, packet);
+    }
+
+    @Override
+    public Packet newPacket() {
+        return new ObjectPacket();
+    }
+
     public void setLocale(Locale locale) {
         this.locale = locale;
         this.datetimeformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
@@ -112,10 +129,6 @@ public class SQLSession implements Session {
 
     public DateFormat getDateTimeFormat() {
         return datetimeformat;
-    }
-
-    public Map<String, PreparedStatement> getCache() {
-        return cache;
     }
 
     /**
@@ -447,11 +460,11 @@ public class SQLSession implements Session {
                 new String[]{"table"}, m);
         SQLSingleResult r = new SQLSingleResult(Types.VARCHAR, 2);
         try {
-            query.setResultProcessor(r);
+            query.addListener(r);
             query.execute(this);
         } catch (IOException ex) {
             throw new SQLException(ex.getMessage());
         }
-        return r.queryForString().toLowerCase();
+        return r.value().toLowerCase();
     }
 }
