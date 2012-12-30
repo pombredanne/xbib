@@ -52,7 +52,7 @@ public class PacketTest extends Assert {
                 .getConnectionFactory("file")
                 .getConnection(URI.create(uri));
         Session<StringPacket> session = c.createSession();
-        session.open(Session.Mode.WRITE);
+        session.open(Session.Mode.APPEND);
         StringPacket data = session.newPacket();
         data.name("demopacket");
         data.packet("Hello World");

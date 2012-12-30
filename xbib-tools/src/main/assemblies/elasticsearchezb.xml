@@ -16,14 +16,15 @@
                 <include>org.xbib:xbib-core</include>
                 <include>org.xbib:xbib-logging</include>
                 <include>org.xbib:xbib-compress</include>
+                <include>org.xbib:xbib-elements</include>
                 <include>org.xbib:xbib-elasticsearch</include>
-                <include>org.xbib:xbib-mapper</include>
                 <include>org.xbib:xbib-query</include>
                 <include>org.xbib:xbib-tools</include>
-                <include>com.google.guava:guava</include>
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.apache.lucene:lucene-core</include>
-                <include>org.codehaus.jackson:jackson-core-asl</include>
+                <include>com.google.guava:guava</include>
+                <include>com.fasterxml.jackson.core:jackson-core</include>
+                <include>joda-time:joda-time</include>
             </includes>
         </dependencySet>
     </dependencySets>

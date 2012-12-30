@@ -25,7 +25,7 @@ import java.io.OutputStream;
  * special io devices. In the Java universe, the only real function that this
  * class performs is to ensure that files have the correct "block" size, or
  * other tars will complain.<p>You should never have a need to access this
- * class directly. TarBuffers are created by Tar IO Streams.</p>
+ * class directly. TarBuffers are created by Tar IO streams.</p>
  *
  * @author <a href="mailto:time@ice.com">Timothy Gerard Endres</a>
  * @author <a href="mailto:peter@apache.org">Peter Donald</a>

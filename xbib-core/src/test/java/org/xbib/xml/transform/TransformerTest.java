@@ -19,12 +19,13 @@
  */
 package org.xbib.xml.transform;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class TransformerTest {
+public class TransformerTest extends Assert {
 
     @Test
     public void loadInstance() {
-        new StylesheetTransformer();
+        assertNotNull(new StylesheetTransformer());
     }
 }

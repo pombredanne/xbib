@@ -170,7 +170,11 @@ public final class ElasticsearchMedlineIndexer extends AbstractImporter<Long, At
         @Override
         public void closeResource() {
             super.closeResource();
-            out.output(resourceContext);
+            try {
+                out.output(resourceContext);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
 
         @Override

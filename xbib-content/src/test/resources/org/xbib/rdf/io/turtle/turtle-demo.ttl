@@ -1,0 +1,13 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<urn:doc1> dc:creator "Smith", "Jones";
+	dcterms:hasPart [
+		dc:title "This is a part", "of the sample title";
+		dc:creator "Jörg Prante";
+		dc:date "2009"
+	];
+	dc:title "A sample title";
+	dcterms:isPartOf [
+		dc:title "another", "title"
+	].

@@ -374,9 +374,9 @@ public class SQLService {
                  * external file as well.
                  *
                  * A DATALINK value is retrieved from a ResultSet object with
-                 * the ResultSet methods getURL or getObject. If the Java
+                 * the ResultSet methods getURL or object. If the Java
                  * platform does not support the type of URL returned by getURL
-                 * or getObject, a DATALINK value can be retrieved as a String
+                 * or object, a DATALINK value can be retrieved as a String
                  * object with the method getString.
                  *
                  * java.net.URL values are stored in a database using the method

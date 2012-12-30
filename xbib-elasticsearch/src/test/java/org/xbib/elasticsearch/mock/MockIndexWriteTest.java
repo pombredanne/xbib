@@ -68,24 +68,24 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
     private ResourceContext createContext() {
         Resource<S, P, O> resource = new SimpleResource()
                 .id(IRI.create("urn:document"))
-                .property("dc:title", "Hello")
-                .property("dc:title", "World")
-                .property("xbib:person", "Jörg Prante")
-                .property("dc:subject", "An")
-                .property("dc:subject", "example")
-                .property("dc:subject", "for")
-                .property("dc:subject", "subject")
-                .property("dc:subject", "sequence")
-                .property("http://purl.org/dc/terms/place", "Köln");
+                .add("dc:title", "Hello")
+                .add("dc:title", "World")
+                .add("xbib:person", "Jörg Prante")
+                .add("dc:subject", "An")
+                .add("dc:subject", "example")
+                .add("dc:subject", "for")
+                .add("dc:subject", "subject")
+                .add("dc:subject", "sequence")
+                .add("http://purl.org/dc/terms/place", "Köln");
         resource.newResource("urn:res1")
-                .property("property1", "value1")
-                .property("property2", "value2");
+                .add("property1", "value1")
+                .add("property2", "value2");
         resource.newResource("urn:res1")
-                .property("property3", "value3")
-                .property("property4", "value4");
+                .add("property3", "value3")
+                .add("property4", "value4");
         resource.newResource("urn:res1")
-                .property("property5", "value5")
-                .property("property6", "value6");
+                .add("property5", "value5")
+                .add("property6", "value6");
         ResourceContext context = new SimpleResourceContext();
         context.newResource(resource);
         return context;

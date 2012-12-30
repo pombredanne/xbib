@@ -84,6 +84,11 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>xbib-elements</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>xbib-query</artifactId>
             <type>jar</type>
         </dependency>

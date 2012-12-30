@@ -134,6 +134,7 @@ public class Elasticsearch implements ElasticsearchInterface {
                 .build();
     }
 
+    @Override
     public synchronized void shutdown() {
         if (client != null) {
             client.close();
@@ -142,8 +143,13 @@ public class Elasticsearch implements ElasticsearchInterface {
         }
     }
 
+    @Override
     public ElasticsearchRequest newRequest() {
         return new ElasticsearchRequest().newRequest(client.prepareSearch().setPreference("_primary_first"));
+    }
+    
+    public ElasticsearchRequest newGetRequest() {
+        return new ElasticsearchRequest().newRequest(client.prepareGet());
     }
 
     private final static String DEFAULT_CLUSTER_NAME = "elasticsearch";

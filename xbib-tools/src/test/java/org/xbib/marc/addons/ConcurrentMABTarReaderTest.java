@@ -1,5 +1,6 @@
 package org.xbib.marc.addons;
 
+import java.io.IOException;
 import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
 import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
@@ -30,14 +31,17 @@ public class ConcurrentMABTarReaderTest {
             long counter;
 
             @Override
+            public void enabled(boolean enabled) {
+                
+            }
+            @Override
             public boolean enabled() {
                 return true;
             }
 
             @Override
-            public boolean output(MABContext context) {
+            public void output(MABContext context) throws IOException {
                 counter++;
-                return true;
             }
 
             @Override

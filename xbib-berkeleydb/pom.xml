@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-mapper</artifactId>
+            <artifactId>xbib-elements</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>

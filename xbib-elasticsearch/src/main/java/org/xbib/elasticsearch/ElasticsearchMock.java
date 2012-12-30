@@ -33,8 +33,6 @@ package org.xbib.elasticsearch;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -45,40 +43,16 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.util.XMLEventConsumer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import org.elasticsearch.ElasticSearchException;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.ShardSearchFailure;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.xbib.elasticsearch.xml.ES;
 import org.xbib.io.util.URIUtil;
-import org.xbib.json.JsonXmlReader;
-import org.xbib.json.JsonXmlStreamer;
-import org.xbib.json.JsonXmlValueMode;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.query.cql.CQLParser;
-import org.xbib.query.cql.elasticsearch.ESGenerator;
-import org.xbib.xml.transform.StylesheetTransformer;
-import org.xml.sax.InputSource;
 
 public class ElasticsearchMock implements ElasticsearchInterface {
 
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchMock.class.getName());
     protected Settings settings;
-    private Logger queryLogger;
 
     public ElasticsearchMock() {
     }

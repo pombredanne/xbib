@@ -31,6 +31,13 @@
  */
 package org.xbib.marc.addons;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
 import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
@@ -42,13 +49,6 @@ import org.xbib.io.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
-
-import java.net.URI;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class ConcurrentAlephPublishingReaderTest {
 
@@ -79,14 +79,17 @@ public class ConcurrentAlephPublishingReaderTest {
         ElementOutput<MABContext> output = new ElementOutput<MABContext>() {
 
             @Override
+            public void enabled(boolean enabled) {
+                
+            }
+            @Override
             public boolean enabled() {
                 return true;
             }
 
             @Override
-            public boolean output(MABContext context) {
+            public void output(MABContext context) throws IOException {
                 count.incrementAndGet();
-                return true;
             }
 
             @Override

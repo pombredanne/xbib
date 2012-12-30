@@ -1,0 +1,232 @@
+%{
+
+/*
+Copyright (C) 2006  David Massart and Chea Sereyvath, European Schoolnet
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+  import java.io.*;
+  import java.lang.String;
+  import java.util.StringTokenizer;  
+%}
+
+%token NL          /* newline  */
+%token <sval> AND  /* Second kind of keyword */
+%token <sval> LEFT_PATENTHESIS  /* Second kind of keyword */
+%token <sval> RIGHT_PATENTHESIS  /* Second kind of keyword */
+%token <sval> CHARSTRING1  /* First kind of keyword */
+%token <sval> CHARSTRING2  /* Second kind of keyword */
+%token <sval> DOT  /* Dot signe*/
+%token <sval> OPERATORS  /* the operator between the signs */
+%token <sval> STANDARD  /* the standard to use */
+%token <ival> INTEGER  /* Integer number */
+%token <dval> REAL  /* real number */
+
+/* The type of rules*/
+%type <sval> plql
+%type <sval> clause
+%type <sval> keywordClause
+%type <sval> operand
+%type <sval> term1
+%type <sval> term2
+%type <sval> charString1
+%type <sval> charString2
+%type <sval> integer
+%type <sval> real
+
+%type <sval> exactClause
+%type <sval> path
+%type <sval> operator
+%type <sval> standard
+
+%type <sval> pathExp
+%type <sval> selector
+%type <sval> standard
+
+%start plql
+
+ 
+%%
+/* rule 2-1 */
+plql:			clause	{  	$$ = "rule number = 2-1 : " + $1;
+							query = $$;
+						}
+				;
+/* rule 2-2 */
+clause:			keywordClause {
+                    System.out.println("rule number = 2-2.1 : " + $1);
+                    }
+				|standard DOT exactClause {	
+					$1 = $1 + "." + $3;	
+					System.out.println("rule number = 2-2.2 : " + $1);
+				}
+				|LEFT_PATENTHESIS clause RIGHT_PATENTHESIS 	{	
+					$1 = " ( " + $2 + " ) "; 
+					System.out.println("rule number = 2-2.3 : " + $1);
+					}		
+				|clause AND clause 	{ 	
+					$1 = $1 + " and " + $3; 
+					System.out.println("rule number = 2-2.4 : " + $1);
+					}
+				;
+/* rule 2-3 */
+keywordClause:	operand {
+                    System.out.println("rule number = 2-3 : " + $1);
+                }
+                ;
+
+/* rule 2-4 */
+operand:        term1 {
+                    System.out.println("rule number = 2-4.1 : " + $1);
+                    }
+				|term2 {
+                    System.out.println("rule number = 2-4.2 : " + $1);
+                    } 
+				|integer {
+                    System.out.println("rule number = 2-4.3 : " + $1);
+                    }
+				|real {
+                    System.out.println("rule number = 2-4.4 : " + $1);
+                    }
+				;
+
+/* rule 2-5 */
+term1:			charString1 {
+                    System.out.println("rule number = 2-5 : " + $1);
+                    }
+				;
+/* rule 2-6 */
+term2:			charString2 {
+                    System.out.println("rule number = 2-6 : " + $1);
+                    }
+				;
+/* rule 2-7 */
+charString1:	CHARSTRING1	{   
+                    System.out.println("rule number = 2-7 : " + $1);
+					}
+				;
+/* rule 2-8 */
+charString2:	CHARSTRING2	{	
+                    System.out.println("rule number = 2-8 : " + $1);
+					} 
+				;
+/* rule 2-9 */
+integer:        INTEGER {	
+                    System.out.println("rule number = 2-9 : " + $1);
+					}
+                ;
+/* rule 2-10 */
+real:       REAL {	
+				System.out.println("rule number = 2-10 : " + $1);
+                }
+            ;
+				
+/* rule 2-11 */				
+exactClause:	path OPERATORS operand {	
+					$1 = $1 + " " + $2 + " " + $3; 
+					System.out.println("rule number = 2-11.1 : " + $1 );
+					}
+                |pathExp { 
+					System.out.println("rule number = 2-11.2 : " + $1 );
+					}
+				;
+                
+/* rule 2-12 */				
+path:			term1	{
+					System.out.println("rule number = 2-12.1 : " + $1);
+					}
+				|path DOT path	{	
+					$1 = $1 + $2 + $3; 
+					System.out.println("rule number = 2-12.2 : " + $1);
+					}
+				;
+
+/* rule 2-13 */
+operator:   OPERATORS   {
+                    System.out.println("rule number = 2-13 : " + $1);
+            }
+            ;
+            
+            
+/* rule 2-14 */
+standard:   STANDARD {
+                    System.out.println("rule number = 2-14.1 : " + $1);
+                }
+
+			|term1 {
+				System.out.println("rule number = 2-14.2 : " + $1);
+			    }
+            ;
+
+/* rule 2-15 */
+pathExp:		path DOT pathExp{
+					$1 = $1 + $2 + $3 ;
+                    System.out.println("rule number = 2-15.1 : " + $1);
+				}
+				|path DOT LEFT_PATENTHESIS selector AND selector RIGHT_PATENTHESIS	{
+					$1 = $1 + $2 + $3 + " " + $4 + $5 + $6 + " " + $7;
+					System.out.println("rule number = 2-15.2 : " + $1);
+					}
+				;
+
+/* rule 2-16 */					
+selector:		term1 OPERATORS operand  {
+					$1 = $1 + " " + $2 + " " + $3;
+					System.out.println("rule number = 2-16.1 : "+ $1);
+					}
+			|selector AND selector { 
+					$1 = $1 + " " + $2 + " " + $3 ;
+					System.out.println("rule number = 2-16.2 : "+ $1);
+					}
+			|LEFT_PATENTHESIS selector RIGHT_PATENTHESIS  {
+                                        $1 = $1 + " " + $2 + " " + $3 ;
+                                        System.out.println("rule number = 2-16.3 : " + $1);
+                                        }
+			|LEFT_PATENTHESIS selector AND selector RIGHT_PATENTHESIS      {
+                                        $1 = $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 ;
+                                        System.out.println("rule number = 2-16.4 : " + $1);
+                                        }
+				;				
+
+%%
+
+	private PlqlLayer2Parser lexer;
+	private String query ;
+	
+	private int yylex () {
+		int yyl_return = -1;
+		try {
+			yylval = new PlqlLayer2AnalyzerVal(0);
+			yyl_return = lexer.yylex();
+		}
+		catch (IOException e) {
+			System.err.println("IO error :"+e);
+		}
+		return yyl_return;
+	}
+
+	public void yyerror (String error) {
+		System.err.println ("Syntax Error\n" + error);
+	}
+
+	public PlqlLayer2Analyzer(Reader r) {/***/
+		lexer = new PlqlLayer2Parser(r, this);
+	}
+		
+    public String getQuery()
+    {
+        return query ;
+    }		

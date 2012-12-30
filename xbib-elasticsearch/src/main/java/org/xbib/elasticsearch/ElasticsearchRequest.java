@@ -1,17 +1,13 @@
 package org.xbib.elasticsearch;
 
-import org.elasticsearch.action.get.GetRequestBuilder;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.query.cql.CQLParser;
-import org.xbib.query.cql.elasticsearch.ESGenerator;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringReader;
+import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.common.unit.TimeValue;
+import org.xbib.logging.Logger;
+import org.xbib.query.cql.CQLParser;
+import org.xbib.query.cql.elasticsearch.ESGenerator;
 
 public class ElasticsearchRequest {
 
@@ -20,15 +16,20 @@ public class ElasticsearchRequest {
     private ESGenerator generator;
     private String[] index;
     private String[] type;
+    private String id;
     private String originalQuery;
     private String query;
-
 
     public ElasticsearchRequest newRequest(SearchRequestBuilder searchRequestBuilder) {
          this.searchRequestBuilder = searchRequestBuilder;
          this.generator = new ESGenerator();
          return this;
      }
+
+    public ElasticsearchRequest newRequest(GetRequestBuilder getRequest) {
+        this.getRequest = getRequest;
+        return this;
+    }
 
     public ElasticsearchRequest setIndex(String index) {
         if (index != null && !"*".equals(index)) {
@@ -60,6 +61,15 @@ public class ElasticsearchRequest {
 
     public String type() {
         return type[0];
+    }
+
+    public ElasticsearchRequest setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String id() {
+        return id;
     }
 
     public ElasticsearchRequest setFrom(int from) {
@@ -138,12 +148,7 @@ public class ElasticsearchRequest {
             return response;
     }
 
-    public ElasticsearchRequest single(GetRequestBuilder getRequest) {
-        this.getRequest = getRequest;
-        return this;
-    }
-
-    public ElasticsearchResponse executeSingle(Logger queryLogger) throws IOException {
+    public ElasticsearchResponse executeGet(Logger queryLogger) throws IOException {
         ElasticsearchResponse response = new ElasticsearchResponse();
         long t0 = System.currentTimeMillis();
         response.getResponse(getRequest.execute().actionGet());

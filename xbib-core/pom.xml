@@ -25,12 +25,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <type>jar</type>
         </dependency>
         <dependency>
             <!-- NOTE: take care of a netty jar that does not contain jboss-beans.xml
@@ -51,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-rdf</artifactId>
+            <artifactId>xbib-content</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>

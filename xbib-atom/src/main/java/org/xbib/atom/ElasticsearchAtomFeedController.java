@@ -28,7 +28,6 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.Elasticsearch;
 import org.xbib.elasticsearch.OutputFormat;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;

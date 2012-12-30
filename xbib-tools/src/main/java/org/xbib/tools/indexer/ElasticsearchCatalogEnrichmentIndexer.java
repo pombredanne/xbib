@@ -1,22 +1,5 @@
 package org.xbib.tools.indexer;
 
-import org.xbib.elasticsearch.ElasticsearchIndexer;
-import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.AbstractImporter;
-import org.xbib.importer.ImportService;
-import org.xbib.importer.Importer;
-import org.xbib.importer.ImporterFactory;
-import org.xbib.io.file.TextFileConnectionFactory;
-import org.xbib.io.file.Finder;
-import org.xbib.iri.IRI;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.simple.SimpleResourceContext;
-import org.xbib.tools.opt.OptionParser;
-import org.xbib.tools.opt.OptionSet;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +8,22 @@ import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+import org.xbib.elasticsearch.ElasticsearchIndexer;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elements.output.ElementOutput;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
+import org.xbib.io.file.Finder;
+import org.xbib.io.file.TextFileConnectionFactory;
+import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.simple.SimpleResourceContext;
+import org.xbib.tools.opt.OptionParser;
+import org.xbib.tools.opt.OptionSet;
 
 public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long, AtomicLong> {
 
@@ -174,14 +173,14 @@ public class ElasticsearchCatalogEnrichmentIndexer extends AbstractImporter<Long
                 id = pos >= 0 ? id.substring(pos + 1) : id;
                 // remove .txt and force uppercase
                 id = id.substring(0, id.length() - 4).toUpperCase();
-                IRI identifier = IRI.create("urn:hbz#" + id);
+                IRI identifier = IRI.create("urn:hbz/enrichment#" + id);
                 Resource resource = ctx.newResource();
                 resource.id(identifier)
-                        .property("dc:title", title)
-                        .property("dc:creator", author)
-                        .property("dc:date", year)
+                        .add("dc:title", title)
+                        .add("dc:creator", author)
+                        .add("dc:date", year)
                         .newResource("dc:description")
-                            .property("dcterms:tableOfContents", sb.toString());
+                            .add("dcterms:tableOfContents", sb.toString());
 
                 out.output(ctx);
             }

@@ -31,6 +31,7 @@
  */
 package org.xbib.elasticsearch;
 
+import java.net.URI;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequest;
@@ -47,11 +48,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
-import java.net.URI;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
- * An Elasticsearch Data Access Object
+ * An Elasticsearch Data Access Object (DAO) for indexing
  */
 public class ElasticsearchIndexer
         extends Elasticsearch
@@ -59,6 +57,8 @@ public class ElasticsearchIndexer
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchIndexer.class.getName());
 
+    private boolean enabled;
+    
     private BulkProcessor bulk;
     /**
      * The size of a bulkQueue request
@@ -71,6 +71,10 @@ public class ElasticsearchIndexer
     private String index;
     private String type;
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
     @Override
     public ElasticsearchIndexer settings(Settings settings) {
         super.settings(settings);
@@ -99,13 +103,15 @@ public class ElasticsearchIndexer
 
             @Override
             public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                logger.warn("bulk error [{}]: {}", executionId, failure.getMessage());
+                logger.error("bulk error [{}]: {}", executionId, failure.getMessage());
+                enabled = false;
             }
         };
         this.bulk = BulkProcessor.builder(client, listener)
                 .setBulkActions(bulkSize)
                 .setConcurrentRequests(maxActiveRequests)
                 .build();
+        this.enabled = true;
         return this;
     }
 
@@ -147,6 +153,7 @@ public class ElasticsearchIndexer
         return this;
     }
 
+    @Override
     public String index() {
         return index;
     }
@@ -157,6 +164,7 @@ public class ElasticsearchIndexer
         return this;
     }
 
+    @Override
     public String type() {
         return type;
     }
@@ -223,27 +231,50 @@ public class ElasticsearchIndexer
         return this;
     }
 
+    @Override
     public ElasticsearchIndexer index(String index, String type, String id, String source) {
-        logger.info("source = {}", source);
+        if (!enabled) {
+            return this;
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("index: coordinate = {}/{}/{} source = {}", index, type, id, source);
+        }
         IndexRequest indexRequest = Requests.indexRequest(index).type(type).id(id).create(false).source(source);
-        bulk.add(indexRequest);
+        try {
+            bulk.add(indexRequest);
+        } catch (Exception e) {
+            logger.error("bulk index failed: {}", e.getMessage(), e);
+            enabled = false;
+        }
         return this;
     }
 
+    @Override
     public ElasticsearchIndexer delete(String index, String type, String id) {
         DeleteRequest deleteRequest = Requests.deleteRequest(index).type(type).id(id);
-        bulk.add(deleteRequest);
+        try {
+           bulk.add(deleteRequest);
+        } catch (Exception e) {
+            logger.error("bulk delete failed: {}", e.getMessage(), e);
+            enabled = false;
+        }
         return this;
     }
 
+    @Override
     public ElasticsearchIndexer flush() {
-        bulk.flush();
+        if (enabled) {
+            bulk.flush();
+        }
         return this;
     }
 
+    @Override
     public synchronized void shutdown() {
+        logger.info("starting shutting down...");
         super.shutdown();
         bulk.close();
+        logger.info("shutting down completed");
     }
 
 }

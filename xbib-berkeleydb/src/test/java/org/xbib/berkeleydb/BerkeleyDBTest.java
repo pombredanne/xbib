@@ -24,12 +24,14 @@ import org.xbib.io.Session;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
+import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.simple.SimpleResource;
 
-public class BerkeleyDBTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> {
+public class BerkeleyDBTest<S extends Identifier, P extends Property, O extends Node> {
 
     private static final Logger logger = LoggerFactory.getLogger(BerkeleyDBTest.class.getName());
     
@@ -56,25 +58,25 @@ public class BerkeleyDBTest<S extends Resource<S, P, O>, P extends Property, O e
     private Resource<S,P,O> createResource() {
         Resource<S,P,O> resource = new SimpleResource();
         resource.id(IRI.create("urn:resource"));
-        resource.property("dc:title", "Hello")
-        .property("dc:title", "World")
-        .property("xbib:person", "Jörg Prante")
-        .property("dc:subject", "An")
-        .property("dc:subject", "example")
-        .property("dc:subject", "for")
-        .property("dc:subject", "a")
-        .property("dc:subject", "sequence")
-        .property("http://purl.org/dc/terms/place", "Köln");
+        resource.add("dc:title", "Hello")
+        .add("dc:title", "World")
+        .add("xbib:person", "Jörg Prante")
+        .add("dc:subject", "An")
+        .add("dc:subject", "example")
+        .add("dc:subject", "for")
+        .add("dc:subject", "a")
+        .add("dc:subject", "sequence")
+        .add("http://purl.org/dc/terms/place", "Köln");
         // sequence optimized for turtle output
         Resource<S,P,O> r1 = resource.newResource("urn:res#1");
-        r1.property("property1", "value1");
-        r1.property("property2", "value2");
+        r1.add("property1", "value1");
+        r1.add("property2", "value2");
         Resource<S,P,O> r2 = resource.newResource("urn:res#2");
-        r2.property("property3", "value3");
-        r2.property("property4", "value4");
+        r2.add("property3", "value3");
+        r2.add("property4", "value4");
         Resource<S,P,O> r3 = resource.newResource("urn:res#3");
-        r3.property("property5", "value5");
-        r3.property("property6", "value6");
+        r3.add("property5", "value5");
+        r3.add("property6", "value6");
         return resource;
     }
 }

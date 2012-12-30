@@ -64,6 +64,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchEZBIndexer.class.getName());
+    private final static String lf = System.getProperty("line.separator");
     private final static AtomicLong fileCounter = new AtomicLong(0L);
     private static Queue<URI> input;
     private static OptionSet options;
@@ -74,7 +75,6 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
     public static void main(String[] args) {
         try {
             OptionParser parser = new OptionParser() {
-
                 {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
@@ -88,14 +88,14 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for ElasticsearchEZBIndexer");
-                System.err.println(" --help                 print this help message");
-                System.err.println(" --elasticsearch <uri>  Elasticesearch URI");
-                System.err.println(" --index <index>        Elasticsearch index name");
-                System.err.println(" --type <type>          Elasticsearch type name");
-                System.err.println(" --path <path>          a file path from where the input files are recursively collected (required)");
-                System.err.println(" --pattern <pattern>    a regex for selecting matching file names for input (required)");
-                System.err.println(" --threads <n>          the number of threads (required, default: 1)");
+                System.err.println("Help for " + ElasticsearchEZBIndexer.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (required)" + lf
+                        + " --threads <n>          the number of threads (required, default: 1)");
                 System.exit(1);
             }
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
@@ -111,12 +111,11 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
                     .setBulkSize((Integer) options.valueOf("bulksize"))
                     .setMaxActiveRequests((Integer) options.valueOf("bulks"));
 
-            final ElasticsearchResourceSink<ResourceContext,Resource> sink =
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
                     new ElasticsearchResourceSink(es);
 
             ImportService service = new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
-
                         @Override
                         public Importer newImporter() {
                             return new ElasticsearchEZBIndexer(sink);
@@ -163,7 +162,7 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
             reader.close();
             fileCounter.incrementAndGet();
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("error while getting next document: {}", ex.getMessage(), ex);
         }
         return fileCounter;
     }
@@ -191,18 +190,21 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
 
         @Override
         public void closeResource() {
-            logger.info("resource complete: {}", resourceContext.resource());
-            out.output(resourceContext);
+            try { 
+                out.output(resourceContext);
+                logger.info("resource output complete: {}", resourceContext.resource());
+            } catch (IOException e ) {
+                logger.error(e.getMessage(), e);
+            }
             super.closeResource();
         }
-
 
         @Override
         public boolean skip(QName name) {
             boolean skipped =
-                    "ezb-export".equals(name.getLocalPart()) ||
-                    "release".equals(name.getLocalPart()) ||
-                    "version".equals(name.getLocalPart());
+                    "ezb-export".equals(name.getLocalPart())
+                    || "release".equals(name.getLocalPart())
+                    || "version".equals(name.getLocalPart());
             return skipped;
         }
     }
@@ -219,5 +221,4 @@ public final class ElasticsearchEZBIndexer extends AbstractImporter<Long, Atomic
             resourceContext.resource().add(statement);
         }
     }
-
 }

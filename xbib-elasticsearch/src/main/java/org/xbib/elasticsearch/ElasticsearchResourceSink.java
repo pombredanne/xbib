@@ -29,37 +29,25 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-
 package org.xbib.elasticsearch;
 
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.xbib.elements.output.ElementOutput;
-import org.xbib.rdf.BlankNode;
-import org.xbib.rdf.Literal;
-import org.xbib.rdf.Property;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.context.JsonLdContext;
-import org.xbib.rdf.context.ResourceContext;
-import org.xbib.xml.CompactingNamespaceContext;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+import org.xbib.elements.output.ElementOutput;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.xcontent.Builder;
 
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C> {
 
     private final ElasticsearchIndexerInterface es;
-    private static final AtomicInteger resourceCounter = new AtomicInteger(0);
-
+    private final Builder<C, R> builder = new Builder();
+    private final AtomicInteger resourceCounter = new AtomicInteger(0);
     private final String defaultIndex;
-
     private final String defaultType;
+    private boolean enabled;
 
     public ElasticsearchResourceSink(final ElasticsearchIndexerInterface es) {
         this.es = es;
@@ -67,9 +55,15 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         this.defaultType = es.type();
     }
 
+    @Override
     public boolean enabled() {
-        String enabled = System.getProperty(getClass().getName());
-        return enabled == null || !"false".equalsIgnoreCase(enabled);
+        this.enabled = Boolean.parseBoolean(System.getProperty(getClass().getName())) || enabled;
+        return enabled;
+    }
+    
+    @Override
+    public void enabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -78,69 +72,56 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     @Override
-    public boolean output(C context) {
-        try {
-            ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
-                public void index(C context, R resource, String source) throws IOException {
-                    String index = makeIndex(context, resource);
-                    String type = makeType(context, resource);
-                    String id = makeId(context, resource);
-                    es.index(index, type, id, source);
-                }
-
-                public void delete(C context, R resource) throws IOException {
-                    String index = makeIndex(context, resource);
-                    String type = makeType(context, resource);
-                    String id = makeId(context, resource);
-                    es.delete(index, type, id);
-                }
-
-            };
-            Iterator<R> it = context.resources();
-            while (it.hasNext()) {
-                R resource = it.next();
-                if (resource.id() == null) {
-                    // no resource ID
-                    continue;
-                }
-                if (resource.isEmpty()) {
-                    // no properties or resources in the resource
-                    continue;
-                }
-                if (resource.isDeleted()) {
-                    // resource shall be deleted
-                    resourceIndexer.delete(context, resource);
-                } else {
-                    // full resource, build it with XContentBuilder
-                    XContentBuilder builder = jsonBuilder();
-                    builder.startObject();
-                    if (context instanceof JsonLdContext) {
-                        JsonLdContext jsonLdContext = (JsonLdContext)context;
-                        // create @context
-                        build(builder, context, jsonLdContext.newResource());
-                        // create @id IRI
-                        builder.field("@id", resource.id().toString());
-                        if (resource.type() != null) {
-                            // create @type IRI
-                            builder.field("@type", resource.type().toString());
-                        }
-                    }
-                    build(builder, context, resource);
-                    builder.endObject();
-                    resourceIndexer.index(context, resource, builder.string());
-                }
-                resourceCounter.incrementAndGet();
+    public void output(C context) throws IOException {
+        ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
+            @Override
+            public void index(C context, R resource, String source) throws IOException {
+                String index = makeIndex(context, resource);
+                String type = makeType(context, resource);
+                String id = makeId(context, resource);
+                es.index(index, type, id, source);
             }
-        } catch (IOException e) {
-            return false;
+
+            @Override
+            public void delete(C context, R resource) throws IOException {
+                String index = makeIndex(context, resource);
+                String type = makeType(context, resource);
+                String id = makeId(context, resource);
+                es.delete(index, type, id);
+            }
+        };
+        Iterator<R> it = context.resources();
+        while (it.hasNext()) {
+            R resource = it.next();
+            if (resource.id() == null) {
+                // no resource ID
+                continue;
+            }
+            if (resource.isEmpty()) {
+                // no properties or resources in the resource
+                continue;
+            }
+            if (resource.isDeleted()) {
+                // resource shall be deleted
+                resourceIndexer.delete(context, resource);
+            } else {
+                resourceIndexer.index(context, resource, builder.build(context, resource));
+            }
+            resourceCounter.incrementAndGet();
         }
-        return true;
     }
 
     public void flush() {
         es.flush();
     }
 
+    /**
+     * The URI path is the Elasticsearch index
+     *
+     * @param context
+     * @param resource
+     * @return
+     */
     protected String makeIndex(C context, R resource) {
         String index = resource.id().getPath();
         if (index == null) {
@@ -149,6 +130,13 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         return index;
     }
 
+    /**
+     * The URI query is the Elasticsearch index type
+     *
+     * @param context
+     * @param resource
+     * @return
+     */
     protected String makeType(C context, R resource) {
         String type = resource.id().getQuery();
         if (type == null) {
@@ -157,6 +145,13 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         return type;
     }
 
+    /**
+     * The URI fragment is the Elasticsearch document ID
+     *
+     * @param context
+     * @param resource
+     * @return
+     */
     protected String makeId(C context, R resource) {
         String id = resource.id().getFragment();
         if (id == null) {
@@ -164,74 +159,4 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         }
         return id;
     }
-
-    protected <S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
-    void build(XContentBuilder builder, C resourceContext, Resource<S, P, O> resource)
-            throws IOException {
-        CompactingNamespaceContext context = resourceContext.namespaceContext();
-        // iterate over properties
-        Iterator<P> it = resource.predicateSet(resource.subject()).iterator();
-        while (it.hasNext()) {
-            P predicate = it.next();
-            Collection<O> values = resource.objectSet(predicate);
-            if (values == null) {
-                throw new IllegalArgumentException(
-                        "can't build property value set for predicate URI " + predicate);
-            }
-            // drop values with size 0 silently
-            if (values.size() == 1) {
-                // single value
-                O value = values.iterator().next();
-                if (!(value instanceof BlankNode)) {
-                    builder.field(context.compact(predicate.getURI()), value.nativeValue());
-                }
-            } else if (values.size() > 1) {
-                // array of values
-                Collection<O> properties = filterBlankNodes(values, new ArrayList<O>());
-                if (!properties.isEmpty()) {
-                    builder.startArray(context.compact(predicate.getURI()));
-                    for (O value : properties) {
-                        builder.value(value.nativeValue());
-                    }
-                    builder.endArray();
-                }
-            }
-        }
-        // then, iterate over resources
-        Map<P, Collection<Resource<S, P, O>>> m = resource.resources();
-        Iterator<P> resIt = m.keySet().iterator();
-        while (resIt.hasNext()) {
-            P predicate = resIt.next();
-            Collection<Resource<S, P, O>> resources = m.get(predicate);
-            // drop resources with size 0 silently
-            if (resources.size() == 1) {
-                // single resource
-                builder.startObject(context.compact(predicate.getURI()));
-                build(builder, resourceContext, resources.iterator().next());
-                builder.endObject();
-            } else if (resources.size() > 1) {
-                // array of resources
-                builder.startArray(context.compact(predicate.getURI()));
-                for (Resource<S, P, O> child : resources) {
-                    builder.startObject();
-                    build(builder, resourceContext, child);
-                    builder.endObject();
-                }
-                builder.endArray();
-            }
-        }
-    }
-
-    private <O extends Literal<?>>
-    Collection<O> filterBlankNodes(Collection<O> objects, Collection<O> properties) {
-        for (O object : objects) {
-            if (object instanceof BlankNode) {
-                continue;
-            }
-            properties.add(object);
-        }
-        return properties;
-    }
-
-
 }

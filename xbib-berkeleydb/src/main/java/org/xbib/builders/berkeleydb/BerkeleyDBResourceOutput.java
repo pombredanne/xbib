@@ -63,15 +63,13 @@ public class BerkeleyDBResourceOutput<C extends ResourceContext>
     }
     
     @Override
-    public boolean output(C context) {
+    public void output(C context) throws IOException {
         try {
             if (session.isOpen()) {
                 write.write(session, context.resource());
                 write.execute(session);
                 counter++;
-                return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             try {
@@ -79,7 +77,7 @@ public class BerkeleyDBResourceOutput<C extends ResourceContext>
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
-            return false;
+            throw e;
         }
     }
 

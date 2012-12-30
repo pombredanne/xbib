@@ -122,7 +122,6 @@ public class ElasticsearchGNDIndexer {
         private final ResourceContext context = new SimpleResourceContext();
         private long triplecounter;
         private Resource resource;
-        private IRI iri;
 
         ElasticBuilder(String esURI, String index, String type) throws IOException {
             ElasticsearchIndexer elasticsearch = new ElasticsearchIndexer();
@@ -153,7 +152,11 @@ public class ElasticsearchGNDIndexer {
         }
 
         private void flush() {
-            sink.output(context);
+            try {
+                sink.output(context);
+            } catch (IOException e) {
+                logger.error("flush failed: {}", e.getMessage(), e);
+            }
             context.reset();
             resource = context.newResource();
         }

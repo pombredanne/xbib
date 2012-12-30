@@ -32,7 +32,6 @@ xbib-printclient
 xbib-fa
 xbib-oauth
 xbib-json
-xbib-jacc
 
 # deploy scripts
 release-github-deploy

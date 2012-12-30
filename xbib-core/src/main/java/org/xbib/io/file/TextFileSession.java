@@ -109,7 +109,7 @@ public class TextFileSession<P extends StringPacket> implements Session<P> {
             }
             case WRITE: {
                 if (file.exists()) {
-                    throw new IOException("not overwriting file: " + file.getAbsolutePath());
+                    throw new IOException("cowardly not overwriting file: " + file.getAbsolutePath());
                 } else {
                     // create directories if required
                     file.getParentFile().mkdirs();
