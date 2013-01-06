@@ -45,7 +45,7 @@ import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
-import org.xbib.io.util.AtomicIntegerIterator;
+import org.xbib.tools.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
@@ -99,7 +99,7 @@ public class ConcurrentAlephPublishingReaderTest {
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new AlephPublishingReader().setListener(kv).setIterator(iterator).setLibrary("hbz50").setSetName("ALEPHSEMAB");
     }
 }

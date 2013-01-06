@@ -36,18 +36,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.xbib.elements.scripting.ScriptElement;
-import org.xbib.io.InputStreamService;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 public class ElementMapFactory<K> {
 
+    public static int DEFAULT_BUFFER_SIZE = 8192;
+    
     private final static Logger logger = LoggerFactory.getLogger(ElementMapFactory.class.getName());
     private final static Map<String, Map<String, Element>> maps = new HashMap();
 
@@ -100,7 +103,7 @@ public class ElementMapFactory<K> {
                             throw new IOException(path + script + " not found: " + path + script);
                         }
                         InputStreamReader reader = new InputStreamReader(input, "UTF-8");
-                        ScriptElement scriptElement = new ScriptElement(name, InputStreamService.getString(reader), invocable);
+                        ScriptElement scriptElement = new ScriptElement(name, getString(reader), invocable);
                         scriptElement.setSettings(struct);
                         element = scriptElement.getElement();
                         reader.close();
@@ -144,4 +147,18 @@ public class ElementMapFactory<K> {
         }
         return packageName;
     }
+    
+    public static String getString(InputStream input, String encoding) throws IOException {
+        return getString(new InputStreamReader(input,encoding));
+    }
+    
+    public static String getString(Reader input) throws IOException {
+        StringWriter output = new StringWriter();
+        char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+        int n;
+        while ((n = input.read(buffer))!= -1) {
+            output.write(buffer, 0, n);
+        }
+        return output.toString();
+    }    
 }

@@ -39,7 +39,7 @@ import org.xbib.iri.IRI;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * 
  */
-public interface Property {
+public interface Property extends Node {
 
    IRI id();
 

@@ -31,29 +31,18 @@
  */
 package org.xbib.importer;
 
-import java.net.URI;
 import java.util.Iterator;
 
 public abstract class AbstractImporter<T,R> implements Importer<T,R> {
 
-    private ImportResultListener<T,R> listener;
-        
-    public AbstractImporter<T,R> setListener(ImportResultListener<T,R> listener) {
-        this.listener = listener;
-        return this;
-    }
-    
     @Override
     public T call() throws Exception {
         Iterator<R> it = this;
         while (it.hasNext()) {
             R r = next();
-            if (listener != null) {
-                listener.process(r);
-            }
         }
         close();
-        return listener != null ? listener.getResult() : null;
+        return null;
     }
 
     @Override

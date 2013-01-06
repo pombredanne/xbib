@@ -39,6 +39,7 @@ package org.xbib.marc;
 public class Field implements Comparable {
 
     public final static String ERROR_TAG = "___";
+    public final static String NULL_TAG = "000";
     private String tag;
     private String indicator;
     private final int position;
@@ -107,21 +108,22 @@ public class Field implements Comparable {
     }
 
     /**
-     * Create field with tag and indicators in the data
+     * Create field, try to derive tag, indicators, and subfield ID from content
      *
      * @param label
-     * @param data
+     * @param content
      */
-    public Field(RecordLabel label, String data) {
-        this.tag = data.length() > 2 ? data.substring(0, 3) : ERROR_TAG;
+    public Field(RecordLabel label, String content) {
+        this.tag = content.length() > 2 ? content.substring(0, 3) : ERROR_TAG;
         if (isControlField()) {
-            this.data = data.substring(3);
             this.indicator = null;
             this.subfieldId = null;
+            this.data = content.substring(3);
         } else {
-            this.indicator = data.length() > 2 + label.getIndicatorLength() ? data.substring(3, 3 + label.getIndicatorLength()) : null;
+            int indlen = label.getIndicatorLength();
+            this.indicator = content.length() > 2 + indlen ? content.substring(3, 3 + indlen) : null;
             this.subfieldId = null; // no subfield
-            this.data = data.length() > 2 + label.getIndicatorLength() ? data.substring(3 + label.getIndicatorLength()) : null;
+            this.data = content.length() > 2 + indlen ? content.substring(3 + indlen) : null;
         }
         this.position = -1;
         this.length = -1;
@@ -132,37 +134,34 @@ public class Field implements Comparable {
      *
      * @param label
      * @param designator
-     * @param data
+     * @param content
      * @param subfield
      */
-    public Field(RecordLabel label, Field designator, String data, boolean subfield) {
-        if (designator == null) {
-            this.position = 0;
-            this.length = 0;
-        } else{
-            this.tag = designator.getTag();
-            this.position = designator.getPosition();
-            this.length = designator.getLength();
-            if (subfield) {
-                this.indicator = designator.getIndicator();
-                if (label.getSubfieldIdentifierLength() > 1) {
-                    this.subfieldId = data.substring(0, label.getSubfieldIdentifierLength() - 1);
-                    this.data = data.substring(label.getSubfieldIdentifierLength() - 2);
-                } else {
-                    // no subfield identifier length specified
-                    this.subfieldId = null; // "a";
-                    this.data = data;
-                }
+    public Field(RecordLabel label, Field designator, String content, boolean subfield) {
+        this.tag = designator.getTag();
+        this.position = designator.getPosition();
+        this.length = designator.getLength();
+        int indlen = label.getIndicatorLength();
+        int subfieldidlen = label.getSubfieldIdentifierLength();
+        if (subfield) {
+            this.indicator = designator.getIndicator();
+            if (subfieldidlen > 1) {
+                this.subfieldId = content.substring(0, subfieldidlen - 1);
+                this.data = content.substring(subfieldidlen - 1);
             } else {
-                if (designator.isControlField()) {
-                    this.data = data;
-                    this.indicator = null;
-                    this.subfieldId = null;
-                } else {
-                    this.indicator = data.substring(0, label.getIndicatorLength());
-                    this.data = data.substring(label.getIndicatorLength());
-                    this.subfieldId = null;
-                }
+                // no subfield identifier length specified
+                this.subfieldId = null;
+                this.data = content;
+            }
+        } else {
+            if (designator.isControlField()) {
+                this.indicator = null;
+                this.subfieldId = null;
+                this.data = content;
+            } else {
+                this.indicator = content.substring(0, indlen);
+                this.subfieldId = null;
+                this.data = content.substring(indlen);
             }
         }
     }
@@ -271,24 +270,12 @@ public class Field implements Comparable {
     }
 
     /**
-     * Set data for a subfield.
-     *
-     * @param data
-     * @return this FIeld object
-     */
-    public Field setSubfieldData(String data) {
-        this.data = subfieldId + data;
-        return this;
-    }
-
-    /**
      * Get the field data.
      *
      * @return the data
      */
     public String getData() {
-        // subfield ID is first byte in data
-        return subfieldId != null && data != null && data.length() > 0 ? data.substring(1) : data;
+        return data;
     }
 
     public String getDesignator() {

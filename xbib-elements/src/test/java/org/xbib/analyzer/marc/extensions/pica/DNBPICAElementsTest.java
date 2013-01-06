@@ -81,7 +81,7 @@ public class DNBPICAElementsTest {
             }
         });
         KeyValueStreamListener listener = new PicaElementMapper("pica/zdb/bib").addBuilder(builder);        
-        MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().setListener(listener);        
+        MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().addListener(listener);        
         DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);        
         reader.parse();
     }

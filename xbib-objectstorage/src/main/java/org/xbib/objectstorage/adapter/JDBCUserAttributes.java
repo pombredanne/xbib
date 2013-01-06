@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.xbib.io.sql.operator.Query;
-import org.xbib.io.sql.SQLResultWithDelayedCloseProcessor;
+import org.xbib.io.sql.NotclosedSQLResultSetListener;
 import org.xbib.io.sql.SQLSession;
 
 public class JDBCUserAttributes implements UserAttributes {
@@ -65,7 +65,7 @@ public class JDBCUserAttributes implements UserAttributes {
         final Query query = new Query(bundle.getString("getuserattributes"),
                 new String[]{"user"}, params);
         String[] keys = bundle.getString("userattributes").split(",");
-        SQLResultWithDelayedCloseProcessor p = new SQLResultWithDelayedCloseProcessor();
+        NotclosedSQLResultSetListener p = new NotclosedSQLResultSetListener();
         try {
             query.addListener(p);
             query.execute(session);

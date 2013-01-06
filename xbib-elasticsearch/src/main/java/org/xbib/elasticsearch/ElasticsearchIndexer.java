@@ -31,25 +31,28 @@
  */
 package org.xbib.elasticsearch;
 
+import com.google.common.collect.Maps;
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
+import org.xbib.elasticsearch.action.bulk.concurrent.ConcurrentBulkProcessor;
+import org.xbib.elasticsearch.action.bulk.concurrent.ConcurrentBulkRequest;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 /**
- * An Elasticsearch Data Access Object (DAO) for indexing
+ * An Elasticsearch indexer
  */
 public class ElasticsearchIndexer
         extends Elasticsearch
@@ -57,19 +60,21 @@ public class ElasticsearchIndexer
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchIndexer.class.getName());
 
-    private boolean enabled;
-    
-    private BulkProcessor bulk;
     /**
-     * The size of a bulkQueue request
+     * The default  size of a bulk request
      */
-    private int bulkSize = 100;
+    private int maxBulkActions = 100;
     /**
-     * The number of maximum active reqeuests
+     * The default number of maximum concurrent bulk requests
      */
-    private int maxActiveRequests = 30;
+    private int maxConcurrentBulkRequests = 30;
+    private final AtomicLong outstandingBulkRequests = new AtomicLong();
+    private boolean enabled;    
+    private ConcurrentBulkProcessor bulk;
     private String index;
     private String type;
+    private boolean dateDetection;
+    private String mapping;
 
     public boolean isEnabled() {
         return enabled;
@@ -86,35 +91,54 @@ public class ElasticsearchIndexer
         return newClient(findURI(), forceNew);
     }
 
+    /**
+     * Create new client with concurrent bulk processor
+     * @param uri the cluster name URI
+     * @param forceNew if a new client should be created
+     * @return this indexer 
+     */
     @Override
     public ElasticsearchIndexer newClient(URI uri, boolean forceNew) {
         super.newClient(uri, forceNew);
-        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
+        ConcurrentBulkProcessor.Listener listener = new ConcurrentBulkProcessor.Listener() {
 
             @Override
-            public void beforeBulk(long executionId, BulkRequest request) {
-                logger.info("sending bulk [{}]", executionId);
+            public void beforeBulk(long executionId, ConcurrentBulkRequest request) {
+                long l = outstandingBulkRequests.incrementAndGet();
+                logger.info("new bulk [{}] of [{} items], {} outstanding bulk requests", 
+                        executionId, request.numberOfActions(), l);
             }
 
             @Override
-            public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                logger.info("bulk success [{}]", executionId);
+            public void afterBulk(long executionId, BulkResponse response) {
+                long l = outstandingBulkRequests.decrementAndGet();
+                logger.info("bulk [{}] success [{} items] [{}ms]", 
+                        executionId , response.items().length, response.took().millis() );
             }
 
             @Override
-            public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                logger.error("bulk error [{}]: {}", executionId, failure.getMessage());
+            public void afterBulk(long executionId, Throwable failure) {
+                long l = outstandingBulkRequests.decrementAndGet();
+                logger.error("bulk [" + executionId + "] error", failure);
                 enabled = false;
             }
         };
-        this.bulk = BulkProcessor.builder(client, listener)
-                .setBulkActions(bulkSize)
-                .setConcurrentRequests(maxActiveRequests)
+        this.bulk = ConcurrentBulkProcessor.builder(client, listener)
+                .maxBulkActions(maxBulkActions)
+                .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
                 .build();
         this.enabled = true;
         return this;
     }
 
+    /**
+     * Initial settings tailored for index/bulk client use.
+     * No transport sniffing, only thread pool is for bulk/indexing,
+     * other thread pools are minimal, ten Netty connections in parallel.
+     * 
+     * @param uri the cluster name URI
+     * @return the initial settings
+     */
     @Override
     protected Settings initialSettings(URI uri) {
         return ImmutableSettings.settingsBuilder().put("cluster.name", findClusterName(uri))
@@ -148,7 +172,7 @@ public class ElasticsearchIndexer
     }
 
     @Override
-    public ElasticsearchIndexer setIndex(String index) {
+    public ElasticsearchIndexer index(String index) {
         this.index = index;
         return this;
     }
@@ -159,7 +183,7 @@ public class ElasticsearchIndexer
     }
 
     @Override
-    public ElasticsearchIndexer setType(String type) {
+    public ElasticsearchIndexer type(String type) {
         this.type = type;
         return this;
     }
@@ -170,36 +194,80 @@ public class ElasticsearchIndexer
     }
 
     @Override
-    public ElasticsearchIndexer setBulkSize(int bulkSize) {
-        this.bulkSize = bulkSize;
+    public ElasticsearchIndexer dateDetection(boolean dateDetection) {
+        this.dateDetection = dateDetection;
         return this;
     }
 
     @Override
-    public ElasticsearchIndexer setMaxActiveRequests(int maxActiveRequests) {
-        this.maxActiveRequests = maxActiveRequests;
+    public boolean dateDetection() {
+        return dateDetection;
+    }
+    
+    @Override
+    public ElasticsearchIndexer maxBulkActions(int maxBulkActions) {
+        this.maxBulkActions = maxBulkActions;
         return this;
     }
 
-    public ElasticsearchIndexer newIndex(String mapping) throws NoNodeAvailableException {
+    @Override
+    public ElasticsearchIndexer maxConcurrentBulkRequests(int maxConcurrentBulkRequests) {
+        this.maxConcurrentBulkRequests = maxConcurrentBulkRequests;
+        return this;
+    }
+
+    public ElasticsearchIndexer mapping(String mapping) {
+        this.mapping = mapping;
+        return this;
+    }
+    
+    public ElasticsearchIndexer newIndex() {
+        return newIndex(true);
+    }
+    
+    public ElasticsearchIndexer newIndex(boolean ignoreException) {
         if (client == null) {
             return this;
         }
-        client.admin().indices().create(new CreateIndexRequest(index)).actionGet();
+        CreateIndexRequest request = new CreateIndexRequest(index);        
         if (mapping != null) {
-            client.admin().indices().putMapping(new PutMappingRequest()
-                    .indices(new String[]{index})
-                    .type(type)
-                    .source(mapping)).actionGet();
+            request.mapping(type, mapping);
+        } else {
+            Map m = Maps.newHashMap();
+            m.put("date_detection", dateDetection);
+            request.mapping(type, m);
+        }
+        try {
+            client.admin().indices().create(request).actionGet();
+        } catch (Exception e) {
+            if (!ignoreException) {
+                throw e;
+            }
         }
         return this;
     }
 
     public ElasticsearchIndexer deleteIndex() {
+        return deleteIndex(true, true);
+    }
+    
+    public ElasticsearchIndexer deleteIndex(boolean enabled) {
+        return deleteIndex(enabled, true);
+    }
+
+    public ElasticsearchIndexer deleteIndex(boolean enabled, boolean ignoreException) {
         if (client == null) {
             return this;
         }
-        client.admin().indices().delete(new DeleteIndexRequest(index));
+        try {
+            if (enabled) {
+                client.admin().indices().delete(new DeleteIndexRequest(index));
+            }
+        } catch (Exception e) {
+            if (!ignoreException) {
+                throw e;
+            }
+        }
         return this;
     }
 
@@ -214,12 +282,28 @@ public class ElasticsearchIndexer
                 .actionGet();
         return this;
     }
-
+    
     public ElasticsearchIndexer deleteType() {
+        return deleteType(true, true);
+    }
+    
+    public ElasticsearchIndexer deleteType(boolean enabled) {
+        return deleteType(enabled, true);
+    }    
+
+    public ElasticsearchIndexer deleteType(boolean enabled, boolean ignoreException) {
         if (client == null) {
             return this;
         }
-        client.admin().indices().deleteMapping(new DeleteMappingRequest().indices(new String[]{index}).type(type));
+        try {
+            if (enabled) {
+                client.admin().indices().deleteMapping(new DeleteMappingRequest().indices(new String[]{index}).type(type));
+            }
+        } catch (Exception e) {
+            if (!ignoreException) {
+                throw e;
+            }
+        }
         return this;
     }
 
@@ -243,7 +327,7 @@ public class ElasticsearchIndexer
         try {
             bulk.add(indexRequest);
         } catch (Exception e) {
-            logger.error("bulk index failed: {}", e.getMessage(), e);
+            logger.error("bulk index failed: "+ e.getMessage(), e);
             enabled = false;
         }
         return this;
@@ -255,7 +339,7 @@ public class ElasticsearchIndexer
         try {
            bulk.add(deleteRequest);
         } catch (Exception e) {
-            logger.error("bulk delete failed: {}", e.getMessage(), e);
+            logger.error("bulk delete failed: " + e.getMessage(), e);
             enabled = false;
         }
         return this;
@@ -263,18 +347,36 @@ public class ElasticsearchIndexer
 
     @Override
     public ElasticsearchIndexer flush() {
-        if (enabled) {
-            bulk.flush();
+        if (!enabled) {
+            return this;
         }
+        bulk.flush();
         return this;
     }
 
     @Override
     public synchronized void shutdown() {
-        logger.info("starting shutting down...");
-        super.shutdown();
-        bulk.close();
-        logger.info("shutting down completed");
+        if (!enabled) {
+            super.shutdown();
+            return;
+        }
+        try {
+            logger.info("flushing...");
+            bulk.flush();
+            logger.info("waiting for outstanding bulk requests for maximum of 30 seconds...");
+            int n = 30;
+            while (outstandingBulkRequests.get() > 0 && n > 0) {
+                Thread.sleep(1000L);
+                n--;
+            }
+            logger.info("closing bulk...");
+            bulk.close();
+            logger.info("bulk closed, shutting down...");        
+            super.shutdown();
+            logger.info("shutting down completed");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
 }

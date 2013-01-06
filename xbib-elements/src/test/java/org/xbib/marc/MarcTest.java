@@ -31,7 +31,6 @@
  */
 package org.xbib.marc;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,43 +50,76 @@ import org.xml.sax.SAXException;
 
 public class MarcTest {
 
-   //  private final String pkg = "/" + getClass().getPackage().getName().replaceAll(".", "/");
-
-    @Test
-    public void testMarc() throws IOException, SAXException,
+    
+    public void testCorrectMarc() throws IOException, SAXException,
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
         for (String s : new String[]{
                     "brkrtest.mrc", "makrtest.mrc", "chabon-loc.mrc", "chabon.mrc", "diacritic4.mrc",
-                    "summerland.mrc", "error.mrc"
+                    "summerland.mrc"
                 }) {
             InputStream in = getClass().getResourceAsStream(s);
-            if (in == null) {
-                throw new IOException("input stream not found");
+            try (InputStreamReader r = new InputStreamReader(in, "ANSEL")) {
+                Iso2709Reader reader = new Iso2709Reader();
+                TransformerFactory tFactory = TransformerFactory.newInstance();
+                Transformer transformer = tFactory.newTransformer();
+                InputSource source = new InputSource(r);
+                FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
+                Writer w = new OutputStreamWriter(out, "UTF-8");
+                StreamResult target = new StreamResult(w);
+                transformer.transform(new SAXSource(reader, source), target);
             }
+        }
+    }
+    
+    
+    public void testFaultyMarc() throws IOException, SAXException,
+            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+        for (String s : new String[]{
+                     "error.mrc"
+                }) {
+            InputStream in = getClass().getResourceAsStream(s);
+            try (InputStreamReader r = new InputStreamReader(in, "ANSEL")) {
+                Iso2709Reader reader = new Iso2709Reader();
+                TransformerFactory tFactory = TransformerFactory.newInstance();
+                Transformer transformer = tFactory.newTransformer();
+                InputSource source = new InputSource(r);
+                FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
+                Writer w = new OutputStreamWriter(out, "UTF-8");
+                StreamResult target = new StreamResult(w);
+                transformer.transform(new SAXSource(reader, source), target);
+            }
+        }
+    }
+
+    
+    public void testAMS() throws IOException, SAXException,
+            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+        InputStream in = getClass().getResourceAsStream("amstransactions.mrc");
+        try (InputStreamReader r = new InputStreamReader(in, "ANSEL")) {
             Iso2709Reader reader = new Iso2709Reader();
-            FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
-            Writer w = new OutputStreamWriter(out, "UTF-8");
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
-            InputSource source = new InputSource(new InputStreamReader(in, "ANSEL"));
+            InputSource source = new InputSource(r);
+            FileOutputStream out = new FileOutputStream("target/ams.xml");
+            Writer w = new OutputStreamWriter(out, "UTF-8");
             StreamResult target = new StreamResult(w);
             transformer.transform(new SAXSource(reader, source), target);
         }
     }
-
-    public void testTalis() throws IOException, SAXException,
+    
+    @Test
+    public void testZDB() throws IOException, SAXException,
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
-        InputStream in = new FileInputStream("/Users/joerg/Downloads/talis-openlibrary-contribution.mrc");
-        if (in == null) {
-            throw new IOException("input stream not found");
+        InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
+        try (InputStreamReader r = new InputStreamReader(in, "UTF-8")) {
+            Iso2709Reader reader = new Iso2709Reader();
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+            InputSource source = new InputSource(r);
+            FileOutputStream out = new FileOutputStream("target/zdblokutf8.xml");
+            Writer w = new OutputStreamWriter(out, "UTF-8");
+            StreamResult target = new StreamResult(w);
+            transformer.transform(new SAXSource(reader, source), target);
         }
-        Iso2709Reader reader = new Iso2709Reader();
-        FileOutputStream out = new FileOutputStream("target/talis.xml");
-        Writer w = new OutputStreamWriter(out, "UTF-8");
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-        InputSource source = new InputSource(new InputStreamReader(in, "ANSEL"));
-        StreamResult target = new StreamResult(w);
-        transformer.transform(new SAXSource(reader, source), target);
-    }
+    }    
 }

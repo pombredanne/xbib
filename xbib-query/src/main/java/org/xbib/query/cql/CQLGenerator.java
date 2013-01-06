@@ -43,7 +43,7 @@ public final class CQLGenerator
         implements Visitor, QueryModel, BreadcrumbWriter {
 
     /** helper for managing our CQL query model (facet/filter/option contexts, breadcrumb trails etc.) */
-    private final CQLQueryModel model = new CQLQueryModel();
+    private CQLQueryModel model = new CQLQueryModel();
     /** a replacement string */
     private String replacementString;
     /** string to be replaced */
@@ -54,6 +54,11 @@ public final class CQLGenerator
         this.stringToBeReplaced = null;
     }
 
+    public CQLGenerator model(CQLQueryModel model) {
+        this.model = model;
+        return this;
+    }
+    
     public CQLQueryModel getModel() {
         return model;
     }
@@ -112,8 +117,7 @@ public final class CQLGenerator
     public void visit(PrefixAssignment node) {
         node.getPrefix().accept(this);
         node.getURI().accept(this);
-        model.getNamespaceContext().addNamespace(node.getPrefix().getValue(),
-                node.getURI().getValue());
+        model.getNamespaceContext().addNamespace(node.getPrefix().getValue(), node.getURI().getValue());
     }
 
     @Override

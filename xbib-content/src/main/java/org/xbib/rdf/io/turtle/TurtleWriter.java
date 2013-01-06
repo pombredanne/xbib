@@ -427,7 +427,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         if (literal.type() != null) {
             // Append the literal's type
             writer.write("^^");
-            writeURI(literal.type());
+            //writeURI(literal.type()); // we always assume compact type URI
+            writer.write(literal.type().toString());
         } else if (literal.language() != null) {
             // Append the literal's language
             writer.write("@");

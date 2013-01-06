@@ -107,7 +107,7 @@ public class MABDisketteTest {
         };
         MABBuilder builder = new MABBuilder().addOutput(output);
         KeyValueStreamListener listener = new ElementMapper("/org/xbib/analyzer/elements/", "mab").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
         reader.setProperty(Iso2709Reader.TYPE, "Titel");

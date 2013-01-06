@@ -24,13 +24,13 @@ public class ElasticsearchResourceBuilderTest {
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/mgl2.xml"), "UTF-8");
         ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
-                .setIndex("test")
-                .setType("test");
+                .index("test")
+                .type("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
         try {
             MABBuilder builder = new MABBuilder().addOutput(sink);
             KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
             reader.setProperty(Iso2709Reader.TYPE, "Titel");
@@ -50,13 +50,13 @@ public class ElasticsearchResourceBuilderTest {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");
         ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
-                .setIndex("test")
-                .setType("test");
+                .index("test")
+                .type("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
         try {
             MABBuilder builder = new MABBuilder().addOutput(sink);
             KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
             reader.setProperty(Iso2709Reader.TYPE, "Titel");

@@ -53,8 +53,8 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
     public void testWrite() throws Exception {
 
         final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
-                .setIndex("test")
-                .setType("test");
+                .index("test")
+                .type("test");
 
         final ElasticsearchResourceSink<ResourceContext, Resource> indexer = new ElasticsearchResourceSink(es);
 

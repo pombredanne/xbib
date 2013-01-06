@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<assembly>
+    <id>elasticsearch-medline</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+            <includes>
+                <include>org.xbib:xbib-content</include>
+                <include>org.xbib:xbib-core</include>
+                <include>org.xbib:xbib-logging</include>
+                <include>org.xbib:xbib-compress</include>
+                <include>org.xbib:xbib-elements</include>
+                <include>org.xbib:xbib-elasticsearch</include>
+                <include>org.xbib:xbib-tools</include>
+                <include>org.elasticsearch:elasticsearch</include>
+                <include>org.apache.lucene:lucene-core</include>
+                <include>com.google.guava:guava</include>
+                <include>com.fasterxml.jackson.core:jackson-core</include>
+                <include>joda-time:joda-time</include>
+                <include>org.slf4j:slf4j-api</include>
+                <include>org.slf4j:slf4j-log4j12</include>
+                <include>log4j:log4j</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

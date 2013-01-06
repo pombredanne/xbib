@@ -110,7 +110,7 @@ public class DNBPICAXmlReaderTest {
         InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
         InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
         DNBPICAXmlReader reader = new DNBPICAXmlReader(source);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(new KeyValueStreamListener<FieldCollection, String>() {
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(new KeyValueStreamListener<FieldCollection, String>() {
             @Override
             public void begin() {
                 logger.debug("begin object");

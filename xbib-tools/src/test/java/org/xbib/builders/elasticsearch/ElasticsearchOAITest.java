@@ -38,8 +38,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.xbib.elasticsearch.ElasticsearchIndexerMock;
-import org.xbib.io.EmptyWriter;
-import org.xbib.io.util.DateUtil;
+import org.xbib.io.NullWriter;
+import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -76,15 +76,15 @@ public class ElasticsearchOAITest {
     public void testDNBOAI() throws Exception {
 
         final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
-                .setIndex("test")
-                .setType("test");
+                .index("test")
+                .type("test");
 
         OAIClient client = OAIClientFactory.getClient("DNB");
         ListRecordsRequest request = new OAIListRecordsRequest(client.getURI());
         StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
         do {
 
-            EmptyWriter w = new EmptyWriter();
+            NullWriter w = new NullWriter();
             ListRecordsResponse response = new ListRecordsResponse(w);
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);

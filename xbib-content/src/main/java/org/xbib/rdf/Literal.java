@@ -42,6 +42,7 @@ import org.xbib.iri.IRI;
 public interface Literal<O> extends Serializable, Node {
 
     IRI XSD_BOOLEAN = IRI.create("xsd:boolean");
+    IRI XSD_LONG = IRI.create("xsd:long");
     IRI XSD_INT = IRI.create("xsd:int");
     IRI XSD_DOUBLE = IRI.create("xsd:double");
     IRI XSD_FLOAT = IRI.create("xsd:float");

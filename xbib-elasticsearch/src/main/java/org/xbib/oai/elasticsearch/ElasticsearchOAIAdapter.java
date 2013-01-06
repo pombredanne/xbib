@@ -43,7 +43,7 @@ import org.xbib.elasticsearch.Elasticsearch;
 import org.xbib.elasticsearch.Formatter;
 import org.xbib.elasticsearch.OutputFormat;
 import org.xbib.elasticsearch.OutputStatus;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.GetRecordRequest;

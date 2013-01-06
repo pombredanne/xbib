@@ -13,6 +13,11 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>xbib-core</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>xbib-query</artifactId>
             <type>jar</type>
         </dependency>

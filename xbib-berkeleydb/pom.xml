@@ -13,6 +13,11 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>xbib-core</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>xbib-elements</artifactId>
             <type>jar</type>
         </dependency>
@@ -25,6 +30,7 @@
             <groupId>org.xbib</groupId>
             <artifactId>xbib-logging</artifactId>
             <type>jar</type>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <repositories>

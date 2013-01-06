@@ -20,7 +20,7 @@
 package org.xbib.query.cql;
 
 import java.util.Date;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 
 /**
  * A CQL Term 

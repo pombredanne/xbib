@@ -38,7 +38,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
-import org.xbib.io.EmptyWriter;
+import org.xbib.io.NullWriter;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -92,7 +92,7 @@ public class ClientTest {
         StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
         boolean failure = false;
         do {
-            EmptyWriter sw = new EmptyWriter();
+            NullWriter sw = new NullWriter();
             ListRecordsResponse response = new ListRecordsResponse(sw);
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);

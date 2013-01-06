@@ -1,5 +1,6 @@
+#!/bin/bash
 
-# Beispielaufruf
+# Example
 
 java -cp target/xbib-tools-1.0-SNAPSHOT-alephseq2xml.jar \
    org.xbib.tools.aleph.AlephSeq2MarcXML \

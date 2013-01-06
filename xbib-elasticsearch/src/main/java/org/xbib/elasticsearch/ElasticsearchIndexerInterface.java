@@ -10,17 +10,21 @@ public interface ElasticsearchIndexerInterface {
 
     ElasticsearchIndexerInterface newClient(URI uri, boolean forceNew);
 
-    ElasticsearchIndexerInterface setIndex(String index);
+    ElasticsearchIndexerInterface index(String index);
 
     String index();
 
-    ElasticsearchIndexerInterface setType(String type);
+    ElasticsearchIndexerInterface type(String type);
 
     String type();
 
-    ElasticsearchIndexerInterface setBulkSize(int bulkSize);
+    ElasticsearchIndexerInterface dateDetection(boolean dateDetection);
     
-    ElasticsearchIndexerInterface setMaxActiveRequests(int maxActiveRequests);
+    boolean dateDetection();
+    
+    ElasticsearchIndexerInterface maxBulkActions(int bulkActions);
+    
+    ElasticsearchIndexerInterface maxConcurrentBulkRequests(int maxConcurentBulkRequests);
 
     ElasticsearchIndexerInterface index(String index, String type, String id, String source);
 

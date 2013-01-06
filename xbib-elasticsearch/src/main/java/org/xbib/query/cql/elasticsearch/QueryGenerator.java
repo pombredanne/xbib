@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.Date;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.query.cql.SyntaxException;
 
 /**

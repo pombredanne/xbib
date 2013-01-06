@@ -38,7 +38,7 @@ import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
 import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.io.util.AtomicIntegerIterator;
+import org.xbib.tools.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
@@ -89,7 +89,7 @@ public class AlephPublishingReaderTest {
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
         ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(mapper);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         AlephPublishingReader reader = new AlephPublishingReader().setListener(kv).setIterator(new AtomicIntegerIterator(1, 10)).setLibrary("hbz50").setSetName("ALEPHSEMAB").setURI(URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver"));
         try {
             while (reader.hasNext()) {

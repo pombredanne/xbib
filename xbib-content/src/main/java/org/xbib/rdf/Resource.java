@@ -96,6 +96,8 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
      * @return the new resource with the property added
      */
     Resource<S, P, O> add(String predicate, Literal literal);
+    Resource<S, P, O> add(String predicate, IRI externalResource);
+    Resource<S, P, O> add(String predicate, Collection literals);
 
     /**
      * Add a property to this resource with a string object value
@@ -113,9 +115,11 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
      * @param object a literal
      * @return the new resource with the property added
      */
-    Resource<S, P, O> add(P predicate, Literal literal);
+    Resource<S, P, O> add(P predicate, Literal<O> literal);
 
-    Resource<S, P, O> add(P predicate, IRI object);
+    Resource<S, P, O> add(P predicate, IRI externalResource);
+
+    Resource<S, P, O> add(P predicate, Collection literals);
 
     /**
      * Add another resource to this resource
@@ -126,7 +130,7 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
     Resource<S, P, O> add(P predicate, Resource<S, P, O> resource);
 
     Resource<S, P, O> add(String predicate, Resource<S, P, O> resource);
-
+    
     Map<P, Collection<Node>> nodeMap();
 
     /**
@@ -170,6 +174,10 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
     Collection<O> objects(P predicate);
 
     Collection<O> objects(String predicate);
+    
+    O literal(P predicate);
+    
+    O literal(String predicate);
 
     /**
      * Add a statement to this resource

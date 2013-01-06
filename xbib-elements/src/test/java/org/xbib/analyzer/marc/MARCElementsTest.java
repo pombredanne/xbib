@@ -58,7 +58,7 @@ public class MARCElementsTest extends Assert {
     public void testSetupOfElements() throws Exception {
         MARCBuilder builder = new MARCBuilder();
         KeyValueStreamListener listener = new MARCElementMapper("marc").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
         reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
@@ -74,7 +74,7 @@ public class MARCElementsTest extends Assert {
         Writer w = new OutputStreamWriter(new FileOutputStream("target/zdb.xml"), "UTF-8");
         MARCBuilder builder = new MARCBuilder();
         KeyValueStreamListener listener = new MARCElementMapper("marc").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
         reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
@@ -110,7 +110,7 @@ public class MARCElementsTest extends Assert {
             }
         });
         KeyValueStreamListener kvlistener = new MARCElementMapper("marc").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(kvlistener);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(kvlistener);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
         reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");

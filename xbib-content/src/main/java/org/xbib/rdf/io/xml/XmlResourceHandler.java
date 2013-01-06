@@ -33,19 +33,18 @@ package org.xbib.rdf.io.xml;
 
 import java.util.Stack;
 import javax.xml.namespace.QName;
-import org.xbib.rdf.simple.Factory;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.simple.Factory;
 
 /**
  * The XML resource handler can create nested RDF resources from arbitrary XML.
  */
 public abstract class XmlResourceHandler extends AbstractXmlHandler {
 
-    private final Factory factory = Factory.getInstance();
-
-    private Stack<Element> stack = new Stack();
+    protected final Factory factory = Factory.getInstance();
+    private Stack<Resource> stack = new Stack();
 
     public XmlResourceHandler(ResourceContext resourceContext) {
         super(resourceContext);
@@ -54,7 +53,7 @@ public abstract class XmlResourceHandler extends AbstractXmlHandler {
     @Override
     public void openResource() {
         super.openResource();
-        stack.push(new Element(resourceContext.resource()));
+        stack.push(resourceContext.resource());
     }
 
     @Override
@@ -68,53 +67,38 @@ public abstract class XmlResourceHandler extends AbstractXmlHandler {
         // nested resource creation
         // always create newResource, even if there will be only a single literal. We will compact later.
         Resource r = stack.peek()
-                .getResource()
                 .newResource(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
-        stack.push(new Element(r));
+        stack.push(r);
     }
 
     @Override
     public void addToPredicate(String content) {
-        stack.peek().setValue(content);
+        //stack.peek().setValue(content);
     }
 
     @Override
     public void closePredicate(QName parent, QName name, int level) {
-        Property p = (Property)factory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
-        Element element = stack.pop();
+        Property p = (Property) factory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
+        Resource r = stack.pop();
         if (level < 0) {
             // it's a newResource
-            stack.peek().getResource().add(p, element.getResource());
+            if (!stack.isEmpty()) {
+                stack.peek().add(p, r);
+            }
         } else {
             // it's a property
-            if (content() != null) {
-                element.getResource().add(p, factory.newLiteral(content()));
+            String s = content();
+            if (s != null) {
+                r.add(p, factory.newLiteral(toLiteral(name, s)));
                 // compact because it has only a single value
-                stack.peek().getResource().compactPredicate(p);
+                if (!stack.isEmpty()) {
+                    stack.peek().compactPredicate(p);
+                }
             }
         }
     }
 
-    class Element {
-
-        private final Resource resource;
-        private Object value;
-
-        Element(Resource resource) {
-            this.resource = resource;
-        }
-
-        public Resource getResource() {
-            return resource;
-        }
-
-        public void setValue(Object value) {
-            String s = value.toString().trim();
-            this.value = s.length() > 0 ? s : null;
-        }
-
-        public Object getValue() {
-            return value;
-        }
+    protected Object toLiteral(QName name, String content) {
+        return content;
     }
 }

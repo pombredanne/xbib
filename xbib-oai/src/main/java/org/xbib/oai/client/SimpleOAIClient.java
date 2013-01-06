@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import org.xbib.io.Session;
 import org.xbib.io.http.netty.HttpResponse;
 import org.xbib.io.http.netty.HttpSession;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.oai.GetRecordRequest;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;

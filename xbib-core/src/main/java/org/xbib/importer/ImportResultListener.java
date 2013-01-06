@@ -31,9 +31,7 @@
  */
 package org.xbib.importer;
 
-import org.xbib.io.ResultProcessor;
-
-public interface ImportResultListener<T,R> extends ResultProcessor<R> {
+public interface ImportResultListener<T,R> {
     
     T getResult();
 }

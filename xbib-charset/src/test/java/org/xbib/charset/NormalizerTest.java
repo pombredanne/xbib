@@ -14,4 +14,12 @@ public class NormalizerTest extends Assert {
         assertEquals("gemäß",norm);
     }
 
+    @Test
+    public void tesNFC() {
+        String s = "Für Bandanzeige bitte zugehörige Publikationen anklicken";
+        System.err.println("l="+ s.length());
+        String norm = Normalizer.normalize(s, Normalizer.Form.NFC);
+        System.err.println("norm="+ norm.length());
+    }
+    
 }

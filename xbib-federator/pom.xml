@@ -62,6 +62,10 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>xbib-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>xbib-sru</artifactId>
         </dependency>
         <dependency>

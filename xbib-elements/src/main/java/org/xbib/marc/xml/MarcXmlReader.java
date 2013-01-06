@@ -32,12 +32,11 @@
 package org.xbib.marc.xml;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange;
 import org.xbib.marc.MarcXchangeListener;
 import org.xml.sax.Attributes;
@@ -54,7 +53,7 @@ public class MarcXmlReader
     private ContentHandler contentHandler;
     private MarcXchangeListener listener;
     private InputSource source;
-    private List<Field> fields = new LinkedList();
+    private FieldCollection fields = new FieldCollection();
     private StringBuilder content = new StringBuilder();
 
     public MarcXmlReader(final InputSource source) {
@@ -274,15 +273,17 @@ public class MarcXmlReader
                 break;
             }
             case CONTROLFIELD: {
-                endControlField(fields.remove(0).setData(content.toString()));
+                endControlField(fields.removeFirst().setData(content.toString()));
                 break;
             }
             case DATAFIELD: {
-                endDataField(fields.remove(0).setSubfieldId(null).setData(content.toString()));
+                endDataField(fields.removeFirst().setSubfieldId(null).setData(content.toString()));
                 break;
             }
             case SUBFIELD: {
-                endSubField(fields.remove(fields.size() - 1).setData(content.toString()));
+                String subfieldId = content.substring(0,1);
+                String data = content.substring(1);
+                endSubField(fields.removeLast().setSubfieldId(subfieldId).setData(data));
                 break;
             }
         }

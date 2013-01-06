@@ -31,16 +31,6 @@
  */
 package org.xbib.elasticsearch;
 
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.xbib.io.util.URIUtil;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -57,6 +47,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.node.DiscoveryNode;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.xbib.io.util.URIUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  *
@@ -71,15 +70,18 @@ public class Elasticsearch implements ElasticsearchInterface {
     public Elasticsearch() {
     }
 
+    @Override
     public Elasticsearch settings(Settings settings) {
         this.settings = settings;
         return this;
     }
 
+    @Override
     public Elasticsearch newClient(boolean forceNew) {
         return newClient(findURI(), forceNew);
     }
 
+    @Override
     public Elasticsearch newClient(URI uri, boolean forceNew) {
         if (forceNew && client != null) {
             client.close();

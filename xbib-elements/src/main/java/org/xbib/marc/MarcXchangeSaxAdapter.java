@@ -71,6 +71,8 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     private String nsUri;
     private ContentHandler contentHandler;
     private MarcXchangeListener listener;
+    private boolean fatalerrors = false;
+    private boolean silenterrors = false;
 
     public MarcXchangeSaxAdapter(final InputSource source)
             throws IOException {
@@ -109,6 +111,16 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
         return this;
     }
     
+    public MarcXchangeSaxAdapter setFatalErrors(Boolean fatalerrors) {
+        this.fatalerrors = fatalerrors;
+        return this;
+    }
+
+    public MarcXchangeSaxAdapter setSilentErrors(Boolean silenterrors) {
+        this.silenterrors = silenterrors;
+        return this;
+    }
+
     public String getIdentifier() {
         return id;
     }
@@ -127,6 +139,10 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     public void beginCollection() throws SAXException {
+        if (contentHandler == null) {
+            logger.warn("no content handler set");
+            return;
+        }
         contentHandler.startDocument();
         // write schema info
         AttributesImpl attrs = new AttributesImpl();
@@ -149,6 +165,10 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     }
 
     public void endCollection() throws SAXException {
+        if (contentHandler == null) {
+            logger.warn("no content handler set");
+            return;
+        }
         contentHandler.endElement(nsUri, COLLECTION, COLLECTION);
         contentHandler.endDocument();
     }
@@ -166,13 +186,19 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             if (type != null) {
                 attrs.addAttribute(nsUri, TYPE, TYPE, "CDATA", type);
             }
-            contentHandler.startElement(nsUri, RECORD, RECORD, attrs);
+            if (contentHandler != null) {
+                contentHandler.startElement(nsUri, RECORD, RECORD, attrs);
+            }
             if (listener != null) {
                 listener.beginRecord(format, type);
             }
             this.recordOpen = true;
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -185,14 +211,20 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             if (listener != null) {
                 listener.endRecord();
             }
-            contentHandler.endElement(nsUri, RECORD, RECORD);
+            if (contentHandler != null) {
+                contentHandler.endElement(nsUri, RECORD, RECORD);
+            }
             if (listener != null) {
                 // emit trailer event, drives record output segmentation
                 listener.trailer(null);
             }
             this.recordOpen = false;
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -202,15 +234,20 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             return;
         }
         try {
-            contentHandler.startElement(nsUri, LEADER, LEADER,
-                    EMPTY_ATTRIBUTES);
-            contentHandler.characters(value.toCharArray(), 0, value.length());
-            contentHandler.endElement(nsUri, LEADER, LEADER);
+            if (contentHandler != null) {
+                contentHandler.startElement(nsUri, LEADER, LEADER, EMPTY_ATTRIBUTES);
+                contentHandler.characters(value.toCharArray(), 0, value.length());
+                contentHandler.endElement(nsUri, LEADER, LEADER);
+            }
             if (listener != null) {
                 listener.leader(value);
             }
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
     
@@ -227,13 +264,18 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
         try {
             AttributesImpl attrs = new AttributesImpl();
             attrs.addAttribute(nsUri, TAG, TAG, "CDATA", designator.getTag());
-            contentHandler.startElement(nsUri, CONTROLFIELD, CONTROLFIELD,
-                    attrs);
+            if (contentHandler != null) {
+                contentHandler.startElement(nsUri, CONTROLFIELD, CONTROLFIELD, attrs);
+            }
             if (listener != null) {
                 listener.beginControlField(designator);
             }
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -257,12 +299,20 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                             value = value.replace('^', '|');
                             break;
                     }
-                    contentHandler.characters(value.toCharArray(), 0, value.length());
+                    if (contentHandler != null) {
+                        contentHandler.characters(value.toCharArray(), 0, value.length());
+                    }
                 }
             }
-            contentHandler.endElement(nsUri, CONTROLFIELD, CONTROLFIELD);
+            if (contentHandler != null) {
+                contentHandler.endElement(nsUri, CONTROLFIELD, CONTROLFIELD);
+            }
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -283,7 +333,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
             AttributesImpl attrs = new AttributesImpl();
             String tag = designator.getTag();
             if (tag == null || tag.length() == 0) {
-                tag = "___"; // fallback
+                tag = Field.NULL_TAG; // fallback
                 designator.setTag(tag);
             }
             attrs.addAttribute(nsUri, TAG, TAG, "CDATA", tag);
@@ -300,13 +350,19 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                 attrs.addAttribute(null, IND + i,
                         IND + i, "CDATA", designator.getIndicator().substring(i - 1, i));
             }
-            contentHandler.startElement(nsUri, DATAFIELD, DATAFIELD, attrs);
+            if (contentHandler != null) {
+                contentHandler.startElement(nsUri, DATAFIELD, DATAFIELD, attrs);
+            }
             if (listener != null) {
                 listener.beginDataField(designator);
             }
             datafieldOpen = true;
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -326,15 +382,23 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                     // write data field per default into a subfield with code 'a'
                     AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute(nsUri, CODE, CODE, "CDATA", "a");
-                    contentHandler.startElement(nsUri, SUBFIELD, SUBFIELD, attrs);
-                    contentHandler.characters(value.toCharArray(), 0, value.length());
-                    contentHandler.endElement(nsUri, SUBFIELD, SUBFIELD);
+                    if (contentHandler != null) {
+                        contentHandler.startElement(nsUri, SUBFIELD, SUBFIELD, attrs);
+                        contentHandler.characters(value.toCharArray(), 0, value.length());
+                        contentHandler.endElement(nsUri, SUBFIELD, SUBFIELD);
+                    }
                 }
             }
-            contentHandler.endElement(NS_URI, DATAFIELD, DATAFIELD);
+            if (contentHandler != null) {
+                contentHandler.endElement(NS_URI, DATAFIELD, DATAFIELD);
+            }
             datafieldOpen = false;
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -345,17 +409,23 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
         }
         try {
             AttributesImpl attrs = new AttributesImpl();
-            String id = designator.getSubfieldId();
-            if (id == null || id.length() == 0) {
-                id = "a"; // fallback
+            String subfieldId = designator.getSubfieldId();
+            if (subfieldId == null || subfieldId.length() == 0) {
+                subfieldId = "a"; // fallback
             }
-            attrs.addAttribute(nsUri, CODE, CODE, "CDATA", id);
-            contentHandler.startElement(nsUri, SUBFIELD, SUBFIELD, attrs);
+            attrs.addAttribute(nsUri, CODE, CODE, "CDATA", subfieldId);
+            if (contentHandler != null) {
+                contentHandler.startElement(nsUri, SUBFIELD, SUBFIELD, attrs);
+            }
             if (listener != null) {
                 listener.beginSubField(designator);
             }
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -366,15 +436,23 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                 listener.endSubField(designator);
             }
             if (designator != null) {
-                String value = designator.getData();
-                if (!value.isEmpty()) {
-                    value = normalizeValue(value);
-                    contentHandler.characters(value.toCharArray(), 0, value.length());
+                if (contentHandler != null) {
+                    String value = designator.getData();
+                    if (!value.isEmpty()) {
+                        value = normalizeValue(value);
+                        contentHandler.characters(value.toCharArray(), 0, value.length());
+                    }
                 }
             }
-            contentHandler.endElement(NS_URI, SUBFIELD, SUBFIELD);
+            if (contentHandler != null) {
+                contentHandler.endElement(NS_URI, SUBFIELD, SUBFIELD);
+            }
         } catch (Exception ex) {
-            logger.warn(ex.getMessage(), ex);
+            if (fatalerrors) {
+                throw new RuntimeException(ex);
+            } else if (!silenterrors) {
+                logger.warn(designator + ": " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -435,9 +513,13 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                         if (directory != null && directory.containsKey(position)) {
                             designator = new Field(label, directory.get(position), fieldContent, false);
                         } else {
+                            // repair field content if too short
+                            if (fieldContent.length() < 3) {
+                                fieldContent = designator.getTag() + fieldContent;
+                            }
                             designator = new Field(label, fieldContent);
                         }
-                        if (designator != null /*&& !designator.isEmpty()*/) {
+                        if (designator != null) {
                             beginDataField(designator);
                         }
                         break;
@@ -446,9 +528,11 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                             subfieldOpen = true;
                             beginDataField(designator);
                         }
-                        designator = new Field(label, designator, fieldContent, true);
-                        beginSubField(designator);
-                        endSubField(designator);
+                        if (designator != null) {
+                            designator = new Field(label, designator, fieldContent, true);
+                            beginSubField(designator);
+                            endSubField(designator);
+                        }
                         break;
                 }
             } catch (FieldDirectoryException ex) {

@@ -36,16 +36,12 @@ import org.xbib.elements.ElementContextFactory;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.FieldCollection;
 import org.xbib.rdf.Property;
 
 public class MARCBuilder
     extends AbstractElementBuilder<FieldCollection, String, MARCElement, MARCContext>
     implements DublinCoreProperties {
-
-    private static final Logger logger = LoggerFactory.getLogger(MARCBuilder.class.getName());
     
     private final ElementContextFactory<MARCContext> contextFactory = new ElementContextFactory<MARCContext>() {
 
@@ -78,22 +74,14 @@ public class MARCBuilder
 
     @Override
     public void build(MARCElement element, FieldCollection fields, String value) {
-        checkForIdentifierPresent();
-        /*logger.info("got field list = {}", fields);
-        for (Field f : fields) {
-            logger.info("field = " + f + " isSubField=" + f.isSubField());
-        }*/
+        if (context().resource().id() == null) {
+            context().resource().id(IRI.create("http://xbib.org#"+context().increment()));
+        }
     }
     
     public MARCBuilder elementProperty(String elementName, Property property, String value) {        
         context.get().getResource(context.get().resource(), elementName).add(property, value);
         return this;
-    }
-    
-    private void checkForIdentifierPresent() {
-        if (context().resource().id() == null) {
-            context().resource().id(IRI.create("http://xbib.org#"+context().increment()));
-        }
     }
     
 }

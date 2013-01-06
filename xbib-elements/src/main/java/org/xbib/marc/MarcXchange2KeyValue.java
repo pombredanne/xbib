@@ -31,54 +31,70 @@
  */
 package org.xbib.marc;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
- * Convert a MarcXchange stream to a key/value stream.
+ * Convert a MarcXchange stream to a key/value stream. With optional value
+ * string transformation.
  *
  * @author Jörg Prante <joergprante@gmail.com>
  */
 public class MarcXchange2KeyValue implements
         MarcXchangeListener,
         KeyValueStreamListener<FieldCollection, String> {
+    
+    private static final Logger logger = LoggerFactory.getLogger(MarcXchange2KeyValue.class.getName());
 
+    public interface FieldDataTransformer {
+
+        String transform(String value);
+    }
     private FieldCollection fields = new FieldCollection();
-    private KeyValueStreamListener<FieldCollection, String> listener;
+    private List<KeyValueStreamListener<FieldCollection, String>> listeners = new ArrayList();
+    private FieldDataTransformer transformer;
 
-    public MarcXchange2KeyValue setListener(KeyValueStreamListener<FieldCollection, String> listener) {
-        this.listener = listener;
+    public MarcXchange2KeyValue addListener(KeyValueStreamListener<FieldCollection, String> listener) {
+        this.listeners.add(listener);
         return this;
     }
 
-    public KeyValueStreamListener<FieldCollection, String> getKeyValueListener() {
-        return listener;
+    public MarcXchange2KeyValue transformer(FieldDataTransformer transformer) {
+        this.transformer = transformer;
+        return this;
     }
 
     @Override
     public void begin() {
-        if (listener != null) {
+        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
             listener.begin();
         }
     }
 
     @Override
     public void end() {
-        if (listener != null) {
+        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
             listener.end();
         }
     }
 
     @Override
     public void end(Object trailer) {
-        if (listener != null) {
+        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
             listener.end(trailer);
         }
     }
 
     @Override
     public void keyValue(FieldCollection key, String value) {
-        if (listener != null && key != null && value != null) {
-            listener.keyValue(key, value);
+        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
+            // we allow null value here to be passed to the listeners
+            if (key != null) {
+                listener.keyValue(key, value);
+            }
         }
     }
 
@@ -111,7 +127,12 @@ public class MarcXchange2KeyValue implements
 
     @Override
     public void endControlField(Field field) {
-        keyValue(fields, field != null ? field.getData() : null);
+        String data = field != null ? field.getData() : null;
+        // transform field data?
+        if (transformer != null && data != null) {
+            data = transformer.transform(data);
+        }
+        keyValue(fields, data);
         fields.clear();
     }
 
@@ -122,10 +143,14 @@ public class MarcXchange2KeyValue implements
 
     @Override
     public void endDataField(Field field) {
-        // put data intot hte emitter if the only have one field
+        // put data into the emitter if the only have one field
         String data = field != null ? field.getData() : null;
         if (data == null && fields.size() == 1) {
             data = fields.get(0).getData();
+        }
+        // transform field data?
+        if (transformer != null && data != null) {
+            data = transformer.transform(data);
         }
         // emit fields as key/value
         keyValue(fields, data);
@@ -141,9 +166,12 @@ public class MarcXchange2KeyValue implements
     public void endSubField(Field field) {
         if (field != null) {
             // remove last field if there is no sub field (it must be a data field)
-            int n = fields.size();
-            if (n > 0 && !fields.get(n - 1).isSubField()) {
-                fields.remove(n - 1);
+            if (!fields.isEmpty() && !fields.getLast().isSubField()) {
+                Field f = fields.removeLast();
+            }            
+            // transform field data?
+            if (transformer != null && field.getData() != null) {
+                field.setData(transformer.transform(field.getData()));
             }
             fields.add(field);
         }

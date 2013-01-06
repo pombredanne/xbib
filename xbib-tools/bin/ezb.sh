@@ -1,11 +1,13 @@
+#!/bin/bash
 
 java \
-    -Djava.util.logging.config.file=bin/logging.properties \
-    -cp lib/xbib-tools-1.0-SNAPSHOT-elasticsearchezb.jar \
-    org.xbib.tools.indexer.ElasticsearchEZBIndexer \
+    -cp lib/xbib-tools-1.0-SNAPSHOT-elasticsearch-ezb.jar \
+    org.xbib.tools.indexer.elasticsearch.EZB \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
+    --threads 4 \
+    --maxbulkactions 1000 \
     --index "ezb" \
     --type "ezb" \
     --path "/Users/joerg/Daten/EZB/" \
-    --pattern "HBZ_update_dump201250001.xml" \
-    --threads 1
+    --pattern "*.xml"
+

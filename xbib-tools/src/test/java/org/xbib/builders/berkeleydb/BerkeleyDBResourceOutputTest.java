@@ -31,7 +31,7 @@ public class BerkeleyDBResourceOutputTest {
             bdb.connect(URI.create("bdbresource:target/zdbdb"));
             MABBuilder builder = new MABBuilder().addOutput(bdb);
             KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().setListener(listener);
+            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
             reader.setProperty(Iso2709Reader.TYPE, "Titel");

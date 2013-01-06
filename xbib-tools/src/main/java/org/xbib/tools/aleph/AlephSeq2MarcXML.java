@@ -56,7 +56,7 @@ import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.progress.BytesProgressWatcher;
-import org.xbib.io.InputStreamService;
+import org.xbib.io.InputService;
 import org.xbib.io.progress.ProgressMonitoredOutputStream;
 import org.xbib.io.SplitWriter;
 import org.xbib.io.file.Finder;
@@ -211,7 +211,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         }
         BufferedReader br = null;
         try {
-            InputStream in = InputStreamService.getInputStream(uri);
+            InputStream in = InputService.getInputStream(uri);
             br = new BufferedReader(new InputStreamReader(in, INPUT_ENCODING));
             AlephSequentialReader seq = new AlephSequentialReader(br);
             try (SplitWriter bw = new SplitWriter(newWriter(watcher), BUFFER_SIZE)) {
@@ -227,8 +227,8 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                                     Field f1 = new Field("941", "  ");
                                     f1.setSubfieldId("d");
                                     reader.getAdapter().beginDataField(f1);
-                                    reader.getAdapter().beginSubField(f1);
-                                    f1.setData(" 1");
+                                    reader.getAdapter().beginSubField(f1);                                    
+                                    f1.setData("1");
                                     reader.getAdapter().endSubField(f1);
                                     reader.getAdapter().endDataField(null);
                                 } else if (n == 956) {
@@ -238,7 +238,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
                                         reader.getAdapter().beginDataField(f2);
                                         reader.getAdapter().beginSubField(f2);
                                         String p = String.format(linkformat, reader.getAdapter().getIdentifier());
-                                        f2.setData(" " + p);
+                                        f2.setData(p);
                                         reader.getAdapter().endSubField(f2);
                                         reader.getAdapter().endDataField(null);
                                     }

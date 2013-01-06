@@ -1,17 +1,13 @@
 package org.xbib.elasticsearch;
 
+import java.net.URI;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-
-import java.net.URI;
 
 public class ElasticsearchIndexerMock
         extends ElasticsearchMock
         implements ElasticsearchIndexerInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchIndexerMock.class.getName());
     private String index;
     private String type;
 
@@ -21,6 +17,7 @@ public class ElasticsearchIndexerMock
         return this;
     }
 
+    @Override
     public ElasticsearchIndexerMock settings(Settings settings) {
         this.settings = settings;
         return this;
@@ -49,30 +46,44 @@ public class ElasticsearchIndexerMock
     }
 
     @Override
-    public ElasticsearchIndexerMock setIndex(String index) {
+    public ElasticsearchIndexerMock index(String index) {
         this.index = index;
         return this;
     }
 
+    @Override
     public String index() {
         return index;
     }
 
     @Override
-    public ElasticsearchIndexerMock setType(String type) {
+    public ElasticsearchIndexerMock type(String type) {
         this.type = type;
         return this;
     }
 
+    @Override
     public String type() {
         return type;
     }
 
-    public ElasticsearchIndexerMock setBulkSize(int bulkSize) {
+    @Override
+    public ElasticsearchIndexerMock dateDetection(boolean dateDetection) {
+        return this;
+    }
+    
+    @Override    
+    public boolean dateDetection() {
+        return false;
+    }
+    
+    @Override
+    public ElasticsearchIndexerMock maxBulkActions(int maxBulkActions) {
         return this;
     }
 
-    public ElasticsearchIndexerMock setMaxActiveRequests(int maxActiveRequests) {
+    @Override
+    public ElasticsearchIndexerMock maxConcurrentBulkRequests(int maxConcurrentRequests) {
         return this;
     }
 
@@ -86,6 +97,7 @@ public class ElasticsearchIndexerMock
         return this;
     }
 
+    @Override
     public ElasticsearchIndexerInterface flush() {
         return this;
     }

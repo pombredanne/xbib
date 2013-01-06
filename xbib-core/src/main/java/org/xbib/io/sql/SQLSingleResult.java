@@ -31,7 +31,6 @@
  */
 package org.xbib.io.sql;
 
-import org.xbib.io.ResultProcessor;
 
 import java.io.IOException;
 import java.sql.ResultSet;

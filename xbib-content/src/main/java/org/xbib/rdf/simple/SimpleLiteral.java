@@ -63,6 +63,9 @@ public class SimpleLiteral<O extends Object>
     @Override
     public SimpleLiteral<O> object(O value) {
         this.value = value;
+        if (type == null) {
+            deriveType();
+        }
         return this;
     }
 
@@ -131,7 +134,7 @@ public class SimpleLiteral<O extends Object>
     public String toLiteral() {
         return (value != null ? value : "")
                 + (lang != null ? "@" + lang : "")
-                + (type != null ? "^^<" + type + ">" : "");
+                + (type != null ? "^^" + type : "");
     }
 
     @Override
@@ -144,6 +147,8 @@ public class SimpleLiteral<O extends Object>
             return s;
         }
         switch (type.toString()) {
+            case "xsd:long":
+                return Long.parseLong(s);
             case "xsd:int":
                 return Integer.parseInt(s);
             case "xsd:boolean":
@@ -159,9 +164,47 @@ public class SimpleLiteral<O extends Object>
         }
     }
 
+    protected void deriveType() {
+        if (value == null) {
+            return;
+        }
+        String s = value.toString();
+        try {
+            Integer.parseInt(s);
+            type(XSD_INT);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            Long.parseLong(s);
+            type(XSD_LONG);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            Float.parseFloat(s);
+            type(XSD_FLOAT);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            Double.parseDouble(s);
+            type(XSD_DOUBLE);
+            return;
+        } catch (Exception e) {
+        }
+        try {
+            if ("true".equals(s) || "false".equals(s)) {
+                Boolean.parseBoolean(s);
+                type(XSD_BOOLEAN);
+                return;
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
-
-
 }

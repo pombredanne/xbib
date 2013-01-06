@@ -35,14 +35,19 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-core</artifactId>   
+            <artifactId>xbib-charset</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-logging</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-charset</artifactId>
+            <artifactId>xbib-content</artifactId>
             <type>jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>

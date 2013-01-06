@@ -77,7 +77,9 @@ public class MARCElementMapper
                     }
                 }
             } else {
-                logger.debug("no element for '{}' fields={}", key.getDesignators(), key);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("no element for '{}' key={}", key.getDesignators(), key);
+                }
             }
             // call the builder with a global key/value pair, even if an element is not configured
             builder.build(element, key, value);

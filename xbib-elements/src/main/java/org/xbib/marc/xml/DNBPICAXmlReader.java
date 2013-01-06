@@ -32,14 +32,11 @@
 package org.xbib.marc.xml;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchangeListener;
 import org.xbib.marc.addons.DNBPICA;
 import org.xml.sax.Attributes;
@@ -56,7 +53,7 @@ public class DNBPICAXmlReader
     private ContentHandler contentHandler;
     private MarcXchangeListener listener;
     private InputSource source;
-    private List<Field> fields = new LinkedList();
+    private FieldCollection fields = new FieldCollection();
     private StringBuilder content = new StringBuilder();
 
     public DNBPICAXmlReader(final InputSource source) {
@@ -244,13 +241,15 @@ public class DNBPICAXmlReader
                 break;
             }
             case TAG: {
-                Field field = fields.get(0).setSubfieldId(null).setData(content.toString());
+                Field field = fields.getFirst().setSubfieldId(null).setData(content.toString());
                 endDataField(field);
                 fields.clear();
                 break;
             }
             case SUBF: {
-                Field field = fields.get(fields.size() - 1).setSubfieldData(content.toString());
+                String subFieldId = content.substring(0,1);
+                String data = content.substring(1);
+                Field field = fields.getLast().setSubfieldId(subFieldId).setData(data);
                 endSubField(field);
                 break;
             }

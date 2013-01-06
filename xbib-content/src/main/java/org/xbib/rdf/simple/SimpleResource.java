@@ -57,7 +57,6 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     
     @Override
     public Resource<S,P,O> newResource(P predicate) {
-        // create a resource stub, a new blank node
         Resource<S,P,O> r = new SimpleResource().id(new IdentifiableNode().blank().id());
         attributes.put(predicate, r);
         return r;
@@ -72,12 +71,29 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     public Resource<S, P, O> add(String predicate, Literal value) {
         return add(factory.asPredicate(predicate), value);
     }
+    
+    @Override
+    public Resource<S, P, O> add(String predicate, IRI externalResource) {
+        return add(factory.asPredicate(predicate), externalResource);
+    }
+
+    @Override
+    public Resource<S, P, O> add(String predicate, Collection literals) {
+        return add(factory.asPredicate(predicate), literals);
+    }
 
     @Override
     public Resource<S, P, O> add(P predicate, String value) {
         return add(predicate, factory.asLiteral(value));
-    }    
-    
+    }   
+
+    @Override
+    public Resource<S, P, O> add(P predicate, Collection literals) {
+        for (Object object : literals) {
+            add(predicate, factory.asLiteral(object));
+        }
+        return this;
+    }
 
     @Override
     public Resource<S, P, O> newResource(IRI predicate) {
@@ -102,9 +118,14 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
 
     @Override
     public Collection<O> objects(String predicate) {
-        return (Collection<O>) attributes.get(factory.asPredicate(predicate));
+        return objects(factory.asPredicate(predicate));
     }
-    
+
+    @Override
+    public O literal(String predicate) {
+        return literal(factory.asPredicate(predicate));
+    }
+
     @Override
     public Iterator<Statement<S, P, O>> iterator() {
         return new StatementIterator(this, true);

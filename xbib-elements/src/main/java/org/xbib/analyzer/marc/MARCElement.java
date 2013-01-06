@@ -31,6 +31,9 @@
  */
 package org.xbib.analyzer.marc;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
 import org.xbib.elements.Element;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.bibliographic.BibliographicProperties;
@@ -44,10 +47,6 @@ import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
-
 public abstract class MARCElement
         implements Element<FieldCollection, String, MARCBuilder>,
         DublinCoreProperties,
@@ -58,7 +57,7 @@ public abstract class MARCElement
         MarcXchange {
 
     protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
-    protected Map<String, Object> params;
+    protected Map params;
 
     @Override
     public MARCElement setSettings(Map params) {
@@ -67,7 +66,7 @@ public abstract class MARCElement
     }
 
     @Override
-    public Map<String, Object> getSettings() {
+    public Map getSettings() {
         return params;
     }
 

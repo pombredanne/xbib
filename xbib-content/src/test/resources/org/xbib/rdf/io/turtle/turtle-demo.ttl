@@ -5,7 +5,7 @@
 	dcterms:hasPart [
 		dc:title "This is a part", "of the sample title";
 		dc:creator "Jörg Prante";
-		dc:date "2009"
+		dc:date "2009"^^xsd:int
 	];
 	dc:title "A sample title";
 	dcterms:isPartOf [

@@ -34,22 +34,39 @@ public final class Factory<S,P,O> {
     public Literal asLiteral(Object literal) {
         return literal == null ? null :
                 literal instanceof Literal ? (Literal)literal :
-                new SimpleLiteral(literal.toString());
+                newLiteral(literal);
     }
     
     public O asObject(Object object) {
         return object == null ? null :
                 object instanceof Literal ? (O) object :
                 object instanceof IRI ? (O) new SimpleResource().id((IRI) object) :
-                (O) new SimpleLiteral(object.toString());
+                (O) new SimpleLiteral(object);
     }
 
     public Identifier newBlankNode(String nodeID) {
         return new IdentifiableNode().id(nodeID);
     }    
     
-    public Literal newLiteral(String value) {
-        return new SimpleLiteral().object(value);
+    public Literal newLiteral(Object value) {
+        Literal l = new SimpleLiteral();
+        if (value instanceof Double) {
+            return l.type(Literal.XSD_DOUBLE).object(value);
+        }
+        if (value instanceof Float) {
+            return l.type(Literal.XSD_FLOAT).object(value);
+        }
+        if (value instanceof Long) {
+            return l.type(Literal.XSD_LONG).object(value);
+        }
+        if (value instanceof Integer) {
+            return l.type(Literal.XSD_INT).object(value);
+        }
+        if (value instanceof Boolean) {
+            return l.type(Literal.XSD_BOOLEAN).object(value);
+        }
+        // auto derive
+        return l.object(value);        
     }
 
     private final static Property TYPE = new IdentifiableProperty(RDF.RDF_TYPE);

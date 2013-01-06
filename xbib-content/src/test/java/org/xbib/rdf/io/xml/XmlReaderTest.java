@@ -60,7 +60,7 @@ public class XmlReaderTest extends Assert {
         StringWriter sw = new StringWriter();
         TurtleWriter t = new TurtleWriter();
         t.write(resourceContext.resource(), true, sw);
-        assertEquals(sw.toString().length(), 1877);
+        assertEquals(sw.toString().length(), 1886);
     }
 
     class ResourceBuilder implements StatementListener {

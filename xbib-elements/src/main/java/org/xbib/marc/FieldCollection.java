@@ -50,8 +50,8 @@ public class FieldCollection extends LinkedList<Field> {
     }
 
     public String getDesignators() {
-        StringBuilder sb = new StringBuilder();
         Collections.sort(this);
+        StringBuilder sb = new StringBuilder();
         for (Field field : this) {
             if (sb.length() > 0) {
                 sb.append(',');

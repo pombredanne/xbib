@@ -26,12 +26,13 @@ import org.xbib.text.data.UnicodeCharacterDatabase;
 public final class Normalizer {
 
     private enum Mask {
+
         NONE, COMPATIBILITY, COMPOSITION
     }
 
     public enum Form {
-        D, C(Mask.COMPOSITION), KD(Mask.COMPATIBILITY), KC(Mask.COMPATIBILITY, Mask.COMPOSITION);
 
+        D, C(Mask.COMPOSITION), KD(Mask.COMPATIBILITY), KC(Mask.COMPATIBILITY, Mask.COMPOSITION);
         private int mask = 0;
 
         Form(Mask... masks) {
@@ -74,6 +75,9 @@ public final class Normalizer {
      * Normalize the string into the given StringBuilder using the given Form
      */
     public static String normalize(CharSequence source, Form form, StringBuilder buf) {
+        if (source == null) {
+            return null;
+        }
         if (source.length() != 0) {
             try {
                 decompose(source, form, buf);
@@ -110,22 +114,25 @@ public final class Normalizer {
             int ch;
             for (; i > 0; i -= CharUtils.length(c)) {
                 ch = CharUtils.codepointAt(buf, i - 1).getValue();
-                if (UnicodeCharacterDatabase.getCanonicalClass(ch) <= cc)
+                if (UnicodeCharacterDatabase.getCanonicalClass(ch) <= cc) {
                     break;
+                }
             }
         }
         return i;
     }
 
     private static void compose(Form form, StringBuilder buf) throws IOException {
-        if (!form.isComposition())
+        if (!form.isComposition()) {
             return;
+        }
         int pos = 0;
         int lc = CharUtils.codepointAt(buf, pos).getValue();
         int cpos = CharUtils.length(lc);
         int lcc = UnicodeCharacterDatabase.getCanonicalClass(lc);
-        if (lcc != 0)
+        if (lcc != 0) {
             lcc = 256;
+        }
         int len = buf.length();
         int c;
         for (int dpos = cpos; dpos < buf.length(); dpos += CharUtils.length(c)) {
@@ -151,5 +158,4 @@ public final class Normalizer {
         }
         buf.setLength(cpos);
     }
-
 }

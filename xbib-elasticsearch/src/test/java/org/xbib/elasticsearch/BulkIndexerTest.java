@@ -32,8 +32,8 @@ public class BulkIndexerTest {
             final ElasticsearchIndexer es =
                     new ElasticsearchIndexer()
                     .newClient(false)
-                    .setIndex("document")
-                    .setType("test");
+                    .index("document")
+                    .type("test");
 
             es.deleteIndex();
             ResourceContext c = createContext();

@@ -41,7 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.query.Filter;
 import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.UnterminatedQuotedStringException;

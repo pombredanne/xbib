@@ -54,6 +54,11 @@ public class Iso2709Reader implements XMLReader {
      * The type property. Defaylt value is "Bibliographic"
      */
     public static String TYPE = "type";
+    
+    public static String FATAL_ERRORS = "fatal_errors";
+    
+    public static String SILENT_ERRORS = "silent_errors";
+    
     /**
      * The schema property
      */
@@ -66,6 +71,8 @@ public class Iso2709Reader implements XMLReader {
         {
             put(FORMAT, "MARC21");
             put(TYPE, "Bibliographic");
+            put(FATAL_ERRORS, Boolean.FALSE);
+            put(SILENT_ERRORS, Boolean.FALSE);
         }
     };
 
@@ -153,11 +160,15 @@ public class Iso2709Reader implements XMLReader {
 
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
-        this.adapter = new MarcXchangeSaxAdapter(input).setContentHandler(contentHandler)
+        this.adapter = new MarcXchangeSaxAdapter(input)
+                .setContentHandler(contentHandler)
                 .setListener(listener)
                 .setSchema((String) properties.get(SCHEMA))
                 .setFormat((String) properties.get(FORMAT))
-                .setType((String) properties.get(TYPE));
+                .setType((String) properties.get(TYPE))
+                .setFatalErrors((Boolean)properties.get(FATAL_ERRORS))
+                .setSilentErrors((Boolean)properties.get(SILENT_ERRORS));
+        
         adapter.parse();
     }
 

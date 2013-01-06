@@ -109,7 +109,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     }
 
     @Override
-    public Resource<S, P, O> add(P predicate, Literal literal) {
+    public Resource<S, P, O> add(P predicate, Literal<O> literal) {
         if (predicate == null) {
             throw new IllegalArgumentException("unable to add a null predicate");
         }
@@ -118,7 +118,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
             attributes.put(predicate, literal);
         }
         return this;
-    }
+    }    
 
     @Override
     public Resource<S, P, O> add(P predicate, Resource<S, P, O> resource) {
@@ -149,6 +149,12 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         return (Collection<O>) attributes.get(predicate);
     }
 
+    @Override
+    public O literal(P predicate) {
+        return attributes.containsKey(predicate) ?
+                (O)attributes.get(predicate).iterator().next() : null;
+    }
+    
     @Override
     public Map<P, Collection<Node>> nodeMap() {
         return attributes.asMap();
@@ -235,6 +241,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     public Map<P, Collection<Resource<S,P,O>>> resources() {
         Map<P, Collection<Resource<S,P,O>>> map = new HashMap();
         Multimap<P, Node> filtered = Multimaps.filterValues(attributes, resources);
+        // copy resources - does this work?
         for (Map.Entry<P,Collection<Node>> me : filtered.asMap().entrySet()) {
             Collection<Resource<S,P,O>> c = new ArrayList();
             for (Node n : me.getValue()) {

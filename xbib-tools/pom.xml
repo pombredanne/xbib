@@ -27,10 +27,11 @@
                     <descriptors>
                         <descriptor>${basedir}/src/main/assemblies/source.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/alephseq2marcxml.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearchgndindexer.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearchmedline.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearchcatalogenrichment.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearchezb.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/gnd.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/medline.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/ce.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/ezb.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/zdb.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -72,6 +73,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>

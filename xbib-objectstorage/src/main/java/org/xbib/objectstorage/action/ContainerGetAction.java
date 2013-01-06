@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.objectstorage.ObjectStorageRequest;
 import org.xbib.objectstorage.ObjectStorageResponse;
 import org.xbib.objectstorage.adapter.container.rows.ContainerRow;

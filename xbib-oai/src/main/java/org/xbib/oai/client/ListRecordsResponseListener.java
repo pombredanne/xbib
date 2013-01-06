@@ -32,7 +32,7 @@
 package org.xbib.oai.client;
 
 import org.xbib.io.http.netty.HttpResponse;
-import org.xbib.io.util.DateUtil;
+import org.xbib.date.DateUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.ListRecordsRequest;

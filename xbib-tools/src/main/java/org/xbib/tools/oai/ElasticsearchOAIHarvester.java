@@ -36,9 +36,8 @@ import static org.xbib.tools.opt.util.DateConverter.*;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-
 import org.xbib.elasticsearch.ElasticsearchIndexer;
-import org.xbib.io.EmptyWriter;
+import org.xbib.io.NullWriter;
 import org.xbib.iri.IRI;
 import org.xbib.oai.ListRecordsRequest;
 import org.xbib.oai.ListRecordsResponse;
@@ -90,13 +89,13 @@ public final class ElasticsearchOAIHarvester {
             throw new IllegalArgumentException("no options");
         }
         final ElasticsearchIndexer es = new ElasticsearchIndexer()
-                .setIndex(options.valueOf("index").toString())
-                .setType(options.valueOf("type").toString());
+                .index(options.valueOf("index").toString())
+                .type(options.valueOf("type").toString());
         final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());
         final ListRecordsRequest request = new OAIListRecordsRequest(client.getURI(), options);
         StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
         do {
-            EmptyWriter w = new EmptyWriter();
+            NullWriter w = new NullWriter();
             ListRecordsResponse response = new ListRecordsResponse(w);
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);
@@ -157,7 +156,6 @@ public final class ElasticsearchOAIHarvester {
             client.setMetadataReader(metadataReader);
             client.prepareListRecords(request, response).execute();
         } while (request.getResumptionToken() != null);
-        es.flush();
         es.shutdown();
     }
 

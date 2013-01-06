@@ -23,7 +23,6 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import java.io.IOException;
 import org.xbib.io.Identifiable;
-import org.xbib.io.ResultProcessor;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
@@ -32,8 +31,7 @@ public class Update<S extends Resource<?, ?, ?>, P extends Property, O extends L
         extends AbstractWrite<S, P, O>
          {
 
-    public void update(BerkeleyDBSession session, Identifiable identifier, Resource<S, P, O> resource,
-        ResultProcessor<Resource<S, P, O>> processor) throws IOException {
+    public void update(BerkeleyDBSession session, Identifiable identifier, Resource<S, P, O> resource) throws IOException {
         if (session == null || !session.isOpen()) {
             return;
         }
@@ -49,9 +47,9 @@ public class Update<S extends Resource<?, ?, ?>, P extends Property, O extends L
             // read resource, start processor, write resource
             if (session.getCursor().getSearchKey(keyEntry, valueEntry, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
                 Resource thisResource = (Resource) session.getBinding().entryToObject(valueEntry);
-                if (processor != null) {
+                /*if (processor != null) {
                     processor.process(thisResource);
-                }
+                }*/
                 session.getBinding().objectToEntry(thisResource, valueEntry);
                 // update cursor
                 OperationStatus status = session.getCursor().putCurrent(valueEntry);

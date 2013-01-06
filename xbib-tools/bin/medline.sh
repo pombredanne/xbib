@@ -1,8 +1,8 @@
+#!/bin/bash
 
 java \
-    -Djava.util.logging.config.file=logging.properties \
-    -cp target/xbib-tools-1.0-SNAPSHOT-elasticsearchmedline.jar \
-    org.xbib.tools.indexer.ElasticsearchMedlineIndexer \
+    -cp target/xbib-tools-1.0-SNAPSHOT-elasticsearch-medline.jar \
+    org.xbib.tools.indexer.elasticsearch.Medline \
     --es "es://interfaces:9300?es.cluster.name=joerg" \
     --index "medline" \
     --type "medline" \

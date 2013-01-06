@@ -62,4 +62,8 @@ public class IdentifiableProperty extends IRI implements Property {
         return this;
     }
     
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

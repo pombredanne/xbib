@@ -44,11 +44,11 @@ public class IndexCreationTest {
         
         final ElasticsearchIndexer es = new ElasticsearchIndexer()
                 .settings(settings)
-                .setIndex("test")
-                .setType("test");
+                .index("test")
+                .type("test");
         try {
             es.deleteIndex();
-            es.newIndex(null); // no mapping
+            es.index();
             es.deleteIndex();
         } catch (NoNodeAvailableException e) {
             // if no node, just skip
