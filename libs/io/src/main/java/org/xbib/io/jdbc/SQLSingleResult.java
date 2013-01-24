@@ -29,9 +29,43 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.importer;
+package org.xbib.io.jdbc;
 
-public interface ImportResultListener<T,R> {
-    
-    T getResult();
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+
+/**
+ * A single SQL result primitive
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public class SQLSingleResult implements ResultSetListener {
+
+    private int type;
+    private int n;
+    private String value;
+
+    public SQLSingleResult(int type, int n) {
+        this.type = type;
+        this.n = n;
+    }
+
+    @Override
+    public void received(ResultSet result) throws SQLException, IOException {
+            switch (type) {
+                case Types.VARCHAR:
+                   value = result.next() ? result.getString(n) : null;
+                    break;
+            }
+    }
+
+    public void close(ResultSet result) throws SQLException, IOException{
+        result.close();
+    }
+
+    public String value() {
+        return value;
+    }
 }

@@ -29,12 +29,20 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.importer;
+package org.xbib.io.jdbc.operator;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.concurrent.Callable;
+import org.xbib.io.jdbc.SQLSession;
 
-public interface Importer<T,R> extends Callable<T>, Closeable, Iterator<R>  {
+import java.io.IOException;
+import java.sql.SQLException;
 
+public class Commit {
+
+    public void execute(SQLSession session) throws IOException {
+        try {
+            session.getConnection().commit();
+        } catch (SQLException ex) {
+            throw new IOException(ex.getMessage());
+        }
+    }
 }

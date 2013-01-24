@@ -29,25 +29,65 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.importer;
+package org.xbib.io.jdbc.operator;
 
-import java.util.Iterator;
+import org.xbib.io.jdbc.SQLSession;
 
-public abstract class AbstractImporter<T,R> implements Importer<T,R> {
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Map;
 
-    @Override
-    public T call() throws Exception {
-        Iterator<R> it = this;
-        while (it.hasNext()) {
-            R r = next();
-        }
-        close();
-        return null;
+/**
+ * An Update operator contains a key for the SQL statement, and a map of
+ * values for binding parameters.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public class Update extends Query {
+
+    private int rows;
+    
+    public Update(String sql) {
+        super(sql);
+    }
+
+    public Update(String table, Map request, String[] cols) {
+        super(table, request, cols);
+    }
+
+    public Update(String sql, String[] params, Map request) {
+        super(sql, params, request);
     }
 
     @Override
-    public void remove() {
-        throw new UnsupportedOperationException("You can't remove an importer");
+    public void execute(SQLSession session) throws IOException {
+        try {
+            this.session = session;
+            PreparedStatement pstmt = prepareStatement(session);
+            if (pstmt == null) {
+                throw new SQLException("unable to prepare statement");
+            }
+            this.rows = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new IOException(ex.getMessage());
+        }
+    }
+
+    @Override
+    protected PreparedStatement prepareStatement(SQLSession session) throws SQLException {
+        PreparedStatement stmt =  super.prepareStatement(session, getSQL());
+
+        if (getRequestParams() != null) {
+            bind(stmt, getRequest(), getRequestParams());
+        } else if (getRequest() != null) {
+            bind(stmt, getRequest(), getRequest().keySet().toArray());
+        }
+        return stmt;
     }
     
+    public int getRowsAffected() {
+        return rows;
+    }
+
 }

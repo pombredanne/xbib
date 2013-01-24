@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-core</artifactId>
+            <artifactId>xbib-util</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>

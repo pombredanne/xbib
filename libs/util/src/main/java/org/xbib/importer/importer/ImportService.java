@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.importer;
+package org.xbib.importer.importer;
 
 import java.util.Collection;
 import java.util.HashMap;

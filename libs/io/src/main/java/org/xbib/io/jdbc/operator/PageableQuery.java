@@ -29,10 +29,29 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.importer;
+package org.xbib.io.jdbc.operator;
 
-public interface ImporterFactory<T,R> {
+import org.xbib.io.jdbc.SQLSession;
 
-    Importer<T,R> newImporter();
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
 
+/**
+ * A pageable query
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public class PageableQuery extends Query {
+    
+    public PageableQuery(String table, Map request, String[] cols) {
+        super(table, request, cols);
+    }
+
+    @Override
+    protected PreparedStatement prepareStatement(SQLSession session, String sql) throws SQLException {
+        return session.getConnection().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, // for absolute()
+                ResultSet.CONCUR_READ_ONLY);
+    }
 }

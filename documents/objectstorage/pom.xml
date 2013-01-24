@@ -79,7 +79,7 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-core</artifactId>
+            <artifactId>xbib-io</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

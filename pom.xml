@@ -176,11 +176,6 @@
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xbib</groupId>
                 <artifactId>xbib-elasticsearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -227,6 +222,11 @@
             <dependency>
                 <groupId>org.xbib</groupId>
                 <artifactId>xbib-berkeleydb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -40,9 +40,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.xbib.io.sql.operator.Query;
-import org.xbib.io.sql.NotclosedSQLResultSetListener;
-import org.xbib.io.sql.SQLSession;
+import org.xbib.io.jdbc.operator.Query;
+import org.xbib.io.jdbc.NotclosedSQLResultSetListener;
+import org.xbib.io.jdbc.SQLSession;
 
 public class JDBCUserAttributes implements UserAttributes {
 
