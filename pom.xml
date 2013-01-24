@@ -38,7 +38,7 @@
 
     <build>
 
-        <!-- declare plugin versions -->
+        <!-- declare maven plugin versions -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -425,26 +425,36 @@
     </dependencies>
 
     <modules>
-        <module>xbib-logging</module>
-        <module>xbib-charset</module>
-        <module>xbib-compress</module>
-        <module>xbib-content</module>
-        <module>xbib-core</module>
-        <module>xbib-elements</module>
-        <module>xbib-elasticsearch</module>
-        <module>xbib-query</module>
-        <module>xbib-sru</module>
-        <module>xbib-oai</module>
-        <module>xbib-tools</module>
-        <module>xbib-berkeleydb</module>
-        <module>xbib-objectstorage</module>
-        <module>xbib-sessionstorage</module>
-        <module>xbib-jacc</module>
-        <module>xbib-iso23950</module>
-        <module>xbib-atom</module>
-        <module>xbib-federator</module>
-        <module>xbib-filetransfer</module>
-        <module>xbib-swingx</module>
-        <module>xbib-printclient</module>
+        <module>libs/logging</module>
+        <module>libs/charset</module>
+        <module>libs/compress</module>
+        <module>libs/util</module>
+        <module>libs/jacc</module>
+        <module>libs/io</module>
+
+        <module>search/content</module>
+        <module>search/elements</module>
+        <module>search/elasticsearch</module>
+        <module>search/query</module>
+        <module>search/sru</module>
+        <module>search/oai</module>
+        <module>search/iso23950</module>
+        <module>search/atom</module>
+        <module>search/federator</module>
+        <module>search/tools</module>
+
+        <module>documents/berkeleydb</module>
+        <module>documents/objectstorage</module>
+        <module>documents/sessionstorage</module>
+        <module>documents/swingx</module>
+        <module>documents/printclient</module>
+
+<!-- 
+   not ready for building        
+        <module>citations/crf</module>
+        <module>citations/citparse</module>
+        <module>citations/pdf2xml</module>        
+-->
     </modules>
+
 </project>

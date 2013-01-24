@@ -1,0 +1,42 @@
+package org.xbib.iri;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class IRITest extends Assert {
+
+    @Test
+    public void testJsonLd() {
+        IRI iri = IRI.create("@context");
+        assertEquals(null, iri.getScheme());
+        assertEquals("@context",iri.getSchemeSpecificPart());
+    }
+
+    @Test(expectedExceptions = org.xbib.iri.IRISyntaxException.class)
+    //@Test
+    public void testIllegalBlankNodeIRI() {
+        IRI iri = IRI.create("_:a1");
+        assertEquals("_", iri.getScheme());
+        assertEquals("a1",iri.getSchemeSpecificPart());
+    }
+
+    @Test
+    public void testRoutingByIRI() {
+        IRI iri = IRI.create("http://index?type#id");
+        assertEquals("http", iri.getScheme());
+        assertEquals("index", iri.getHost());
+        assertEquals("type", iri.getQuery());
+        assertEquals("id", iri.getFragment());
+    }
+
+    @Test
+    public void testCuri() {
+        IRI curi = new IRI().curi("dc:creator");
+        assertEquals("dc", curi.getScheme());
+        assertEquals("creator", curi.getPath());
+        curi = new IRI().curi("creator");
+        assertNull(curi.getScheme());
+        assertEquals("creator", curi.getPath());
+    }
+
+}
