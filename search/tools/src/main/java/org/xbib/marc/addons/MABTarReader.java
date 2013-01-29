@@ -45,7 +45,7 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.xbib.importer.importer.AbstractImporter;
+import org.xbib.importer.AbstractImporter;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionService;
 import org.xbib.io.Packet;

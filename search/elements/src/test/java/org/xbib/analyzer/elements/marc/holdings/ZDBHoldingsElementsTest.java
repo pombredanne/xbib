@@ -35,6 +35,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.TreeMap;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.analyzer.marc.MARCBuilder;
@@ -42,7 +44,6 @@ import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.analyzer.marc.MARCElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
-import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
@@ -77,7 +78,7 @@ public class ZDBHoldingsElementsTest extends Assert {
 
                 @Override
                 public void output(ResourceContext context) throws IOException {
-                   logger.debug("output={}", context.resource());
+                    logger.debug("output={}", context.resource());
                     counter++;
                 }
 
@@ -87,12 +88,15 @@ public class ZDBHoldingsElementsTest extends Assert {
                 }
             };
             builder.addOutput(out);
-            KeyValueStreamListener listener = new MARCElementMapper("marc/holdings").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
+            MARCElementMapper mapper = new MARCElementMapper("marc/holdings")
+                    .catchall(true)
+                    .addBuilder(builder);
+            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MARC");
             reader.setProperty(Iso2709Reader.TYPE, "Holdings");
             reader.parse(source);
+            logger.info("elements={}",mapper.elements());
         }
         assertEquals(out.getCounter(), 293);
     }
@@ -103,7 +107,8 @@ public class ZDBHoldingsElementsTest extends Assert {
         @Override
         public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
-                context().resource().id(IRI.create("http://xbib.org#" + context().increment()));
+                IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+                context().resource().id(id);
             }
             for (Field field : fields) {
                    logger.debug("element={} field={}", element, field);

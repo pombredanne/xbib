@@ -31,13 +31,13 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.xbib.elasticsearch.ElasticsearchIndexer;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.importer.AbstractImporter;
-import org.xbib.importer.importer.ImportService;
-import org.xbib.importer.importer.Importer;
-import org.xbib.importer.importer.ImporterFactory;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
 import org.xbib.io.InputService;
 import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
@@ -112,14 +112,14 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
-            ImportService service = new ImportService().setThreads(threads).setFactory(
+            new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
 
                         @Override
                         public Importer newImporter() {
                             return new Medline(sink);
                         }
-                    }).execute();
+                    }).execute().shutdown();
             logger.info("files indexed = {}, resources indexed = {}", fileCounter, sink.getCounter());
             es.shutdown();
         } catch (IOException | InterruptedException | ExecutionException e) {
@@ -185,7 +185,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void identify(QName name, String value, IRI identifier) {
             if ("PMID".equals(name.getLocalPart())) {
-               resourceContext.resource().id(IRI.create("pmid:" + value));
+               resourceContext.resource().id(new IRI().curi("pmid", value).build());
             }
         }
 

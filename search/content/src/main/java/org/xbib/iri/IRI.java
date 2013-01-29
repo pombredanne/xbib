@@ -45,6 +45,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     private String path;
     private String query;
     private String fragment;
+    private String a_schemeSpecificPart;
     private String a_host;
     private String a_fragment;
     private String a_path;
@@ -204,16 +205,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
             buildAuthority(buf, userinfo, host, port);
             this.authority = (buf.length() != 0) ? buf.toString() : null;
         }
-        if (host != null && host.startsWith("[")) {
-            a_host = host;
-        } else {
-            a_host = IDNA.toASCII(host);
-        }
-        a_fragment = UrlEncoding.encode(fragment, Profile.FRAGMENT.filter());
-        a_path = UrlEncoding.encode(path, Profile.PATH.filter());
-        a_query = UrlEncoding.encode(query, Profile.QUERY.filter(), Profile.PATH.filter());
-        a_userinfo = UrlEncoding.encode(userinfo, Profile.USERINFO.filter());
-        a_authority = buildASCIIAuthority();
         schemeSpecificPart = buildSchemeSpecificPart(authority, path, query, fragment);
         return this;
     }
@@ -317,6 +308,13 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     }
 
     public String getASCIIHost() {
+        if (host != null && a_host == null) {
+            if (host.startsWith("[")) {
+                a_host = host;
+            } else {
+                a_host = IDNA.toASCII(host);
+            }
+        }
         return (a_host != null && a_host.length() > 0) ? a_host : null;
     }
 
@@ -361,10 +359,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     private String buildASCIIAuthority() {
         if (schemeClass instanceof HttpScheme) {
             StringBuilder buf = new StringBuilder();
-            String aui = getASCIIUserInfo();
-            String ah = getASCIIHost();
-            int port = getPort();
-            buildAuthority(buf, aui, ah, port);
+            buildAuthority(buf, getASCIIUserInfo(),  getASCIIHost(), getPort());
             return buf.toString();
         } else {
             return UrlEncoding.encode(authority, Profile.AUTHORITY.filter());
@@ -372,27 +367,45 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     }
 
     public String getASCIIAuthority() {
+        if (authority != null && a_authority == null) {
+            a_authority = buildASCIIAuthority();
+        }
         return (a_authority != null && a_authority.length() > 0) ? a_authority : null;
     }
 
     public String getASCIIFragment() {
+        if (fragment != null && a_fragment == null) {
+            a_fragment = UrlEncoding.encode(fragment, Profile.FRAGMENT.filter());
+        }
         return a_fragment;
     }
 
     public String getASCIIPath() {
+        if (path != null && a_path == null) {
+            a_path = UrlEncoding.encode(path, Profile.PATH.filter());
+        }
         return a_path;
     }
 
     public String getASCIIQuery() {
+        if (query != null && a_query == null) {
+            a_query = UrlEncoding.encode(query, Profile.QUERY.filter(), Profile.PATH.filter());
+        }
         return a_query;
     }
 
     public String getASCIIUserInfo() {
+        if (userinfo != null && a_userinfo == null) {
+            a_userinfo = UrlEncoding.encode(userinfo, Profile.USERINFO.filter());
+        }
         return a_userinfo;
     }
 
     public String getASCIISchemeSpecificPart() {
-        return buildSchemeSpecificPart(a_authority, a_path, a_query, a_fragment);
+        if (a_schemeSpecificPart == null) {
+            a_schemeSpecificPart = buildSchemeSpecificPart(getASCIIAuthority(), getASCIIPath(), getASCIIQuery(), getASCIIFragment());
+        }
+        return a_schemeSpecificPart;
     }
 
     private String buildSchemeSpecificPart(String authority, String path, String query, String fragment) {
@@ -401,7 +414,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
             buf.append("//");
             buf.append(authority);
         }
-        if (path != null && path.length() != 0) {
+        if (path != null && path.length() > 0) {
             buf.append(path);
         }
         if (query != null) {

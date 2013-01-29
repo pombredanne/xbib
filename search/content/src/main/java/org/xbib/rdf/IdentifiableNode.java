@@ -78,7 +78,7 @@ public class IdentifiableNode implements Identifier {
             // blank
             blank();
         }
-        return BLANK_PREFIX.equals(id.getScheme()) ? PLACEHOLDER + id.getSchemeSpecificPart() : id.toASCIIString();
+        return BLANK_PREFIX.equals(id.getScheme()) ? PLACEHOLDER + id.getSchemeSpecificPart() : id.toString();
     }
 
     @Override

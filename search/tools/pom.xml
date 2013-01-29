@@ -5,10 +5,11 @@
         <groupId>org.xbib</groupId>
         <artifactId>xbib</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-tools</artifactId>
-    <name>xbib-tools</name>
-    <description>xbib - Tools</description>
+    <artifactId>xbib-search-tools</artifactId>
+    <name>xbib-search-tools</name>
+    <description>xbib - Search Tools</description>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -78,11 +79,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.xbib</groupId>
-            <artifactId>xbib-berkeleydb</artifactId>   
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>oracle</groupId>

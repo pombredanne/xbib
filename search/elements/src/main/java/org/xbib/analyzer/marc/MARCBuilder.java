@@ -75,7 +75,8 @@ public class MARCBuilder
     @Override
     public void build(MARCElement element, FieldCollection fields, String value) {
         if (context().resource().id() == null) {
-            context().resource().id(IRI.create("http://xbib.org#"+context().increment()));
+            IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+            context().resource().id(id);
         }
     }
     

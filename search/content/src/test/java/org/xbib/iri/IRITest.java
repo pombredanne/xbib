@@ -31,12 +31,23 @@ public class IRITest extends Assert {
 
     @Test
     public void testCuri() {
-        IRI curi = new IRI().curi("dc:creator");
+        IRI curi = new IRI().curi("dc:creator").build();
         assertEquals("dc", curi.getScheme());
         assertEquals("creator", curi.getPath());
-        curi = new IRI().curi("creator");
+        curi = new IRI().curi("creator").build();
         assertNull(curi.getScheme());
         assertEquals("creator", curi.getPath());
     }
 
+    @Test
+    public void testSchemeSpecificPart() {
+        IRI curi = new IRI().curi("dc:creator").build();
+        assertEquals("dc", curi.getScheme());
+        assertEquals("creator", curi.getSchemeSpecificPart());
+        assertEquals("dc:creator", curi.toString());
+        curi = new IRI().curi("creator").build();
+        assertNull(curi.getScheme());
+        assertEquals("creator", curi.getSchemeSpecificPart());
+        assertEquals("creator", curi.toString());
+    }
 }

@@ -31,8 +31,8 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.xbib.elasticsearch.ElasticsearchIndexer;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.io.InputService;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -104,7 +104,8 @@ public class GND {
                     }
                 }
             });
-            TurtleReader reader = new TurtleReader(IRI.create("http://d-nb.info/gnd/"));
+            IRI id = new IRI().scheme("http").host("d-nb.info").path("/gnd/").build();
+            TurtleReader reader = new TurtleReader(id);
             reader.setListener(builder);
             reader.parse(in);
             builder.close();

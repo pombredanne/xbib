@@ -40,9 +40,9 @@ import java.util.Iterator;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionService;
 import org.xbib.io.Session;
-import org.xbib.io.sql.operator.Query;
-import org.xbib.io.sql.NotclosedSQLResultSetListener;
-import org.xbib.io.sql.SQLSession;
+import org.xbib.io.jdbc.operator.Query;
+import org.xbib.io.jdbc.NotclosedSQLResultSetListener;
+import org.xbib.io.jdbc.SQLSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 

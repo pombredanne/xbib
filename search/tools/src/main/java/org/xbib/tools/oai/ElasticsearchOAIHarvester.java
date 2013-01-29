@@ -36,7 +36,8 @@ import static org.xbib.tools.opt.util.DateConverter.*;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import org.xbib.elasticsearch.ElasticsearchIndexer;
+
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.io.NullWriter;
 import org.xbib.iri.IRI;
 import org.xbib.oai.ListRecordsRequest;
@@ -89,6 +90,7 @@ public final class ElasticsearchOAIHarvester {
             throw new IllegalArgumentException("no options");
         }
         final ElasticsearchIndexer es = new ElasticsearchIndexer()
+                .newClient()
                 .index(options.valueOf("index").toString())
                 .type(options.valueOf("type").toString());
         final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());

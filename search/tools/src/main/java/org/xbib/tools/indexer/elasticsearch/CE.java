@@ -8,13 +8,14 @@ import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import org.xbib.elasticsearch.ElasticsearchIndexer;
+
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.importer.AbstractImporter;
-import org.xbib.importer.importer.ImportService;
-import org.xbib.importer.importer.Importer;
-import org.xbib.importer.importer.ImporterFactory;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
 import org.xbib.io.file.Finder;
 import org.xbib.io.file.TextFileConnectionFactory;
 import org.xbib.iri.IRI;
@@ -88,7 +89,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                         public Importer newImporter() {
                             return new CE(sink);
                         }
-                    }).execute();
+                    }).execute().shutdown();
 
             logger.info("finished, number of files = {}, resources indexed = {}",
                     fileCounter, sink.getCounter());
@@ -173,7 +174,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                 id = pos >= 0 ? id.substring(pos + 1) : id;
                 // remove .txt and force uppercase
                 id = id.substring(0, id.length() - 4).toUpperCase();
-                IRI identifier = IRI.create("urn:hbz/enrichment#" + id);
+                IRI identifier = new IRI().scheme("urn").host("hbz").query("enrichment").fragment(id).build();
                 Resource resource = ctx.newResource();
                 resource.id(identifier)
                         .add("dc:title", title)

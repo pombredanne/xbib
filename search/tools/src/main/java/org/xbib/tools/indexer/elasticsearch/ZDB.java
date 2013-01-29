@@ -40,13 +40,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.analyzer.marc.MARCBuilder;
 import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.analyzer.marc.MARCElementMapper;
-import org.xbib.elasticsearch.ElasticsearchIndexer;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
+import org.xbib.elasticsearch.support.IElasticsearchIndexer;
+import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.importer.AbstractImporter;
-import org.xbib.importer.importer.ImportService;
-import org.xbib.importer.importer.Importer;
-import org.xbib.importer.importer.ImporterFactory;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
 import org.xbib.io.InputService;
 import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
@@ -79,6 +81,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
     private static String type;
     private static String elements;
 
+
     public static void main(String[] args) {
         try {
             OptionParser parser = new OptionParser() {
@@ -93,6 +96,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("marc");
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                 }
             };
             options = parser.parse(args);
@@ -122,9 +126,11 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             elements = options.valueOf("elements").toString();
+            Boolean mock = (Boolean)options.valueOf("mock");
 
-            final ElasticsearchIndexer es = new ElasticsearchIndexer();
-            es.enable(true)
+            final IElasticsearchIndexer es = mock ?
+                    new MockElasticsearchIndexer() :
+                    new ElasticsearchIndexer()
                     .maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
@@ -147,7 +153,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         public Importer newImporter() {
                             return new ZDB(sink);
                         }
-                    }).execute();
+                    }).execute().shutdown();
             long t1 = System.currentTimeMillis();
 
             double dps = sink.getCounter() * 1000 / (t1 - t0);
@@ -210,7 +216,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             reader.parse(source);
             r.close();
             fileCounter.incrementAndGet();
-            logger.info("elements={}", mapper.elements().toString());
+            logger.info("elements={}", mapper.elements());
         } catch (Exception ex) {
             logger.error("error while getting next document: " + ex.getMessage(), ex);
         }
@@ -222,8 +228,8 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
-                IRI iri = IRI.create("http://" + index + "?" + type + "#" + context().increment());
-                context().resource().id(iri);
+                IRI id = new IRI().scheme("http").host(index).query(type).fragment(Long.toString(context().increment())).build();
+                context().resource().id(id);
             }
         }
     }

@@ -37,13 +37,14 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.namespace.QName;
-import org.xbib.elasticsearch.ElasticsearchIndexer;
+
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.importer.AbstractImporter;
-import org.xbib.importer.importer.ImportService;
-import org.xbib.importer.importer.Importer;
-import org.xbib.importer.importer.ImporterFactory;
+import org.xbib.importer.AbstractImporter;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
 import org.xbib.io.InputService;
 import org.xbib.io.file.Finder;
 import org.xbib.io.util.URIUtil;
@@ -143,10 +144,12 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                         public Importer newImporter() {
                             return new EZB(sink);
                         }
-                    }).execute();
+                    }).execute().shutdown();
             long t1 = System.currentTimeMillis();
+
             double dps = sink.getCounter() * 1000 /  (t1-t0);
             logger.info("Complete. {} files, {} docs, {} ms ({} dps)", fileCounter, sink.getCounter(), t1-t0, dps);
+
             es.shutdown();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -200,8 +203,8 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void identify(QName name, String value, IRI identifier) {
             if ("license_entry_id".equals(name.getLocalPart()) && identifier == null) {
-                IRI iri = IRI.create("urn:" + index + "?" + type + "#" + value);
-                resourceContext.resource().id(iri);
+                IRI id = new IRI().scheme("urn").host(index).query(type).fragment(value).build();
+                resourceContext.resource().id(id);
             }
         }
 

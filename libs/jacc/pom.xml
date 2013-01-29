@@ -6,6 +6,7 @@
         <groupId>org.xbib</groupId>
         <artifactId>xbib</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
     </parent>
   <artifactId>xbib-jacc</artifactId>
   <name>xbib-jacc</name>  

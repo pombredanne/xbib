@@ -1,7 +1,7 @@
 {
     "Source" : {
         "values" : [
-        "001B0,001Bt"
+        "001$B$0t"
         ]
     },
     "RecordIdentifier" : {
@@ -9,7 +9,7 @@
     },
     "Identifier" : {
         "values" : [
-        "008Hd,008He"
+        "008$H$de"
         ],
         "subfields" : {
             "a" : "identifierAuthorityBIK",
@@ -24,12 +24,12 @@
     },
     "ShortName" : {
         "values" : [
-        "029@4,029@a"
+        "029$@$4a"
         ]
     },
     "Name" : {
         "values" : [
-        "029Aa"
+        "029$A$a"
         ],
         "subfields" : {
             "a" : "name"
@@ -37,8 +37,8 @@
     },
     "Location" : {
         "values" : [
-        "032P2,032Pa,032Pb,032Pd,032Pe,032Pf,032Pi,032Pj,032Pk,032Pl,032Pn,032Pp",
-        "032P2,032Pa,032Pb,032Pd,032Pe,032Pf,032Pi,032Pj,032Pn,032Pp"
+        "032$P$2abdefijklnp",
+        "032$P$2abdefijp"
         ],
         "subfields" : {
             "a" : "locationStreet",
@@ -54,7 +54,7 @@
     },
     "InterLibrary" : {
         "values" : [
-        "035Ia,035Ic,035Ie"
+        "035$I$ace"
         ],
         "subfields" : {
             "a" : "libraryRegion",
@@ -65,7 +65,7 @@
     },
     "Communication" : {
         "values" : [
-        "035Ba,035Bc,035Bd,035Be,035Bf,035Bk,035Bl"
+        "035$B$acdefkl"
         ],
         "subfields" : {
             "a" : "code", /* S=Sitz, P=Postanschrift, R=Rechnungsanschrift, W=weitere */
@@ -78,7 +78,7 @@
     },
     "Organization" : {
         "values" : [
-        "035Ea,035Eb,035Ef,035Eg,035Eh,035Ei"
+        "035$E$abfghi"
         ],
         "subfields" : {
             "a" : "status",

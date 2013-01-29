@@ -44,7 +44,7 @@ import org.xbib.logging.LoggerFactory;
 
 public class DublinCoreBuilderTest extends Assert {
 
-    private static final Logger logger = LoggerFactory.getLogger(DublinCoreBuilderTest.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(DublinCoreBuilderTest.class.getName());
     
     private long counter;
     

@@ -36,11 +36,10 @@ import java.net.URI;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.Formatter;
-import org.xbib.elasticsearch.OutputFormat;
-import org.xbib.elasticsearch.OutputStatus;
+import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.Formatter;
+import org.xbib.elasticsearch.support.OutputFormat;
+import org.xbib.elasticsearch.support.OutputStatus;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
@@ -126,10 +125,10 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName());
             elasticsearch
                     .newRequest()
-                    .setIndex(getIndex(request))
-                    .setType(getType(request))
-                    .setFrom(request.getStartRecord() - 1)
-                    .setSize(request.getMaximumRecords())
+                    .index(getIndex(request))
+                    .type(getType(request))
+                    .from(request.getStartRecord() - 1)
+                    .size(request.getMaximumRecords())
                     .cql(getQuery(request))
                     .execute(logger)
                     .format(OutputFormat.formatOf(mediaType))

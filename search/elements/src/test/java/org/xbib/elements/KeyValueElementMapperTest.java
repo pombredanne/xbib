@@ -31,12 +31,50 @@
  */
 package org.xbib.elements;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
-public class KeyValueElementMapperTest {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class KeyValueElementMapperTest extends Assert {
+
+    private final Logger logger = LoggerFactory.getLogger(KeyValueElementMapperTest.class.getName());
 
     @Test
     public void testElements() throws Exception {
         ElementMapper test = new ElementMapper("test");
     }
+
+    @Test
+    public void testSegmentKey() {
+        String value = "100$0$1$abc";
+        Element element = new NullElement();
+        Map map = new TreeMap(); // for sorting
+        Map m = ElementMapBuilder.addSegment(value, element, map);
+
+        value = "100$0$2$abc";
+        element = new NullElement();
+        m = ElementMapBuilder.addSegment(value, element, m);
+
+        value = "100$0$2$def";
+        element = new NullElement();
+        m = ElementMapBuilder.addSegment(value, element, m);
+
+        value = "200$0$2$abc";
+        element = new NullElement();
+        m = ElementMapBuilder.addSegment(value, element, m);
+
+        assertEquals("{100={0={2={abc=<null>, def=<null>}, 1={abc=<null>}}}, 200={0={2={abc=<null>}}}}", m.toString());
+
+        Element e = ElementMapBuilder.getElement("100$0$1$abc", m);
+        logger.info("e={}", e);
+        e = ElementMapBuilder.getElement("100$0$1$def", m);
+        logger.info("e={}", e);
+    }
+
+
 }

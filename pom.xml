@@ -15,7 +15,7 @@
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <elasticsearch.version>0.19.13-SNAPSHOT</elasticsearch.version>
+        <elasticsearch.version>0.19.12</elasticsearch.version>
         <lucene.version>3.6.2</lucene.version>
     </properties>
 
@@ -192,6 +192,11 @@
             <dependency>
                 <groupId>org.xbib</groupId>
                 <artifactId>xbib-elements</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-io</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -443,17 +448,18 @@
         <module>search/federator</module>
         <module>search/tools</module>
 
-        <module>documents/berkeleydb</module>
-        <module>documents/objectstorage</module>
-        <module>documents/sessionstorage</module>
-        <module>documents/swingx</module>
-        <module>documents/printclient</module>
-
+<!--
+        <module>storage/berkeleydb</module>
+        <module>storage/objectstorage</module>
+        <module>storage/sessionstorage</module>
+        <module>storage/swingx</module>
+        <module>storage/printclient</module>
+-->
 <!-- 
    not ready for building        
-        <module>citations/crf</module>
-        <module>citations/citparse</module>
-        <module>citations/pdf2xml</module>        
+        <module>textmining/crf</module>
+        <module>textmining/citparse</module>
+        <module>textmining/pdf2xml</module>        
 -->
     </modules>
 

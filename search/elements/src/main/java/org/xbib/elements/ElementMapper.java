@@ -45,7 +45,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         implements KeyValueStreamListener<K, V> {
 
     protected final static Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
-    private final Map<String, Element> map;
+    private final Map map;
     private List<ElementBuilder<K, V, E, C>> builders = new ArrayList();
 
     public ElementMapper(String format) {
@@ -58,7 +58,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
     
     public ElementMapper(ClassLoader cl, String path, String format) {
         try {
-            this.map = ElementMapFactory.getElementMap(cl, path, format);
+            this.map = ElementMapBuilder.getElementMap(cl, path, format);
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -69,7 +69,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         return this;
     }
     
-    protected Map<String,Element> getMap() {
+    protected Map getMap() {
         return map;
     }
 

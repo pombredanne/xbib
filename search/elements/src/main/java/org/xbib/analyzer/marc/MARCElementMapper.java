@@ -31,12 +31,16 @@
  */
 package org.xbib.analyzer.marc;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.xbib.analyzer.elements.marc.support.SubfieldValueMapper;
+import org.xbib.elements.Element;
 import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.ElementMapBuilder;
 import org.xbib.elements.ElementMapper;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
@@ -47,7 +51,7 @@ public class MARCElementMapper
 
     private boolean catchall = false;
 
-    private Set<String> elements = new TreeSet();
+    private Set<String> keys = new TreeSet();
 
     /**
      * Instantiate a MARC element mapper.
@@ -72,10 +76,6 @@ public class MARCElementMapper
         return this;
     }
 
-    public Set<String> elements() {
-        return elements;
-    }
-
     /**
      * Process fields/value stream of MARC data. The fields/value stream is
      * organized with the subfield set as fields and the field data as value.
@@ -92,8 +92,8 @@ public class MARCElementMapper
         if (fields == null) {
             return;
         }
-        String key = fields.getDesignators();
-        MARCElement element = (MARCElement) getMap().get(key);
+        String key = fields.toString();
+        MARCElement element = (MARCElement)ElementMapBuilder.getElement(key, getMap());
         for (ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder : getBuilders()) {
             if (element != null) {
                 // field builder - check for subfield type and pass configured values
@@ -123,17 +123,30 @@ public class MARCElementMapper
                     }
                 }
             } else {
-                // a field collector for the convenience of dumping them to JSON
-                String k = "\""+key+"\"";
-                if (catchall && !elements.contains(k)) {
-                    elements.add(k);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("collected element '{}' for fields={}", key, fields);
-                    }
+                if (catchall) {
+                    keys.add(key);
                 }
             }
             // call the builder with a global fields/value pair, even if an element is not configured
             builder.build(element, fields, value);
         }
     }
+
+    /**
+     * Helper method for diagnostics of unknown fields.
+     *
+     * @return
+     */
+    public String elements() {
+        // print elements in JSON syntax
+        StringBuilder sb = new StringBuilder();
+        for (String key : keys) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append("\"").append(key).append("\"");
+        }
+        return sb.toString();
+    }
+
 }
