@@ -63,6 +63,7 @@ import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+import org.xbib.tools.util.FormatUtil;
 import org.xml.sax.InputSource;
 
 /**
@@ -141,7 +142,8 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     .waitForHealthyCluster()
                     .deleteIndex()
                     .dateDetection(false)
-                    .newIndex();
+                    .newIndex()
+                    .startBulkMode();
 
             // we write RDF resources to Elasticsearch
             final ElasticsearchResourceSink<ResourceContext, Resource> sink = new ElasticsearchResourceSink(es);
@@ -155,10 +157,18 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                             return new ZDB(sink);
                         }
                     }).execute();
+            
             long t1 = System.currentTimeMillis();
-            double dps = sink.getCounter() * 1000 / (t1 - t0);
-            logger.info("Complete. {} files, {} docs, {} ms ({} dps)",
-                    fileCounter, sink.getCounter(), TimeValue.timeValueMillis(t1 - t0).format(), dps);
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            long docs = sink.getCounter();
+            double dps = docs * 1000 / (t1 - t0);
+            long bytes = es.getVolumeInBytes();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            double avg = bytes / docs;
+            String avgSize = FormatUtil.convertFileSize(avg);
+            double mbps = (bytes / (1024*1024)) * 1000 / (t1 - t0);
+            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes, avgSize, avg, dps, mbps);
 
             service.shutdown();
             es.shutdown();

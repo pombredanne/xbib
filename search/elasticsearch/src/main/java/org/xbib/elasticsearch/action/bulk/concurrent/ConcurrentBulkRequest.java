@@ -55,10 +55,11 @@ public class ConcurrentBulkRequest extends BulkRequest implements ActionRequest 
     private ReplicationType replicationType = ReplicationType.DEFAULT;
     private WriteConsistencyLevel consistencyLevel = WriteConsistencyLevel.DEFAULT;
     private boolean refresh = false;
-    private final AtomicLong sizeInBytes = new AtomicLong();
+    private final AtomicLong sizeInBytes = new AtomicLong(0L);
 
-    public ConcurrentBulkRequest requests(Collection<ActionRequest> requests) {
+    public ConcurrentBulkRequest requests(Collection<ActionRequest> requests, long sizeInBytes) {
         this.requests.addAll(requests);
+        this.sizeInBytes.set(sizeInBytes);
         return this;
     }
 
@@ -358,19 +359,23 @@ public class ConcurrentBulkRequest extends BulkRequest implements ActionRequest 
      */
     public synchronized ConcurrentBulkRequest take(int numRequests) {
         Collection<ActionRequest> partRequest = Lists.newArrayList();
+        long size = 0L;
         for (int i = 0; i < numRequests; i++) {
             ActionRequest request = requests.poll();
             if (request != null) {
-                // some nasty overhead to calculate the decreased byte size
+                // some nasty overhead to recalculate the current size in bytes
                 if (request instanceof IndexRequest) {
-                    sizeInBytes.addAndGet(-((IndexRequest) request).source().length() - REQUEST_OVERHEAD);
+                    long l = ((IndexRequest) request).source().length() + REQUEST_OVERHEAD;
+                    sizeInBytes.addAndGet(-l);
+                    size += l;
                 } else if (request instanceof DeleteRequest) {
                     sizeInBytes.addAndGet(-REQUEST_OVERHEAD);
+                    size += REQUEST_OVERHEAD; 
                 }
                 partRequest.add(request);
             }
         }
-        return new ConcurrentBulkRequest().requests(partRequest);
+        return new ConcurrentBulkRequest().requests(partRequest, size);
     }
 
     /**

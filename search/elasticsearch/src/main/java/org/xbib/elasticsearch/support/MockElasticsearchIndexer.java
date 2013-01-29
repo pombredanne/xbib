@@ -113,6 +113,21 @@ public class MockElasticsearchIndexer extends MockElasticsearch implements IElas
     public MockElasticsearchIndexer flush() {
         return this;
     }
+    
+    @Override
+    public MockElasticsearchIndexer startBulkMode() {
+        return this;
+    }
+    
+    @Override
+    public MockElasticsearchIndexer stopBulkMode() {
+        return this;
+    }
+    
+    @Override
+    public long getVolumeInBytes() {
+        return 0L;
+    }
 
     @Override
     public MockElasticsearchIndexer deleteIndex() {

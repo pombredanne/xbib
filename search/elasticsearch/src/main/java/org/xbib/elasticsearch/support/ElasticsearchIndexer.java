@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.elasticsearch.action.admin.indices.settings.UpdateSettingsRequest;
 
 /**
  * Elasticsearch indexing helper class
@@ -47,9 +48,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearchIndexer {
 
-    private final static ESLogger logger = ESLoggerFactory.getLogger(MockElasticsearch.class.getName());
+    private final static ESLogger logger = ESLoggerFactory.getLogger(ElasticsearchIndexer.class.getName());
     /**
-     * The default  size of a bulk request
+     * The default size of a bulk request
      */
     private int maxBulkActions = 100;
     /**
@@ -57,6 +58,7 @@ public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearc
      */
     private int maxConcurrentBulkRequests = 30;
     private final AtomicLong outstandingBulkRequests = new AtomicLong();
+    private final AtomicLong volumeCounter = new AtomicLong();
     private boolean enabled = true;
     private ConcurrentBulkProcessor bulk;
     private String index;
@@ -94,12 +96,12 @@ public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearc
     public ElasticsearchIndexer newClient(URI uri) {
         super.newClient(uri);
         ConcurrentBulkProcessor.Listener listener = new ConcurrentBulkProcessor.Listener() {
-
             @Override
             public void beforeBulk(long executionId, ConcurrentBulkRequest request) {
                 long l = outstandingBulkRequests.incrementAndGet();
-                logger.info("new bulk [{}] of [{} items], {} outstanding bulk requests",
-                        executionId, request.numberOfActions(), l);
+                long v = volumeCounter.addAndGet(request.estimatedSizeInBytes());
+                logger.info("new bulk [{}] of [{} items], {} bytes, {} outstanding bulk requests",
+                        executionId, request.numberOfActions(), v, l);
             }
 
             @Override
@@ -125,9 +127,9 @@ public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearc
     }
 
     /**
-     * Initial settings tailored for index/bulk client use.
-     * No transport sniffing, only thread pool is for bulk/indexing,
-     * other thread pools are minimal, ten Netty connections in parallel.
+     * Initial settings tailored for index/bulk client use. No transport
+     * sniffing, only thread pool is for bulk/indexing, other thread pools are
+     * minimal, ten Netty connections in parallel.
      *
      * @param uri the cluster name URI
      * @return the initial settings
@@ -302,6 +304,18 @@ public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearc
         return this;
     }
 
+    @Override
+    public ElasticsearchIndexer startBulkMode() {
+        disableRefreshInterval();
+        return this;
+    }
+    
+    @Override
+    public ElasticsearchIndexer stopBulkMode() {
+        enableRefreshInterval();
+        return this;
+    }
+
     public ElasticsearchIndexer refresh() {
         if (client == null) {
             return this;
@@ -393,12 +407,35 @@ public class ElasticsearchIndexer extends Elasticsearch implements IElasticsearc
             }
             logger.info("closing bulk...");
             bulk.close();
+            logger.info("enable refresh interval...");
+            enableRefreshInterval();
             logger.info("bulk closed, shutting down...");
             super.shutdown();
             logger.info("shutting down completed");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public long getVolumeInBytes() {
+        return volumeCounter.get();
+    }
+
+    protected void enableRefreshInterval() {
+        ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
+        settings.put("refresh_interval", "1000");
+        UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest(index());
+        updateSettingsRequest.settings(settings);
+        client.admin().indices().updateSettings(updateSettingsRequest).actionGet();
+    }
+
+    protected void disableRefreshInterval() {
+        ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
+        settings.put("refresh_interval", -1);
+        UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest(index());
+        updateSettingsRequest.settings(settings);
+        client.admin().indices().updateSettings(updateSettingsRequest).actionGet();
     }
 
 }
