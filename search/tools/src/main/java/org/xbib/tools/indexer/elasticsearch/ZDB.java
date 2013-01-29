@@ -37,6 +37,8 @@ import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.analyzer.marc.MARCBuilder;
 import org.xbib.analyzer.marc.MARCElement;
 import org.xbib.analyzer.marc.MARCElementMapper;
@@ -136,18 +138,17 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     .newClient(esURI)
                     .index(index)
                     .type(type)
+                    .waitForHealthyCluster()
                     .deleteIndex()
                     .dateDetection(false)
-                    .newIndex()
-                    .waitForHealthyCluster();
+                    .newIndex();
 
-            // we write resources to Elasticsearch
-            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
-                    new ElasticsearchResourceSink(es);
+            // we write RDF resources to Elasticsearch
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink = new ElasticsearchResourceSink(es);
 
             // do the import
             long t0 = System.currentTimeMillis();
-            new ImportService().setThreads(threads).setFactory(
+            ImportService service = new ImportService().setThreads(threads).setFactory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
@@ -155,12 +156,11 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         }
                     }).execute().shutdown();
             long t1 = System.currentTimeMillis();
-
             double dps = sink.getCounter() * 1000 / (t1 - t0);
-
             logger.info("Complete. {} files, {} docs, {} ms ({} dps)",
-                    fileCounter, sink.getCounter(), t1 - t0, dps);
+                    fileCounter, sink.getCounter(), TimeValue.timeValueMillis(t1 - t0).format(), dps);
 
+            service.shutdown();
             es.shutdown();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();

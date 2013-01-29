@@ -18,6 +18,7 @@
  */
 package org.xbib.elasticsearch.support;
 
+import org.elasticsearch.ElasticSearchTimeoutException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
@@ -255,9 +256,14 @@ public class Elasticsearch implements IElasticsearch {
 
     @Override
     public Elasticsearch waitForHealthyCluster() throws IOException {
-        ClusterHealthResponse healthResponse =
-                client.admin().cluster().prepareHealth().setWaitForGreenStatus().setTimeout("30s").execute().actionGet(30000);
-        if (healthResponse.isTimedOut()) {
+        try {
+            logger.info("waiting for cluster health...");
+            ClusterHealthResponse healthResponse =
+                    client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout("30s").execute().actionGet(30000);
+            if (healthResponse.isTimedOut()) {
+                throw new IOException("cluster not healthy, cowardly refusing to continue with operations");
+            }
+        } catch (ElasticSearchTimeoutException e) {
             throw new IOException("cluster not healthy, cowardly refusing to continue with operations");
         }
         return this;

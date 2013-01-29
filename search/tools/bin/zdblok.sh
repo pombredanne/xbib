@@ -9,6 +9,6 @@ java \
     --maxbulkactions 1000 \
     --index "zdb" \
     --type "holdings" \
-    --path "/Users/joerg/Daten/zdb/" \
+    --path "$HOME/Daten/zdb/" \
     --pattern "1208zdblokutf8.mrc" \
     --elements "marc/holdings"
