@@ -152,6 +152,12 @@ public interface IElasticsearchIndexer {
      */
     IElasticsearchIndexer flush();
 
+    IElasticsearchIndexer startBulkMode();
+    
+    IElasticsearchIndexer stopBulkMode();
+    
+    long getVolumeInBytes();
+
     /**
      * Create a new index
      *

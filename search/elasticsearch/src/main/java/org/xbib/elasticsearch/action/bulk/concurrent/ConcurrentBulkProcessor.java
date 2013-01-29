@@ -82,7 +82,7 @@ public class ConcurrentBulkProcessor {
      * id is provided, one will be generated, or usage of the create flag).
      */
     public ConcurrentBulkProcessor add(IndexRequest request) {
-        bulkRequest.add((ActionRequest) request);
+        bulkRequest.add(request);
         flushIfNeeded();
         return this;
     }
@@ -92,7 +92,7 @@ public class ConcurrentBulkProcessor {
      * of actions to execute.
      */
     public ConcurrentBulkProcessor add(DeleteRequest request) {
-        bulkRequest.add((ActionRequest) request);
+        bulkRequest.add(request);
         flushIfNeeded();
         return this;
     }
