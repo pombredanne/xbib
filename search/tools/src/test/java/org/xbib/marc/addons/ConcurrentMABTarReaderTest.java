@@ -5,9 +5,9 @@ import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
 import org.xbib.analyzer.marc.extensions.mab.MABContext;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.importer.importer.ImportService;
-import org.xbib.importer.importer.Importer;
-import org.xbib.importer.importer.ImporterFactory;
+import org.xbib.importer.ImportService;
+import org.xbib.importer.Importer;
+import org.xbib.importer.ImporterFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 
 import java.net.URI;

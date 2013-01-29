@@ -27,8 +27,8 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.OutputFormat;
+import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -146,9 +146,10 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             String mediaType = "application/xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
             elasticsearch.newRequest()
-                    .setIndex(index)
-                    .setType(type)
-                    .setFrom(config.getFrom()).setSize(config.getSize())
+                    .index(index)
+                    .type(type)
+                    .from(config.getFrom())
+                    .size(config.getSize())
                     .cql(query)
                     .execute(logger)
                     .format(OutputFormat.formatOf(mediaType))

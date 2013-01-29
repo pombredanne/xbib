@@ -33,24 +33,27 @@ package org.xbib.marc;
 
 import org.xbib.collect.TreeDeque;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class FieldCollection extends TreeDeque<Field> {
 
-    public final static FieldCollection FORMAT_KEY =  new FieldCollection("FORMAT");
-    public final static FieldCollection TYPE_KEY =  new FieldCollection("TYPE");            
-    public final static FieldCollection LEADER_KEY =  new FieldCollection("LEADER");
+    public final static FieldCollection FORMAT_KEY = new FieldCollection("FORMAT");
+    public final static FieldCollection TYPE_KEY = new FieldCollection("TYPE");
+    public final static FieldCollection LEADER_KEY = new FieldCollection("LEADER");
 
 
     public FieldCollection() {
         super();
     }
-    
+
     private FieldCollection(String tag) {
         this();
         super.add(new Field(tag));
     }
 
     public String getDesignators() {
-        //Collections.sort(this); // we use sort here to reduce the number of field combinatons
         StringBuilder sb = new StringBuilder();
         for (Field field : this) {
             if (sb.length() > 0) {
@@ -58,12 +61,114 @@ public class FieldCollection extends TreeDeque<Field> {
             }
             sb.append(field.getDesignator());
         }
-        return sb.toString();        
+        return sb.toString();
     }
-    
+
+    /**
+     * Build a pattern of this field collection for matching
+     * @param map
+     */
+    public void makePattern(Map<String, String[]> map) {
+        StringBuilder pattern = new StringBuilder();
+        // walk through sorted designators
+        String tag = null;
+        String[] ind = null;
+        String sub = null;
+        for (Field field : this) {
+            if (tag == null) {
+                tag = field.tag();
+            }
+            int l = field.indicator() != null ? field.indicator().length() : 0;
+            if (ind == null && l > 0) {
+                ind = new String[field.indicator().length()];
+                for (int i = 0; i < l; i++) {
+                    ind[i] = field.indicator().substring(i, i + 1);
+                }
+            }
+            if (sub == null) {
+                sub = field.subfieldId();
+            }
+            if (!tag.equals(field.tag())) {
+                // very unlikely when parsing MARC
+                switchToNextTag(map, pattern, tag, ind, sub);
+                tag = field.tag();
+                ind = null;
+                sub = null;
+            } else {
+                // new indicator?
+                if (ind != null) {
+                    for (int i = 0; i < l; i++) {
+                        char ch = field.indicator().charAt(i);
+                        int pos = ind[i].indexOf(ch);
+                        if (pos < 0) {
+                            ind[i] = ind[i] + ch;
+                        }
+                    }
+                }
+                // new subfield id?
+                if (sub != null && sub.indexOf(field.subfieldId()) < 0) {
+                    sub = sub + field.subfieldId();
+                }
+            }
+        }
+        // last tag
+        if (tag != null) {
+            switchToNextTag(map, pattern, tag, ind, sub);
+        }
+    }
+
+    private void switchToNextTag(Map<String, String[]> map,
+                                 StringBuilder pattern, String tag, String[] ind, String sub) {
+        if (pattern.length() > 0) {
+            pattern.append('|');
+        }
+        pattern.append(tag);
+        String p = pattern.toString();
+        // merge with pattern map, if any
+        if (map != null) {
+            int l = ind != null ? ind.length : 0;
+            String[] v = new String[l+1];
+            if (ind != null) {
+                for (int i = 0; i < l; i++) {
+                    v[i] = ind[i];
+                }
+            }
+            if (sub != null) {
+                v[l] = sub;
+            }
+            if (!map.containsKey(p)) {
+                map.put(p, v);
+            } else {
+                // melt
+                String[] s = map.get(p);
+                if (s != null) {
+                    // melt indicators
+                    if (ind != null) {
+                        for (int i = 0; i < l; i++) {
+                            if (s[i].indexOf(ind[i]) < 0) {
+                                s[i] += ind[i];
+                            }
+                        }
+                    }
+                    // melt subfield
+                    if (sub != null) {
+                        for (int i = 0; i < sub.length(); i++) {
+                            if (s[l].indexOf(sub.charAt(i)) < 0) {
+                                s[l] += sub.charAt(i);
+                            }
+                        }
+                    }
+                    map.put(p,s);
+                } else {
+                    map.put(p,v);
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        /*StringBuilder sb = new StringBuilder();
         for (Field field : this) {
             if (sb.length() > 0) {
                 sb.append(',');
@@ -71,6 +176,27 @@ public class FieldCollection extends TreeDeque<Field> {
             sb.append(field.toString());
         }
         return sb.toString();
+        */
+        Map<String,String[]> m = new TreeMap();
+        makePattern(m);
+        StringBuilder sb = new StringBuilder();
+        for (String k : m.keySet()) {
+            sb.append(k);
+            String[] values = m.get(k);
+            if (values != null) {
+                for (String v : values) {
+                    sb.append('$');
+                    if (v != null) {
+                        // TODO sort characters is slow
+                        char[] ch = v.toCharArray();
+                        Arrays.sort(ch);
+                        sb.append(ch);
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
+
 
 }

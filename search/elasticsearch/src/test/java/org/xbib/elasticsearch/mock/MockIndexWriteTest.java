@@ -32,8 +32,8 @@
 package org.xbib.elasticsearch.mock;
 
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.ElasticsearchIndexerMock;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
@@ -52,7 +52,7 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
     @Test
     public void testWrite() throws Exception {
 
-        final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
+        final MockElasticsearchIndexer es = new MockElasticsearchIndexer()
                 .index("test")
                 .type("test");
 

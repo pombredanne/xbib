@@ -13,11 +13,11 @@
             <scope>runtime</scope>
             <includes>
                 <include>org.xbib:xbib-content</include>
-                <include>org.xbib:xbib-core</include>
+                <include>org.xbib:xbib-util</include>
                 <include>org.xbib:xbib-logging</include>
                 <include>org.xbib:xbib-compress</include>
                 <include>org.xbib:xbib-elasticsearch</include>
-                <include>org.xbib:xbib-tools</include>
+                <include>org.xbib:xbib-search-tools</include>
                 <include>com.google.guava:guava</include>
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.slf4j:slf4j-api</include>

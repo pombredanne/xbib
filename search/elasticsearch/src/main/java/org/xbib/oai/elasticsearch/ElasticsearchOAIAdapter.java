@@ -38,12 +38,11 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.Elasticsearch;
-import org.xbib.elasticsearch.Formatter;
-import org.xbib.elasticsearch.OutputFormat;
-import org.xbib.elasticsearch.OutputStatus;
 import org.xbib.date.DateUtil;
+import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.Formatter;
+import org.xbib.elasticsearch.support.OutputFormat;
+import org.xbib.elasticsearch.support.OutputStatus;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.GetRecordRequest;
@@ -113,10 +112,10 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName());
             elasticsearch
                     .newRequest()
-                    .setIndex(getIndex(request))
-                    .setType(getType(request))
-                    .setFrom(request.getResumptionToken().getPosition())
-                    .setSize(1000)
+                    .index(getIndex(request))
+                    .type(getType(request))
+                    .from(request.getResumptionToken().getPosition())
+                    .size(1000)
                     .query(query)
                     .execute(logger)
                     .format(OutputFormat.formatOf(mediaType))

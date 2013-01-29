@@ -35,6 +35,7 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.testng.annotations.Test;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 
 public class IndexCreationTest {
 

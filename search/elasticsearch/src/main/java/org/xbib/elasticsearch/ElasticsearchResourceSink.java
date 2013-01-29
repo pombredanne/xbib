@@ -34,6 +34,8 @@ package org.xbib.elasticsearch;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.xbib.elasticsearch.support.IElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
@@ -42,14 +44,14 @@ import org.xbib.rdf.xcontent.Builder;
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C> {
 
-    private final ElasticsearchIndexerInterface es;
+    private final IElasticsearchIndexer es;
     private final Builder<C, R> builder = new Builder();
     private final AtomicInteger resourceCounter = new AtomicInteger(0);
     private final String defaultIndex;
     private final String defaultType;
     private boolean enabled;
 
-    public ElasticsearchResourceSink(final ElasticsearchIndexerInterface es) {
+    public ElasticsearchResourceSink(final IElasticsearchIndexer es) {
         this.es = es;
         this.defaultIndex = es.index();
         this.defaultType = es.type();

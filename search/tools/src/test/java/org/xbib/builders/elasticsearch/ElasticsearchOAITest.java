@@ -37,7 +37,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.xbib.elasticsearch.ElasticsearchIndexerMock;
+import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
 import org.xbib.io.NullWriter;
 import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;
@@ -75,7 +75,7 @@ public class ElasticsearchOAITest {
 
     public void testDNBOAI() throws Exception {
 
-        final ElasticsearchIndexerMock es = new ElasticsearchIndexerMock()
+        final MockElasticsearchIndexer es = new MockElasticsearchIndexer()
                 .index("test")
                 .type("test");
 

@@ -5,6 +5,7 @@
         <groupId>org.xbib</groupId>
         <artifactId>xbib</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
     </parent>
     <artifactId>xbib-io</artifactId>
     <name>xbib-io</name>
@@ -14,6 +15,11 @@
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-util</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-logging</artifactId>
             <type>jar</type>
         </dependency>
     </dependencies>

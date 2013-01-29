@@ -3,6 +3,11 @@ package org.xbib.elasticsearch;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.testng.annotations.Test;
+import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.ElasticsearchIndexer;
+import org.xbib.elasticsearch.support.Formatter;
+import org.xbib.elasticsearch.support.OutputFormat;
+import org.xbib.elasticsearch.support.OutputStatus;
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -47,10 +52,10 @@ public class BulkIndexerTest {
                     .settings(settings)
                     .newClient()
                     .newRequest()
-                    .setIndex("document")
-                    .setType("test")
-                    .setFrom(0)
-                    .setSize(10)
+                    .index("document")
+                    .type("test")
+                    .from(0)
+                    .size(10)
                     .cql("Hello")
                     .execute(queryLogger)
                     .context(c)
