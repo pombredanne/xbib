@@ -44,6 +44,9 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
+/**
+ * ISO 2709 reader behaving like a SaX XMLReader
+ */
 public class Iso2709Reader implements XMLReader {
 
     /**
@@ -54,18 +57,41 @@ public class Iso2709Reader implements XMLReader {
      * The type property. Defaylt value is "Bibliographic"
      */
     public static String TYPE = "type";
-    
+
+    /**
+     * Should errors abort the reader.
+     */
     public static String FATAL_ERRORS = "fatal_errors";
-    
+
+    /**
+     * Should errors be silenced
+     */
     public static String SILENT_ERRORS = "silent_errors";
-    
+
+    /**
+     * Buffer size for input stream
+     */
+    public static String BUFFER_SIZE = "buffer_size";
+
     /**
      * The schema property
      */
     public static String SCHEMA = "schema";
+    /**
+     * The SaX adapter
+     */
     private MarcXchangeSaxAdapter adapter;
+    /**
+     * XML content handler
+     */
     private ContentHandler contentHandler;
+    /**
+     * MarcXchange listener
+     */
     private MarcXchangeListener listener;
+    /**
+     * Properties for this reader
+     */
     private Map<String, Object> properties = new HashMap() {
 
         {
@@ -73,16 +99,19 @@ public class Iso2709Reader implements XMLReader {
             put(TYPE, "Bibliographic");
             put(FATAL_ERRORS, Boolean.FALSE);
             put(SILENT_ERRORS, Boolean.FALSE);
+            put(BUFFER_SIZE, 65536);
         }
     };
 
     @Override
     public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        // TODO
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        // TODO
     }
 
     @Override
@@ -160,7 +189,9 @@ public class Iso2709Reader implements XMLReader {
 
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
-        this.adapter = new MarcXchangeSaxAdapter(input)
+        this.adapter = new MarcXchangeSaxAdapter()
+                .buffersize((Integer)properties.get(BUFFER_SIZE))
+                .inputSource(input)
                 .setContentHandler(contentHandler)
                 .setListener(listener)
                 .setSchema((String) properties.get(SCHEMA))

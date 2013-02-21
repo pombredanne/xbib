@@ -53,12 +53,12 @@ public class ImportService<T, R> {
     public ImportService() {
     }
 
-    public ImportService setThreads(int threadnum) {
+    public ImportService threads(int threadnum) {
         this.threadnum = threadnum;
         return this;
     }
 
-    public ImportService setFactory(ImporterFactory<T, R> factory) {
+    public ImportService factory(ImporterFactory<T, R> factory) {
         this.factory = factory;
         return this;
     }
@@ -106,7 +106,7 @@ public class ImportService<T, R> {
         return this;
     }
 
-    public Map<Long, T> getResults() {
+    public Map<Long, T> results() {
         return results;
     }
 

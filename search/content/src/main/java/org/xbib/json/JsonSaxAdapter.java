@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,68 +16,77 @@
 package org.xbib.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import org.xbib.xml.XMLNamespaceContext;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Set;
+import java.util.TreeSet;
+
 import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
 import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
 import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
 import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.xml.namespace.QName;
-
-import org.xbib.xml.XMLNamespaceContext;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * Converts JSON to SAX events.
- *  <pre>
+ * Converts JSON to SAX events. It can be used either directly
+ * <pre>
  *  <code>
- *	ContentHandler ch = ...;
- *	JsonSaxAdapter adapter = new JsonSaxAdapter(...);
- *	adapter.parse();
+ * 	ContentHandler ch = ...;
+ * 	JsonSaxAdapter adapter = new JsonSaxAdapter("{\"name\":\"value\"}", ch);
+ * 	adapter.parse();
  *  </code>
  *  </pre>
- *  
+ *
+ * <pre>
+ *  <code>
+ * 	Transformer transformer = TransformerFactory.newInstance().newTransformer();
+ * 	InputSource source = new InputSource(...);
+ * 	Result result = ...;
+ * 	transformer.transform(new SAXSource(new JsonXmlReader(),source), result);
+ *  </code>
+ *  </pre>
  */
 public class JsonSaxAdapter {
 
-    private static final JsonFactory jsonFactory = new JsonFactory();
-    private JsonXmlValueMode mode = JsonXmlValueMode.SKIP_EMPTY_VALUES;
     private static final AttributesImpl EMPTY_ATTRIBUTES = new AttributesImpl();
+
+    private static final JsonFactory factory = new JsonFactory();
+
+    private JsonXmlValueMode mode = JsonXmlValueMode.SKIP_EMPTY_VALUES;
+
     private final JsonParser jsonParser;
+
     private final ContentHandler contentHandler;
-    private final XMLNamespaceContext context = XMLNamespaceContext.getInstance();
+
     private final QName root;
 
-    public JsonSaxAdapter(final InputSource source, final ContentHandler contentHandler,
-            final QName root) throws IOException {
-        this(parseJson(source), contentHandler, root);
+    private XMLNamespaceContext context = XMLNamespaceContext.getInstance();
+
+    public JsonSaxAdapter(final Reader reader, final ContentHandler contentHandler, final QName qname) throws IOException {
+        this(factory.createJsonParser(reader), contentHandler, qname);
     }
 
-    public JsonSaxAdapter(final JsonParser jsonParser, final ContentHandler contentHandler,
-             final QName root) {
+    public JsonSaxAdapter(final JsonParser jsonParser, final ContentHandler contentHandler, final QName qname) {
         this.jsonParser = jsonParser;
         this.contentHandler = contentHandler;
-        this.root = root;
+        this.root = qname;
         contentHandler.setDocumentLocator(new DocumentLocator());
     }
 
-    private static JsonParser parseJson(final InputSource source)
-            throws IOException {
-        if (source.getByteStream() != null) {
-            return jsonFactory.createJsonParser(new InputStreamReader(source.getByteStream(), "UTF-8"));
-        } else {
-            return jsonFactory.createJsonParser(source.getCharacterStream());
-        }
+    public JsonSaxAdapter context(XMLNamespaceContext context) {
+        this.context = context;
+        return this;
     }
 
     /**
@@ -87,42 +96,46 @@ public class JsonSaxAdapter {
         jsonParser.nextToken();
         contentHandler.startDocument();
         writeNamespaceDeclarations(context);
-        if (root != null)
-        contentHandler.startElement(root.getNamespaceURI(), root.getLocalPart(),
-                root.getPrefix() + ":" + root.getLocalPart(), EMPTY_ATTRIBUTES);
+        if (root != null) {
+            contentHandler.startElement(root.getNamespaceURI(), root.getLocalPart(),
+                    root.getPrefix() + ":" + root.getLocalPart(), EMPTY_ATTRIBUTES);
+        }
         parseObject();
-        if (root != null)
-        contentHandler.endElement(root.getNamespaceURI(), root.getLocalPart(),
-                root.getPrefix() + ":" + root.getLocalPart());
+        if (root != null) {
+            contentHandler.endElement(root.getNamespaceURI(), root.getLocalPart(),
+                    root.getPrefix() + ":" + root.getLocalPart());
+        }
         contentHandler.endDocument();
     }
 
     /**
      * Parses generic object.
+     *
      * @return number of elements written
      * @throws IOException
-     * @throws JsonParseException
-     * @throws Exception
+     * @throws SAXException
      */
-    private void parseObject() throws IOException, SAXException {
+    private int parseObject() throws SAXException, IOException {
+        int elementsWritten = 0;
         while (jsonParser.nextToken() != null && jsonParser.getCurrentToken() != END_OBJECT) {
             if (FIELD_NAME.equals(jsonParser.getCurrentToken())) {
                 String elementName = jsonParser.getCurrentName();
                 jsonParser.nextToken();
                 parseElement(elementName);
+                elementsWritten++;
             } else {
-                throw new IOException("Error when parsing, expected field name got " 
-                        + jsonParser.getCurrentToken());
+                throw new JsonParseException("expected field name, but got " + jsonParser.getCurrentToken(),
+                        jsonParser.getCurrentLocation());
             }
         }
+        return elementsWritten;
     }
 
     private void parseElement(final String elementName) throws SAXException, IOException {
+        startElement(elementName);
         JsonToken currentToken = jsonParser.getCurrentToken();
         if (START_OBJECT.equals(currentToken)) {
-            startElement(elementName);
             parseObject();
-            endElement(elementName);
         } else if (START_ARRAY.equals(currentToken)) {
             parseArray(elementName);
         } else if (currentToken.isScalarValue()) {
@@ -132,7 +145,14 @@ public class JsonSaxAdapter {
                 endElement(elementName);
             }
         }
+        endElement(elementName);
     }
+
+    private boolean isEmptyValue() throws IOException {
+        return (jsonParser.getCurrentToken() == VALUE_NULL)
+                || jsonParser.getText().isEmpty();
+    }
+
 
     private void parseArray(final String elementName) throws IOException, SAXException {
         while (jsonParser.nextToken() != END_ARRAY && jsonParser.getCurrentToken() != null) {
@@ -141,13 +161,10 @@ public class JsonSaxAdapter {
     }
 
     private void parseValue() throws IOException, SAXException {
-        String text = jsonParser.getText();
-        contentHandler.characters(text.toCharArray(), 0, text.length());
-    }
-
-    private boolean isEmptyValue() throws IOException {
-        return (jsonParser.getCurrentToken() == VALUE_NULL)
-                || jsonParser.getText().isEmpty();
+        if (jsonParser.getCurrentToken() != VALUE_NULL) {
+            String text = jsonParser.getText();
+            contentHandler.characters(text.toCharArray(), 0, text.length());
+        }
     }
 
     private void startElement(final String elementName) throws SAXException {
@@ -165,7 +182,6 @@ public class JsonSaxAdapter {
 
     private class DocumentLocator implements Locator {
 
-        @Override
         public String getPublicId() {
             Object sourceRef = jsonParser.getCurrentLocation().getSourceRef();
             if (sourceRef != null) {
@@ -175,17 +191,14 @@ public class JsonSaxAdapter {
             }
         }
 
-        @Override
         public String getSystemId() {
             return getPublicId();
         }
 
-        @Override
         public int getLineNumber() {
             return jsonParser.getCurrentLocation() != null ? jsonParser.getCurrentLocation().getLineNr() : -1;
         }
 
-        @Override
         public int getColumnNumber() {
             return jsonParser.getCurrentLocation() != null ? jsonParser.getCurrentLocation().getColumnNr() : -1;
         }
@@ -226,4 +239,5 @@ public class JsonSaxAdapter {
         }
         return new QName(nsURI, name, nsPrefix);
     }
+
 }

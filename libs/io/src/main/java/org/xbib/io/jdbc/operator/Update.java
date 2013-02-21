@@ -39,7 +39,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * An Update operator contains a key for the SQL statement, and a map of
+ * An Update operator contains a key for the SQL triple, and a map of
  * values for binding parameters.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
@@ -66,7 +66,7 @@ public class Update extends Query {
             this.session = session;
             PreparedStatement pstmt = prepareStatement(session);
             if (pstmt == null) {
-                throw new SQLException("unable to prepare statement");
+                throw new SQLException("unable to prepare triple");
             }
             this.rows = pstmt.executeUpdate();
         } catch (SQLException ex) {

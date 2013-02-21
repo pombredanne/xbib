@@ -36,10 +36,11 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
+
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.date.DateUtil;
-import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.Formatter;
 import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.elasticsearch.support.OutputStatus;
@@ -68,7 +69,7 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
     private StylesheetTransformer transformer;
     private String oaiStyleSheet = "es-oai-response.xsl";
-    private Elasticsearch elasticsearch = new Elasticsearch().newClient();
+    private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     @Override
     public URI getURI() {
@@ -110,9 +111,7 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
         String query = getQuery(request);        
         try {
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName());
-            elasticsearch
-                    .newRequest()
-                    .index(getIndex(request))
+            es.newSearchRequest().index(getIndex(request))
                     .type(getType(request))
                     .from(request.getResumptionToken().getPosition())
                     .size(1000)

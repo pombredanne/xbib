@@ -6,8 +6,8 @@ import java.io.StringWriter;
 import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.rdf.context.IRINamespaceContext;
@@ -23,7 +23,7 @@ public class RdfXmlReaderTest {
             throw new IOException("file " + filename + " not found");
         }
         Resource root = new SimpleResource();
-        StatementListener listener = new ResourceBuilder(root);
+        TripleListener listener = new ResourceBuilder(root);
         RdfXmlReader reader = new RdfXmlReader();
         reader.setListener(listener);
         reader.parse(new InputSource(in));
@@ -42,7 +42,7 @@ public class RdfXmlReaderTest {
         //logger.log(Level.INFO, "turtle = {0}", s2);
     }
 
-    class ResourceBuilder implements StatementListener {
+    class ResourceBuilder implements TripleListener {
 
         Resource resource;
 
@@ -51,14 +51,16 @@ public class RdfXmlReaderTest {
         }
         
         @Override
-        public void newIdentifier(IRI uri) {
+        public ResourceBuilder newIdentifier(IRI uri) {
             resource.id(uri);
+            return this;
         }
 
         @Override
-        public void statement(Statement statement) {
-            //logger.log(Level.INFO, statement.toString());
-            resource.add(statement);
+        public ResourceBuilder triple(Triple triple) {
+            //logger.log(Level.INFO, triple.toString());
+            resource.add(triple);
+            return this;
         }
     }
 }

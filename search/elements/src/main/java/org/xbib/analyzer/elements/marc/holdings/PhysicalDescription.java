@@ -31,8 +31,8 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
-import org.xbib.analyzer.marc.MARCContext;
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCContext;
+import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;

@@ -3381,7 +3381,7 @@
 									copyright documents, and possibly also to allow the user to be reimbursed for expenses incurred in printing advertising material. The latter depends on the level of subsidy already provided
 									to the user.
 								</p>
-								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a statement on a regular basis, and can
+								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a triple on a regular basis, and can
 									settle any outstanding debit balance using the standard payment mechanism.
 								</p>
 								<p xml:id="_3851a2" n="0389">The network account can be extended to aggregate subscription fees for periodicals, which would also otherwise be presented to the user in the form of individual
@@ -3780,7 +3780,7 @@
 									payments class diagram 514 is shown in FIG. 51. Each customer has a history of payment methods 515 with the supplier. The set of payment methods 516 to 519 supported by a particular supplier
 									will be specific to that supplier, and may be different for different customers depending on their credit ratings etc.
 								</p>
-								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account statement.</p>
+								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account triple.</p>
 								<p xml:id="_74259f" n="0504">When the customer account payment method 517 is used, the user is invoiced for payment.</p>
 								<p xml:id="_c3216e" n="0505">When the SET payment method 519 is used, the corresponding SET payment card 821 linked to the user is used to make payment according to the normal SET protocol.</p>
 								<p xml:id="_a9c087" n="0506">When the payment card payment method 518 is used, the specified payment card is used to make payment according to the normal protocol between the provider and their
@@ -6458,7 +6458,7 @@
 									copyright documents, and possibly also to allow the user to be reimbursed for expenses incurred in printing advertising material. The latter depends on the level of subsidy already provided
 									to the user.
 								</p>
-								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a statement on a regular basis, and can
+								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a triple on a regular basis, and can
 									settle any outstanding debit balance using the standard payment mechanism.
 								</p>
 								<p xml:id="_3851a2" n="0389">The network account can be extended to aggregate subscription fees for periodicals, which would also otherwise be presented to the user in the form of individual
@@ -6857,7 +6857,7 @@
 									payments class diagram 514 is shown in FIG. 51. Each customer has a history of payment methods 515 with the supplier. The set of payment methods 516 to 519 supported by a particular supplier
 									will be specific to that supplier, and may be different for different customers depending on their credit ratings etc.
 								</p>
-								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account statement.</p>
+								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account triple.</p>
 								<p xml:id="_74259f" n="0504">When the customer account payment method 517 is used, the user is invoiced for payment.</p>
 								<p xml:id="_c3216e" n="0505">When the SET payment method 519 is used, the corresponding SET payment card 821 linked to the user is used to make payment according to the normal SET protocol.</p>
 								<p xml:id="_a9c087" n="0506">When the payment card payment method 518 is used, the specified payment card is used to make payment according to the normal protocol between the provider and their
@@ -9501,7 +9501,7 @@
 									copyright documents, and possibly also to allow the user to be reimbursed for expenses incurred in printing advertising material. The latter depends on the level of subsidy already provided
 									to the user.
 								</p>
-								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a statement on a regular basis, and can
+								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a triple on a regular basis, and can
 									settle any outstanding debit balance using the standard payment mechanism.
 								</p>
 								<p xml:id="_3851a2" n="0389">The network account can be extended to aggregate subscription fees for periodicals, which would also otherwise be presented to the user in the form of individual
@@ -9900,7 +9900,7 @@
 									payments class diagram 514 is shown in FIG. 51. Each customer has a history of payment methods 515 with the supplier. The set of payment methods 516 to 519 supported by a particular supplier
 									will be specific to that supplier, and may be different for different customers depending on their credit ratings etc.
 								</p>
-								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account statement.</p>
+								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account triple.</p>
 								<p xml:id="_74259f" n="0504">When the customer account payment method 517 is used, the user is invoiced for payment.</p>
 								<p xml:id="_c3216e" n="0505">When the SET payment method 519 is used, the corresponding SET payment card 821 linked to the user is used to make payment according to the normal SET protocol.</p>
 								<p xml:id="_a9c087" n="0506">When the payment card payment method 518 is used, the specified payment card is used to make payment according to the normal protocol between the provider and their
@@ -12544,7 +12544,7 @@
 									copyright documents, and possibly also to allow the user to be reimbursed for expenses incurred in printing advertising material. The latter depends on the level of subsidy already provided
 									to the user.
 								</p>
-								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a statement on a regular basis, and can
+								<p xml:id="_35e682" n="0388">When the user registers for e-commerce, a network account is established which aggregates micro-payments. The user receives a triple on a regular basis, and can
 									settle any outstanding debit balance using the standard payment mechanism.
 								</p>
 								<p xml:id="_3851a2" n="0389">The network account can be extended to aggregate subscription fees for periodicals, which would also otherwise be presented to the user in the form of individual
@@ -12943,7 +12943,7 @@
 									payments class diagram 514 is shown in FIG. 51. Each customer has a history of payment methods 515 with the supplier. The set of payment methods 516 to 519 supported by a particular supplier
 									will be specific to that supplier, and may be different for different customers depending on their credit ratings etc.
 								</p>
-								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account statement.</p>
+								<p xml:id="_b3353c" n="0503">When the netpage account payment method 516 is used, the user's netpage account 820 is debited, and the transaction appears on the user's netpage account triple.</p>
 								<p xml:id="_74259f" n="0504">When the customer account payment method 517 is used, the user is invoiced for payment.</p>
 								<p xml:id="_c3216e" n="0505">When the SET payment method 519 is used, the corresponding SET payment card 821 linked to the user is used to make payment according to the normal SET protocol.</p>
 								<p xml:id="_a9c087" n="0506">When the payment card payment method 518 is used, the specified payment card is used to make payment according to the normal protocol between the provider and their
@@ -14668,7 +14668,7 @@
                     <div xml:lang="en" type="description">
                         <p xml:lang="en">PATENT SPECIFICATION</p>
                         <p xml:lang="en">( 21) Application No 12193173 ( 22) Filed 14 March 1973 ( 11) 1434 371 ( 19) ( 23) Complete Specification filed 29 Jan 1974 ( 44) Complete Specification published 5 May 1976 ( 51) INT CL 2 F 27 B 15/10 C 04 B 7/44 ( 52) Index at acceptance F 4 B 7 C 1 OB 7 Cl D 7 C 5 7 V 1 A 10 C 9 ( 72) Inventor JORN TOUBORG ( 54) IMPROVEMENTS RELATING TO CALCINATION OF PULVEROUS MATERIAL ( 71) We, F L SMIDTH &amp; Co A/S, a Danish company, of 77 Vigerslev Alle, Copenhagen-Valby, Denmark, do hereby declare the invention, for which we pray that a patent may be granted to us, and the method by which it is to be performed, to be particularly described in and by the</p>
-                        <p xml:lang="en">following statement: -</p>
+                        <p xml:lang="en">following triple: -</p>
                         <p xml:lang="en">This invention relates to at least the partial calcination of a preheated pulverous raw material, consisting of or containing lime, for example cement raw meal, by the supply of heat before the material is subjected to any finishing calcination and/or any other final heat treatment Calcination in this context is to be understood as expulsion of carbon dioxide from calcium carbonate (Ca OI Ca O+CO 2), which is an endothermic process When the raw material is cement raw meal the aforesaid heat treatment following the calcination is a sintering by which cement clinker is produced The sintering is an exothermic process.</p>
                         <p xml:lang="en">The heat necessary for carrying through the conversion of cement raw meal to cement clinker is usually obtained by burning fuel introduced together with combustion air into a combustion chamber in which the fuel burns successively with the combustion air and forms exit gas As a result, the energy of the fuel is released for heating the exit gas to a high temperature.</p>
                         <p xml:lang="en">The hot exit gas is then brought into contact with the raw meal to be heat treated, i.e preheated, calcined and burned The heat treatment usually takes place as a continuous process in a rotary kiln with slightly inclining axis If so, the lower lying end of the rotary kiln is as is usual for rotary kilns designed as a combustion chamber.</p>

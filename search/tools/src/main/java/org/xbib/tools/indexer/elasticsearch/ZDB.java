@@ -34,18 +34,20 @@ package org.xbib.tools.indexer.elasticsearch;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.text.NumberFormat;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.elasticsearch.client.support.MockTransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.analyzer.marc.MARCBuilder;
-import org.xbib.analyzer.marc.MARCElement;
-import org.xbib.analyzer.marc.MARCElementMapper;
+import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCBuilderFactory;
+import org.xbib.elements.marc.MARCElement;
+import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
-import org.xbib.elasticsearch.support.IElasticsearchIndexer;
-import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -76,13 +78,20 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
     private final static Logger logger = LoggerFactory.getLogger(ZDB.class.getName());
     private final static String lf = System.getProperty("line.separator");
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+    private final static AtomicLong outputCounter = new AtomicLong(0L);
     private static Queue<URI> input;
     private ElementOutput output;
     private static OptionSet options;
     private boolean done = false;
     private static String index;
     private static String type;
+    private static String shards;
+    private static String replica;
     private static String elements;
+    private static int pipelines;
+    private static int buffersize;
+    private static boolean mock;
+    private static boolean detect;
 
 
     public static void main(String[] args) {
@@ -92,6 +101,8 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("replica").withRequiredArg().ofType(Integer.class).defaultsTo(0);
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("1208zdblokutf8.mrc");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
@@ -100,6 +111,9 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("marc");
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                    accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
+                    accepts("buffersize").withRequiredArg().ofType(Integer.class).defaultsTo(8192);
+                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                 }
             };
             options = parser.parse(args);
@@ -109,12 +123,19 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
                         + " --type <type>          Elasticsearch type name" + lf
+                        + " --shards <n>           Elasticsearch number of shards" + lf
+                        + " --replica <n>          Elasticsearch number of replica" + lf
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
+                        + " --threads <n>          the number of threads for import (optional, default: 1)"
                         + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
                         + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
-                        + " --elements <name>      element set (optional, default: marc)");
+                        + " --elements <name>      element set (optional, default: marc)"
+                        + " --mock <bool>          dry run of indexing (optional, default: false)"
+                        + " --pipelines <n>        number of pipelines (optional, default: number of cpu cores)"
+                        + " --buffersize <n>       buffer size in chars for reads (optional, default: 8192)"
+                        + " --detect <bool>        detect unknown keys (optional, default: false)"
+                );
                 System.exit(1);
             }
 
@@ -126,14 +147,19 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             URI esURI = URI.create(options.valueOf("elasticsearch").toString());
             index = options.valueOf("index").toString();
             type = options.valueOf("type").toString();
+            shards = options.valueOf("shards").toString();
+            replica = options.valueOf("replica").toString();
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             elements = options.valueOf("elements").toString();
-            Boolean mock = (Boolean)options.valueOf("mock");
+            mock = (Boolean)options.valueOf("mock");
+            pipelines = (Integer)options.valueOf("pipelines");
+            buffersize = (Integer)options.valueOf("buffersize");
+            detect = (Boolean)options.valueOf("detect");
 
-            final IElasticsearchIndexer es = mock ?
-                    new MockElasticsearchIndexer() :
-                    new ElasticsearchIndexer()
+            final TransportClientIngest es = mock ?
+                    new MockTransportClientIngest() :
+                    new TransportClientIngestSupport()
                     .maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
@@ -141,6 +167,8 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     .type(type)
                     .waitForHealthyCluster()
                     .deleteIndex()
+                    .setting("index.number_of_shards", shards)
+                    .setting("index.number_of_replicas", "0")
                     .dateDetection(false)
                     .newIndex()
                     .startBulkMode();
@@ -150,7 +178,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
             // do the import
             long t0 = System.currentTimeMillis();
-            ImportService service = new ImportService().setThreads(threads).setFactory(
+            ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
@@ -158,18 +186,24 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         }
                     }).execute();
             long t1 = System.currentTimeMillis();
-            String t = TimeValue.timeValueMillis(t1 - t0).format();
-            long docs = sink.getCounter();
-            double dps = docs * 1000 / (t1 - t0);
+            long docs = outputCounter.get();
             long bytes = es.getVolumeInBytes();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1.0); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
             String byteSize = FormatUtil.convertFileSize(bytes);
-            double avg = bytes / docs;
             String avgSize = FormatUtil.convertFileSize(avg);
-            double mbps = (bytes / (1024*1024)) * 1000 / (t1 - t0);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
             logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter, docs, t, (t1-t0), byteSize, bytes, avgSize, avg, dps, mbps);
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
 
             service.shutdown();
+
             es.shutdown();
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -200,19 +234,18 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             return fileCounter;
         }
         try {
-            MARCBuilder builder = new OurMARCBuilder()
+            MARCBuilderFactory factory = new MARCBuilderFactory() {
+                public MARCBuilder newBuilder() {
+                    MARCBuilder builder = new OurMARCBuilder()
                     .addOutput(new OurElementOutput());
-            MARCElementMapper mapper = new MARCElementMapper(elements)
-                    .catchall(true)
-                    .addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
-                    /*.transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
-                @Override
-                public String transform(String in) {
-                    // ZDB PICA UTF-8 is delivered with decomposed form (e.g. 0308 COMBINING DIAERESIS)
-                    return Normalizer.normalize(in, Form.NFC);
+                    return builder;
                 }
-            })*/
+            };
+            MARCElementMapper mapper = new MARCElementMapper(elements)
+                    .pipelines(pipelines)
+                    .detectUnknownKeys(detect)
+                    .start(factory);
+            MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                     .addListener(mapper);
             Iso2709Reader reader = new Iso2709Reader()
                     .setMarcXchangeListener(kv);
@@ -220,12 +253,14 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             reader.setProperty(Iso2709Reader.TYPE, "Holdings");
             reader.setProperty(Iso2709Reader.FATAL_ERRORS, false);
             reader.setProperty(Iso2709Reader.SILENT_ERRORS, true);
+            reader.setProperty(Iso2709Reader.BUFFER_SIZE, buffersize);
             InputStreamReader r = new InputStreamReader(InputService.getInputStream(uri), "UTF-8");
             InputSource source = new InputSource(r);
             reader.parse(source);
             r.close();
             fileCounter.incrementAndGet();
-            logger.info("elements={}", mapper.elements());
+            logger.info("unknown keys={}", mapper.unknownKeys());
+            mapper.close();
         } catch (Exception ex) {
             logger.error("error while getting next document: " + ex.getMessage(), ex);
         }
@@ -235,7 +270,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
     class OurMARCBuilder extends MARCBuilder {
 
         @Override
-        public void build(MARCElement element, FieldCollection fields, String value) {
+        public synchronized void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
                 IRI id = new IRI().scheme("http").host(index).query(type).fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
@@ -260,12 +295,13 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                 logger.debug("output={}", context.resource());
             }
             output.output(context);
+            outputCounter.incrementAndGet();
             context.reset();
         }
 
         @Override
         public long getCounter() {
-            return 0;
+            return outputCounter.get();
         }
     }
 }

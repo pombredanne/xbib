@@ -35,17 +35,17 @@ import java.util.Iterator;
 import java.util.Stack;
 import javax.xml.namespace.QName;
 import org.xbib.iri.IRI;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public abstract class AbstractXmlHandler extends DefaultHandler {
+public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHandler {
 
     protected final ResourceContext resourceContext;
-    protected StatementListener listener;
+    protected TripleListener listener;
     protected StringBuilder content = new StringBuilder();
     private String defaultPrefix;
     private String defaultNamespace;
@@ -56,6 +56,10 @@ public abstract class AbstractXmlHandler extends DefaultHandler {
         this.resourceContext = context;
     }
 
+    public ResourceContext resourceContext() {
+        return resourceContext;
+    }
+
     public AbstractXmlHandler setDefaultNamespace(String prefix, String namespaceURI) {
         this.defaultPrefix = prefix;
         this.defaultNamespace = namespaceURI;
@@ -63,7 +67,7 @@ public abstract class AbstractXmlHandler extends DefaultHandler {
         return this;
     }
 
-    public AbstractXmlHandler setListener(StatementListener listener) {
+    public AbstractXmlHandler setListener(TripleListener listener) {
         this.listener = listener;
         return this;
     }
@@ -164,9 +168,9 @@ public abstract class AbstractXmlHandler extends DefaultHandler {
         }
         if (listener != null) {
             listener.newIdentifier(resourceContext.resource().id());
-            Iterator<Statement> it = resourceContext.resource().iterator();
+            Iterator<Triple> it = resourceContext.resource().iterator();
             while (it.hasNext()) {
-                listener.statement(it.next());
+                listener.triple(it.next());
             }
         }
     }

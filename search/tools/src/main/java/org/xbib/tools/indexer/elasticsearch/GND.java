@@ -31,16 +31,17 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.io.InputService;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.turtle.TurtleReader;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
@@ -117,7 +118,7 @@ public class GND {
         System.exit(0);
     }
 
-    private static class ElasticBuilder implements StatementListener {
+    private static class ElasticBuilder implements TripleListener {
 
         private final ElasticsearchResourceSink sink;
         private final ResourceContext context = new SimpleResourceContext();
@@ -125,7 +126,7 @@ public class GND {
         private Resource resource;
 
         ElasticBuilder(String esURI, String index, String type) throws IOException {
-            ElasticsearchIndexer elasticsearch = new ElasticsearchIndexer();
+            TransportClientIngest elasticsearch = new TransportClientIngestSupport();
             elasticsearch.newClient(URI.create(esURI))
                     .index(index)
                     .type(type);
@@ -139,15 +140,17 @@ public class GND {
         }
 
         @Override
-        public void newIdentifier(IRI uri) {
+        public ElasticBuilder newIdentifier(IRI uri) {
             flush();
             resource.id(uri);
+            return this;
         }
 
         @Override
-        public void statement(Statement statement) {
-            resource.add(statement);
+        public ElasticBuilder triple(Triple triple) {
+            resource.add(triple);
             triplecounter++;
+            return this;
         }
 
         public long getTripleCounter() {

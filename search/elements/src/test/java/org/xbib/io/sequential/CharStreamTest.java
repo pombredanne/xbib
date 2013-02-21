@@ -99,7 +99,7 @@ public class CharStreamTest {
         };
 
         InputStream in = getClass().getResourceAsStream("sequential.groupstream");
-        CharStream stream = CharStreamFactory.getInstance().newStream(new InputStreamReader(in), listener);
+        CharStream stream = CharStreamFactory.getInstance().newStream(new InputStreamReader(in), 8192, listener);
 
         try {
             while (stream.ready()) {

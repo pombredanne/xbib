@@ -127,7 +127,7 @@ class NVTASCIIWriter extends Writer {
 		}
 		if (buffer.length() > 0) {
 			String statement = buffer.toString();
-			// Sends the statement to the server.
+			// Sends the triple to the server.
 			writer.write(statement);
 			writer.write(LINE_SEPARATOR);
 			writer.flush();

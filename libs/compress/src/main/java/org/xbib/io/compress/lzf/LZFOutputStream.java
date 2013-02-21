@@ -18,7 +18,6 @@ import org.xbib.io.compress.BufferRecycler;
  */
 public class LZFOutputStream extends OutputStream {
 
-    private static final int OUTPUT_BUFFER_SIZE = LZFChunk.MAX_CHUNK_LEN;
     private final ChunkEncoder _encoder;
     private final BufferRecycler _recycler;
     protected final OutputStream _outputStream;
@@ -39,10 +38,14 @@ public class LZFOutputStream extends OutputStream {
      // Construction, configuration
      */
     public LZFOutputStream(final OutputStream outputStream) {
-        _encoder = new ChunkEncoder(OUTPUT_BUFFER_SIZE);
+        this(outputStream, LZFChunk.MAX_CHUNK_LEN);
+    }
+
+    public LZFOutputStream(final OutputStream outputStream, int bufsize) {
+        _encoder = new ChunkEncoder(bufsize);
         _recycler = BufferRecycler.instance();
         _outputStream = outputStream;
-        _outputBuffer = _recycler.allocOutputBuffer(OUTPUT_BUFFER_SIZE);
+        _outputBuffer = _recycler.allocOutputBuffer(bufsize);
         _outputStreamClosed = false;
     }
 

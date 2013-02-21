@@ -1,11 +1,10 @@
 package org.xbib.builders.elasticsearch;
 
+import org.elasticsearch.client.support.MockTransportClientIngest;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
-import org.xbib.elements.ElementMapper;
-import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.addons.MABDisketteReader;
@@ -23,14 +22,14 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/mgl2.xml"), "UTF-8");
-        MockElasticsearchIndexer es = new MockElasticsearchIndexer()
+        MockTransportClientIngest es = new MockTransportClientIngest()
                 .index("test")
                 .type("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+        MABBuilder builder = new MABBuilder().addOutput(sink);
+        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         try {
-            MABBuilder builder = new MABBuilder().addOutput(sink);
-            KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
             reader.setProperty(Iso2709Reader.TYPE, "Titel");
@@ -42,6 +41,7 @@ public class ElasticsearchResourceBuilderTest {
         } catch (NoNodeAvailableException e) {
         } finally {        
             es.shutdown();
+            mapper.close();
         }
     }
 
@@ -49,14 +49,14 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = new FileInputStream("/Users/joerg/Daten/zdb/2012/1211zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");
-        MockElasticsearchIndexer es = new MockElasticsearchIndexer()
+        MockTransportClientIngest es = new MockTransportClientIngest()
                 .index("test")
                 .type("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+        MABBuilder builder = new MABBuilder().addOutput(sink);
+        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         try {
-            MABBuilder builder = new MABBuilder().addOutput(sink);
-            KeyValueStreamListener listener = new ElementMapper("mab").addBuilder(builder);
-            MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
             reader.setProperty(Iso2709Reader.TYPE, "Titel");
@@ -68,6 +68,7 @@ public class ElasticsearchResourceBuilderTest {
         } catch (NoNodeAvailableException e) {
         } finally {
             es.shutdown();
+            mapper.close();
         }
     }
 }

@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 
 public class BlankNodeTest extends Assert {
 
@@ -31,12 +31,9 @@ public class BlankNodeTest extends Assert {
         // we test here resource adding
         r.add("a:res", q);
 
-        Iterator<Statement> it = r.propertyIterator();
-        assertEquals(it.next().toString(), "urn:meta1 urn:res1 _:a1 urn:has a first resource\n");
+        Iterator<Triple> it = r.propertyIterator();
+        assertEquals(it.next().toString(), "urn:meta1 urn:res1 <genid:genid1>");
         assertEquals(it.next().toString(), "urn:meta1 urn:has a first property");
-        assertEquals(it.next().toString(), "urn:meta1 a:res urn:meta2 urn:res2 _:a2 urn:has a second resource\n"
-                + "\n"
-                + "_:a2 urn:has a second resource\n"
-                + "urn:meta2 urn:has a second property\n");
+        assertEquals(it.next().toString(), "urn:meta1 a:res <urn:meta2>");
     }
 }

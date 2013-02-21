@@ -31,8 +31,8 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.analyzer.marc.extensions.pica.PicaBuilder;
-import org.xbib.analyzer.marc.extensions.pica.PicaElement;
+import org.xbib.elements.marc.extensions.pica.PicaBuilder;
+import org.xbib.elements.marc.extensions.pica.PicaElement;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 

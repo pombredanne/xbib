@@ -52,7 +52,7 @@ public interface SRU {
     String OPERATION_PARAMETER = "operation";
     
     /**
-     * The version of the request, and a statement by the client that 
+     * The version of the request, and a triple by the client that
      * it wants the response to be less than, or preferably equal to, 
      * that version
      */

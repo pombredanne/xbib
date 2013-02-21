@@ -1,7 +1,7 @@
 package org.xbib.analyzer.elements.mab;
 
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABElement;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElement;
 import org.xbib.marc.FieldCollection;
 
 public class Error extends MABElement {

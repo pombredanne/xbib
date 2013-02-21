@@ -48,17 +48,18 @@ import java.util.Map;
 import java.util.Stack;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Identifier;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
+import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.simple.Factory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
 import org.xbib.rdf.io.XmlTriplifier;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.simple.SimpleLiteral;
-import org.xbib.rdf.simple.SimpleStatement;
+import org.xbib.rdf.simple.SimpleTriple;
 import org.xbib.xml.XMLFilterReader;
 import org.xbib.xml.XMLUtil;
 import org.xml.sax.Attributes;
@@ -83,11 +84,14 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
 
     private final Factory<S,P,O> factory = Factory.getInstance();
 
-    private StatementListener<S,P,O> listener;
+    private XmlHandler xmlHandler = new Handler();
+    private TripleListener<S,P,O> listener;
     // counter for blank node generation
     private int bn = 0;
 
-    public RdfXmlReader() {
+    public RdfXmlReader<S,P,O> setHandler(XmlHandler handler) {
+        this.xmlHandler = handler;
+        return this;
     }
 
     /**
@@ -96,7 +100,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
      * @param tripleHandler the triple listener
      */
     @Override
-    public RdfXmlReader setListener(StatementListener<S,P,O> tripleHandler) {
+    public RdfXmlReader setListener(TripleListener<S,P,O> tripleHandler) {
         this.listener = tripleHandler;
         return this;
     }
@@ -139,22 +143,22 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     }
 
     @Override
-    public DefaultHandler getHandler() {
+    public XmlHandler getHandler() {
         return new Handler();
     }
 
     private void yield(Object s, IRI p, Object o) {
-        yield(new SimpleStatement(factory.asSubject(s), factory.asPredicate(p), factory.asObject(o)));
+        yield(new SimpleTriple(factory.asSubject(s), factory.asPredicate(p), factory.asObject(o)));
     }
 
     private void yield(S s, P p, O o) {
-        yield(new SimpleStatement(s, p, o));
+        yield(new SimpleTriple(s, p, o));
     }
 
     // produce a triple for the listener
-    private void yield(Statement<S, P, O> t) {
+    private void yield(Triple t) {
         if (listener != null) {
-            listener.statement(t);
+            listener.triple(t);
         }
     }
 
@@ -386,19 +390,29 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         public String datatype = null; // a predicate's datatype
         public IRI reification = null; // when reifying, the triple's uriRef
         public List<IRI> collection = null; // for parseType=Collection, the items
-        public Statement<S, P, O> collectionHead = null; // for parseType=Collection, the head triple
+        public Triple<S, P, O> collectionHead = null; // for parseType=Collection, the head triple
         public boolean isSubject = false; // is there a subject at this frame
         public boolean isPredicate = false; // is there a predicate at this frame
         public boolean isCollection = false; // is the predicate at this frame a collection
         public int li = 1;
     }
 
-    class Handler extends DefaultHandler {
+    class Handler extends DefaultHandler implements XmlHandler {
 
-        Stack<Frame> stack = new Stack<>();
-        StringBuilder pcdata = null;
-        StringBuilder xmlLiteral = null;
+        private Stack<Frame> stack = new Stack<>();
+        private StringBuilder pcdata = null;
+        private StringBuilder xmlLiteral = null;
         int literalLevel = 0; // level in XMLLiteral
+        private TripleListener listener;
+
+        public Handler setListener(TripleListener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public TripleListener getListener() {
+            return listener;
+        }
 
         @Override
         public void startElement(String ns, String name, String qn, Attributes attrs) throws SAXException {
@@ -485,7 +499,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
                                 S s = factory.asSubject(ancestorSubject(stack));
                                 P p = factory.asPredicate(frame.node);
                                 O o = factory.asObject(blankNode());
-                                frame.collectionHead = new SimpleStatement(s,p,o);
+                                frame.collectionHead = new SimpleTriple(s,p,o);
                                 pcdata = null;
                                 break;
                             case "Literal":

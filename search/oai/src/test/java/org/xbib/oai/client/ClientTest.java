@@ -50,15 +50,15 @@ import org.xbib.oai.MetadataPrefixService;
 import org.xbib.oai.MetadataReader;
 import org.xbib.oai.ResumptionToken;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.XmlTriplifier;
 import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 public class ClientTest {
 
@@ -86,6 +86,7 @@ public class ClientTest {
 
     @Test
     public void testDNBOAIClient() throws Exception {
+        logger.info("trying to connect to DNB");
         OAIClient client = OAIClientFactory.getClient(
                  "http://services.dnb.de/oai/repository"
         );
@@ -98,20 +99,22 @@ public class ClientTest {
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);
             final XmlTriplifier reader = MetadataPrefixService.getTriplifier(request.getMetadataPrefix());
-            final StatementListener listener = new StatementListener() {
+            final TripleListener listener = new TripleListener() {
 
                 @Override
-                public void newIdentifier(IRI uri) {
+                public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
+                    return this;
                 }
 
                 @Override
-                public void statement(Statement statement) {
+                public TripleListener triple(Triple statement) {
                     getResource().add(statement);
+                    return this;
                 }
             };
             reader.setListener(listener);
-            final DefaultHandler handler = reader.getHandler();
+            final XmlHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 
                 @Override
@@ -124,7 +127,7 @@ public class ClientTest {
                 public void endDocument() throws SAXException {
                     handler.endDocument();
                     if (resource.id() == null) {
-                        resource.id(IRI.create(getHeader().getIdentifier()));
+                        resource.id(new IRI().host("test").query("test").fragment(getHeader().getIdentifier()).build());
                     }
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();

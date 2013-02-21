@@ -81,7 +81,7 @@ public class ElasticsearchTest {
                 .put("client.transport.sniff", false).build();
         try {
             TransportClient client = new TransportClient(settings);
-            InetSocketTransportAddress address = new InetSocketTransportAddress("127.0.0.1", 9300);
+            InetSocketTransportAddress address = new InetSocketTransportAddress("localhost", 9300);
             client.addTransportAddress(address);
             client.close();
         } catch (MasterNotDiscoveredException e) {

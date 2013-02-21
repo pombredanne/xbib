@@ -37,7 +37,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.xbib.elasticsearch.support.MockElasticsearchIndexer;
+import org.elasticsearch.client.support.MockTransportClientIngest;
 import org.xbib.io.NullWriter;
 import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;
@@ -50,10 +50,11 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
@@ -75,7 +76,7 @@ public class ElasticsearchOAITest {
 
     public void testDNBOAI() throws Exception {
 
-        final MockElasticsearchIndexer es = new MockElasticsearchIndexer()
+        final MockTransportClientIngest es = new MockTransportClientIngest()
                 .index("test")
                 .type("test");
 
@@ -89,20 +90,22 @@ public class ElasticsearchOAITest {
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);
             RdfXmlReader reader = new RdfXmlReader();
-            final StatementListener stmt = new StatementListener() {
+            final TripleListener stmt = new TripleListener() {
 
                 @Override
-                public void newIdentifier(IRI uri) {
+                public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
+                    return this;
                 }
 
                 @Override
-                public void statement(Statement statement) {
+                public TripleListener triple(Triple statement) {
                     getResource().add(statement);
+                    return this;
                 }
             };
             reader.setListener(stmt);
-            final DefaultHandler handler = reader.getHandler();
+            final XmlHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 
                 @Override

@@ -38,26 +38,33 @@ import java.io.OutputStream;
 public class ZOutputStream extends OutputStream {
 
     protected ZStream z = new ZStream();
-    protected int bufsize = 512;
+    protected int bufsize;
     protected int flush = ZConstants.Z_NO_FLUSH;
-    protected byte[] buf = new byte[bufsize],  buf1 = new byte[1];
+    protected byte[] buf;
+    protected byte[] buf1 = new byte[1];
     protected boolean compress;
     protected OutputStream out;
 
     public ZOutputStream(OutputStream out) {
         super();
         this.out = out;
+        this.bufsize = 512;
+        this.buf = new byte[bufsize];
         z.inflateInit();
         compress = false;
     }
 
-    public ZOutputStream(OutputStream out, int level) {
-        this(out, level, false);
+    public ZOutputStream(OutputStream out, int bufsize) {
+        this(out, ZConstants.Z_DEFAULT_COMPRESSION, false);
+        this.bufsize = bufsize;
+        this.buf = new byte[bufsize];
     }
 
     public ZOutputStream(OutputStream out, int level, boolean nowrap) {
         super();
         this.out = out;
+        this.bufsize = 512;
+        this.buf = new byte[bufsize];
         z.deflateInit(level, nowrap);
         compress = true;
     }

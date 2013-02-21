@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCElement;
 
 public class LinkingEntries extends MARCElement {
     private final static LinkingEntries instance = new LinkingEntries();

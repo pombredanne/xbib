@@ -19,7 +19,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.xml.XMLNamespaceContext;
 import org.xbib.xml.XMLUtil;
 
@@ -48,10 +48,10 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         }
         startRDF();
         writeHeader();
-        Iterator<Statement> it = resource.iterator();
+        Iterator<Triple<S,P,O>> it = resource.iterator();
         while (it.hasNext()) {
-            Statement stmt = it.next();
-            handleStatement(stmt);
+            Triple<S,P,O> stmt = it.next();
+            triple(stmt);
         }
         endRDF();
     }
@@ -146,13 +146,13 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         }
     }
 
-    private void handleStatement(Statement<S, P, O> statement) throws IOException {
+    private void triple(Triple<S,P,O> triple) throws IOException {
         if (!writingStarted) {
             throw new IOException("Document writing has not yet been started");
         }
-        S subj = statement.subject();
-        P pred = statement.predicate();
-        O obj = statement.object();
+        S subj = triple.subject();
+        P pred = triple.predicate();
+        O obj = triple.object();
         // Verify that an XML namespace-qualified name can be created for the
         // predicate
         String predString = pred.toString();
@@ -223,7 +223,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             writeEndTag(predNamespace, predLocalName);
         }
         writeNewLine();
-        // Don't write </rdf:Description> yet, maybe the next statement
+        // Don't write </rdf:Description> yet, maybe the next triple
         // has the same subject.
     }
 
@@ -241,7 +241,7 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
 
     private void flushPendingStatements() throws IOException {
         if (lastWrittenSubject != null) {
-            // The last statement still has to be closed:
+            // The last triple still has to be closed:
             writeEndTag(NS_URI, "Description");
             writeNewLine();
             lastWrittenSubject = null;

@@ -34,7 +34,7 @@ package org.xbib.io.jdbc.operator;
 import java.util.Map;
 
 /**
- * An InsertAppend class contains a key for the SQL statement, and a map of
+ * An InsertAppend class contains a key for the SQL triple, and a map of
  * values for binding parameters.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>

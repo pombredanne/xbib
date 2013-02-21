@@ -4138,7 +4138,7 @@ Revision 1.02 - Added Log Comment  2003/03/24 19:37:42  ckeith
 		<xsl:choose>
 			<xsl:when
 				test="//marc:datafield[@tag='245'] and //marc:datafield[@tag=880]/marc:subfield[@code=6][contains(text(),'245')]">
-				<note type="statement of responsibility">
+				<note type="triple of responsibility">
 					<xsl:attribute name="altRepGroup">
 						<xsl:text>00</xsl:text>
 					</xsl:attribute>
@@ -4149,7 +4149,7 @@ Revision 1.02 - Added Log Comment  2003/03/24 19:37:42  ckeith
 				</note>
 			</xsl:when>
 			<xsl:when test="//marc:datafield[@tag='245']/marc:subfield[@code=c]">
-				<note type="statement of responsibility">
+				<note type="triple of responsibility">
 					<xsl:call-template name="scriptCode"/>
 					<xsl:call-template name="subfieldSelect">
 						<xsl:with-param name="codes">c</xsl:with-param>

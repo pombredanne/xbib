@@ -33,6 +33,7 @@ package org.xbib.marc;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import org.xbib.io.sequential.CharStream;
@@ -54,8 +55,8 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     private static final Logger logger = LoggerFactory.getLogger(MarcXchangeSaxAdapter.class.getName());
     private static final AttributesImpl EMPTY_ATTRIBUTES = new AttributesImpl();
     private static final CharStreamFactory factory = CharStreamFactory.getInstance();
-    private final CharStream stream;
     private final CharStreamListener streamListener = new Iso2709StreamListener();
+    private CharStream stream;
     private char mark = '\u0000';
     private int position = 0;
     private FieldDirectory directory;
@@ -73,17 +74,28 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
     private MarcXchangeListener listener;
     private boolean fatalerrors = false;
     private boolean silenterrors = false;
+    private int buffersize = 8192;
 
-    public MarcXchangeSaxAdapter(final InputSource source)
-            throws IOException {
-        if (source.getByteStream() != null) {
-            String encoding = source.getEncoding() != null ? source.getEncoding() : "ANSEL";
-            this.stream = factory.newStream(new InputStreamReader(source.getByteStream(), encoding), streamListener);
-        } else {
-            this.stream = factory.newStream(source.getCharacterStream(), streamListener);
-        }
+    public MarcXchangeSaxAdapter() {
         this.subfieldOpen = false;
         this.recordOpen = false;
+    }
+
+    public MarcXchangeSaxAdapter buffersize(int buffersize) {
+        this.buffersize = buffersize;
+        return this;
+    }
+
+    public MarcXchangeSaxAdapter inputSource(final InputSource source) throws IOException {
+        if (source.getByteStream() != null) {
+            String encoding = source.getEncoding() != null ? source.getEncoding() : "ANSEL";
+            Reader reader = new InputStreamReader(source.getByteStream(), encoding);
+            this.stream = factory.newStream(reader, buffersize, streamListener);
+        } else {
+            Reader reader = source.getCharacterStream();
+            this.stream = factory.newStream(reader, buffersize, streamListener);
+        }
+        return this;
     }
 
     public MarcXchangeSaxAdapter setContentHandler(ContentHandler handler) {

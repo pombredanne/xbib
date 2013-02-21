@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.xbib.elasticsearch.support.IElasticsearchIndexer;
+import org.elasticsearch.client.support.ClientIngest;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
@@ -44,17 +44,12 @@ import org.xbib.rdf.xcontent.Builder;
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C> {
 
-    private final IElasticsearchIndexer es;
-    private final Builder<C, R> builder = new Builder();
+    private final ClientIngest ingester;
     private final AtomicInteger resourceCounter = new AtomicInteger(0);
-    private final String defaultIndex;
-    private final String defaultType;
     private boolean enabled;
 
-    public ElasticsearchResourceSink(final IElasticsearchIndexer es) {
-        this.es = es;
-        this.defaultIndex = es.index();
-        this.defaultType = es.type();
+    public ElasticsearchResourceSink(final ClientIngest ingester) {
+        this.ingester = ingester;
     }
 
     @Override
@@ -74,14 +69,14 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     @Override
-    public void output(C context) throws IOException {
+    public synchronized void output(C context) throws IOException {
         ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
             @Override
             public void index(C context, R resource, String source) throws IOException {
                 String index = makeIndex(context, resource);
                 String type = makeType(context, resource);
                 String id = makeId(context, resource);
-                es.index(index, type, id, source);
+                ingester.index(index, type, id, source);
             }
 
             @Override
@@ -89,9 +84,10 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
                 String index = makeIndex(context, resource);
                 String type = makeType(context, resource);
                 String id = makeId(context, resource);
-                es.delete(index, type, id);
+                ingester.delete(index, type, id);
             }
         };
+        Builder<C, R> builder = new Builder();
         Iterator<R> it = context.resources();
         while (it.hasNext()) {
             R resource = it.next();
@@ -114,7 +110,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     public void flush() {
-        es.flush();
+        ingester.flush();
     }
 
     /**
@@ -127,7 +123,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     protected String makeIndex(C context, R resource) {
         String index = resource.id().getHost();
         if (index == null) {
-            index = defaultIndex;
+            index = ingester.index();
         }
         return index;
     }
@@ -142,7 +138,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     protected String makeType(C context, R resource) {
         String type = resource.id().getQuery();
         if (type == null) {
-            type = defaultType;
+            type = ingester.type();
         }
         return type;
     }

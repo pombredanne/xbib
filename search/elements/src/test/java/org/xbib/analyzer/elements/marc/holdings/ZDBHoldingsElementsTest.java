@@ -31,17 +31,12 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.TreeMap;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.analyzer.marc.MARCBuilder;
-import org.xbib.analyzer.marc.MARCElement;
-import org.xbib.analyzer.marc.MARCElementMapper;
+import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCBuilderFactory;
+import org.xbib.elements.marc.MARCElement;
+import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -53,54 +48,62 @@ import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicLong;
+
 public class ZDBHoldingsElementsTest extends Assert {
 
     private static final Logger logger = LoggerFactory.getLogger(ZDBHoldingsElementsTest.class.getName());
-    
+
     @Test
     public void testZDBElements() throws Exception {
+        logger.info("testZDBElements");
         InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
-        ElementOutput out;
+        final AtomicLong counter = new AtomicLong();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
             InputSource source = new InputSource(br);
-            MARCBuilder builder = new OurMARCBuilder();
-            out = new ElementOutput() {
-                long counter = 0;
+            MARCBuilderFactory factory = new MARCBuilderFactory() {
+                public MARCBuilder newBuilder() {
+                    MARCBuilder builder = new OurMARCBuilder();
+                    ElementOutput out = new ElementOutput() {
 
-                @Override
-                public boolean enabled() {
-                    return true;
-                }
+                        @Override
+                        public boolean enabled() {
+                            return true;
+                        }
 
-                @Override
-                public void enabled(boolean enabled) {
-                }
+                        @Override
+                        public void enabled(boolean enabled) {
+                        }
 
-                @Override
-                public void output(ResourceContext context) throws IOException {
-                    logger.debug("output={}", context.resource());
-                    counter++;
-                }
+                        @Override
+                        public void output(ResourceContext context) throws IOException {
+                            counter.incrementAndGet();
+                        }
 
-                @Override
-                public long getCounter() {
-                    return counter;
+                        @Override
+                        public long getCounter() {
+                            return counter.longValue();
+                        }
+                    };
+                    builder.addOutput(out);
+                    return builder;
                 }
             };
-            builder.addOutput(out);
-            MARCElementMapper mapper = new MARCElementMapper("marc/holdings")
-                    .catchall(true)
-                    .addBuilder(builder);
+            MARCElementMapper mapper = new MARCElementMapper("marc/holdings").start(factory);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MARC");
             reader.setProperty(Iso2709Reader.TYPE, "Holdings");
             reader.parse(source);
-            logger.info("elements={}",mapper.elements());
+            mapper.close();
         }
-        assertEquals(out.getCounter(), 293);
+        assertEquals(counter.get(), 293);
     }
-    
+
 
     class OurMARCBuilder extends MARCBuilder {
 
@@ -111,8 +114,8 @@ public class ZDBHoldingsElementsTest extends Assert {
                 context().resource().id(id);
             }
             for (Field field : fields) {
-                   logger.debug("element={} field={}", element, field);
+                logger.debug("element={} field={}", element, field);
             }
         }
-    }    
+    }
 }

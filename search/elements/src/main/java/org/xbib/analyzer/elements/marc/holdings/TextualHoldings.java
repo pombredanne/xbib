@@ -31,16 +31,17 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
+import org.xbib.analyzer.elements.marc.support.EnumerationAndChronology;
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
+import org.xbib.rdf.Resource;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.xbib.analyzer.elements.marc.support.EnumerationAndChronology;
-import org.xbib.analyzer.marc.MARCElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
-import org.xbib.rdf.Resource;
 
 public class TextualHoldings extends MARCElement {
 
@@ -68,7 +69,7 @@ public class TextualHoldings extends MARCElement {
     public void setMovingwallPatterns(Pattern[] p) {
         this.movingwallPatterns = p;
     }
-    
+
     public Pattern[] getMovingwallPatterns() {
         return this.movingwallPatterns;
     }
@@ -77,14 +78,16 @@ public class TextualHoldings extends MARCElement {
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
         for (Field field : fields) {
             builder.context().resource().add("textualholdings", field.data());
-            Resource r = builder.context().resource().newResource("holdings");
-            Resource parsedHoldings = 
-                    EnumerationAndChronology.parse(field.data(), r, getMovingwallPatterns());
-            if (!parsedHoldings.isEmpty()) {
-                Set<Integer> dates = EnumerationAndChronology.dates(parsedHoldings);
-                builder.context().resource().add("dates", dates);
-            } else {
-                logger.warn("no dates found in field " + field);
+            if (field.subfieldId().equals("a")) {
+                Resource r = builder.context().resource().newResource("holdings");
+                Resource parsedHoldings =
+                        EnumerationAndChronology.parse(field.data(), r, getMovingwallPatterns());
+                if (!parsedHoldings.isEmpty()) {
+                    Set<Integer> dates = EnumerationAndChronology.dates(parsedHoldings);
+                    builder.context().resource().add("dates", dates);
+                } else {
+                    logger.debug("no dates found in field " + field);
+                }
             }
         }
     }

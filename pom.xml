@@ -15,8 +15,10 @@
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <elasticsearch.version>0.19.12</elasticsearch.version>
+        <elasticsearch.version>0.20.5</elasticsearch.version>
+        <!--
         <lucene.version>3.6.2</lucene.version>
+        -->
     </properties>
 
     <scm>
@@ -235,6 +237,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.xbib.elasticsearch</groupId>
+                <artifactId>elasticsearch-transport-support</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>13.0.1</version>
@@ -320,43 +327,6 @@
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
                 <version>4.1.21</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-            <!-- include lucene, required for ES client :( -->
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-analyzers</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-queries</artifactId>
-                <version>${lucene.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>jakarta-regexp</groupId>
-                        <artifactId>jakarta-regexp</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-memory</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-highlighter</artifactId>
-                <version>${lucene.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

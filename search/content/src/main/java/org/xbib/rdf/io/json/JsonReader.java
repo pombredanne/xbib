@@ -35,74 +35,54 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.Stack;
-import javax.xml.namespace.QName;
 
-import org.xbib.iri.IRI;
-import org.xbib.json.JsonXmlReader;
-import org.xbib.json.JsonXmlReaderFactory;
+import org.xbib.json.JsonSaxAdapter;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.Triplifier;
-import org.xbib.rdf.simple.Factory;
-import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.XMLFilterReader;
-import org.xbib.xml.XMLNamespaceContext;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
+import org.xbib.rdf.io.xml.AbstractXmlHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.namespace.QName;
 
 /**
  * A triplifier for JSON (not JSON-LD)
- *
- * UNTESTED
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class JsonReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
         implements Triplifier<S, P, O> {
 
-    private Factory<S,P,O> factory = Factory.getInstance();
-    private XMLNamespaceContext context;
-    private XMLNamespaceContext ignore;
-    private StatementListener listener;
-    private Resource<S, P, O> resource;
-    private Resource<S, P, O> rootResource;
-    private IRI identifier;
+    private TripleListener listener;
+    private AbstractXmlHandler handler;
     private QName root;
 
     public JsonReader() {
-        this(XMLNamespaceContext.getInstance(), null);
-    }
-
-    public JsonReader(QName root) {
-        this(XMLNamespaceContext.getInstance(), root);
-    }
-
-    public JsonReader(XMLNamespaceContext context, QName root) {
-        this.context = context;
-        this.root = root;
     }
 
     @Override
-    public JsonReader setListener(StatementListener listener) {
+    public JsonReader setListener(TripleListener listener) {
         this.listener = listener;
         return this;
     }
 
-    public JsonReader setIdentifier(IRI identifier) {
-        this.identifier = identifier;
+    public TripleListener getListener() {
+        return listener;
+    }
+
+    public JsonReader setHandler(AbstractXmlHandler handler) {
+        this.handler = handler;
         return this;
     }
 
-    public JsonReader setIgnoreNamespaces(XMLNamespaceContext ignore) {
-        this.ignore = ignore;
+    public AbstractXmlHandler getHandler() {
+        return handler;
+    }
+
+    public JsonReader root(QName root) {
+        this.root = root;
         return this;
     }
 
@@ -113,111 +93,20 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
 
     @Override
     public JsonReader parse(Reader reader) throws IOException {
-        try {
-            parse(new InputSource(reader));
-        } catch (SAXException ex) {
-            throw new IOException(ex);
+        if (handler != null) {
+            if (listener != null) {
+                handler.setListener(listener);
+            }
+            JsonSaxAdapter adapter = new JsonSaxAdapter(reader, handler, root)
+                    .context(handler.resourceContext().namespaceContext());
+            try {
+                adapter.parse();
+            } catch (SAXException e) {
+                throw new IOException(e);
+            }
         }
         return this;
     }
 
-    public JsonReader parse(InputSource source) throws IOException, SAXException {
-        parse(JsonXmlReaderFactory.createJsonXmlReader(root), source);
-        return this;
-    }
 
-    public JsonReader parse(JsonXmlReader reader, InputSource source) throws IOException, SAXException {
-        Handler xmlHandler = new Handler();
-        reader.setContentHandler(xmlHandler);
-        reader.parse(source);
-        return this;
-    }
-
-    public JsonReader parse(XMLFilterReader reader, InputSource source) throws IOException, SAXException {
-        Handler xmlHandler = new Handler();
-        reader.setContentHandler(xmlHandler);
-        reader.parse(source);
-        return this;
-    }
-
-    private String prefix(String name) {
-        return name.replaceAll("[^a-zA-Z]+", "");
-    }
-
-    class Handler extends DefaultHandler {
-
-        StringBuilder content = new StringBuilder();
-        Stack<QName> stack = new Stack();
-        Stack<Resource> resources = new Stack();
-
-        @Override
-        public void startDocument() throws SAXException {
-            resource = new SimpleResource();
-            rootResource = resource;
-        }
-
-        @Override
-        public void endDocument() throws SAXException {
-            rootResource.id(identifier);
-            listener.newIdentifier(identifier);
-            Iterator<Statement<S, P, O>> it = rootResource.iterator();
-            while (it.hasNext()) {
-                Statement<S, P, O> st = it.next();
-                listener.statement(st);
-            }
-            root = null;
-        }
-
-        @Override
-        public void startElement(String nsURI, String localname, String qname, Attributes atts) throws SAXException {
-            if (ignore != null && ignore.getPrefix(nsURI) != null) {
-                return;
-            }
-            if (!stack.empty()) {
-                QName name = stack.peek();
-                P property = factory.asPredicate(new IRI().curi(name.getPrefix(), name.getLocalPart()));
-                resources.push(resource);
-                resource = resource.newResource(property);
-            }
-            String prefix = context.getPrefix(nsURI);
-            if (prefix == null) {
-                throw new SAXException("namespace context does not contain prefix for namespace '"
-                        + nsURI + "', local name = '" + localname + "', qname = '" + qname + "'");
-            }
-            stack.push(new QName(nsURI, localname, prefix));
-            content.setLength(0);
-        }
-
-        @Override
-        public void endElement(String nsURI, String localname, String qname) throws SAXException {
-            if (ignore != null && ignore.getPrefix(nsURI) != null) {
-                return;
-            }
-            QName name = stack.pop();
-            P property = factory.asPredicate(new IRI().curi(name.getPrefix(), name.getLocalPart()));
-            if (content.length() > 0) {
-                resource.add(property, content.toString());
-            }
-            if (!resources.empty()) {
-                resource = resources.pop();
-            }
-        }
-
-        @Override
-        public void characters(char[] chars, int start, int length) throws SAXException {
-            content.append(new String(chars, start, length));
-        }
-
-        @Override
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {
-            if (ignore != null && ignore.getPrefix(uri) != null) {
-                return;
-            }
-            context.addNamespace(prefix(prefix), uri);
-        }
-
-        @Override
-        public void endPrefixMapping(String prefix) throws SAXException {
-        }
-    }
 }

@@ -9,7 +9,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 
 /**
  *
@@ -34,7 +34,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
     public void testEmptyResources() throws Exception {
         Resource<S, P, O> r = new SimpleResource().id(IRI.create("urn:root"));
         assertEquals(r.isEmpty(), true);
-        assertEquals(r.toString(), "urn:root");
+        assertEquals(r.toString(), "<urn:root>");
     }
 
     @Test
@@ -63,12 +63,17 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
     }
 
     @Test
-    public void testProperties() throws Exception {
+    public void testPredicateSet() throws Exception {
         Resource<S, P, O> r = new SimpleResource().id(IRI.create("urn:doc1"))
                 .add("urn:valueURI", "Hello World")
                 .add("urn:creator", "Smith")
                 .add("urn:creator", "Jones");
-        assertEquals("urn:doc1 urn:valueURI Hello World\nurn:doc1 urn:creator Smith\nurn:doc1 urn:creator Jones\n", r.toString());
+        S subject = r.subject();
+        String[] s = new String[]{"urn:valueURI","urn:creator"};
+        int i = 0;
+        for (P predicate : r.predicateSet(subject)) {
+            assertEquals(s[i++], predicate.toString());
+        }
     }
 
     @Test
@@ -89,7 +94,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
                 .add("urn:valueURI", "Hello World")
                 .add("urn:name", "Smith")
                 .add("urn:name", "Jones");
-        Iterator<Statement<S, P, O>> it = r.propertyIterator();
+        Iterator<Triple<S, P, O>> it = r.propertyIterator();
         assertEquals("urn:doc2 urn:valueURI Hello World", it.next().toString());
         assertEquals("urn:doc2 urn:name Smith", it.next().toString());
         assertEquals("urn:doc2 urn:name Jones", it.next().toString());
@@ -113,7 +118,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
         
         // normal iterator
         int cnt = 0;
-        Iterator<Statement<S,P,O>> it1 = r.iterator();
+        Iterator<Triple<S,P,O>> it1 = r.iterator();
         while (it1.hasNext()) {
             it1.next();
             cnt++;
@@ -156,10 +161,10 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
         P predicate = factory.asPredicate("urn:pred");
         Resource<S, P, O> r1 = r.newResource(predicate);
         r1.add(predicate, "a value");
-        Iterator<Statement<S, P, O>> it = r.iterator();
+        Iterator<Triple<S,P,O>> it = r.iterator();
         int cnt = 0;
         while (it.hasNext()) {
-            Statement<S, P, O> stmt = it.next();
+            Triple<S,P,O> stmt = it.next();
             //System.err.println("stmt="+stmt);
             cnt++;
         }
@@ -173,7 +178,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
          * urn:doc urn:pred a value
          */
         while (it.hasNext()) {
-            Statement<S, P, O> stmt = it.next();
+            Triple stmt = it.next();
             cnt++;
         }
         assertEquals(cnt, 2);

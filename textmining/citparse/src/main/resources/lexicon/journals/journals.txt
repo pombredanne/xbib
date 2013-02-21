@@ -3533,7 +3533,7 @@ Turk ortodonti dergisi
 Ortodonti Derneg'nin resmi yayin organidir
 Turkish journal of orthodontics
 Biology of the neonate
-Consensus statement
+Consensus triple
 NIH Consensus Development Conference. National Institutes of Health Consensus Development Conference
 Nihon Ago Kansetsu Gakkai Zasshi
 Biological psychiatry
@@ -4936,7 +4936,7 @@ di  Societa italiana di ecografia urologica e nefrologica
 Associazione ricerche in urologia
 Bulletin - Office international des epizooties
 Revista da Associacao Medica Brasileira
-NIH consensus statement
+NIH consensus triple
 Fiziologicheskii zhurnal imeni I.M. Sechenova
 Brain injury
 Clinics in communication disorders
@@ -8585,7 +8585,7 @@ Monographien aus dem Gesamtgebiete der Psychiatrie
 Monographs in human genetics
 Neoplastic disease at various sites
 Monographs in oral science
-National Institutes of Health consensus development conference consensus statement
+National Institutes of Health consensus development conference consensus triple
 Monographs in neural sciences
 Monographs of the Physiological Society
 Monograph of the American Association of Mental Deficiency
@@ -9253,7 +9253,7 @@ Problemy endokrinologii
 Placenta. Supplement
 Perioperative nursing quarterly
 Problemy endokrinologii i gormonoterapii
-Policy statement
+Policy triple
 Royal College of General Practitioners. Royal College of General Practitioners
 Problemy gematologii i perelivaniia krovi
 Problemi na khigienata

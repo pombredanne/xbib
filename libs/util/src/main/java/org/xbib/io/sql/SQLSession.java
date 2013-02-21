@@ -163,7 +163,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set current date in a prepared statement
+     * Set current date in a prepared triple
      *
      * @param p
      * @param pos
@@ -175,7 +175,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Date in a prepared statement
+     * Set a java.sql.Date in a prepared triple
      *
      * @param p
      * @param pos
@@ -188,7 +188,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Date in a prepared statement
+     * Set a java.sql.Date in a prepared triple
      *
      * @param p
      * @param pos
@@ -201,7 +201,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Date in a prepared statement
+     * Set a java.sql.Date in a prepared triple
      *
      * @param p
      * @param pos
@@ -240,7 +240,7 @@ public class SQLSession implements Session {
      * Set a bind parameter of type java.lang.String in a
      * PreparedStatement
      *
-     * @param p the prepared statement
+     * @param p the prepared triple
      * @param pos the position of the bind variable
      * @param s the string
      * @param len the string length
@@ -267,8 +267,8 @@ public class SQLSession implements Session {
      * Set a Java string to binary representation for databases with
      * character-set problems.
      *
-     * @param p the prepared statement
-     * @param pos the position in the statement
+     * @param p the prepared triple
+     * @param pos the position in the triple
      * @param s the string
      *
      * @throws SQLException if SQL fails
@@ -293,7 +293,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set current date in a prepared statement
+     * Set current date in a prepared triple
      *
      * @param p
      * @param pos
@@ -306,7 +306,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos
@@ -319,7 +319,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos
@@ -332,7 +332,7 @@ public class SQLSession implements Session {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos

@@ -41,7 +41,7 @@ import org.xbib.rdf.Property;
 
 public interface Triplifier<S extends Identifier, P extends Property, O extends Node> {
 
-    Triplifier setListener(StatementListener<S, P, O> listener);
+    Triplifier setListener(TripleListener<S, P, O> listener);
 
     Triplifier parse(InputStream in) throws IOException;
     

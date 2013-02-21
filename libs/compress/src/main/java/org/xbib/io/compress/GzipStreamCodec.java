@@ -51,8 +51,17 @@ public class GzipStreamCodec implements StreamCodec<GZIPInputStream,GZIPOutputSt
     }
 
     @Override
+    public GZIPInputStream decode(InputStream in, int bufsize) throws IOException {
+        return new GZIPInputStream(in, bufsize);
+    }
+
+    @Override
     public GZIPOutputStream encode(OutputStream out) throws IOException {
         return new GZIPOutputStream(out);
     }
-    
+
+    @Override
+    public GZIPOutputStream encode(OutputStream out, int bufsize) throws IOException {
+        return new GZIPOutputStream(out, bufsize);
+    }
 }

@@ -34,7 +34,7 @@ package org.xbib.io.sequential;
 import java.io.Reader;
 
 /**
- * A data stream factory
+ * A char stream factory
  *
  * @author <a href="mailto:joergprante@gmail.coml;rg Prante</a>
  */
@@ -48,13 +48,9 @@ public final class CharStreamFactory {
     public static CharStreamFactory getInstance() {
         return instance;
     }
-    
-    public CharStream newStream(Reader reader) {
-        return new SequentialCharStream(reader);
-    }
 
-    public CharStream newStream(Reader reader, CharStreamListener listener) {
-        return new SequentialCharStream(reader, listener);
+    public CharStream newStream(Reader reader, int buffersize, CharStreamListener listener) {
+        return new SequentialCharStream(reader, buffersize, listener);
     }
 }
 

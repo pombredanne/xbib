@@ -94,9 +94,13 @@ public class BZip2Inflate implements Bzip2Constants {
     private char z;
 
     public BZip2Inflate() {
+        this(8192);
+    }
+
+    public BZip2Inflate(int bufsize) {
         ll8 = null;
         tt = null;
-        this.inputBuffer = new ByteArrayOutputStream(8192);
+        this.inputBuffer = new ByteArrayOutputStream(bufsize);
         bsSetStream();
     }
 

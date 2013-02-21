@@ -72,7 +72,7 @@ public class SearchRetrieve extends AbstractSRURequest {
     }
     
     /**
-     * The version of the request, and a statement by the client that it 
+     * The version of the request, and a triple by the client that it
      * wants the response to be less than, or preferably equal to, that 
      * version.
      * @param version

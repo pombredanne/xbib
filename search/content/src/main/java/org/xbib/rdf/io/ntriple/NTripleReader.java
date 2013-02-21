@@ -40,14 +40,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.xbib.iri.IRI;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.Factory;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
 import org.xbib.rdf.io.Triplifier;
-import org.xbib.rdf.simple.SimpleStatement;
+import org.xbib.rdf.simple.SimpleTriple;
 
 /**
  * Parser for NTriple RDF serialization format
@@ -72,10 +72,10 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
     private BufferedReader reader;
     private boolean eof;
     private final Factory<S,P,O> factory = Factory.getInstance();
-    private StatementListener<S, P, O> listener;
+    private TripleListener<S, P, O> listener;
 
     @Override
-    public NTripleReader setListener(StatementListener<S, P, O> listener) {
+    public NTripleReader setListener(TripleListener<S, P, O> listener) {
         this.listener = listener;
         return this;
     }
@@ -159,8 +159,8 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
             object = (O) factory.newLiteral(literal);
         }
         if (listener != null) {
-            Statement stmt = new SimpleStatement<>(subject, predicate, object);
-            listener.statement(stmt);
+            Triple stmt = new SimpleTriple<>(subject, predicate, object);
+            listener.triple(stmt);
         }
     }
 }

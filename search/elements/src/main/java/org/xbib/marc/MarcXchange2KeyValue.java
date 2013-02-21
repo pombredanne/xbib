@@ -53,9 +53,10 @@ public class MarcXchange2KeyValue implements
 
         String transform(String value);
     }
-    private FieldCollection fields = new FieldCollection();
+    private FieldCollection fields;
     private List<KeyValueStreamListener<FieldCollection, String>> listeners = new ArrayList();
     private FieldDataTransformer transformer;
+
 
     public MarcXchange2KeyValue addListener(KeyValueStreamListener<FieldCollection, String> listener) {
         this.listeners.add(listener);
@@ -75,6 +76,16 @@ public class MarcXchange2KeyValue implements
     }
 
     @Override
+    public void keyValue(FieldCollection key, String value) {
+        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
+            // we allow null value here to be passed to the listeners
+            if (key != null) {
+                listener.keyValue(key, value);
+            }
+        }
+    }
+
+    @Override
     public void end() {
         for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
             listener.end();
@@ -85,16 +96,6 @@ public class MarcXchange2KeyValue implements
     public void end(Object trailer) {
         for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
             listener.end(trailer);
-        }
-    }
-
-    @Override
-    public void keyValue(FieldCollection key, String value) {
-        for (KeyValueStreamListener<FieldCollection, String> listener : listeners) {
-            // we allow null value here to be passed to the listeners
-            if (key != null) {
-                listener.keyValue(key, value);
-            }
         }
     }
 
@@ -122,6 +123,7 @@ public class MarcXchange2KeyValue implements
 
     @Override
     public void beginControlField(Field field) {
+        fields = new FieldCollection();
         fields.add(field);
     }
 
@@ -133,11 +135,12 @@ public class MarcXchange2KeyValue implements
             data = transformer.transform(data);
         }
         keyValue(fields, data);
-        fields.clear();
+        //fields.clear();
     }
 
     @Override
     public void beginDataField(Field field) {
+        fields = new FieldCollection();
         fields.add(field);
     }
 
@@ -154,7 +157,7 @@ public class MarcXchange2KeyValue implements
         }
         // emit fields as key/value
         keyValue(fields, data);
-        fields.clear();
+        //fields.clear();
     }
 
     @Override

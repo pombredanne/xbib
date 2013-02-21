@@ -1,9 +1,11 @@
 package org.xbib.marc.addons;
 
 import java.io.IOException;
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABContext;
-import org.xbib.elements.ElementMapper;
+
+import org.testng.annotations.Test;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABContext;
+import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -11,11 +13,16 @@ import org.xbib.importer.ImporterFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 
 import java.net.URI;
-import java.util.concurrent.ExecutionException;
 
 public class ConcurrentMABTarReaderTest {
-        
-    public void test() throws InterruptedException, ExecutionException {
+
+    private MABElementMapper mapper;
+
+    /**
+     * Takes a long time (~10-20 minutes!)
+     * @throws Exception
+     */
+    public void testMABTarImport() throws Exception {
         ImporterFactory factory = new ImporterFactory() {
 
             @Override
@@ -23,7 +30,11 @@ public class ConcurrentMABTarReaderTest {
                 return createImporter();
             }
         };
-        new ImportService().setThreads(4).setFactory(factory).execute();
+        new ImportService()
+                .threads(Runtime.getRuntime().availableProcessors())
+                .factory(factory)
+                .execute();
+        mapper.close();
     }
     
     private Importer createImporter() {
@@ -51,10 +62,10 @@ public class ConcurrentMABTarReaderTest {
             
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
-        ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
+        mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new MABTarReader()
-                .setURI(URI.create("tarbz2:///Users/joerg/Downloads/clobs.hbz.metadata.mab.alephxml-clob-dump3"))
+                .setURI(URI.create("tarbz2://"+System.getProperty("user.home")+"/Daten/hbz/aleph/clobs.hbz.metadata.mab.alephxml-clob-dump0"))
                 .setListener(kv);
     }
     

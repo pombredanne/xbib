@@ -35,11 +35,11 @@ import org.xbib.elements.output.ElementOutput;
 import org.xbib.rdf.context.ResourceContext;
 
 public interface ElementBuilder<K, V, E extends Element, C extends ResourceContext> {
-    
+
+    ResourceContextFactory<C> contextFactory();
+
     C context();
 
-    ElementBuilder<K,V,E,C> addOutput(ElementOutput output);
-    
     void begin();
     
     void build(E element, K key, V value);
@@ -48,4 +48,5 @@ public interface ElementBuilder<K, V, E extends Element, C extends ResourceConte
     
     void end(Object trailer);
 
+    ElementBuilder<K,V,E,C> addOutput(ElementOutput output);
 }

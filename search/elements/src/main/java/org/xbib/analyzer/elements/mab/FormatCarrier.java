@@ -1,8 +1,8 @@
 package org.xbib.analyzer.elements.mab;
 
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABElement;
-import org.xbib.analyzer.marc.extensions.mab.MABValueMapper;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElement;
+import org.xbib.elements.marc.extensions.mab.MABValueMapper;
 import org.xbib.marc.FieldCollection;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ public class FormatCarrier extends MABElement {
 
     @Override
     public FormatCarrier build(MABBuilder b, FieldCollection key, String value) {
-        b.context().getResource(b.context().resource(), FORMAT).add(DCTERMS_MEDIUM, value);
+        b.context().resource().add(DCTERMS_MEDIUM, value);
         return this;
     }
     

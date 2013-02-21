@@ -1,7 +1,7 @@
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.MARCBuilder;
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.FieldCollection;
 
 public class Error extends MARCElement {

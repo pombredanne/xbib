@@ -37,7 +37,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.xbib.io.NullWriter;
 import org.xbib.iri.IRI;
 import org.xbib.oai.ListRecordsRequest;
@@ -47,9 +48,10 @@ import org.xbib.oai.ResumptionToken;
 import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.rdfxml.RdfXmlReader;
+import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -89,7 +91,7 @@ public final class ElasticsearchOAIHarvester {
         if (options == null) {
             throw new IllegalArgumentException("no options");
         }
-        final ElasticsearchIndexer es = new ElasticsearchIndexer()
+        final TransportClientIngest es = new TransportClientIngestSupport()
                 .newClient()
                 .index(options.valueOf("index").toString())
                 .type(options.valueOf("type").toString());
@@ -102,20 +104,22 @@ public final class ElasticsearchOAIHarvester {
             client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);
             RdfXmlReader reader = new RdfXmlReader();
-            final StatementListener stmt = new StatementListener() {
+            final TripleListener stmt = new TripleListener() {
 
                 @Override
-                public void newIdentifier(IRI uri) {
+                public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
+                    return this;
                 }
 
                 @Override
-                public void statement(Statement statement) {
+                public TripleListener triple(Triple statement) {
                     getResource().add(statement);
+                    return this;
                 }
             };
             reader.setListener(stmt);
-            final DefaultHandler handler = reader.getHandler();
+            final XmlHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 
                 @Override

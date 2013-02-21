@@ -7,9 +7,9 @@ import javax.xml.namespace.QName;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.CharUtils.Profile;
@@ -32,7 +32,7 @@ public class XmlReaderTest extends Assert {
         context.addNamespace("oaidc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         resourceContext.newNamespaceContext(context);
 
-        AbstractXmlHandler handler = new XmlResourceHandler(resourceContext) {
+        AbstractXmlHandler xmlHandler = new XmlResourceHandler(resourceContext) {
 
             @Override
             public boolean isResourceDelimiter(QName name) {
@@ -55,24 +55,26 @@ public class XmlReaderTest extends Assert {
             }
 
         };
-        handler.setListener(new ResourceBuilder());
-        new XmlReader().setHandler(handler).parse(new InputSource(in));
+        xmlHandler.setListener(new ResourceBuilder());
+        new XmlReader().setHandler(xmlHandler).parse(new InputSource(in));
         StringWriter sw = new StringWriter();
         TurtleWriter t = new TurtleWriter();
         t.write(resourceContext.resource(), true, sw);
         assertEquals(sw.toString().length(), /*1886*/ 1877);
     }
 
-    class ResourceBuilder implements StatementListener {
+    class ResourceBuilder implements TripleListener {
 
         @Override
-        public void newIdentifier(IRI uri) {
+        public ResourceBuilder newIdentifier(IRI uri) {
             resourceContext.resource().id(uri);
+            return this;
         }
 
         @Override
-        public void statement(Statement statement) {
-            resourceContext.resource().add(statement);
+        public ResourceBuilder triple(Triple triple) {
+            resourceContext.resource().add(triple);
+            return this;
         }
     }
 }

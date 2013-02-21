@@ -42,7 +42,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.Visitor;
 
 /**
@@ -127,13 +127,13 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     }
 
     @Override
-    public Iterator<Statement<S, P, O>> iterator() {
-        return new StatementIterator(this, true);
+    public Iterator<Triple<S, P, O>> iterator() {
+        return new TripleIterator(this, true);
     }
 
     @Override
-    public Iterator<Statement<S, P, O>> propertyIterator() {
-        return new StatementIterator(this, false);
+    public Iterator<Triple<S,P,O>> propertyIterator() {
+        return new TripleIterator(this, false);
     }
 
     @Override

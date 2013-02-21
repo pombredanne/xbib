@@ -140,7 +140,7 @@ public abstract class JSONLDSerializer {
     		statement.put("name", graph);
     	}
     	
-    	// make sure this statement is unique
+    	// make sure this triple is unique
     	for (Map<String,Object> si: statements) {
     		if (JSONLDProcessorImpl.compareRdfStatements(si, statement)) {
     			return;
@@ -186,7 +186,7 @@ public abstract class JSONLDSerializer {
     		statement.put("name", graph);
     	}
     	
-    	// make sure this statement is unique
+    	// make sure this triple is unique
     	for (Map<String,Object> si: statements) {
     		if (JSONLDProcessorImpl.compareRdfStatements(si, statement)) {
     			return;

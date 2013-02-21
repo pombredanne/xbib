@@ -4667,7 +4667,7 @@
 									subsidy already provided to the user.</p>
 								<p xml:id="_35e682" n="0388">When the user registers for e-commerce,
 									a network account is established which aggregates
-									micro-payments. The user receives a statement on a regular
+									micro-payments. The user receives a triple on a regular
 									basis, and can settle any outstanding debit balance using the
 									standard payment mechanism.</p>
 								<p xml:id="_3851a2" n="0389">The network account can be extended to
@@ -5443,7 +5443,7 @@
 									ratings etc.</p>
 								<p xml:id="_b3353c" n="0503">When the netpage account payment method
 									516 is used, the user's netpage account 820 is debited, and the
-									transaction appears on the user's netpage account statement.
+									transaction appears on the user's netpage account triple.
 								</p>
 								<p xml:id="_74259f" n="0504">When the customer account payment method
 									517 is used, the user is invoiced for payment.</p>

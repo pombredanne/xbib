@@ -51,8 +51,17 @@ public class Bzip2StreamCodec implements StreamCodec<Bzip2InputStream,Bzip2Outpu
     }
 
     @Override
+    public Bzip2InputStream decode(InputStream in, int bufsize) throws IOException {
+        return new Bzip2InputStream(in, bufsize);
+    }
+
+    @Override
     public Bzip2OutputStream encode(OutputStream out) throws IOException {
         return new Bzip2OutputStream(out);
     }
-    
+
+    @Override
+    public Bzip2OutputStream encode(OutputStream out, int bufsize) throws IOException {
+        return new Bzip2OutputStream(out, bufsize);
+    }
 }

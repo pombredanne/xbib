@@ -32,14 +32,16 @@
 package org.xbib.tools.indexer.elasticsearch;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.namespace.QName;
 
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -52,9 +54,9 @@ import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.xml.AbstractXmlHandler;
 import org.xbib.rdf.io.xml.XmlReader;
 import org.xbib.rdf.io.xml.XmlResourceHandler;
@@ -119,11 +121,10 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean overwrite = (Boolean) options.valueOf("overwrite");            
             
-            final ElasticsearchIndexer es = new ElasticsearchIndexer();
+            final TransportClientIngestSupport es = new TransportClientIngestSupport();
             
             // we always delete index first, and we disable date detection
-            es.enable(true)
-                    .maxBulkActions(maxbulkactions)
+            es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
                     .index(index)
@@ -138,7 +139,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                     new ElasticsearchResourceSink(es);
 
             long t0 = System.currentTimeMillis();
-            new ImportService().setThreads(threads).setFactory(
+            new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
@@ -183,10 +184,12 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             AbstractXmlHandler handler = new Handler(resourceContext)
                     .setListener(new ResourceBuilder())
                     .setDefaultNamespace("ezb", "http://ezb.uni-regensburg.de/ezeit/");
-            XmlReader reader = new XmlReader().setHandler(handler)
+            InputStream in = InputService.getInputStream(uri);
+            new XmlReader()
                     .setNamespaces(false)
-                    .parse(InputService.getInputStream(uri));
-            reader.close();
+                    .setHandler(handler)
+                    .parse(in);
+            in.close();
             fileCounter.incrementAndGet();
         } catch (Exception ex) {
             logger.error("error while getting next document: " + ex.getMessage(), ex);
@@ -245,16 +248,18 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         }
     }
 
-    class ResourceBuilder implements StatementListener {
+    class ResourceBuilder implements TripleListener {
 
         @Override
-        public void newIdentifier(IRI identifier) {
+        public ResourceBuilder newIdentifier(IRI identifier) {
             resourceContext.resource().id(identifier);
+            return this;
         }
 
         @Override
-        public void statement(Statement statement) {
-            resourceContext.resource().add(statement);
+        public ResourceBuilder triple(Triple triple) {
+            resourceContext.resource().add(triple);
+            return this;
         }
     }
 }

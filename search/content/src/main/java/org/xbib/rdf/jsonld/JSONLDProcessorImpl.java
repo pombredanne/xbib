@@ -1932,8 +1932,8 @@ public class JSONLDProcessorImpl implements JsonLd {
     /**
      * Compares two RDF statements for equality.
      *
-     * @param s1 the first statement.
-     * @param s2 the second statement.
+     * @param s1 the first triple.
+     * @param s2 the second triple.
      *
      * @return true if the statements are the same, false if not.
      */
@@ -2003,8 +2003,8 @@ public class JSONLDProcessorImpl implements JsonLd {
      * @param subject the active subject.
      * @param property the active property.
      * @param graph the graph name.
-     * @param callback(err, statement) called when a statement is output, with
-     * the last statement as null.
+     * @param callback(err, triple) called when a triple is output, with
+     * the last triple as null.
      */
     public void toRDF(Object element, UniqueNamer namer, String subject, String property, Object graph, JSONLDTripleCallback callback) {
         CallbackWrapper cbw = new ToRDFCallback(callback);
@@ -2021,8 +2021,8 @@ public class JSONLDProcessorImpl implements JsonLd {
      * @param subject the active subject.
      * @param property the active property.
      * @param graph the graph name.
-     * @param callback(err, statement) called when a statement is output, with
-     * the last statement as null.
+     * @param callback(err, triple) called when a triple is output, with
+     * the last triple as null.
      */
     private void internalToRDF(Object elem, UniqueNamer namer, Object subject, Object property, Object graph, CallbackWrapper callback) {
         if (elem instanceof Map) {
@@ -2373,9 +2373,9 @@ public class JSONLDProcessorImpl implements JsonLd {
     private final Pattern p = Pattern.compile("^[+-]?[0-9]+((?:\\.?[0-9]+((?:E?[+-]?[0-9]+)|)|))$");
 
     /**
-     * Converts an RDF statement object to a JSON-LD object.
+     * Converts an RDF triple object to a JSON-LD object.
      *
-     * @param o the RDF statement object to convert. useNativeTypes true to
+     * @param o the RDF triple object to convert. useNativeTypes true to
      * output native types, false not to.
      *
      * @return the JSON-LD object.

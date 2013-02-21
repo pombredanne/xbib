@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCElement;
 
 public class StandardIdentifier extends MARCElement {
     private final static StandardIdentifier instance = new StandardIdentifier();

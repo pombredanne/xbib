@@ -40,7 +40,7 @@ import java.io.Reader;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.XmlTriplifier;
 import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.InputSource;
@@ -52,8 +52,8 @@ public class XmlReader<S extends Identifier, P extends Property, O extends Node>
         implements Closeable, XmlTriplifier<S, P, O> {
 
     private InputSource source;
-    private StatementListener listener;
-    private AbstractXmlHandler handler;
+    private TripleListener listener;
+    private XmlHandler handler;
     private boolean namespaces = true;
     private boolean validate = false;
 
@@ -63,9 +63,19 @@ public class XmlReader<S extends Identifier, P extends Property, O extends Node>
      * @param listener the triple listener
      */
     @Override
-    public XmlReader setListener(StatementListener listener) {
+    public XmlReader setListener(TripleListener listener) {
         this.listener = listener;
         return this;
+    }
+
+    public XmlTriplifier setHandler(XmlHandler handler) {
+        this.handler = handler;
+        return this;
+    }
+
+    @Override
+    public XmlHandler getHandler() {
+        return handler;
     }
 
     public XmlReader setValidate(boolean validate) {
@@ -126,16 +136,6 @@ public class XmlReader<S extends Identifier, P extends Property, O extends Node>
         reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", validate);
         reader.parse(source);
         return this;
-    }
-
-    public XmlReader setHandler(AbstractXmlHandler handler) {
-        this.handler = handler;
-        return this;
-    }
-
-    @Override
-    public AbstractXmlHandler getHandler() {
-        return handler;
     }
 
     @Override

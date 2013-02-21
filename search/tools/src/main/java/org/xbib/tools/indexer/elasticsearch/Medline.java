@@ -31,8 +31,9 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -43,9 +44,9 @@ import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.xml.AbstractXmlHandler;
 import org.xbib.rdf.io.xml.XmlReader;
 import org.xbib.rdf.io.xml.XmlResourceHandler;
@@ -55,6 +56,7 @@ import org.xbib.tools.opt.OptionSet;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -103,7 +105,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
             logger.info("input = {},  threads = {}", input, threads);
 
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final ElasticsearchIndexer es = new ElasticsearchIndexer();
+            final TransportClientIngest es = new TransportClientIngestSupport();
                     es.newClient(uri)
                     .index(options.valueOf("index").toString())
                     .type(options.valueOf("type").toString())
@@ -112,7 +114,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
-            new ImportService().setThreads(threads).setFactory(
+            new ImportService().threads(threads).factory(
                     new ImporterFactory() {
 
                         @Override
@@ -151,9 +153,15 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
             return fileCounter;
         }
         try {
-            AbstractXmlHandler handler = new Handler(resourceContext).setListener(new ResourceBuilder()).setDefaultNamespace("ml", "http://www.nlm.nih.gov/medline");
-            XmlReader reader = new XmlReader().setHandler(handler).setNamespaces(false).parse(InputService.getInputStream(uri));
-            reader.close();
+            AbstractXmlHandler handler = new Handler(resourceContext)
+                    .setListener(new ResourceBuilder())
+                    .setDefaultNamespace("ml", "http://www.nlm.nih.gov/medline");
+            InputStream in = InputService.getInputStream(uri);
+            new XmlReader()
+                    .setNamespaces(false)
+                    .setHandler(handler)
+                    .parse(in);
+            in.close();
             fileCounter.incrementAndGet();
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -197,16 +205,18 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         }
     }
 
-    class ResourceBuilder implements StatementListener {
+    class ResourceBuilder implements TripleListener {
 
         @Override
-        public void newIdentifier(IRI identifier) {
+        public ResourceBuilder newIdentifier(IRI identifier) {
             resourceContext.resource().id(identifier);
+            return this;
         }
 
         @Override
-        public void statement(Statement statement) {
-            resourceContext.resource().add(statement);
+        public ResourceBuilder triple(Triple triple) {
+            resourceContext.resource().add(triple);
+            return this;
         }
     }
 

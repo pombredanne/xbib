@@ -43,7 +43,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 
 public class NTripleWriter<S extends Identifier, P extends Property, O extends Node> {
 
@@ -67,14 +67,14 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
      */
     public void write(Resource<S, P, O> resource, Writer writer) throws IOException {
         StringBuilder sb = new StringBuilder();
-        Iterator<Statement<S, P, O>> it = resource.iterator();
+        Iterator<Triple<S,P,O>> it = resource.iterator();
         while (it.hasNext()) {
             sb.append(writeStatement(it.next()));
         }
         writer.write(sb.toString());
     }
 
-    public String writeStatement(Statement<S, P, O> stmt) throws IOException {
+    public String writeStatement(Triple<S, P, O> stmt) throws IOException {
         S subj = stmt.subject();
         P pred = stmt.predicate();
         O obj = stmt.object();

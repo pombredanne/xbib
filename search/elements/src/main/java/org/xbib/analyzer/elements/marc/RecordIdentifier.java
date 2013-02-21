@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.iri.IRI;
 import org.xbib.marc.Field;

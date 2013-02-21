@@ -32,11 +32,11 @@
 package org.xbib.elements.items;
 
 import org.xbib.elements.AbstractElementBuilder;
-import org.xbib.elements.ElementContextFactory;
+import org.xbib.elements.ResourceContextFactory;
 
 public class LiaBuilder<K,V> extends AbstractElementBuilder<K,V, LiaElement, LiaContext> {
 
-    private final static ElementContextFactory<LiaContext> contextFactory = new ElementContextFactory<LiaContext>() {
+    private final static ResourceContextFactory<LiaContext> contextFactory = new ResourceContextFactory<LiaContext>() {
 
         @Override
         public LiaContext newContext() {
@@ -45,7 +45,7 @@ public class LiaBuilder<K,V> extends AbstractElementBuilder<K,V, LiaElement, Lia
     };
 
     @Override
-    protected ElementContextFactory<LiaContext> getContextFactory() {
+    public ResourceContextFactory<LiaContext> contextFactory() {
         return contextFactory;
     }
 

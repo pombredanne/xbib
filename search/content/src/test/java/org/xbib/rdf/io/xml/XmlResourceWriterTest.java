@@ -42,6 +42,6 @@ public class XmlResourceWriterTest<S extends Identifier, P extends Property, O e
         // child parent
         sw = new StringWriter();
         xmlrw.toXML(child, sw);
-        assertEquals("<genid:a1><urn:property>value</urn:property></genid:a1>", sw.toString());
+        assertEquals("<genid:genid1><urn:property>value</urn:property></genid:genid1>", sw.toString());
     }
 }

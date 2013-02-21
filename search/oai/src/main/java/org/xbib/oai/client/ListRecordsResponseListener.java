@@ -61,14 +61,12 @@ public class ListRecordsResponseListener extends AbstractResponseListener {
     private static final Logger logger = LoggerFactory.getLogger(ListRecordsResponseListener.class.getName());
     private final ListRecordsRequest request;
     private final ListRecordsResponse response;
-    private final StylesheetTransformer transformer;
     private MetadataReader metadataReader;
 
     ListRecordsResponseListener(ListRecordsRequest request, ListRecordsResponse response, StylesheetTransformer transformer) {
         super(request, response, transformer);
         this.request = request;
         this.response = response;
-        this.transformer = transformer;
     }
 
     public ListRecordsResponseListener setMetadataReader(MetadataReader metadataReader) {
@@ -86,10 +84,16 @@ public class ListRecordsResponseListener extends AbstractResponseListener {
             if (status == 503) {
                 String retryAfter = result.getHeaders().getFirstValue("retry-after");
                 if (retryAfter != null) {
+                    logger.debug("got retry-after {}", retryAfter);
                     if (isDigits(retryAfter)) {
-                        response.setExpire(Integer.parseInt(retryAfter) * 1000L);
+                        // retry-after is given in seconds
+                        response.setExpire(Integer.parseInt(retryAfter));
+                    } else {
+                        Date d = DateUtil.parseDateRFC(retryAfter);
+                        if (d != null) {
+                            response.setExpire(d.getTime() - new Date().getTime());
+                        }
                     }
-                    response.setExpire(DateUtil.parseDateRFC(retryAfter).getTime() - new Date().getTime());
                 }
                 return;
             }

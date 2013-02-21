@@ -50,9 +50,9 @@ import java.io.StringReader;
 public abstract class AbstractResponseListener implements HttpResponseListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractResponseListener.class.getName());
+    protected final StylesheetTransformer transformer;
     private final OAIResponse response;
     private HttpResponse httpResponse;
-    private final StylesheetTransformer transformer;
     private int statuscode;
 
     AbstractResponseListener(OAIRequest request, OAIResponse response, StylesheetTransformer transformer) {

@@ -116,9 +116,9 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         if (resource.id() == null) {
             resource.id(super.id());
             Resource<S, P, O> r = newResource(predicate);
-            Iterator<Statement<S, P, O>> it = resource.iterator();
+            Iterator<Triple<S,P,O>> it = resource.iterator();
             while (it.hasNext()) {
-                Statement<S, P, O> stmt = it.next();
+                Triple stmt = it.next();
                 r.add(stmt);
             }
         } else {
@@ -149,8 +149,8 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     }
 
     @Override
-    public Resource<S, P, O> add(Statement<S, P, O> statement) {
-        attributes.put(statement.predicate(), statement.object());
+    public Resource<S, P, O> add(Triple<S,P,O> triple) {
+        attributes.put(triple.predicate(), triple.object());
         return this;
     }
 
@@ -204,32 +204,14 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
 
     @Override
     public String toString() {
-        if (isEmpty()) {
-            if (super.id() != null) {
-                return super.id().toASCIIString();
-            }
-            return "<>"; //anonymous node
-        } else {
-            StringBuilder sb = new StringBuilder();
-            Iterator<Statement<S, P, O>> it = iterator();
-            while (it.hasNext()) {
-                sb.append(it.next()).append("\n");
-            }
-            return sb.toString();
-        }
+        return "<" + (super.id() != null ? super.id() : "") + ">";
     }
-    private final static Predicate<Node> resources = new Predicate<Node>() {
-        @Override
-        public boolean apply(Node input) {
-            return input instanceof Resource;
-        }
-    };
 
     @Override
     public Map<P, Collection<Resource<S,P,O>>> resources() {
         Map<P, Collection<Resource<S,P,O>>> map = new HashMap();
         Multimap<P, Node> filtered = Multimaps.filterValues(attributes, resources);
-        // copy resources - does this work?
+        // copy resources...
         for (Map.Entry<P,Collection<Node>> me : filtered.asMap().entrySet()) {
             Collection<Resource<S,P,O>> c = new ArrayList();
             for (Node n : me.getValue()) {
@@ -239,5 +221,12 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         }
         return map;
     }
+
+    private final static Predicate<Node> resources = new Predicate<Node>() {
+        @Override
+        public boolean apply(Node input) {
+            return input instanceof Resource;
+        }
+    };
 
 }

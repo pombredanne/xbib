@@ -80,7 +80,7 @@ public class Query {
      */
     private String[] requestParams;
     /**
-     * SQL statement
+     * SQL triple
      */
     private String sql;
     /**
@@ -244,10 +244,10 @@ public class Query {
     }
 
     /**
-     * Create a prepared statement
+     * Create a prepared triple
      *
      * @param session the session
-     * @return a prepared statement
+     * @return a prepared triple
      * @throws java.sql.SQLException
      */
     protected PreparedStatement prepareStatement(SQLSession session) throws SQLException {
@@ -358,7 +358,7 @@ public class Query {
     /**
      * Set a bind parameter of type java.lang.String in a PreparedStatement
      *
-     * @param p the prepared statement
+     * @param p the prepared triple
      * @param pos the position of the bind variable
      * @param s the string
      * @param len the string length
@@ -387,8 +387,8 @@ public class Query {
      * Set a Java string to binary representation for databases with
      * character-set problems.
      *
-     * @param p the prepared statement
-     * @param pos the position in the statement
+     * @param p the prepared triple
+     * @param pos the position in the triple
      * @param s the string
      *
      * @throws java.sql.SQLException if SQL fails
@@ -413,7 +413,7 @@ public class Query {
     }
 
     /**
-     * Set current date in a prepared statement
+     * Set current date in a prepared triple
      *
      * @param p
      * @param pos
@@ -426,7 +426,7 @@ public class Query {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos
@@ -439,7 +439,7 @@ public class Query {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos
@@ -452,7 +452,7 @@ public class Query {
     }
 
     /**
-     * Set a java.sql.Timestamp in a prepared statement
+     * Set a java.sql.Timestamp in a prepared triple
      *
      * @param p
      * @param pos

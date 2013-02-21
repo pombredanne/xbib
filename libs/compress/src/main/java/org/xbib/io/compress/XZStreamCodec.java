@@ -52,8 +52,17 @@ public class XZStreamCodec implements StreamCodec<XZInputStream,XZOutputStream> 
     }
 
     @Override
-    public XZOutputStream encode(OutputStream out) throws IOException {
-        return new XZOutputStream(out,  new LZMA2Options());
+    public XZInputStream decode(InputStream in, int bufsize) throws IOException {
+        return new XZInputStream(in, bufsize / 1024); // KB limit
     }
-    
+
+    @Override
+    public XZOutputStream encode(OutputStream out) throws IOException {
+        return new XZOutputStream(out, new LZMA2Options());
+    }
+
+    @Override
+    public XZOutputStream encode(OutputStream out, int bufsize) throws IOException {
+        return new XZOutputStream(out, new LZMA2Options()); // ignore bufsize
+    }
 }

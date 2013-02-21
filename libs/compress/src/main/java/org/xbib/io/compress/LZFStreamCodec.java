@@ -20,8 +20,17 @@ public class LZFStreamCodec implements StreamCodec<LZFInputStream,LZFOutputStrea
     }
 
     @Override
+    public LZFInputStream decode(InputStream in, int bufsize) throws IOException {
+        return new LZFInputStream(in, true);
+    }
+
+    @Override
     public LZFOutputStream encode(OutputStream out) throws IOException {
         return new LZFOutputStream(out);
     }
 
+    @Override
+    public LZFOutputStream encode(OutputStream out, int bufsize) throws IOException {
+        return new LZFOutputStream(out, bufsize);
+    }
 }

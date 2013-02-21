@@ -34,9 +34,9 @@ package org.xbib.marc.addons;
 import java.io.IOException;
 import java.net.URI;
 
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABContext;
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABContext;
+import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.tools.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;
@@ -88,7 +88,7 @@ public class AlephPublishingReaderTest {
             }
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
-        ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
+        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         AlephPublishingReader reader = new AlephPublishingReader().setListener(kv).setIterator(new AtomicIntegerIterator(1, 10)).setLibrary("hbz50").setSetName("ALEPHSEMAB").setURI(URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver"));
         try {
@@ -97,6 +97,7 @@ public class AlephPublishingReaderTest {
             }
         } finally {
             reader.close();
+            mapper.close();
         }
     }
 }

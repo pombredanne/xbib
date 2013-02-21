@@ -38,9 +38,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABContext;
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABContext;
+import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -64,7 +64,7 @@ public class ConcurrentAlephPublishingReaderTest {
         for (int i = 0; i < threads; i++) {
             uris.add(uri);
         }
-        ImportService service = new ImportService().setThreads(threads).setFactory(
+        ImportService service = new ImportService().threads(threads).factory(
                 new ImporterFactory() {
 
                     @Override
@@ -72,7 +72,7 @@ public class ConcurrentAlephPublishingReaderTest {
                         return createImporter();
                     }
                 }).execute();
-        logger.info("count = " + count + " result = " + service.getResults());
+        logger.info("count = " + count + " result = " + service.results());
     }
 
     private Importer createImporter() {
@@ -98,8 +98,9 @@ public class ConcurrentAlephPublishingReaderTest {
             }
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
-        ElementMapper mapper = new ElementMapper("mab").addBuilder(builder);
+        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        return new AlephPublishingReader().setListener(kv).setIterator(iterator).setLibrary("hbz50").setSetName("ALEPHSEMAB");
+        return new AlephPublishingReader().setListener(kv).setIterator(iterator)
+                .setLibrary("hbz50").setSetName("ALEPHSEMAB");
     }
 }

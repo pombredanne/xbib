@@ -47,11 +47,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.testng.annotations.Test;
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABContext;
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABContext;
+import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xml.sax.InputSource;
@@ -106,8 +105,8 @@ public class MABDisketteTest {
             
         };
         MABBuilder builder = new MABBuilder().addOutput(output);
-        KeyValueStreamListener listener = new ElementMapper("/org/xbib/analyzer/elements/", "mab").addBuilder(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(listener);
+        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
         reader.setProperty(Iso2709Reader.TYPE, "Titel");
@@ -116,6 +115,7 @@ public class MABDisketteTest {
         InputSource source = new InputSource(br);
         StreamResult target = new StreamResult(w);
         transformer.transform(new SAXSource(reader, source), target);
+        mapper.close();
     }
 
     private void toMAB(Reader r, Writer w) throws Exception {

@@ -46,7 +46,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.xml.XMLNamespaceContext;
 
 /**
@@ -97,16 +97,16 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
     public void writeResource(XMLEventConsumer consumer, Resource<S, P, O> resource, QName parent)
             throws XMLStreamException {
         boolean startElementWritten = false;
-        Iterator<Statement<S, P, O>> it = resource.propertyIterator();
+        Iterator<Triple<S,P,O>> it = resource.propertyIterator();
         while (it.hasNext()) {
-            Statement<S, P, O> statement = it.next();
+            Triple<S, P, O> triple = it.next();
             if (!startElementWritten) {
                 if (parent != null) {
                     consumer.add(eventFactory.createStartElement(parent, null, null));
                 }
                 startElementWritten = true;
             }
-            write(consumer, statement);
+            write(consumer, triple);
         }
         if (!startElementWritten) {
             if (parent != null) {
@@ -118,10 +118,10 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
         }
     }
 
-    private void write(XMLEventConsumer consumer, Statement<S, P, O> statement)
+    private void write(XMLEventConsumer consumer, Triple<S,P,O> triple)
             throws XMLStreamException {
-        P predicate = statement.predicate();
-        O object = statement.object();
+        P predicate = triple.predicate();
+        O object = triple.object();
         String nsPrefix = predicate.id().getScheme();
         String name = predicate.id().getSchemeSpecificPart();
         String nsURI = context.getNamespaceURI(nsPrefix);

@@ -53,9 +53,7 @@ public class CQLFeedOnlineTest {
         p.put("feed.constructiontime.pattern","Feed erzeugt in {0,number} Millisekunden");
         ElasticsearchAtomFeedController controller = new ElasticsearchAtomFeedController();
         try {
-            Feed feed = controller.createFeed(p,
-                "dc.title = test",
-                0, 10);
+            Feed feed = controller.createFeed(p, "dc.title = test", 0, 10);
             StringWriter sw = new StringWriter();
             feed.writeTo("prettyxml", sw);
             logger.info(sw.toString());

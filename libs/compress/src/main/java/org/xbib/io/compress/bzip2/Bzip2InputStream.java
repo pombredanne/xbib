@@ -112,7 +112,12 @@ public class Bzip2InputStream extends InputStream implements Bzip2Constants {
      */
     public Bzip2InputStream(final InputStream in) throws IOException {
         super();
+        this.in = in;
+        init();
+    }
 
+    public Bzip2InputStream(final InputStream in, int bufsize) throws IOException {
+        super();
         this.in = in;
         init();
     }

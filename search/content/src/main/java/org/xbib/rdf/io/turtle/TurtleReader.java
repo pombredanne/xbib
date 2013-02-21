@@ -48,14 +48,14 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
-import org.xbib.rdf.io.StatementListener;
+import org.xbib.rdf.Triple;
+import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.Triplifier;
 import org.xbib.rdf.simple.Factory;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.rdf.simple.SimpleStatement;
+import org.xbib.rdf.simple.SimpleTriple;
 import org.xbib.xml.XMLNamespaceContext;
 
 /**
@@ -106,7 +106,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     /**
      * Stack for resource statements
      */
-    private Stack<Statement<S, P, O>> statements;
+    private Stack<Triple> triples;
     /**
      * Counter for parsed triples
      */
@@ -116,9 +116,9 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
      */
     private XMLNamespaceContext context;
     /**
-     * An optional statement listener
+     * An optional triple listener
      */
-    private StatementListener<S, P, O> listener;
+    private TripleListener<S, P, O> listener;
     private boolean strict = false;
 
     public TurtleReader(IRI uri) {
@@ -131,7 +131,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     }
 
     @Override
-    public TurtleReader setListener(StatementListener<S, P, O> listener) {
+    public TurtleReader setListener(TripleListener<S, P, O> listener) {
         this.listener = listener;
         return this;
     }
@@ -162,7 +162,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         this.reader = new PushbackReader(reader, 2);
         this.sb = new StringBuilder();
         this.eof = false;
-        this.statements = new Stack();
+        this.triples = new Stack();
         try {
             while (!eof) {
                 char ch = skipWhitespace();
@@ -317,7 +317,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     }
 
     /**
-     * Parse statement object
+     * Parse triple object
      *
      * @throws IOException
      */
@@ -330,13 +330,13 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         } else {
             object = parseValue();
         }
-        Statement<S, P, O> stmt = new SimpleStatement(subject, predicate, object);
+        Triple stmt = new SimpleTriple(subject, predicate, object);
         if (subject instanceof Identifier) {
             // Push triples with blank node subjects on stack.
             // The idea for having ordered resource properties is:
             // All resource property triples should be serialized
             // after the resource parent triple.
-            statements.add(0, stmt);
+            triples.add(0, stmt);
         } else {
             // Send record events. A record is grouped by a sequence of same non-blank subjects
             if (lastsubject == null) {
@@ -351,12 +351,12 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
                 lastsubject = subject;
             }
             if (listener != null) {
-                listener.statement(stmt);
+                listener.triple(stmt);
             }
-            while (!statements.isEmpty()) {
-                Statement<S, P, O> s = statements.pop();
+            while (!triples.isEmpty()) {
+                Triple<S, P, O> s = triples.pop();
                 if (listener != null) {
-                    listener.statement(s);
+                    listener.triple(s);
                 }
             }
         }
@@ -526,7 +526,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             while (ch != ')') {
                 Identifier value = new IdentifiableNode();
                 if (listener != null) {
-                    listener.statement(new SimpleStatement(blanknode, factory.asPredicate("rdf:rest"), value));
+                    listener.triple(new SimpleTriple(blanknode, factory.asPredicate("rdf:rest"), value));
                 }
                 subject = (S) value;
                 blanknode = value;
@@ -535,7 +535,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             }
             reader.read();
             if (listener != null) {
-                listener.statement(new SimpleStatement(blanknode,
+                listener.triple(new SimpleTriple(blanknode,
                         factory.asPredicate("rdf:rest"),
                         "rdf:null"));
             }

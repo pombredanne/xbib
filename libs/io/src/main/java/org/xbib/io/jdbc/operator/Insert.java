@@ -39,7 +39,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * An Insert operator contains a key for the SQL statement, and a map of
+ * An Insert operator contains a key for the SQL triple, and a map of
  * values for binding parameters.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
@@ -70,13 +70,13 @@ public class Insert extends Update {
     }
 
     /**
-     * Create insert statement
+     * Create insert triple
      *
      * @param session the session
      *
-     * @return a prepared statement
+     * @return a prepared triple
      *
-     * @throws java.sql.SQLException if statement preparation fails
+     * @throws java.sql.SQLException if triple preparation fails
      */
     @Override
     protected PreparedStatement prepareStatement(SQLSession session) throws SQLException {

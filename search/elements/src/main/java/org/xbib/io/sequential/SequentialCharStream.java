@@ -36,7 +36,6 @@ import java.io.Reader;
  * will buffer input for the file
  * <code>file.java</code>.
  *
- * @see java.io.BufferedWriter
  */
 public class SequentialCharStream extends Reader implements CharStream {
 
@@ -47,9 +46,10 @@ public class SequentialCharStream extends Reader implements CharStream {
     private int markpos = -1;
     private int pos;
     private CharStreamListener listener;
+    private final static int DEFAULT_BUFFER_SIZE = 8192;
 
     /**
-     * Constructs a new BufferedReader on the Reader
+     * Constructs a new SequentialCharStream on the Reader
      * <code>in</code>. The default buffer size (8K) is allocated and all reads
      * can now be filtered through this BufferedReader.
      *
@@ -67,10 +67,7 @@ public class SequentialCharStream extends Reader implements CharStream {
      * @param in the Reader to buffer reads on.
      */
     public SequentialCharStream(Reader in, CharStreamListener listener) {
-        super(in);
-        this.in = in;
-        this.buf = new char[8192];
-        this.listener = listener;
+        this(in, DEFAULT_BUFFER_SIZE, listener);
     }
 
     /**
@@ -83,14 +80,14 @@ public class SequentialCharStream extends Reader implements CharStream {
      * @param size the size of buffer to allocate.
      * @throws IllegalArgumentException if the size is <= 0
      */
-    public SequentialCharStream(Reader in, int size) {
+    public SequentialCharStream(Reader in, int size, CharStreamListener listener) {
         super(in);
         if (size <= 0) {
             throw new IllegalArgumentException();
         }
         this.in = in;
         this.buf = new char[size];
-        this.listener = null;
+        this.listener = listener;
     }
 
     /**

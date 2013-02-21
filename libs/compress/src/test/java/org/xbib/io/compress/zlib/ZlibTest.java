@@ -31,7 +31,7 @@ public class ZlibTest extends Assert {
     @Test
     public void helloWorld() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ZOutputStream zOut = new ZOutputStream(out, ZConstants.Z_BEST_COMPRESSION);
+        ZOutputStream zOut = new ZOutputStream(out, ZConstants.Z_BEST_COMPRESSION, false);
         ObjectOutputStream objOut = new ObjectOutputStream(zOut);
         String helloWorld = "Hello World!";
         objOut.writeObject(helloWorld);

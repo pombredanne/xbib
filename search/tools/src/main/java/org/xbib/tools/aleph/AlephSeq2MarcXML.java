@@ -141,7 +141,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
             System.err.println("enable = " + enable + " ");
             System.err.println("linkformat (for MARC 956) = " + linkformat + " (default:\"http://index.hbz-nrw.de/query/services/document/xhtml/hbz/title/%s\")");
 
-            ImportService service = new ImportService().setThreads(threads).setFactory(
+            ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
 
                         @Override

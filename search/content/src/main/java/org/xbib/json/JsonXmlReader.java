@@ -16,6 +16,7 @@
 package org.xbib.json;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import javax.xml.namespace.QName;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -107,7 +108,12 @@ public class JsonXmlReader implements XMLReader {
 
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
-        new JsonSaxAdapter(input, contentHandler, root).parse();
+        if (input.getCharacterStream() != null) {
+            new JsonSaxAdapter(input.getCharacterStream(), contentHandler, root).parse();
+        }
+        if (input.getByteStream() != null) {
+            new JsonSaxAdapter(new InputStreamReader(input.getByteStream(), input.getEncoding()), contentHandler, root).parse();
+        }
     }
 
     @Override

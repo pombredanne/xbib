@@ -36,7 +36,8 @@ import java.net.URI;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.CQLRequest;
+import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.Formatter;
 import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.elasticsearch.support.OutputStatus;
@@ -61,7 +62,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     private final String recordPacking = "xml";
     private final String recordSchema = "mods";
     private StylesheetTransformer transformer;
-    private Elasticsearch elasticsearch = new Elasticsearch().newClient();
+    private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     @Override
     public URI getURI() {
@@ -123,8 +124,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         try {
             String mediaType = "application/x-mods";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName());
-            elasticsearch
-                    .newRequest()
+            es.newSearchRequest()
                     .index(getIndex(request))
                     .type(getType(request))
                     .from(request.getStartRecord() - 1)

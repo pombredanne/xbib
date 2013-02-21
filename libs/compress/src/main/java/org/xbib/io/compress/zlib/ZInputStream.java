@@ -39,10 +39,11 @@ import java.io.InputStream;
 public class ZInputStream extends FilterInputStream {
 
     protected ZStream z = new ZStream();
-    protected int bufsize = 512;
     protected int flush = ZConstants.Z_NO_FLUSH;
-    protected byte[] buf = new byte[bufsize],  buf1 = new byte[1];
+    protected byte[] buf;
+    protected byte[] buf1 = new byte[1];
     protected boolean compress;
+    private int bufsize;
 
     public ZInputStream(InputStream in) {
         this(in, false);
@@ -50,6 +51,8 @@ public class ZInputStream extends FilterInputStream {
 
     public ZInputStream(InputStream in, boolean nowrap) {
         super(in);
+        this.bufsize = 512;
+        this.buf = new byte[bufsize];
         z.inflateInit(nowrap);
         compress = false;
         z.nextin = buf;
@@ -57,18 +60,21 @@ public class ZInputStream extends FilterInputStream {
         z.availin = 0;
     }
 
-    public ZInputStream(InputStream in, int level) {
+    public ZInputStream(InputStream in, int bufsize) {
         super(in);
-        z.deflateInit(level);
-        compress = true;
+        this.bufsize = bufsize;
+        this.buf = new byte[bufsize];
+        z.inflateInit(false);
+        compress = false;
         z.nextin = buf;
         z.nextinindex = 0;
         z.availin = 0;
     }
 
-    /*public int available() throws IOException {
-    return inf.finished() ? 0 : 1;
-    }*/
+    public void level(int level) {
+        z.deflateInit(level);
+    }
+
     @Override
     public int read() throws IOException {
         if (read(buf1, 0, 1) == -1) {

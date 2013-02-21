@@ -9,8 +9,9 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.elasticsearch.client.support.TransportClientIngest;
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -70,7 +71,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
             final Integer threads = (Integer) options.valueOf("threads");
 
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final ElasticsearchIndexer es = new ElasticsearchIndexer();
+            final TransportClientIngest es = new TransportClientIngestSupport();
             es.newClient(uri)
                     .index(options.valueOf("index").toString())
                     .type(options.valueOf("type").toString())
@@ -83,7 +84,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
 
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
-            ImportService service = new ImportService().setThreads(threads).setFactory(
+            ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {

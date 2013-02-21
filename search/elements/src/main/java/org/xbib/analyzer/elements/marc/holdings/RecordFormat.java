@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
-import org.xbib.analyzer.marc.MARCElement;
+import org.xbib.elements.marc.MARCElement;
 
 public class RecordFormat extends MARCElement {
     private final static RecordFormat instance = new RecordFormat();

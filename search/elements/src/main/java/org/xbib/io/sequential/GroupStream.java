@@ -37,22 +37,20 @@ import java.util.Iterator;
 
 public class GroupStream extends SequentialCharStream {
 
+    private String data;
+
     public GroupStream(Reader in) {
         super(in);
     }
 
-    public GroupStream(Reader in, CharStreamListener listener) {
-        super(in, listener);
+    public GroupStream(Reader in, int buffersize, CharStreamListener listener) {
+        super(in, buffersize, listener);
     }
 
     @Override
     protected boolean isSep(char ch) {
         return ch == Separable.GS;
     }
-
-    
-    String data;
-
     
     public void setData(String data) {
         this.data = data;

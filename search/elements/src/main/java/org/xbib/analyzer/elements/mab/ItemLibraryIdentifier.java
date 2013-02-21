@@ -2,9 +2,9 @@ package org.xbib.analyzer.elements.mab;
 
 import java.util.List;
 import java.util.Map;
-import org.xbib.analyzer.marc.extensions.mab.MABBuilder;
-import org.xbib.analyzer.marc.extensions.mab.MABContext;
-import org.xbib.analyzer.marc.extensions.mab.MABElement;
+import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABContext;
+import org.xbib.elements.marc.extensions.mab.MABElement;
 import org.xbib.elements.ValueMapFactory;
 import org.xbib.elements.items.*;
 import org.xbib.marc.Field;

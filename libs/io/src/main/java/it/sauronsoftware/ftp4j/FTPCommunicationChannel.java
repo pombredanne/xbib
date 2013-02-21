@@ -170,7 +170,7 @@ public class FTPCommunicationChannel {
 	}
 
 	/**
-	 * This method reads and parses a FTP reply statement from the server.
+	 * This method reads and parses a FTP reply triple from the server.
 	 * 
 	 * @return The reply from the server.
 	 * @throws IOException

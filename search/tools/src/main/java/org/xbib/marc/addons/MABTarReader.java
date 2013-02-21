@@ -59,7 +59,7 @@ import org.xbib.marc.MarcXchangeListener;
 public class MABTarReader extends AbstractImporter<Object, Packet>
         implements MarcXchangeListener, Iterator<Packet> {
 
-    private final static Logger logger = LoggerFactory.getLogger(MABTarReader.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(MABTarReader.class.getName());
     private XMLInputFactory factory = XMLInputFactory.newInstance();
     private URI uri;
     private Connection<TarSession> connection;
@@ -313,8 +313,8 @@ public class MABTarReader extends AbstractImporter<Object, Packet>
             String localName = element.getName().getLocalPart();
             switch (localName) {
                 case "subfield":
-                    String subfieldId = sb.substring(0,1);
-                    String data = sb.substring(1);
+                    String subfieldId = sb.length() > 0 ? sb.substring(0,1) : "a";
+                    String data = sb.length() > 1 ? sb.substring(1) : "";
                     stack.peek().subfieldId(subfieldId).data(data);
                     endSubField(stack.pop());
                     break;

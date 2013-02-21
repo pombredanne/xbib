@@ -1,4 +1,41 @@
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
 package org.xbib.analyzer.elements.marc.support;
+
+import org.xbib.date.DateUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.simple.SimpleResource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,72 +46,74 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.xbib.date.DateUtil;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.simple.SimpleResource;
 
 /**
- * Parsing patterns of enumeration and chronology 
- * 
+ * Parsing patterns of enumeration and chronology
+ * <p/>
  * Rules are given by Zeitschriftendatenbank
  * http://support.d-nb.de/iltis/katricht/zdb/8032.pdf
  *
- *
- * @author joerg
  */
 public class EnumerationAndChronology {
 
     private static final Logger logger = LoggerFactory.getLogger(EnumerationAndChronology.class.getName());
     private final static Pattern[] p1a = new Pattern[]{
-        // 1921=1339
-        Pattern.compile("(\\d{4}/?\\d{0,4})\\s*="),
-        // 1961
-        // 1965/66
-        // 1968/70 
-        // 1961/62(1963)
-        // 1965/70(1971/72)
-        // 1961/62(1962)
-        // 1992,14140(12. März)
-        // SS 1922
-        // WS 1948/49
-        Pattern.compile("(\\d{4}/?\\d{0,4})"),};
+            // 1921=1339
+            Pattern.compile("(\\d{4}/?\\d{0,4})\\s*="),
+            // 1961
+            // 1965/66
+            // 1968/70
+            // 1961/62(1963)
+            // 1965/70(1971/72)
+            // 1961/62(1962)
+            // 1992,14140(12. März)
+            // SS 1922
+            // WS 1948/49
+            Pattern.compile("(\\d{4}/?\\d{0,4})"),};
     private final static Pattern[] p1b = new Pattern[]{
-        // 1.1970
-        // 1.1970/71    
-        // 2.1938/40(1942)
-        // 9.1996/97(1997)
-        // 2.1970,3 
-        // 4.1961,Aug.
-        // 3.1971,Jan./Febr.
-        // 1.1970; 3.1972; 7.1973
-        Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4})"),};
+            // 1.1970
+            // 1.1970/71
+            // 2.1938/40(1942)
+            // 9.1996/97(1997)
+            // 2.1970,3
+            // 4.1961,Aug.
+            // 3.1971,Jan./Febr.
+            // 1.1970; 3.1972; 7.1973
+            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4})"),};
     private final static Pattern[] p1c = new Pattern[]{
-        // 1.5678=[1917/18]
-        Pattern.compile("=\\s*\\[(\\d{4}/?\\d{0,4})\\]"),
-        // 1.1981=1401 
-        Pattern.compile("\\.(\\d{4}/?\\d{0,4})\\s*="),};
+            // 1.5678=[1917/18]
+            Pattern.compile("=\\s*\\[(\\d{4}/?\\d{0,4})\\]"),
+            // 1.1981=1401
+            Pattern.compile("\\.(\\d{4}/?\\d{0,4})\\s*="),};
     private final static Pattern[] p2a = new Pattern[]{
-        // 1971 -
-        Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
+            // 1971 -
+            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
     private final static Pattern[] p2b = new Pattern[]{
-        // 1.1971 -
-        // 2.1947,15.Mai -
-        // 1963,21(22.Mai) -
-        Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
+            // 1.1971 -
+            // 2.1947,15.Mai -
+            // 1963,21(22.Mai) -
+            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
     private final static Pattern[] p3a = new Pattern[]{
-        // 1963 - 1972
-        Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d{4}/?\\d{0,4})")
+            // 1963 - 1972
+            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d{4}/?\\d{0,4})")
     };
     private final static Pattern[] p3b = new Pattern[]{
-        // 6.1961/64 - 31.1970
-        // 1.1963 - 12.1972
-        // 115.1921/22(1923) - 1125.1937
-        // 3.1858,6 - 24.1881,3
-        // 1.1960 - 5.1963; 11.1964; 23.1971 -
-        Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d+)\\.(\\d{4}/?\\d{0,4})")
+            // 6.1961/64 - 31.1970
+            // 1.1963 - 12.1972
+            // 115.1921/22(1923) - 1125.1937
+            // 3.1858,6 - 24.1881,3
+            // 1.1960 - 5.1963; 11.1964; 23.1971 -
+            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d+)\\.(\\d{4}/?\\d{0,4})")
     };
+    private final static Pattern[] p4a = new Pattern[]{
+            // 2.1938/40(1942)
+            // 9.1996/97(1997)
+            // 115.1921/22(1923) - 1125.1937
+            // 1961/62(1963)
+            // 1965/70(1971/72)
+            Pattern.compile("\\((\\d{4}/?\\d{0,4})\\)")
+    };
+
 
     private EnumerationAndChronology() {
     }
@@ -89,6 +128,16 @@ public class EnumerationAndChronology {
         }
         for (String value : values.split(";")) {
             boolean found = false;
+            // first, check dates in parentheses
+            for (Pattern p : p4a) {
+                Matcher m = p.matcher(value);
+                found = m.find();
+                if (found) {
+                    resource.newResource("group")
+                            .add("begindate", sanitizeDate(m.group(1)));
+                }
+            }
+            // always continue - parentheses dates are optional
             for (Pattern p : p3b) {
                 Matcher m = p.matcher(value);
                 found = m.find();
@@ -208,15 +257,15 @@ public class EnumerationAndChronology {
         int pos = date.indexOf("/");
         if (pos > 0) {
             if (pos > 4) {
-                return null;
+                return null; // invalid date
             }
             int base = Integer.parseInt(date.substring(0, pos));
             if (base <= 0 || base > DateUtil.getYear()) {
-                return null;
+                return null; //invalid date
             }
         } else {
             if (date.length() != 4) {
-                return null;
+                return null; // invalid date
             }
         }
         return date;
@@ -228,16 +277,18 @@ public class EnumerationAndChronology {
         if (pos > 0) {
             int base = Integer.parseInt(date.substring(0, pos));
             dates.add(base);
-            int frac = Integer.parseInt(date.substring(pos + 1));
+            int frac = 0;
+            try {
+                frac = Integer.parseInt(date.substring(pos + 1));
+            } catch (NumberFormatException e) {
+                // not important
+            }
             if (frac >= 100 && frac <= DateUtil.getYear()) {
                 dates.add(frac);
-            } else {
-                try {
-                    frac += Integer.parseInt(date.substring(0, 2)) * 100;
-                    dates.add(frac);
-                } catch (NumberFormatException e) {
-                    // not important
-                }
+            } else if (frac > 0 && frac < 100) {
+                // two digits frac, create full year
+                frac += Integer.parseInt(date.substring(0, 2)) * 100;
+                dates.add(frac);
             }
         } else {
             int base = Integer.parseInt(date);

@@ -51,9 +51,15 @@
     },
     "TextualHoldings" : {
         "values": [
+        "866$ $0$x", /* non-public note, exemplarbezogener Kommentar */
+        "866$ $0$z", /* public note */
+        "866$ $ $9y",
         "866$ 3$0$ax",
+        "866$ 3$0$axz",
         "866$ 3$0$az",
+        "866$ 3$ $z",
         "866$ 3$0$z",
+        "866$3$0$az",
         "866$3$0$a",
         "866$3$0$z"
         ],
@@ -70,16 +76,9 @@
     },
     "TextualHoldingsPublicNote" : {
         "values": [
-        "866$ $0$x", /* non-public note, exemplarbezogener Kommentar */
-        "866$ $0$z", /* public note */
-        "866$ $ $9y",
-        "866$ $0$xa",
-        "866$ $0$za",
-        "866$ 3$0$axz",
-        "866$ 3$ 0$z",
-        "866$0$0$89",
         "866$0$0$89abi",
         "866$0$0$89ai",
+        "866$0$0$89",
         "866$0$0$89bi",
         "866$0$0$89i",
         "866$0$1$89a",
@@ -92,8 +91,7 @@
         "866$1$0$89ai",
         "866$1$0$89b",
         "866$1$0$89bi",
-        "866$1$0$89i",
-        "866$3$0$az"
+        "866$1$0$89i"
         ]
     },
     "FormattedEnumerationAndChronology" : {
@@ -123,13 +121,13 @@
         "859$1$0$8i",
         "859$1$0$8ai",
         "859$1$0$8a",
-            "859$0$1$8",
-            "859$0$1$8a",
-            "859$1$1$8a",
-            "859$1$1$8ai",
-            "859$1$1$8i",
-            "859$3$0$a",
-            "859$3$0$z"
+        "859$0$1$8",
+        "859$0$1$8a",
+        "859$1$1$8a",
+        "859$1$1$8ai",
+        "859$1$1$8i",
+        "859$3$0$a",
+        "859$3$0$z"
          ],
         "indicators" : {
             "00" : "begingroup",
@@ -260,20 +258,20 @@
             /*MAB 072 leihverkehrsrelevante Bibliothek */
             "l" : {
                 "a" : {
-                    "servicetype" : "ill"
+                    "servicetype" : "ILL"
                 },
                 "b" : {
-                    "servicetype" : "none"
+                    "servicetype" : "NONE"
                 },
                 "c" : {
-                    "servicetype" : "unknown"
+                    "servicetype" : "UNKNOWN"
                 },
                 "m" : {
                     "servicetype" : null
                 }, /*Ausleihindikator*/
                 "n" : {
                     "servicetype" : null
-                }, /* Geshäftsgangstatus*/
+                }, /* Geschäftsgangstatus */
                 "o" : {
                     "servicetype" : null
                 } /* Fernleihindikator (alt)*/
@@ -288,7 +286,7 @@
                     "servicemode" : "copy"
                 },
                 "c" : {
-                    "servicemode" : "copyloan"
+                    "servicemode" : "copy-loan"
                 },
                 "d" : {
                     "servicemode" : "none"
@@ -299,7 +297,7 @@
             },
             "p" : {
                 "a" : {
-                    "servicetransfer" :"domesticonly"
+                    "servicetransfer" :"domestic-only"
                 },
                 "b" : {
                     "servicetransfer" :"postal"
@@ -314,10 +312,10 @@
                     "fundedby" : "DFG"
                 },
                 "b" : {
-                    "fundedby" : "self"
+                    "fundedby" : "SELF"
                 },
                 "c" : {
-                    "fundedby" : "none"
+                    "fundedby" : "NONE"
                 }
             }
         }
@@ -635,7 +633,38 @@
         "856$3$0$z",
         "856$4$0$u",
         "856$4$0$ux"
-        ]
+        ],
+        "subfields" : {
+            "2" : "accessmode",
+            "3" : "relatedto",
+            "6" : "linkage",
+            "8" : "pos",
+            "9" : "prefix",
+            "a" : "hostname",
+            "b" : "accessnumber",
+            "c" : "compression",
+            "d" : "path",
+            "f" : "electronicname",
+            "h" : "processor",
+            "i" : "instruction",
+            "j" : "bitspersecond",
+            "k" : "password",
+            "l" : "logon",
+            "m" : "contact",
+            "n" : "locationofhost",
+            "o" : "operatingsystem",
+            "p" : "port",
+            "q" : "format",
+            "r" : "settings",
+            "s" : "size",
+            "t" : "terminal",
+            "u" : "uri",
+            "v" : "hoursaccess",
+            "w" : "controlnumber",
+            "x" : "nonpublicnote",
+            "y" : "label",
+            "z" : "publicnote"
+        }
     },
     "Error" : {
        /* known, but ignored by being faulty */

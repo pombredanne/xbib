@@ -31,86 +31,166 @@
  */
 package org.xbib.elements;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.xbib.classloader.URIClassLoader;
+import org.xbib.keyvalue.KeyValue;
 import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.context.ResourceContext;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
+
 public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
-        implements KeyValueStreamListener<K, V> {
+        implements KeyValueStreamListener<K, V>, Closeable {
 
-    protected final static Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
-    private final Map map;
-    private List<ElementBuilder<K, V, E, C>> builders = new ArrayList();
-
-    public ElementMapper(String format) {
-        this("", format);
-    }
+    private final Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
+    protected final BlockingQueue<List<KeyValue>> queue;
+    protected final Map map;
+    protected ElementBuilderFactory<K, V, E, C> factory;
+    protected Set<KeyValuePipeline> pipelines;
+    private ExecutorService service;
+    private LinkedList<KeyValue> keyvalues;
+    private int numPipelines;
+    private boolean detectUnknownKeys;
 
     public ElementMapper(String path, String format) {
-       this(null, path, format);
+        this(new URIClassLoader(), path, format);
     }
-    
+
     public ElementMapper(ClassLoader cl, String path, String format) {
+        this.queue = new SynchronousQueue<>(true);
+        this.pipelines = new HashSet();
         try {
-            this.map = ElementMapBuilder.getElementMap(cl, path, format);
+            this.map = ElementMap.getElementMap(cl, path, format);
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ElementMapper addBuilder(ElementBuilder<K, V, E, C> builder) {
-        builders.add(builder);
+    public ElementMapper pipelines(int numPipelines) {
+        this.numPipelines = numPipelines;
         return this;
     }
-    
-    protected Map getMap() {
-        return map;
+
+    public ElementMapper detectUnknownKeys(boolean enabled) {
+        this.detectUnknownKeys = enabled;
+        return this;
     }
 
-    protected List<ElementBuilder<K, V, E, C>> getBuilders() {
-        return builders;
+    public Set<KeyValuePipeline> pipelines() {
+        return pipelines;
     }
-    
+
+    public ElementMapper start(ElementBuilderFactory<K, V, E, C> factory) {
+        logger.info("starting {}", this);
+        if (numPipelines == 0) {
+            numPipelines = 1;
+        }
+        // restrict numPipelines to a reasonable value
+        if (numPipelines >= 100) {
+            numPipelines = 100;
+        }
+        if (service == null) {
+            this.service = Executors.newFixedThreadPool(numPipelines);
+        }
+        this.factory = factory;
+        for (int i = 0; i < numPipelines; i++) {
+            KeyValuePipeline pipeline = createPipeline(i).detectUnknownKeys(detectUnknownKeys);
+            pipelines.add(pipeline);
+            service.submit(pipeline);
+        }
+        return this;
+    }
+
+    public void close() {
+        if (service == null) {
+            return;
+        }
+        for (int i = 0; i < numPipelines; i++) {
+            try {
+                queue.offer(new LinkedList(), 1, TimeUnit.SECONDS); // send poison element to all numPipelines
+            } catch (InterruptedException e) {
+                logger.error("interrupted while close()");
+            }
+        }
+        try {
+            service.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            service.shutdownNow();
+        }
+        logger.info("closed");
+    }
+
     @Override
     public void begin() {
-        for (ElementBuilder<K, V, E, C> builder : builders) {
-            builder.begin();
-        }
+        keyvalues = new LinkedList();
     }
 
     @Override
     public void keyValue(K key, V value) {
-        if (key == null) {
-            return;
-        }
-        E element = (E) map.get(key.toString());
-        for (ElementBuilder<K, V, E, C> builder : builders) {
-            if (element != null) {
-                element.build(builder, key, value);
-            }
-            // call the builder with a global key/value pair, even when e is null
-            builder.build(element, key, value);
-        }
+        keyvalues.add(new KeyValue(key, value));
     }
 
     @Override
     public void end() {
-        for (ElementBuilder<K, V, E, C> builder : builders) {
-            builder.end();
+        try {
+            queue.offer((List<KeyValue>) keyvalues.clone(), 2, TimeUnit.SECONDS);
+            keyvalues.clear();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void end(Object info) {
-        for (ElementBuilder<K, V, E, C> builder : builders) {
-            builder.end(info);
+        try {
+            // add marker element
+            if (keyvalues != null) {
+                keyvalues.add(new KeyValue(null, info));
+                // move shallow copy of key/values to pipeline for thread safety
+                queue.offer((List<KeyValue>) keyvalues.clone(), 2, TimeUnit.SECONDS);
+                keyvalues.clear();
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
+    }
+
+    protected KeyValuePipeline createPipeline(int i) {
+        return new KeyValuePipeline(i, queue, map, factory);
+    }
+
+    /**
+     * Helper method for diagnosing unknown keys.
+     *
+     * @return
+     */
+    public String unknownKeys() {
+        Set<String> unknownKeys = new TreeSet();
+        for (KeyValuePipeline p : pipelines()) {
+            unknownKeys.addAll(p.unknownKeys);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String key : unknownKeys) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append("\"").append(key).append("\"");
+        }
+        return sb.toString();
     }
 
 }

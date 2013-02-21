@@ -31,13 +31,14 @@
  */
 package org.xbib.marc;
 
-import org.xbib.collect.TreeDeque;
+//import org.xbib.collect.TreeDeque;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FieldCollection extends TreeDeque<Field> {
+public class FieldCollection extends LinkedList<Field> {
 
     public final static FieldCollection FORMAT_KEY = new FieldCollection("FORMAT");
     public final static FieldCollection TYPE_KEY = new FieldCollection("TYPE");
@@ -63,6 +64,19 @@ public class FieldCollection extends TreeDeque<Field> {
         }
         return sb.toString();
     }
+
+    public void format() {
+        int s = size();
+        String[] tags = new String[s];
+        for (int i = 0 ; i < s; i++) {
+
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0 ; i < s; i++) {
+            sb.append(tags[i]);
+        }
+    }
+
 
     /**
      * Build a pattern of this field collection for matching

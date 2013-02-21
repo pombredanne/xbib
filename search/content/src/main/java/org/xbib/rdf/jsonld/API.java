@@ -275,11 +275,11 @@ public class API implements JsonLd {
      *                      [format] the format to use to output a string:
      *                      'application/nquads' for N-Quads (default).
      *                      [collate] true to output all statements at once (in an array
-     *                      or as a formatted string), false to output one statement at
+     *                      or as a formatted string), false to output one triple at
      *                      a time (default).
      *                      [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
-     * @param callback(err,statement) called when a statement is output, with the
-     *                      last statement as null.
+     * @param callback(err,triple) called when a triple is output, with the
+     *                      last triple as null.
      */
     public static void toRDF(Object input, Options opts, JSONLDTripleCallback callback) throws JSONLDProcessingError {
         if (opts == null) {

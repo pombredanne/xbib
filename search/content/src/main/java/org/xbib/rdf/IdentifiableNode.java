@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.iri.IRI;
 
 /**
- * An identifiable node
+ * An identifiable node (including blank nodes)
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -43,15 +43,17 @@ public class IdentifiableNode implements Identifier {
     
     private final static AtomicLong nodeCounter = new AtomicLong();
 
-    private final static String PLACEHOLDER = "_:"; 
-    
+    private final static String PLACEHOLDER = "_:";
+
+    private final static String GENID = "genid";
+
     private IRI id;
 
     public IdentifiableNode() {
     }
 
     public IdentifiableNode blank() {
-        id("a" + nodeCounter.incrementAndGet());
+        id(GENID + nodeCounter.incrementAndGet());
         return this;
     }
     

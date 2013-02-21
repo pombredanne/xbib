@@ -76,7 +76,8 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
     
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
-        new MarcXchangeSaxAdapter(input)
+        new MarcXchangeSaxAdapter()
+                .inputSource(input)
                 .setContentHandler(getContentHandler())
                 .setListener(this)
                 .setSchema((String) getProperty(SCHEMA))

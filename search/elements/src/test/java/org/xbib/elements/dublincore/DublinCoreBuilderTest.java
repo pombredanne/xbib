@@ -35,10 +35,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elements.ElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.keyvalue.KeyValueReader;
-import org.xbib.keyvalue.KeyValueStreamListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -74,10 +72,11 @@ public class DublinCoreBuilderTest extends Assert {
         };
         
         DublinCoreBuilder builder = new DublinCoreBuilder().addOutput(output);
-        KeyValueStreamListener listener = new ElementMapper("dublincore").addBuilder(builder);
-        try (KeyValueReader reader = new KeyValueReader(sr).addListener(listener)) {
+        DublinCoreElementMapper mapper = new DublinCoreElementMapper("dublincore").start(builder);
+        try (KeyValueReader reader = new KeyValueReader(sr).addListener(mapper)) {
             while (reader.readLine() != null);
         }
+        mapper.close();
         assertEquals(output.getCounter() > 0, true);
     }
 }

@@ -1,10 +1,11 @@
 package org.xbib.elasticsearch;
 
+import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.support.Elasticsearch;
-import org.xbib.elasticsearch.support.ElasticsearchIndexer;
+import org.xbib.elasticsearch.support.CQLRequest;
+import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.Formatter;
 import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.elasticsearch.support.OutputStatus;
@@ -20,6 +21,8 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
+
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.elasticsearch.indices.IndexMissingException;
@@ -34,9 +37,9 @@ public class BulkIndexerTest {
             Settings settings = ImmutableSettings.settingsBuilder()
                     .put("cluster.name", "test").build();
 
-            final ElasticsearchIndexer es =
-                    new ElasticsearchIndexer()
-                    .newClient()
+            final TransportClientIngestSupport es = new TransportClientIngestSupport()
+                    .settings(settings)
+                    .newClient(URI.create("es://localhost:9300"))
                     .index("document")
                     .type("test");
 
@@ -48,12 +51,9 @@ public class BulkIndexerTest {
             Logger queryLogger = LoggerFactory.getLogger("test", BulkIndexerTest.class.getName());
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             // check if IRI path "document" worked
-            new Elasticsearch()
-                    .settings(settings)
+            new CQLSearchSupport()
                     .newClient()
-                    .newRequest()
-                    .index("document")
-                    .type("test")
+                    .newSearchRequest()
                     .from(0)
                     .size(10)
                     .cql("Hello")

@@ -27,7 +27,8 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.xbib.elasticsearch.support.Elasticsearch;
+import org.xbib.elasticsearch.support.CQLRequest;
+import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
@@ -56,7 +57,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
     
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchAtomFeedController.class.getName());
     protected AbderaFeedBuilder builder;
-    private Elasticsearch elasticsearch = new Elasticsearch().newClient();
+    private CQLSearchSupport elasticsearch = new CQLSearchSupport().newClient();
 
     public ElasticsearchAtomFeedController() {
     }
@@ -116,6 +117,9 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
 
     public Feed createFeed(AtomFeedProperties config,
             String query) throws IOException {
+        if (!elasticsearch.isConnected()) {
+            throw new IOException("elasticsearch client not connected");
+        }
         // load properties from feed config
         String feedConfigLocation = config.getFeedConfigLocation();
         Properties properties = new Properties();
@@ -145,7 +149,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             this.builder = new AbderaFeedBuilder(config, query);
             String mediaType = "application/xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
-            elasticsearch.newRequest()
+            elasticsearch.newSearchRequest()
                     .index(index)
                     .type(type)
                     .from(config.getFrom())

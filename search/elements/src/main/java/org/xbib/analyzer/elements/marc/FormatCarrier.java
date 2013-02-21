@@ -32,9 +32,9 @@
 package org.xbib.analyzer.elements.marc;
 
 import java.util.Map;
-import org.xbib.analyzer.marc.MARCBuilder;
-import org.xbib.analyzer.marc.MARCElement;
-import org.xbib.analyzer.marc.MARCValueMapper;
+import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCElement;
+import org.xbib.elements.marc.MARCValueMapper;
 import org.xbib.elements.dublincore.DublinCoreTerms;
 import org.xbib.marc.FieldCollection;
 

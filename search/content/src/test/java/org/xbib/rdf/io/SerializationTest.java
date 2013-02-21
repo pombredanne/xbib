@@ -7,7 +7,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.StringWriter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
@@ -15,9 +14,7 @@ import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.io.xml.XmlResourceWriter;
 import org.xbib.rdf.simple.SerializableResource;
-import org.xbib.rdf.simple.SimpleResource;
 
 public class SerializationTest <S extends Identifier, P extends Property, O extends Literal<O>>
    extends Assert  {

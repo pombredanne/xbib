@@ -46,7 +46,7 @@ import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Statement;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.xml.CompactingNamespaceContext;
 
@@ -77,7 +77,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
      */
     private boolean writingStarted;
     /**
-     * indicate whether a statement being written is in a resource or not
+     * indicate whether a triple being written is in a resource or not
      */
     private boolean sameSubject;
     /*
@@ -94,9 +94,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private Stack<S> subjects;
     private Stack<P> predicates;
     /**
-     * the current statement
+     * the current triple
      */
-    private Statement<S, P, O> statement;
+    private Triple<S,P,O> triple;
     /**
      * counter for written triples
      */
@@ -166,9 +166,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private void writeNamespaces(IRINamespaceContext context, Resource<S, P, O> resource) throws IOException {
         // first, collect namespace URIs and prefixes
         IRINamespaceContext newContext = IRINamespaceContext.newInstance();
-        Iterator<Statement<S, P, O>> it = resource.iterator();
+        Iterator<Triple<S,P,O>> it = resource.iterator();
         while (it.hasNext()) {
-            Statement<S, P, O> stmt = it.next();
+            Triple<S,P,O> stmt = it.next();
             String[] s = context.inContext(stmt.subject().id());
             if (s != null) {
                 newContext.addNamespace(s[0], s[1]);
@@ -196,9 +196,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     }
 
     private void writeResource(Resource<S, P, O> resource) throws IOException {
-        Iterator<Statement<S, P, O>> it = resource.iterator();
+        Iterator<Triple<S, P, O>> it = resource.iterator();
         while (it.hasNext()) {
-            Statement<S, P, O> stmt = it.next();
+            Triple stmt = it.next();
             handleStatement(stmt);
             tripleCounter++;
         }
@@ -264,16 +264,16 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     }
 
     /**
-     * Serialize statement
+     * Serialize triple
      *
      * @param stmt
      * @throws IOException
      */
-    public void handleStatement(Statement<S, P, O> stmt) throws IOException {
+    public void handleStatement(Triple<S,P,O> stmt) throws IOException {
         if (!writingStarted) {
             throw new IOException("document writing has not yet been started");
         }
-        this.statement = stmt;
+        this.triple = stmt;
         S subj = stmt.subject();
         P pred = stmt.predicate();
         O obj = stmt.object();
@@ -378,8 +378,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         writer.write("[");
         writer.write(LF);
         writeIndent(1);
-        subjects.push(statement.subject());
-        predicates.push(statement.predicate());
+        subjects.push(triple.subject());
+        predicates.push(triple.predicate());
     }
 
     private void closeResource() throws IOException {
@@ -439,7 +439,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private void closeSubject() throws IOException {
         if (sameSubject) {
             closeResource();
-            if (statement.subject().equals(lastSubject)) {
+            if (triple.subject().equals(lastSubject)) {
                 writer.write(";");
                 writer.write(LF);
                 writeIndent(1); // ?

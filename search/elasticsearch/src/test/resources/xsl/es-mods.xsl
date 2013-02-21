@@ -312,7 +312,7 @@
         </mods:physicalDescription>
     </xsl:template>
     <xsl:template match="dc:description/xbib:creatorDescription">
-        <mods:note type="statement of responsibility">
+        <mods:note type="triple of responsibility">
             <xsl:apply-templates/>
         </mods:note>
     </xsl:template>

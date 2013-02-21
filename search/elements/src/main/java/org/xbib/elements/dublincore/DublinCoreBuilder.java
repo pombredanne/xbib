@@ -32,13 +32,13 @@
 package org.xbib.elements.dublincore;
 
 import org.xbib.elements.AbstractElementBuilder;
-import org.xbib.elements.ElementContextFactory;
+import org.xbib.elements.ResourceContextFactory;
 import org.xbib.elements.output.ElementOutput;
 
 public class DublinCoreBuilder<K,V>
     extends AbstractElementBuilder<K, V, DublinCoreElement, DublinCoreContext> {
 
-    private final static ElementContextFactory<DublinCoreContext> contextFactory = new ElementContextFactory<DublinCoreContext>() {
+    private final static ResourceContextFactory<DublinCoreContext> contextFactory = new ResourceContextFactory<DublinCoreContext>() {
 
         @Override
         public DublinCoreContext newContext() {
@@ -47,13 +47,8 @@ public class DublinCoreBuilder<K,V>
     };
 
     @Override
-    protected ElementContextFactory<DublinCoreContext> getContextFactory() {
+    public ResourceContextFactory<DublinCoreContext> contextFactory() {
         return contextFactory;
-    }
-    
-    @Override
-    public DublinCoreContext context() {
-        return context.get();
     }
     
     @Override
