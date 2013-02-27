@@ -39,9 +39,9 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.elasticsearch.client.support.MockTransportClientIngest;
-import org.elasticsearch.client.support.TransportClientIngest;
-import org.elasticsearch.client.support.TransportClientIngestSupport;
+import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elements.marc.MARCBuilder;
 import org.xbib.elements.marc.MARCBuilderFactory;
@@ -234,17 +234,10 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             return fileCounter;
         }
         try {
-            MARCBuilderFactory factory = new MARCBuilderFactory() {
-                public MARCBuilder newBuilder() {
-                    MARCBuilder builder = new OurMARCBuilder()
-                    .addOutput(new OurElementOutput());
-                    return builder;
-                }
-            };
             MARCElementMapper mapper = new MARCElementMapper(elements)
                     .pipelines(pipelines)
                     .detectUnknownKeys(detect)
-                    .start(factory);
+                    .start(buildFactory);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                     .addListener(mapper);
             Iso2709Reader reader = new Iso2709Reader()
@@ -267,10 +260,19 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         return fileCounter;
     }
 
+    final MARCBuilderFactory buildFactory = new MARCBuilderFactory() {
+        public MARCBuilder newBuilder() {
+            MARCBuilder builder = new OurMARCBuilder()
+                    .addOutput(new OurElementOutput());
+            return builder;
+        }
+    };
+
+
     class OurMARCBuilder extends MARCBuilder {
 
         @Override
-        public synchronized void build(MARCElement element, FieldCollection fields, String value) {
+        public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
                 IRI id = new IRI().scheme("http").host(index).query(type).fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
@@ -291,12 +293,8 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void output(ResourceContext context) throws IOException {
-            if (logger.isDebugEnabled()) {
-                logger.debug("output={}", context.resource());
-            }
             output.output(context);
             outputCounter.incrementAndGet();
-            context.reset();
         }
 
         @Override

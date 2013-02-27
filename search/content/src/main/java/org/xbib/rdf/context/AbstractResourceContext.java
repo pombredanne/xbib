@@ -41,7 +41,7 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
 
     protected IRINamespaceContext namespaces;
     protected Map<IRI, R> contexts = new LinkedHashMap();
-    protected IRI context;
+    protected IRI identifier;
     protected R resource;
 
     public ResourceContext<R> newNamespaceContext() {
@@ -64,6 +64,11 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
     @Override
     public ResourceContext<R> newResource(R resource) {
         this.resource = resource;
+        if (identifier != null) {
+            if (resource != null) {
+                contexts.put(identifier, resource);
+            }
+        }
         return this;
     }
 
@@ -73,38 +78,38 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
     }
 
     @Override
-    public Iterator<R> resources() {
-        if (resource != null) {
-            contexts.put(context, resource);
-        }
-        return contexts.values().iterator();
-    }
-    
-    @Override
-    public ResourceContext<R> newContext(IRI newContext) {
-        if (context != null) {
+    public ResourceContext<R> id(IRI identifier) {
+        if (identifier != null) {
             if (resource != null) {
-                contexts.put(context, resource);
+                contexts.put(identifier, resource);
             }
         }
-        this.context = newContext;
+        this.identifier = identifier;
         return this;
     }
 
     @Override
     public IRI context() {
-        return context;
+        return identifier;
     }
 
     @Override
-    public Map<IRI, R> contexts() {
+    public Map<IRI, R> asMap() {
         return contexts;
     }
 
     @Override
     public void reset() {
         contexts.clear();
-        context = null;
+        identifier = null;
         resource = null;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Resource r : contexts.values()) {
+            sb.append(r.toString()).append("\n");
+        }
+        return sb.toString();
     }
 }

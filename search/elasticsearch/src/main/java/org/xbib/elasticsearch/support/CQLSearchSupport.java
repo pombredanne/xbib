@@ -33,11 +33,19 @@ package org.xbib.elasticsearch.support;
 
 import org.elasticsearch.client.support.TransportClientSearchSupport;
 
+import java.net.URI;
+
 public class CQLSearchSupport extends TransportClientSearchSupport {
 
     @Override
     public CQLSearchSupport newClient() {
         super.newClient(findURI());
+        return this;
+    }
+
+    @Override
+    public CQLSearchSupport newClient(URI uri) {
+        super.newClient(uri);
         return this;
     }
 

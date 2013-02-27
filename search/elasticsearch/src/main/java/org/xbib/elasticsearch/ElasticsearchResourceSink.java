@@ -32,11 +32,12 @@
 package org.xbib.elasticsearch;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.elasticsearch.client.support.ClientIngest;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.xcontent.Builder;
@@ -88,19 +89,15 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
             }
         };
         Builder<C, R> builder = new Builder();
-        Iterator<R> it = context.resources();
-        while (it.hasNext()) {
-            R resource = it.next();
+        Map<IRI,R> map = context.asMap();
+        for (R resource : map.values()) {
             if (resource.id() == null) {
-                // no resource ID
                 continue;
             }
             if (resource.isEmpty()) {
-                // no properties or resources in the resource
                 continue;
             }
             if (resource.isDeleted()) {
-                // resource shall be deleted
                 resourceIndexer.delete(context, resource);
             } else {
                 resourceIndexer.index(context, resource, builder.build(context, resource));

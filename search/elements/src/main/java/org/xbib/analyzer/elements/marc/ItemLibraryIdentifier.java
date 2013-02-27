@@ -73,7 +73,7 @@ public class ItemLibraryIdentifier extends MARCElement {
     }
 
     private void createItemService(MARCBuilder b, String itemStatus) {
-        MARCContext lia = b.context();
+        LiaContext lia = b.context();
         String format = b.context().getFormat();
         boolean continuing = b.context().getContinuing();
         if (itemStatus == null) {

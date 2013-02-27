@@ -50,9 +50,9 @@ public class MARCBuilder
 
         @Override
         public MARCContext newContext() {
-            return new MARCContext();
+            return new MARCContext().id(new IRI().host("marc").build());
         }
-    };     
+    };
     
     @Override
     public ResourceContextFactory<MARCContext> contextFactory() {

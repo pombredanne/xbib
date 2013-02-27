@@ -33,9 +33,6 @@ package org.xbib.elements.marc;
 
 import org.xbib.elements.ElementBuilderFactory;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class MARCBuilderFactory implements ElementBuilderFactory {
 
     public MARCBuilder newBuilder() {

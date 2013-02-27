@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.context.ResourceContext;
@@ -55,6 +56,8 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     @Override
     public void begin() {
         C context = contextFactory().newContext();
+        // set a context identifier to make this context valid for resources
+        context.id(new IRI().host("element").build());
         context.newResource(context.newResource());
         contexts.set(context);
     }

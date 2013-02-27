@@ -35,6 +35,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.logging.Logger;
@@ -57,11 +59,10 @@ public class DNBPICAElementsTest {
     
     @Test
     public void testBibElements() throws Exception {
-        InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        InputSource source = new InputSource(br);
+        logger.info("testBibElements");
         PicaBuilder builder = new PicaBuilder();
-        builder.addOutput(new ElementOutput<ResourceContext>() {
+        final AtomicLong counter = new AtomicLong();
+        final ElementOutput output = new ElementOutput<ResourceContext>() {
 
             @Override
             public boolean enabled() {
@@ -69,23 +70,30 @@ public class DNBPICAElementsTest {
             }
             @Override
             public void enabled(boolean enabled) {
-                
+
             }
             @Override
             public void output(ResourceContext context) throws IOException {
-                logger.debug("resource = {}", context.resource());
+                if (context != null) {
+                    counter.incrementAndGet();
+                }
             }
 
             @Override
             public long getCounter() {
-                return 0;
+                return counter.get();
             }
-        });
+        };
+        builder.addOutput(output);
         PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib").start(builder);
         MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().addListener(mapper);
-        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);        
+        InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        InputSource source = new InputSource(br);
+        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);
         reader.parse();
         mapper.close();
+        logger.info("counter = {}", counter.get());
     }
     
 }

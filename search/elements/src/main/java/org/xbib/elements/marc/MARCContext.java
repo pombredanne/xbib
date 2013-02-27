@@ -33,6 +33,7 @@ package org.xbib.elements.marc;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elements.items.LiaContext;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
@@ -45,6 +46,12 @@ public class MARCContext extends LiaContext {
     private final static AtomicLong counter = new AtomicLong(0L);
     private String format;
     private boolean continuing;
+
+    @Override
+    public MARCContext id(IRI id) {
+        super.id(id);
+        return this;
+    }
 
     @Override
     public Resource newResource() {

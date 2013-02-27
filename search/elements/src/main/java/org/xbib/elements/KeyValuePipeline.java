@@ -50,6 +50,7 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
     private final BlockingQueue<List<KeyValue>> queue;
     private final ElementBuilder<K,V,E,C> builder;
     private final Map map;
+    private long counter;
     protected boolean detectUnknownKeys;
     protected Set<String> unknownKeys;
     private final Logger logger;
@@ -61,6 +62,7 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
         this.logger = LoggerFactory.getLogger("pipeline" + i);
         this.queue = queue;
         this.map = map;
+        this.counter = 0L;
         this.builder = factory.newBuilder();
         this.unknownKeys = new TreeSet();
     }
@@ -77,7 +79,10 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
                 List<KeyValue> e = queue.take();
                 // poison element? then quit
                 if (e.isEmpty()) {
-                    logger.info("end of key/value pipeline, unknown keys = {}", unknownKeys);
+                    logger.info("end of key/value pipeline");
+                    if (!unknownKeys.isEmpty()) {
+                        logger.info("unknown keys = {}", unknownKeys);
+                    }
                     break;
                 }
                 // only a single marker element in list? then skip
@@ -99,6 +104,7 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
                     } else {
                         build(key, value);
                     }
+                    counter++;
                 }
                 if (!end) {
                     builder.end();
@@ -112,6 +118,10 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
         }
         // nothing special
         return true;
+    }
+
+    public long getCounter() {
+        return counter;
     }
 
     protected Map map() {

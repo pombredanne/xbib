@@ -1,10 +1,10 @@
 #!/bin/bash
 
-java -Xmx1g \
+java \
     -cp bin:lib/xbib-search-tools-1.0-SNAPSHOT-elasticsearch-zdb.jar \
     org.xbib.tools.indexer.elasticsearch.ZDB \
     --elasticsearch "es://localhost:9300?es.cluster.name=joerg" \
-    --mock true \
+    --mock false \
     --detect true \
     --threads 1 \
     --maxbulkactions 1000 \

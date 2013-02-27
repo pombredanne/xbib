@@ -95,30 +95,31 @@ public class MARCElementsTest extends Assert {
         InputStream in = getClass().getResourceAsStream("stb-bonn.mrc");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
+        final ElementOutput output = new ElementOutput<ResourceContext>() {
+            @Override
+            public boolean enabled() {
+                return true;
+            }
+
+            @Override
+            public void enabled(boolean enabled) {
+
+            }
+
+            @Override
+            public void output(ResourceContext context) throws IOException {
+                logger.debug(context.resource().toString());
+            }
+
+            @Override
+            public long getCounter() {
+                return 0;
+            }
+        };
         MARCBuilderFactory factory = new MARCBuilderFactory() {
             public MARCBuilder newBuilder() {
                 MARCBuilder builder = new MARCBuilder();
-                builder.addOutput(new ElementOutput<ResourceContext>() {
-                    @Override
-                    public boolean enabled() {
-                        return true;
-                    }
-
-                    @Override
-                    public void enabled(boolean enabled) {
-
-                    }
-
-                    @Override
-                    public void output(ResourceContext context) throws IOException {
-                        logger.debug(context.resource().toString());
-                    }
-
-                    @Override
-                    public long getCounter() {
-                        return 0;
-                    }
-                });
+                builder.addOutput(output);
                 return builder;
             }
         };

@@ -31,6 +31,7 @@
  */
 package org.xbib.rdf.simple;
 
+import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.AbstractResourceContext;
 import org.xbib.rdf.context.ResourceContext;
@@ -38,6 +39,12 @@ import org.xbib.rdf.context.ResourceContext;
 public class SimpleResourceContext 
     extends AbstractResourceContext<Resource>
     implements ResourceContext<Resource> {
+
+    @Override
+    public SimpleResourceContext id(IRI identifier) {
+        super.id(identifier);
+        return this;
+    }
 
     @Override
     public Resource newResource() {

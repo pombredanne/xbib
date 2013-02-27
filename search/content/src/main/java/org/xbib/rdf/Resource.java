@@ -296,6 +296,13 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
     boolean isEmpty();
 
     /**
+     * The size of the resource. It corresponds to the number of statements in this resource.
+     *
+     * @return the size
+     */
+    int size();
+
+    /**
      * Set marker for resource deletion
      */
     Resource<S, P, O> setDeleted(boolean delete);

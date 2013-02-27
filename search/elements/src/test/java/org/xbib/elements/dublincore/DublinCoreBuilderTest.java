@@ -33,6 +33,8 @@ package org.xbib.elements.dublincore;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
@@ -44,10 +46,10 @@ public class DublinCoreBuilderTest extends Assert {
 
     private final Logger logger = LoggerFactory.getLogger(DublinCoreBuilderTest.class.getName());
     
-    private long counter;
-    
+
     @Test
     public void testDublinCoreBuilder() throws Exception {
+        final AtomicLong counter = new AtomicLong(0L);
         StringReader sr = new StringReader("100=John Doe\n200=Hello Word\n300=2012\n400=1");
         ElementOutput<DublinCoreContext> output = new ElementOutput<DublinCoreContext>() {
             
@@ -62,12 +64,12 @@ public class DublinCoreBuilderTest extends Assert {
             @Override
             public void output(DublinCoreContext context) throws IOException {
                 logger.info("resource = {}", context.resource());
-                counter++;
+                counter.incrementAndGet();
             }
 
             @Override
             public long getCounter() {
-                return counter;
+                return counter.get();
             }
         };
         
@@ -77,6 +79,6 @@ public class DublinCoreBuilderTest extends Assert {
             while (reader.readLine() != null);
         }
         mapper.close();
-        assertEquals(output.getCounter() > 0, true);
+        assertEquals(output.getCounter() > 0L, true);
     }
 }

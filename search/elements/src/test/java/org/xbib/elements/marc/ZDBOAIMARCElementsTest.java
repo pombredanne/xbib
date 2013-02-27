@@ -35,10 +35,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
+import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
 import org.xbib.rdf.context.ResourceContext;
@@ -51,41 +57,61 @@ public class ZDBOAIMARCElementsTest {
     @Test
     public void testOAIElements() throws Exception {
         logger.info("testOAIElements");
-        InputStream in = getClass().getResourceAsStream("/org/xbib/marc/xml/zdb-oai-marc.xml");
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        InputSource source = new InputSource(br);
+        final AtomicLong counter = new AtomicLong();
+        final ElementOutput output = new ElementOutput<ResourceContext>() {
+            @Override
+            public boolean enabled() {
+                return true;
+            }
+
+            @Override
+            public void enabled(boolean enabled) {
+            }
+
+            @Override
+            public void output(ResourceContext context) throws IOException {
+                if (context != null) {
+                    logger.info("resource = {}", context.resource());
+                    counter.incrementAndGet();
+                }
+            }
+
+            @Override
+            public long getCounter() {
+                return counter.get();
+            }
+        };
+
         MARCBuilderFactory factory = new MARCBuilderFactory() {
             public MARCBuilder newBuilder() {
-                MARCBuilder builder = new MARCBuilder();
-                builder.addOutput(new ElementOutput<ResourceContext>() {
-                    @Override
-                    public boolean enabled() {
-                        return true;
-                    }
-
-                    @Override
-                    public void enabled(boolean enabled) {
-                    }
-
-                    @Override
-                    public void output(ResourceContext context) throws IOException {
-                        if (context != null) {
-                            logger.debug("resource = {}", context.resource());
-                        }
-                    }
-
-                    @Override
-                    public long getCounter() {
-                        return 0;
-                    }
-                });
+                MARCBuilder builder = new OurMARCBuilder().addOutput(output);
                 return builder;
             }
         };
         MARCElementMapper mapper = new MARCElementMapper("marc").start(factory);
-        MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().addListener(mapper);
-        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);
-        reader.parse();
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
+        InputStream in = getClass().getResourceAsStream("/org/xbib/marc/xml/zdb-oai-marc.xml");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        InputSource source = new InputSource(br);
+        Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
+        reader.parse(source);
+        br.close();
         mapper.close();
+        logger.info("counter = {}", output.getCounter());
+    }
+
+
+    class OurMARCBuilder extends MARCBuilder {
+
+        @Override
+        public void build(MARCElement element, FieldCollection fields, String value) {
+            if (context().resource().id() == null) {
+                IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+                context().resource().id(id);
+            }
+            for (Field field : fields) {
+                logger.debug("element={} field={}", element, field);
+            }
+        }
     }
 }

@@ -192,6 +192,11 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     }
 
     @Override
+    public int size() {
+        return attributes.size();
+    }
+
+    @Override
     public Resource<S, P, O> setDeleted(boolean delete) {
         this.deleted = delete;
         return this;

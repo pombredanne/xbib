@@ -76,17 +76,11 @@ public interface ResourceContext<R extends Resource> extends ResourceFactory<R> 
     R resource();
 
     /**
-     * Return an iterator over the resources in this context.
-     * @return the iterator over the resources
-     */
-    Iterator<R> resources();
-
-    /**
-     * Create a new context.
+     *  Set context identifier
      * @param newContext the IRI of the new context
      * @return  the current resource context
      */
-    ResourceContext<R> newContext(IRI newContext);
+    ResourceContext<R> id(IRI newContext);
 
     /**
      * Get current context
@@ -95,10 +89,10 @@ public interface ResourceContext<R extends Resource> extends ResourceFactory<R> 
     IRI context();
     
     /**
-     * Return all contexts.
-     * @return all contexts
+     * Return map of resource
+     * @return the map of resources
      */
-    Map<IRI,R> contexts();
+    Map<IRI,R> asMap();
 
     /**
      * Reset this context so the context becomes empty

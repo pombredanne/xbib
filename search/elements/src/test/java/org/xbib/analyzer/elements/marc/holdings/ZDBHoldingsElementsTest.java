@@ -61,35 +61,37 @@ public class ZDBHoldingsElementsTest extends Assert {
     @Test
     public void testZDBElements() throws Exception {
         logger.info("testZDBElements");
-        InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
         final AtomicLong counter = new AtomicLong();
+        final ElementOutput out = new ElementOutput() {
+
+            @Override
+            public boolean enabled() {
+                return true;
+            }
+
+            @Override
+            public void enabled(boolean enabled) {
+            }
+
+            @Override
+            public void output(ResourceContext context) throws IOException {
+                if (!context.resource().isEmpty()) {
+                    counter.incrementAndGet();
+                }
+            }
+
+            @Override
+            public long getCounter() {
+                return counter.get();
+            }
+        };
+
+        InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
             InputSource source = new InputSource(br);
             MARCBuilderFactory factory = new MARCBuilderFactory() {
                 public MARCBuilder newBuilder() {
-                    MARCBuilder builder = new OurMARCBuilder();
-                    ElementOutput out = new ElementOutput() {
-
-                        @Override
-                        public boolean enabled() {
-                            return true;
-                        }
-
-                        @Override
-                        public void enabled(boolean enabled) {
-                        }
-
-                        @Override
-                        public void output(ResourceContext context) throws IOException {
-                            counter.incrementAndGet();
-                        }
-
-                        @Override
-                        public long getCounter() {
-                            return counter.longValue();
-                        }
-                    };
-                    builder.addOutput(out);
+                    MARCBuilder builder = new OurMARCBuilder().addOutput(out);
                     return builder;
                 }
             };
@@ -101,9 +103,9 @@ public class ZDBHoldingsElementsTest extends Assert {
             reader.parse(source);
             mapper.close();
         }
-        assertEquals(counter.get(), 293);
+        logger.info("counter = {}", out.getCounter());
+        assertEquals(out.getCounter(), 293);
     }
-
 
     class OurMARCBuilder extends MARCBuilder {
 

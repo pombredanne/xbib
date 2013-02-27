@@ -3,6 +3,7 @@ package org.xbib.elasticsearch;
 import org.elasticsearch.client.support.TransportClientIngestSupport;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.support.CQLRequest;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
@@ -27,24 +28,21 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.elasticsearch.indices.IndexMissingException;
 
-public class BulkIndexerTest {
+public class BulkIndexerTest extends Assert {
 
     private static final Logger logger = LoggerFactory.getLogger(BulkIndexerTest.class.getName());
 
     @Test
-    public void test() throws Exception {
+    public void testBulkIndexerWithSingleResourceAndCQLSearch() throws Exception {
         try {
-            Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", "test").build();
-
             final TransportClientIngestSupport es = new TransportClientIngestSupport()
-                    .settings(settings)
-                    .newClient(URI.create("es://localhost:9300"))
+                    .newClient(URI.create("es://localhost:9300?es.cluster.name=test"))
                     .index("document")
                     .type("test");
 
             es.deleteIndex();
             ResourceContext c = createContext();
+
             new ElasticsearchResourceSink(es).output(c);
             es.flush();
             Thread.sleep(2000);
@@ -52,7 +50,7 @@ public class BulkIndexerTest {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             // check if IRI path "document" worked
             new CQLSearchSupport()
-                    .newClient()
+                    .newClient(URI.create("es://localhost:9300?es.cluster.name=test"))
                     .newSearchRequest()
                     .from(0)
                     .size(10)
@@ -68,6 +66,7 @@ public class BulkIndexerTest {
                 }
             });
             logger.info("result = {}", output.toString());
+            assertTrue(output.toString().length() > 0);
             //es.deleteIndex();
         } catch (ClusterBlockException | NoNodeAvailableException | IndexMissingException e) {
             logger.warn(e.getMessage());
@@ -75,7 +74,9 @@ public class BulkIndexerTest {
     }
 
     private ResourceContext createContext() {
-        ResourceContext context = new JsonLdContext().newNamespaceContext();
+        ResourceContext context = new JsonLdContext()
+                .id(IRI.create("http://test#1"))
+                .newNamespaceContext();
         context.namespaceContext().addNamespace(ES.NS_PREFIX, ES.NS_URI);
         context.namespaceContext().addNamespace("urn", "http://urn");
         context.namespaceContext().addNamespace("dc", "http://purl.org/dc/terms/");

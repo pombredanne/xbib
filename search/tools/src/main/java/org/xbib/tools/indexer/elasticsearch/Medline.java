@@ -31,8 +31,8 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.elasticsearch.client.support.TransportClientIngest;
-import org.elasticsearch.client.support.TransportClientIngestSupport;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
@@ -105,8 +105,8 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
             logger.info("input = {},  threads = {}", input, threads);
 
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final TransportClientIngest es = new TransportClientIngestSupport();
-                    es.newClient(uri)
+            final TransportClientIngest es = new TransportClientIngestSupport()
+                    .newClient(uri)
                     .index(options.valueOf("index").toString())
                     .type(options.valueOf("type").toString())
                     .maxBulkActions((Integer)options.valueOf("bulksize"))

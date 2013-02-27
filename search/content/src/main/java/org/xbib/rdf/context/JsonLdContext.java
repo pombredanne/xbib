@@ -27,13 +27,18 @@ public class JsonLdContext
     private Map<String,Resource> languages;
     private Map<String,Resource> containers;
 
+    @Override
+    public JsonLdContext id(IRI identifier) {
+        super.id(identifier);
+        return this;
+    }
 
     @Override
     public Resource newResource() {
         Resource<Resource,Property,Literal> root = new SimpleResource().id(new IRI().schemeSpecificPart("@context").build());
-        Resource context = root.newResource(CONTEXT);
+        Resource resource = root.newResource(CONTEXT);
         for (Map.Entry<String,String> me : namespaceContext().getNamespaces().entrySet()) {
-            context.add(me.getKey(), me.getValue());
+            resource.add(me.getKey(), me.getValue());
         }
         return root;
     }

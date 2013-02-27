@@ -38,8 +38,9 @@ import org.xbib.rdf.context.AbstractResourceContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
 
-public class DublinCoreContext extends AbstractResourceContext 
-    implements ResourceContext, DublinCoreElements {
+public class DublinCoreContext
+        extends AbstractResourceContext
+        implements ResourceContext, DublinCoreElements {
 
     private final Map<String,Resource> resources = new HashMap();
 
