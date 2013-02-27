@@ -37,7 +37,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.elasticsearch.client.support.MockTransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
 import org.xbib.io.NullWriter;
 import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;

@@ -37,8 +37,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.elasticsearch.client.support.TransportClientIngest;
-import org.elasticsearch.client.support.TransportClientIngestSupport;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.io.NullWriter;
 import org.xbib.iri.IRI;
 import org.xbib.oai.ListRecordsRequest;

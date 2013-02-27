@@ -1,6 +1,6 @@
 package org.xbib.builders.elasticsearch;
 
-import org.elasticsearch.client.support.MockTransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;

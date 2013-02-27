@@ -9,8 +9,8 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.elasticsearch.client.support.TransportClientIngest;
-import org.elasticsearch.client.support.TransportClientIngestSupport;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
