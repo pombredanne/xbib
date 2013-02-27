@@ -128,8 +128,8 @@ public class GND {
         ElasticBuilder(String esURI, String index, String type) throws IOException {
             TransportClientIngest es = new TransportClientIngestSupport()
                     .newClient(URI.create(esURI))
-                    .index(index)
-                    .type(type);
+                    .setIndex(index)
+                    .setType(type);
             sink = new ElasticsearchResourceSink(es);
             resource = context.newResource();
         }

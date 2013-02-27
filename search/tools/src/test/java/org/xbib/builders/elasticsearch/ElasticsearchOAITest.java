@@ -76,8 +76,8 @@ public class ElasticsearchOAITest {
     public void testDNBOAI() throws Exception {
 
         final MockTransportClientIngest es = new MockTransportClientIngest()
-                .index("test")
-                .type("test");
+                .setIndex("test")
+                .setType("test");
 
         OAIClient client = OAIClientFactory.getClient("DNB");
         ListRecordsRequest request = new OAIListRecordsRequest(client.getURI());

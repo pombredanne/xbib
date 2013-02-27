@@ -52,7 +52,7 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
     @Test
     public void testWrite() throws Exception {
 
-        final MockTransportClientIngest es = new MockTransportClientIngest().index("test").type("test");
+        final MockTransportClientIngest es = new MockTransportClientIngest().setIndex("test").setType("test");
 
         final ElasticsearchResourceSink<ResourceContext, Resource> indexer = new ElasticsearchResourceSink(es);
 

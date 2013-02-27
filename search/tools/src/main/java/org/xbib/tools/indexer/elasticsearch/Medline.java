@@ -107,8 +107,8 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
             final TransportClientIngest es = new TransportClientIngestSupport()
                     .newClient(uri)
-                    .index(options.valueOf("index").toString())
-                    .type(options.valueOf("type").toString())
+                    .setIndex(options.valueOf("index").toString())
+                    .setType(options.valueOf("type").toString())
                     .maxBulkActions((Integer)options.valueOf("bulksize"))
                     .maxConcurrentBulkRequests((Integer)options.valueOf("bulks"));
 

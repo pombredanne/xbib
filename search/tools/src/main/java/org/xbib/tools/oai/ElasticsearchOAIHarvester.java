@@ -93,8 +93,8 @@ public final class ElasticsearchOAIHarvester {
         }
         final TransportClientIngest es = new TransportClientIngestSupport()
                 .newClient()
-                .index(options.valueOf("index").toString())
-                .type(options.valueOf("type").toString());
+                .setIndex(options.valueOf("index").toString())
+                .setType(options.valueOf("type").toString());
         final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());
         final ListRecordsRequest request = new OAIListRecordsRequest(client.getURI(), options);
         StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");

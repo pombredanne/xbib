@@ -69,25 +69,26 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         return resourceCounter.longValue();
     }
 
-    @Override
-    public synchronized void output(C context) throws IOException {
-        ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
-            @Override
-            public void index(C context, R resource, String source) throws IOException {
-                String index = makeIndex(context, resource);
-                String type = makeType(context, resource);
-                String id = makeId(context, resource);
-                ingester.index(index, type, id, source);
-            }
+    final ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
+        @Override
+        public void index(C context, R resource, String source) throws IOException {
+            String index = makeIndex(context, resource);
+            String type = makeType(context, resource);
+            String id = makeId(context, resource);
+            ingester.indexDocument(index, type, id, source);
+        }
 
-            @Override
-            public void delete(C context, R resource) throws IOException {
-                String index = makeIndex(context, resource);
-                String type = makeType(context, resource);
-                String id = makeId(context, resource);
-                ingester.delete(index, type, id);
-            }
-        };
+        @Override
+        public void delete(C context, R resource) throws IOException {
+            String index = makeIndex(context, resource);
+            String type = makeType(context, resource);
+            String id = makeId(context, resource);
+            ingester.deleteDocument(index, type, id);
+        }
+    };
+
+    @Override
+    public void output(C context) throws IOException {
         Builder<C, R> builder = new Builder();
         Map<IRI,R> map = context.asMap();
         for (R resource : map.values()) {
@@ -118,11 +119,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
      * @return
      */
     protected String makeIndex(C context, R resource) {
-        String index = resource.id().getHost();
-        if (index == null) {
-            index = ingester.index();
-        }
-        return index;
+        return resource.id().getHost();
     }
 
     /**
@@ -133,11 +130,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
      * @return
      */
     protected String makeType(C context, R resource) {
-        String type = resource.id().getQuery();
-        if (type == null) {
-            type = ingester.type();
-        }
-        return type;
+        return resource.id().getQuery();
     }
 
     /**

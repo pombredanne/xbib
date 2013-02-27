@@ -3,7 +3,6 @@ package org.xbib.elasticsearch;
 import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.support.CQLRequest;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.Formatter;
 import org.xbib.elasticsearch.support.OutputFormat;
@@ -35,8 +34,8 @@ public class BulkIndexerTest extends Assert {
         try {
             final TransportClientIngestSupport es = new TransportClientIngestSupport()
                     .newClient(URI.create("es://localhost:9300?es.cluster.name=test"))
-                    .index("document")
-                    .type("test");
+                    .setIndex("document")
+                    .setType("test");
 
             es.deleteIndex();
             ResourceContext c = createContext();

@@ -160,12 +160,12 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             final TransportClientIngest es = mock ?
                     new MockTransportClientIngest() :
                     new TransportClientIngestSupport()
-                    .maxBulkActions(maxbulkactions)
+                     .maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
-                    .index(index)
-                    .type(type)
                     .waitForHealthyCluster()
+                    .setIndex(index)
+                    .setType(type)
                     .deleteIndex()
                     .setting("index.number_of_shards", shards)
                     .setting("index.number_of_replicas", "0")
@@ -293,6 +293,9 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void output(ResourceContext context) throws IOException {
+            if (logger.isDebugEnabled()) {
+                logger.debug("context={} resource size={}", context.asMap(), context.resource().size());
+            }
             output.output(context);
             outputCounter.incrementAndGet();
         }
