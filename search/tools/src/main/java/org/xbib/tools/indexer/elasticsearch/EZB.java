@@ -131,8 +131,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                     .waitForHealthyCluster()
                     .deleteIndex(overwrite)
                     .dateDetection(false)
-                    .newIndex()
-                    ;
+                    .newIndex();
 
             final ElasticsearchResourceSink<ResourceContext, Resource> sink =
                     new ElasticsearchResourceSink(es);

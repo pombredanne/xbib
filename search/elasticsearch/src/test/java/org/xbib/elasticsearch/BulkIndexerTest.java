@@ -1,8 +1,6 @@
 package org.xbib.elasticsearch;
 
-import org.elasticsearch.client.support.TransportClientIngestSupport;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.support.CQLRequest;

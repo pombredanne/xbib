@@ -31,7 +31,8 @@
  */
 package org.xbib.elasticsearch.support;
 
-import org.elasticsearch.client.support.TransportClientSearchSupport;
+
+import org.elasticsearch.client.support.search.transport.TransportClientSearchSupport;
 
 import java.net.URI;
 
