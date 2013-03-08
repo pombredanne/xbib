@@ -29,80 +29,58 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.elements.marc;
+package org.xbib.analyzer.elements.marc;
 
-import java.util.Map;
-import org.xbib.elements.Element;
 import org.xbib.elements.ElementBuilder;
-import org.xbib.elements.bibliographic.BibliographicProperties;
-import org.xbib.elements.bibliographic.ExtraBibliographicProperties;
-import org.xbib.elements.dublincore.DublinCoreProperties;
-import org.xbib.elements.dublincore.DublinCoreTerms;
-import org.xbib.elements.dublincore.DublinCoreTermsProperties;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
+import org.xbib.elements.marc.MARCContext;
+import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
-import org.xbib.marc.MarcXchange;
 
-public abstract class MARCElement
-        implements Element<FieldCollection, String, MARCBuilder>,
-        DublinCoreProperties,
-        DublinCoreTerms,
-        DublinCoreTermsProperties,
-        BibliographicProperties,
-        ExtraBibliographicProperties,
-        MarcXchange {
+import java.util.Map;
 
-    protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
-    protected Map params;
-
-    @Override
-    public MARCElement setSettings(Map params) {
-        this.params = params;
-        return this;
+public class PhysicalDescriptionCode extends MARCElement {
+    private final static PhysicalDescriptionCode instance = new PhysicalDescriptionCode();
+    
+    public static MARCElement getInstance() {
+        return instance;
     }
-
+    
     @Override
-    public Map getSettings() {
-        return params;
-    }
-
-    @Override
-    public MARCElement begin() {
-        return this;
-    }
-
-    @Override
-    public MARCElement build(MARCBuilder builder, FieldCollection key, String value) {
-        return this;
-    }
-
-    @Override
-    public MARCElement end() {
-        return this;
-    }
-
-    /**
-     * Process mapped element. Empty by default.
-     *
-     * @param builder
-     * @param fields
-     * @param value
-     */
     public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        // overridden 
+        Map<String,Object> tags = (Map<String,Object>) getSettings().get("tags");
+        if (tags == null) {
+            return;
+        }
+        Map<String,Object> codes = (Map<String,Object>) getSettings().get("codes");
+        if (codes == null) {
+            return;
+        }
+        for (Field field: fields) {
+            String data = field.data();
+            for (String pos : codes.keySet()) {
+                int i = Integer.parseInt(pos);
+                Map<String,Object> m =  (Map<String,Object>)codes.get(data.substring(i,i+1));
+                logger.info("phys: i={} data={} m={}", i, data.substring(i,i+1), m, field);
+                if (m == null) {
+                    continue;
+                }
+                String pred = (String)codes.get("value");
+                if (pred == null) {
+                    continue;
+                }
+                logger.info("got pred {}", pred);
+                for (String pos2 : m.keySet()) {
+                    int j = Integer.parseInt(pos2);
+                    String code = (String)m.get(data.substring(j,j+1));
+                    logger.info("got code {} for {}", code, data.substring(j,j+1));
+                    if (code == null) {
+                        continue;
+                    }
+                    builder.context().resource().add(pred, code);
+                }
+            }
+        }
     }
-
-    /**
-     * Process mapped element with subfield mappings. Empty by default.
-     *
-     * @param builder
-     * @param field
-     * @param subfieldType
-     */
-    public void field(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, Field field, String subfieldType) {
-        // overridden
-    }
-
+    
 }

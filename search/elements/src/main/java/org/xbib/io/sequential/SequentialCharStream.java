@@ -18,6 +18,7 @@ package org.xbib.io.sequential;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.text.Normalizer;
 
 /**
  * SequentialCharStream is a buffered character input reader. Buffering allows
@@ -524,7 +525,7 @@ public class SequentialCharStream extends Reader implements CharStream {
             for (int charPos = pos; charPos < count; charPos++) {
                 char ch = buf[charPos];
                 if (isSep(ch)) {
-                    String res = new String(buf, pos, charPos - pos);
+                    String res = normalize(new String(buf, pos, charPos - pos));
                     if (listener != null) {
                         if (res.length() > 0) {
                             listener.data(res);
@@ -548,19 +549,21 @@ public class SequentialCharStream extends Reader implements CharStream {
                  */
                 if (pos >= count) {
                     if (isSep(eod)) {
+                        String s = normalize(result);
                         if (listener != null) {
-                            listener.data(result.toString());
+                            listener.data(s);
                         }
-                        return result.toString();
+                        return s;
                     }
                     // attempt to fill buffer
                     if (fillbuf() == -1) {
                         // characters or null.
                         if (result.length() > 0 || eod != '\0') {
+                            String s = normalize(result);
                             if (listener != null) {
-                                listener.data(result.toString());
+                                listener.data(s);
                             }
-                            return result.toString();
+                            return s;
                         } else {
                             return null;
                         }
@@ -576,11 +579,12 @@ public class SequentialCharStream extends Reader implements CharStream {
                             result.append(buf, pos, charPos - pos - 1);
                         }
                         pos = charPos;
+                        String s = normalize(result);
                         if (listener != null) {
-                            listener.data(result.toString());
+                            listener.data(s);
                             sendEvent(eod);
                         }
-                        return result.toString();
+                        return s;
                     }
                 }
                 if (eod == '\0') {
@@ -595,6 +599,10 @@ public class SequentialCharStream extends Reader implements CharStream {
 
     protected boolean isSep(char ch) {
         return (ch == Separable.FS || ch == Separable.GS || ch == Separable.RS || ch == Separable.US);
+    }
+
+    protected String normalize(CharSequence ch) {
+        return ch.toString(); //Normalizer.normalize(ch, Normalizer.Form.NFKD);
     }
 
     private void sendEvent(char ch) {

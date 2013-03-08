@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.elements.marc.holdings;
+package org.xbib.analyzer.elements.marc;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -50,6 +50,7 @@ import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,13 +58,12 @@ import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ZDBHoldingsElementsTest extends Assert {
+public class ZDBTitleElementsTest extends Assert {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZDBHoldingsElementsTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ZDBTitleElementsTest.class.getName());
 
-    @Test
     public void testZDBElements() throws Exception {
-        logger.info("testZDBElements");
+        logger.info("testZDBTitleElements");
         final AtomicLong counter = new AtomicLong();
         final ElementOutput out = new ElementOutput() {
 
@@ -91,9 +91,8 @@ public class ZDBHoldingsElementsTest extends Assert {
 
         final Charset UTF8 = Charset.forName("UTF-8");
         final Charset ISO88591 = Charset.forName("ISO-8859-1");
-
-        final InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
-
+        //InputStream in = getClass().getResourceAsStream("zdbtitutf8.mrc");
+        final InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1208zdbtitutf8.mrc");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, ISO88591))) {
             InputSource source = new InputSource(br);
             MARCBuilderFactory factory = new MARCBuilderFactory() {
@@ -102,7 +101,7 @@ public class ZDBHoldingsElementsTest extends Assert {
                     return builder;
                 }
             };
-            MARCElementMapper mapper = new MARCElementMapper("marc/holdings")
+            MARCElementMapper mapper = new MARCElementMapper("marc")
                     .detectUnknownKeys(true)
                     .start(factory);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
@@ -118,23 +117,26 @@ public class ZDBHoldingsElementsTest extends Assert {
                     .addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
                         @Override
                         public void keyValue(FieldCollection key, String value) {
-                            logger.info("begin");
-                            for (Field f : key) {
-                                logger.info("tag={} ind={} subf={} data={}",
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("begin");
+                                for (Field f : key) {
+                                    logger.debug("tag={} ind={} subf={} data={}",
                                         f.tag(), f.indicator(), f.subfieldId(), f.data());
+                                }
+                                logger.debug("end");
                             }
-                            logger.info("end");
                         }
 
                     });
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MARC");
-            reader.setProperty(Iso2709Reader.TYPE, "Holdings");
+            reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
             reader.parse(source);
             mapper.close();
+            logger.info("zdb title counter = {}", out.getCounter());
+            logger.info("unknown keys = {}", mapper.unknownKeys());
         }
-        logger.info("counter = {}", out.getCounter());
-        assertEquals(out.getCounter(), 293);
+        //assertEquals(out.getCounter(), 293);
     }
 
     class OurMARCBuilder extends MARCBuilder {

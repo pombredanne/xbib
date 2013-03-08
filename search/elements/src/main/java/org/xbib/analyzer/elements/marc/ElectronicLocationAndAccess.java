@@ -29,16 +29,26 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.elements.marc.holdings;
+package org.xbib.analyzer.elements.marc;
 
+import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
-public class FormattedEnumerationAndChronology extends MARCElement {
+public class ElectronicLocationAndAccess extends MARCElement {
 
-    private final static FormattedEnumerationAndChronology instance = new FormattedEnumerationAndChronology();
+    private final static ElectronicLocationAndAccess instance = new ElectronicLocationAndAccess();
 
-    public static FormattedEnumerationAndChronology getInstance() {
+    public static ElectronicLocationAndAccess getInstance() {
         return instance;
     }
 
+    @Override
+    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
+        for (Field field : fields) {
+            String s = field.data().trim();
+            builder.context().resource().add("url",s);
+        }
+    }
 }

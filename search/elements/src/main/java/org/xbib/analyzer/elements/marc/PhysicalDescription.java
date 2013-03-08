@@ -31,29 +31,13 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import java.util.Map;
-import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
 public class PhysicalDescription extends MARCElement {
     private final static PhysicalDescription instance = new PhysicalDescription();
     
     public static MARCElement getInstance() {
         return instance;
-    }
-    
-    @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        for (Field field: fields) {
-            Map<String,Object> tags = (Map<String,Object>) getSettings().get("tags");
-            if ("codes".equals(tags.get(field.tag()))) {
-                String code = field.data();
-                
-            }
-        }
     }
     
 }

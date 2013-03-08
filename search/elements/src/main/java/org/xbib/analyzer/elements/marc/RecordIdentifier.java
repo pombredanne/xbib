@@ -47,9 +47,9 @@ public class RecordIdentifier extends MARCElement {
 
     @Override
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        for (Field field : fields) {
+        /*for (Field field : fields) {
             IRI id = new IRI().scheme("http").host("xbib.org").fragment(field.data().trim()).build();
             builder.context().resource().id(id);
-        }
+        }*/
     }
 }

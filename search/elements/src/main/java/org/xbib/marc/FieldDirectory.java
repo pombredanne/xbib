@@ -31,11 +31,17 @@
  */
 package org.xbib.marc;
 
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+
 import java.util.TreeMap;
 
 public class FieldDirectory extends TreeMap<Integer, Field> {
 
-    public FieldDirectory(RecordLabel label, String segment) throws FieldDirectoryException {
+    private static final Logger logger = LoggerFactory.getLogger(FieldDirectory.class.getName());
+
+    public FieldDirectory(RecordLabel label, String buffer)
+            throws FieldDirectoryException {
         super();
         int directoryLength = label.getBaseAddressOfData() - (RecordLabel.LENGTH + 1);
         // assume that negative values means prohibiting directory access
@@ -48,7 +54,8 @@ public class FieldDirectory extends TreeMap<Integer, Field> {
             // plus data field length
             // plus starting character position length
             // plus segment identifier length
-            int entrysize = keylength + label.getDataFieldLength()
+            int entrysize = keylength
+                    + label.getDataFieldLength()
                     + label.getStartingCharacterPositionLength()
                     + label.getSegmentIdentifierLength();
             if (directoryLength % entrysize != 0) {
@@ -59,14 +66,14 @@ public class FieldDirectory extends TreeMap<Integer, Field> {
                         + " segment identifier length = " + label.getSegmentIdentifierLength());
             }
             for (int i = RecordLabel.LENGTH; i < RecordLabel.LENGTH + directoryLength; i += entrysize) {
-                String key = segment.substring(i, i + keylength);
+                String key = buffer.substring(i, i + keylength);
                 try {
-                    int length = Integer.parseInt(
-                            segment.substring(i + keylength, i + keylength + label.getDataFieldLength()));
-                    int position = label.getBaseAddressOfData() + Integer.parseInt(
-                            segment.substring(i + keylength + label.getDataFieldLength(),
-                            i + keylength + label.getDataFieldLength() + label.getStartingCharacterPositionLength()));
-                    put(position, new Field(label, key, position, length));
+                    int l = i + keylength + label.getDataFieldLength();
+                    int length = Integer.parseInt(buffer.substring(i + keylength, l));
+                    int position = label.getBaseAddressOfData()
+                            + Integer.parseInt(buffer.substring(l, l + label.getStartingCharacterPositionLength()));
+                    Field field = new Field(label, key, position, length);
+                    put(position, field);
                 } catch (NumberFormatException e) {
                     throw new FieldDirectoryException("directory corrupt? key = " + key + " length = " + directoryLength);
                 }

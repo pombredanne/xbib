@@ -80,9 +80,6 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
                 // poison element? then quit
                 if (e.isEmpty()) {
                     logger.info("end of key/value pipeline");
-                    if (!unknownKeys.isEmpty()) {
-                        logger.info("unknown keys = {}", unknownKeys);
-                    }
                     break;
                 }
                 // only a single marker element in list? then skip

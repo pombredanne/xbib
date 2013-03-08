@@ -34,6 +34,7 @@ package org.xbib.marc;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import org.xbib.io.sequential.CharStream;
@@ -525,14 +526,13 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                                 endDataField(designator);
                             }
                         }
-                        if (directory != null && directory.containsKey(position)) {
+                        if (directory == null || directory.isEmpty()) {
+                            designator = new Field(label, fieldContent);
+                        } else if (directory.containsKey(position)) {
                             designator = new Field(label, directory.get(position), fieldContent, false);
                         } else {
-                            // repair field content if too short
-                            if (fieldContent.length() < 3) {
-                                fieldContent = designator.tag() + fieldContent;
-                            }
-                            designator = new Field(label, fieldContent);
+                            throw new FieldDirectoryException("byte position not found in directory: "
+                                    + position + " - is this stream reading using an 8-bit wide encoding?");
                         }
                         if (designator != null) {
                             beginDataField(designator);
@@ -551,7 +551,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                         break;
                 }
             } catch (FieldDirectoryException ex) {
-                logger.warn(ex.getMessage(), ex);
+                logger.warn(ex.getMessage());
             } finally {
                 position += data.length();
             }

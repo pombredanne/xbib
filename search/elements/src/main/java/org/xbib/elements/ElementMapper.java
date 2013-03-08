@@ -80,6 +80,10 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         }
     }
 
+    public Map map() {
+        return map;
+    }
+
     public ElementMapper pipelines(int numPipelines) {
         this.numPipelines = numPipelines;
         return this;
@@ -108,7 +112,8 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         }
         this.factory = factory;
         for (int i = 0; i < numPipelines; i++) {
-            KeyValuePipeline pipeline = createPipeline(i).detectUnknownKeys(detectUnknownKeys);
+            KeyValuePipeline pipeline = createPipeline(i)
+                    .detectUnknownKeys(detectUnknownKeys);
             pipelines.add(pipeline);
             service.submit(pipeline);
         }
@@ -160,7 +165,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
             // add marker element
             if (keyvalues != null) {
                 keyvalues.add(new KeyValue(null, info));
-                // move shallow copy of key/values to pipeline for thread safety
+                // move shallow copy of key/values to pipeline, this ensures thread safety
                 queue.offer((List<KeyValue>) keyvalues.clone(), 2, TimeUnit.SECONDS);
                 keyvalues.clear();
             }
@@ -184,11 +189,16 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
             unknownKeys.addAll(p.unknownKeys);
         }
         StringBuilder sb = new StringBuilder();
+        String lastKey = "   ";
         for (String key : unknownKeys) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
+            if (!key.startsWith(lastKey.substring(0,3))) {
+                sb.append("\n");
+            }
             sb.append("\"").append(key).append("\"");
+            lastKey = key;
         }
         return sb.toString();
     }
