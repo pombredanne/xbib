@@ -35,6 +35,17 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>github-release-repo</id>
+            <url>https://github.com/xbib/maven-repo/raw/master/releases</url>
+        </repository>
+        <repository>
+            <id>github-snapshot-repo</id>
+            <url>https://github.com/xbib/maven-repo/raw/master/snapshots</url>
+        </repository>
+    </repositories>
+
     <build>
 
         <!-- declare maven plugin versions -->
