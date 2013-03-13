@@ -31,7 +31,6 @@
  */
 package org.xbib.rdf.context;
 
-import java.util.Iterator;
 import java.util.Map;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;

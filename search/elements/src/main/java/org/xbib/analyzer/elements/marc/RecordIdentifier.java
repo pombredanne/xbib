@@ -33,8 +33,6 @@ package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.ElementBuilder;
-import org.xbib.iri.IRI;
-import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 
 public class RecordIdentifier extends MARCElement {
@@ -47,9 +45,5 @@ public class RecordIdentifier extends MARCElement {
 
     @Override
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        /*for (Field field : fields) {
-            IRI id = new IRI().scheme("http").host("xbib.org").fragment(field.data().trim()).build();
-            builder.context().resource().id(id);
-        }*/
     }
 }

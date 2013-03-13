@@ -64,7 +64,14 @@
         "866$3$0$z"
         ],
         "movingwall" : [
-        "Letzte (\\d+) Jg."
+            "Letzte (\\d+) Jg."
+        ],
+        "currentissue" : [
+            "Nur neueste Ausgabe",
+            "Nur neueste Ausg. vorhanden"
+        ],
+        "currentyear" : [
+            "Nur der laufende Jahrgang vorhanden"
         ]
     },
     "TextualHoldingsPrefix" : {

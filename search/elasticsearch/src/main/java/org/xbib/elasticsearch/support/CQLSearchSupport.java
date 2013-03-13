@@ -52,14 +52,14 @@ public class CQLSearchSupport extends TransportClientSearchSupport {
 
     @Override
     public CQLRequest newSearchRequest() {
-        return new CQLRequest()
-                .newSearchRequest(client.prepareSearch().setPreference("_primary_first"));
+        return client != null ? new CQLRequest()
+                .newSearchRequest(client.prepareSearch().setPreference("_primary_first")) : null;
     }
 
     @Override
     public CQLRequest newGetRequest() {
-        return new CQLRequest()
-                .newGetRequest(client.prepareGet());
+        return client != null ?new CQLRequest()
+                .newGetRequest(client.prepareGet()) : null;
     }
 
 }

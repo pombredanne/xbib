@@ -77,6 +77,7 @@ public class TransformerURIResolver implements URIResolver {
                             try {
                                 in = new FileInputStream(systemId);
                             } catch (FileNotFoundException e) {
+                                // ignore
                             }
                         } else {
                             break;

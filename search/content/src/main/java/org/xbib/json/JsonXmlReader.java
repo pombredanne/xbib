@@ -112,7 +112,8 @@ public class JsonXmlReader implements XMLReader {
             new JsonSaxAdapter(input.getCharacterStream(), contentHandler, root).parse();
         }
         if (input.getByteStream() != null) {
-            new JsonSaxAdapter(new InputStreamReader(input.getByteStream(), input.getEncoding()), contentHandler, root).parse();
+            String encoding = input.getEncoding() != null? input.getEncoding() : System.getProperty("file.encoding");
+            new JsonSaxAdapter(new InputStreamReader(input.getByteStream(), encoding), contentHandler, root).parse();
         }
     }
 

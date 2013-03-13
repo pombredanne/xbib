@@ -12,13 +12,13 @@
             <unpack>true</unpack>
             <scope>runtime</scope>
             <includes>
-                <include>org.xbib:xbib-search-tools</include>
                 <include>org.xbib:xbib-content</include>
                 <include>org.xbib:xbib-util</include>
                 <include>org.xbib:xbib-logging</include>
                 <include>org.xbib:xbib-compress</include>
                 <include>org.xbib:xbib-elements</include>
                 <include>org.xbib:xbib-elasticsearch</include>
+                <include>org.xbib:xbib-search-tools</include>
                 <include>org.xbib.elasticsearch:elasticsearch-transport-support</include>
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.apache.lucene:lucene-core</include>

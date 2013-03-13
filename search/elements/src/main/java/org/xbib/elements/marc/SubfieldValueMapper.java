@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.elements.marc.support;
+package org.xbib.elements.marc;
 
 import java.util.Map;
 import org.xbib.marc.Field;
@@ -39,10 +39,14 @@ public class SubfieldValueMapper {
     private SubfieldValueMapper() {
     }
 
-    public static Map.Entry<String, Object> 
-            map(Map subfields, final Field field) {
+    public static Map.Entry<String, Object> map(Map subfields, final Field field) {
+        return map(subfields, field, true);
+    }
+
+    public static Map.Entry<String, Object> map(Map subfields, final Field field,
+                                                boolean trim) {
         String k = null;
-        Object v = field.data();
+        Object v = trim ? field.data().trim(): field.data();
         Object subfieldDef = subfields.get(field.subfieldId());
         if (subfieldDef instanceof Map) {
             // key/value mapping
@@ -50,12 +54,11 @@ public class SubfieldValueMapper {
             if (subfieldmap.containsKey(v)) {
                 Object o = subfieldmap.get(v);
                 if (o instanceof Map) {
-                    Map.Entry<String, Object> me =
-                            (Map.Entry<String, Object>) ((Map) o).entrySet().iterator().next();
+                    Map.Entry<String, Object> me = (Map.Entry<String, Object>) ((Map) o).entrySet().iterator().next();
                     k = me.getKey();
                     v = me.getValue();
                 } else {
-                    v = (String) o;
+                    v = o;
                 }
             } else if (subfieldmap.containsKey("")) {
                 k = (String) subfieldmap.get("");

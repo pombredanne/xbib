@@ -61,7 +61,7 @@ public class PhysicalDescriptionCode extends MARCElement {
             for (String pos : codes.keySet()) {
                 int i = Integer.parseInt(pos);
                 Map<String,Object> m =  (Map<String,Object>)codes.get(data.substring(i,i+1));
-                logger.info("phys: i={} data={} m={}", i, data.substring(i,i+1), m, field);
+                logger.debug("phys: i={} data={} m={}", i, data.substring(i,i+1), m, field);
                 if (m == null) {
                     continue;
                 }
@@ -69,11 +69,11 @@ public class PhysicalDescriptionCode extends MARCElement {
                 if (pred == null) {
                     continue;
                 }
-                logger.info("got pred {}", pred);
+                logger.debug("got pred {}", pred);
                 for (String pos2 : m.keySet()) {
                     int j = Integer.parseInt(pos2);
                     String code = (String)m.get(data.substring(j,j+1));
-                    logger.info("got code {} for {}", code, data.substring(j,j+1));
+                    logger.debug("got code {} for {}", code, data.substring(j,j+1));
                     if (code == null) {
                         continue;
                     }

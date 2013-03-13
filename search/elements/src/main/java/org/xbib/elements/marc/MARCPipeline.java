@@ -31,7 +31,6 @@
  */
 package org.xbib.elements.marc;
 
-import org.xbib.analyzer.elements.marc.support.SubfieldValueMapper;
 import org.xbib.elements.ElementBuilderFactory;
 import org.xbib.elements.ElementMap;
 import org.xbib.elements.KeyValuePipeline;
@@ -44,14 +43,12 @@ import org.xbib.rdf.Resource;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 
 public class MARCPipeline
         extends KeyValuePipeline<FieldCollection, String, MARCElement, MARCContext> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(MARCPipeline.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(MARCPipeline.class.getName());
 
     public MARCPipeline(int i,
                         BlockingQueue<List<KeyValue>> queue,

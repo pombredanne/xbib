@@ -98,7 +98,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         return pipelines;
     }
 
-    public ElementMapper start(ElementBuilderFactory<K, V, E, C> factory) {
+    public ElementMapper start(ElementBuilderFactory factory) {
         logger.info("starting {}", this);
         if (numPipelines == 0) {
             numPipelines = 1;

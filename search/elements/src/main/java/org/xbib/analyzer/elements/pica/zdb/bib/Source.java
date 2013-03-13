@@ -31,9 +31,7 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.marc.FieldCollection;
 
 public class Source extends PicaElement {
     private final static Source instance = new Source();
@@ -41,12 +39,6 @@ public class Source extends PicaElement {
     public static Source getInstance() {
         return instance;
     }
-
-    public Source build(PicaBuilder builder, FieldCollection key, String value) {
-        builder.context().resource().add("adr:", value);
-        return this;
-    }
-
 }
 
 

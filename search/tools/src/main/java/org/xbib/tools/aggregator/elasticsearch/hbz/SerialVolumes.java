@@ -1,4 +1,35 @@
-package org.xbib.tools.aggregator.elasticsearch;
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
+package org.xbib.tools.aggregator.elasticsearch.hbz;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -8,7 +39,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.tools.opt.OptionParser;
@@ -17,24 +47,21 @@ import org.xbib.tools.opt.OptionSet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.constantScoreQuery;
 import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
 import static org.elasticsearch.index.query.FilterBuilders.existsFilter;
 
-public class HBZSerialVolumes {
+public class SerialVolumes {
 
-    private final static Logger logger = LoggerFactory.getLogger(HBZSerialVolumes.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(SerialVolumes.class.getName());
     private static OptionSet options;
     private final static String lf = System.getProperty("line.separator");
     private TransportClientSearchSupport support;
     private String index;
     private String type;
 
-
-    public HBZSerialVolumes(TransportClientSearchSupport support, String index, String type) {
+    public SerialVolumes(TransportClientSearchSupport support, String index, String type) {
         this.support = support;
         this.index = index;
         this.type = type;
@@ -62,14 +89,14 @@ public class HBZSerialVolumes {
             searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
                     .setScroll(timeout)
                     .execute().actionGet();
-            for (SearchHit hit : searchResponse.hits()) {
+            for (SearchHit hit : searchResponse.getHits()) {
                 logger.info("id = {}", hit.id());
                 Object o = hit.getSource().get("dc:identifier.xbib:identifierAuthorityZDB");
                 if (o != null) {
                     logger.info("ZDB ID = {}", o.toString());
                 }
             }
-        } while (searchResponse.hits().hits().length > 0);
+        } while (searchResponse.getHits().getHits().length > 0);
     }
 
     public static void main(String[] args) {
@@ -96,7 +123,7 @@ public class HBZSerialVolumes {
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + HBZSerialVolumes.class.getCanonicalName() + lf
+                System.err.println("Help for " + SerialVolumes.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
@@ -129,7 +156,7 @@ public class HBZSerialVolumes {
             TransportClientSearchSupport es = new TransportClientSearchSupport()
                     .newClient(esURI);
 
-            new HBZSerialVolumes(es, index, type);
+            new SerialVolumes(es, index, type);
 
 
         } catch (Exception e) {

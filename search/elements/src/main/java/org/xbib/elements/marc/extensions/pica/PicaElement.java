@@ -42,6 +42,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
+import org.xbib.rdf.Property;
 
 import java.util.Map;
 
@@ -76,31 +77,35 @@ public abstract class PicaElement
     @Override
     public PicaElement build(PicaBuilder builder, FieldCollection key, String value) {
         return this;
-    }    
-    
-    /**
-     * Process mapped element. Empty by default.
-     * @param builder
-     * @param fields
-     * @param value
-     */
-    public PicaElement fields(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, FieldCollection fields, String value) {
-        return this;
-    }
-
-    /**
-     * Process mapped element with subfield mappings. Empty by default.
-     * @param builder
-     * @param field
-     * @param subfieldType 
-     */
-    public PicaElement field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
-        return this;
     }
 
     @Override
     public PicaElement end() {
         return this;
     }
-    
+
+    /**
+     * Process mapped element. Empty by default.
+     *
+     * @param builder
+     * @param fields
+     * @param value
+     */
+    public void fields(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder,
+                       FieldCollection fields, String value) {
+        // should be overridden
+    }
+
+    /**
+     * Process mapped element, with subfield mappings. Empty by default.
+     *
+     * @param builder
+     * @param field
+     * @param subfieldType
+     */
+    public void field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder,
+                      Field field, String subfieldType) {
+        // should be overridden
+    }
+
 }

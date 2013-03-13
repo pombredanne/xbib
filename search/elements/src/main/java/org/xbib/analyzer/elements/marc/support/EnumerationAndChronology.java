@@ -57,55 +57,77 @@ import java.util.regex.Pattern;
 public class EnumerationAndChronology {
 
     private static final Logger logger = LoggerFactory.getLogger(EnumerationAndChronology.class.getName());
-    private final static Pattern[] p1a = new Pattern[]{
+
+    private final static Pattern[] p1a = new Pattern[] {
             // 1921=1339
-            Pattern.compile("(\\d{4}/?\\d{0,4})\\s*="),
-            // 1961
+            // 1921/22=1339
+            Pattern.compile("(\\d{4})(/?\\d{2})\\s*="),
+            // 1965/70(1971/72)
+            Pattern.compile("(\\d{4})(/?\\d{2})\\((\\d{4})(/?\\d{2})\\)"),
             // 1965/66
             // 1968/70
             // 1961/62(1963)
-            // 1965/70(1971/72)
             // 1961/62(1962)
+            // WS 1948/49
+            Pattern.compile("(\\d{4})(/?\\d{2})"),
+            // 1961
             // 1992,14140(12. März)
             // SS 1922
-            // WS 1948/49
-            Pattern.compile("(\\d{4}/?\\d{0,4})"),};
+            Pattern.compile("(\\d{4})")
+    };
     private final static Pattern[] p1b = new Pattern[]{
-            // 1.1970
             // 1.1970/71
             // 2.1938/40(1942)
             // 9.1996/97(1997)
+            Pattern.compile("(\\d+)\\.(\\d{4})(/\\d{0,4})"),
+            // 1.1970
             // 2.1970,3
             // 4.1961,Aug.
             // 3.1971,Jan./Febr.
             // 1.1970; 3.1972; 7.1973
-            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4})"),};
-    private final static Pattern[] p1c = new Pattern[]{
+            Pattern.compile("(\\d+)\\.(\\d{4})"),
+            // 1.[19]93,1
+            Pattern.compile("(\\d+)\\.(\\[?\\d{2}\\]?\\d{2}/?\\d{0,4})")
+    };
+    private final static Pattern[] p1c = new Pattern[] {
+            // An V= [1796/97]
             // 1.5678=[1917/18]
-            Pattern.compile("=\\s*\\[(\\d{4}/?\\d{0,4})\\]"),
+            Pattern.compile("=\\s*\\[(\\d{4})(/?\\d{0,4})\\]"),
             // 1.1981=1401
-            Pattern.compile("\\.(\\d{4}/?\\d{0,4})\\s*="),};
-    private final static Pattern[] p2a = new Pattern[]{
+            Pattern.compile("\\.(\\d{4}/?\\d{0,4})\\s*=")
+    };
+    private final static Pattern[] p2a = new Pattern[] {
             // 1971 -
-            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
-    private final static Pattern[] p2b = new Pattern[]{
+            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*$"),
+            // 1963,21(22.Mai) -
+            Pattern.compile("(\\d{4}).*\\-\\s*$"),
+            // [19]51,1 - [19]52,5
+            Pattern.compile("(\\[\\d{2}\\]\\d{2}).*\\-\\s*$")
+    };
+    private final static Pattern[] p2b = new Pattern[] {
             // 1.1971 -
             // 2.1947,15.Mai -
-            // 1963,21(22.Mai) -
-            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*$"),};
-    private final static Pattern[] p3a = new Pattern[]{
-            // 1963 - 1972
-            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d{4}/?\\d{0,4})")
+            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*$")
     };
-    private final static Pattern[] p3b = new Pattern[]{
+    private final static Pattern[] p3a = new Pattern[] {
+            // 1963 - 1972
+            Pattern.compile("(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d{4}/?\\d{0,4})"),
+            // [19]51,1 - [19]52,5
+            Pattern.compile("(\\[\\d{2}\\]\\d{2}/?\\d{0,4}).*\\-\\s*(\\[\\d{2}\\]\\d{2}/?\\d{0,4})")
+    };
+    private final static Pattern[] p3b = new Pattern[] {
             // 6.1961/64 - 31.1970
             // 1.1963 - 12.1972
             // 115.1921/22(1923) - 1125.1937
             // 3.1858,6 - 24.1881,3
             // 1.1960 - 5.1963; 11.1964; 23.1971 -
-            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d+)\\.(\\d{4}/?\\d{0,4})")
+            Pattern.compile("(\\d+)\\.(\\d{4}/?\\d{0,4}).*\\-\\s*(\\d+)\\.(\\d{4}/?\\d{0,4})"),
+            // [19]81/82 - [19]83
+            Pattern.compile("(\\d+)\\.(\\[\\d{2}\\]\\d{2})(/\\d{0,4}).*\\-\\s*(\\d+)\\.(\\[\\d{2}\\]\\d{2})(/\\d{0,4})"),
+            // 1.[19]51,1 - 1.[19]52,5
+            Pattern.compile("(\\d+)\\.(\\[\\d{2}\\]\\d{2}).*\\-\\s*(\\d+)\\.(\\[\\d{2}\\]\\d{2})")
     };
-    private final static Pattern[] p4a = new Pattern[]{
+    private final static Pattern[] p4a = new Pattern[] {
             // 2.1938/40(1942)
             // 9.1996/97(1997)
             // 115.1921/22(1923) - 1125.1937
@@ -113,7 +135,6 @@ public class EnumerationAndChronology {
             // 1965/70(1971/72)
             Pattern.compile("\\((\\d{4}/?\\d{0,4})\\)")
     };
-
 
     private EnumerationAndChronology() {
     }
@@ -158,9 +179,19 @@ public class EnumerationAndChronology {
                 Matcher m = p.matcher(value);
                 found = m.find();
                 if (found) {
-                    resource.newResource("group")
-                            .add("begindate", sanitizeDate(m.group(1)))
-                            .add("enddate", sanitizeDate(m.group(2)));
+                    if (m.groupCount() == 4) {
+                        List<Integer> l1 = fractionDate(m.group(1) + m.group(2));
+                        List<Integer> l2 = fractionDate(m.group(3) + m.group(4));
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l1.get(0)))
+                                .add("enddate", Integer.toString(l2.get(l2.size()-1)));
+                    } else {
+                        List<Integer> l1 = fractionDate(m.group(1));
+                        List<Integer> l2 = fractionDate(m.group(2));
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l1.get(0)))
+                                .add("enddate", Integer.toString(l2.get(l2.size()-1)));
+                    }
                     break;
                 }
             }
@@ -201,8 +232,18 @@ public class EnumerationAndChronology {
                 Matcher m = p.matcher(value);
                 found = m.find();
                 if (found) {
-                    resource.newResource("group")
+                    if (m.groupCount() > 1) {
+                        List<Integer> l = fractionDate(m.group(1) + m.group(2));
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l.get(0)) );
+                        if (l.size() > 1) {
+                            resource.newResource("group")
+                                .add("begindate", Integer.toString(l.get(1)) );
+                        }
+                    } else {
+                        resource.newResource("group")
                             .add("begindate", sanitizeDate(m.group(1)));
+                    }
                     break;
                 }
             }
@@ -214,9 +255,21 @@ public class EnumerationAndChronology {
                 Matcher m = p.matcher(value);
                 found = m.find();
                 if (found) {
-                    resource.newResource("group")
+                    if (m.groupCount() == 3) {
+                        List<Integer> l = fractionDate(m.group(2) + m.group(3));
+                        resource.newResource("group")
+                                .add("beginvolume", m.group(1))
+                                .add("begindate", Integer.toString(l.get(0)) );
+                        if (l.size() > 1) {
+                            resource.newResource("group")
+                                .add("beginvolume", m.group(1))
+                                .add("begindate", Integer.toString(l.get(1)) );
+                        }
+                    } else {
+                        resource.newResource("group")
                             .add("beginvolume", m.group(1))
                             .add("begindate", sanitizeDate(m.group(2)));
+                    }
                     break;
                 }
             }
@@ -228,8 +281,33 @@ public class EnumerationAndChronology {
                 Matcher m = p.matcher(value);
                 found = m.find();
                 if (found) {
-                    resource.newResource("group")
+                    if (m.groupCount() == 4) {
+                        List<Integer> l1 = fractionDate(m.group(1) + m.group(2));
+                        List<Integer> l2 = fractionDate(m.group(3) + m.group(4));
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l1.get(0)) );
+                        if (l1.size() > 1) {
+                            resource.newResource("group")
+                                .add("begindate", Integer.toString(l1.get(1)) );
+                        }
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l2.get(0)) );
+                        if (l2.size() > 1) {
+                            resource.newResource("group")
+                                .add("begindate", Integer.toString(l2.get(1)) );
+                        }
+                    } else if (m.groupCount() == 2) {
+                        List<Integer> l = fractionDate(m.group(1) + m.group(2));
+                        resource.newResource("group")
+                                .add("begindate", Integer.toString(l.get(0)) );
+                        if (l.size() > 1) {
+                            resource.newResource("group")
+                                .add("begindate", Integer.toString(l.get(1)) );
+                        }
+                    } else {
+                        resource.newResource("group")
                             .add("begindate", sanitizeDate(m.group(1)));
+                    }
                     break;
                 }
             }
@@ -259,23 +337,24 @@ public class EnumerationAndChronology {
             if (pos > 4) {
                 return null; // invalid date
             }
-            int base = Integer.parseInt(date.substring(0, pos));
-            if (base <= 0 || base > DateUtil.getYear()) {
-                return null; //invalid date
-            }
+            String s = date.substring(0, pos).replaceAll("[^\\d]","");
+            int base = Integer.parseInt(s);
+            String res =  base > 0 && base <= DateUtil.getYear() ? s : null;
+            return res;
         } else {
-            if (date.length() != 4) {
-                return null; // invalid date
-            }
+            // remove non-numeric characters
+            String s = date.replaceAll("[^\\d]","");
+            String res = s.length() == 4 ? s : null;
+            return res;
         }
-        return date;
     }
 
     public static List<Integer> fractionDate(String date) {
         List<Integer> dates = new ArrayList();
         int pos = date.indexOf("/");
         if (pos > 0) {
-            int base = Integer.parseInt(date.substring(0, pos));
+            String s = date.substring(0, pos).replaceAll("[^\\d]","");
+            int base = Integer.parseInt(s);
             dates.add(base);
             int frac = 0;
             try {
@@ -287,11 +366,12 @@ public class EnumerationAndChronology {
                 dates.add(frac);
             } else if (frac > 0 && frac < 100) {
                 // two digits frac, create full year
-                frac += Integer.parseInt(date.substring(0, 2)) * 100;
+                frac += Integer.parseInt(s.substring(0, 2)) * 100;
                 dates.add(frac);
             }
         } else {
-            int base = Integer.parseInt(date);
+            String s = date.replaceAll("[^\\d]","");
+            int base = Integer.parseInt(s);
             dates.add(base);
         }
         return dates;
@@ -333,7 +413,7 @@ public class EnumerationAndChronology {
                         logger.warn("too many years: {}-{} (from {},{})",
                                 start, end, begindate, enddate);
                     } else {
-                        for (int i = start; i < end; i++) {
+                        for (int i = start; i <= end; i++) {
                             dates.add(i);
                         }
                     }

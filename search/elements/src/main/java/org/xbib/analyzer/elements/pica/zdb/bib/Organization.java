@@ -32,10 +32,6 @@
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-
-import java.util.Map;
 
 public class Organization extends PicaElement {
 
@@ -45,16 +41,4 @@ public class Organization extends PicaElement {
         return instance;
     }
 
-    @Override
-    public Organization field(ElementBuilder builder, Field field, String subfieldType) {
-        if (subfieldType != null) {
-            builder.context().resource().add(LA_NS_URI + subfieldType, field.data());
-            Map<String,String> map = (Map<String,String>) getSettings().get(subfieldType);
-            if (map != null) {
-                builder.context().resource().add(LA_NS_URI + subfieldType + "Value", 
-                         map.get(field.data()));
-            }
-        }
-        return this;
-    }
 }

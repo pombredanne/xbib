@@ -32,8 +32,6 @@
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
 
 public class Location extends PicaElement {
 
@@ -43,11 +41,4 @@ public class Location extends PicaElement {
         return instance;
     }
 
-    @Override
-    public Location field(ElementBuilder builder, Field field, String subfieldType) {
-        if (subfieldType != null) {
-            builder.context().resource().add(LA_NS_URI + subfieldType, field.data());
-        }
-        return this;
-    }
 }

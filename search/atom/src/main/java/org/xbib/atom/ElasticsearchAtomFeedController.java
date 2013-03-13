@@ -57,7 +57,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
     
     private final static Logger logger = LoggerFactory.getLogger(ElasticsearchAtomFeedController.class.getName());
     protected AbderaFeedBuilder builder;
-    private CQLSearchSupport elasticsearch = new CQLSearchSupport().newClient();
+    private CQLSearchSupport support = new CQLSearchSupport();
 
     public ElasticsearchAtomFeedController() {
     }
@@ -117,8 +117,11 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
 
     public Feed createFeed(AtomFeedProperties config,
             String query) throws IOException {
-        if (!elasticsearch.isConnected()) {
-            throw new IOException("elasticsearch client not connected");
+        if (!support.isConnected()) {
+            support.newClient();
+            if (!support.isConnected()) {
+                throw new IOException("elasticsearch client not connected");
+            }
         }
         // load properties from feed config
         String feedConfigLocation = config.getFeedConfigLocation();
@@ -149,7 +152,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             this.builder = new AbderaFeedBuilder(config, query);
             String mediaType = "application/xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
-            elasticsearch.newSearchRequest()
+            support.newSearchRequest()
                     .index(index)
                     .type(type)
                     .from(config.getFrom())

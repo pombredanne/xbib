@@ -31,26 +31,13 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaContext;
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
 public class Identifier extends PicaElement implements LibraryAddressProperties {
     private final static Identifier instance = new Identifier();
     
     public static Identifier getInstance() {
         return instance;
-    }
-
-    @Override
-    public Identifier field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
-        builder.context().resource().add(LA_NS_URI + subfieldType, field.data());
-        if (logger.isDebugEnabled()) {
-            logger.debug("got identifier = {}", builder.context().resource());
-        }
-        return this;
     }
 
 }

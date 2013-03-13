@@ -45,8 +45,6 @@ public class IdentifiableNode implements Identifier {
 
     private final static String PLACEHOLDER = "_:";
 
-    private final static String GENID = "genid";
-
     private IRI id;
 
     public IdentifiableNode() {
@@ -59,7 +57,7 @@ public class IdentifiableNode implements Identifier {
     
     @Override
     public IdentifiableNode id(String id) {
-        id(new IRI().curi(BLANK_PREFIX, id).build());
+        id(new IRI().curi(Identifier.GENID, id).build());
         return this;
     }
     
@@ -80,7 +78,8 @@ public class IdentifiableNode implements Identifier {
             // blank
             blank();
         }
-        return BLANK_PREFIX.equals(id.getScheme()) ? PLACEHOLDER + id.getSchemeSpecificPart() : id.toString();
+        return Identifier.GENID.equals(id.getScheme()) ?
+                PLACEHOLDER + id.getSchemeSpecificPart() : id.toString();
     }
 
     @Override

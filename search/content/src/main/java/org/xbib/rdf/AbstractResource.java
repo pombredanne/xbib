@@ -72,9 +72,9 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     @Override
     public AbstractResource<S, P, O> id(IRI identifier) {
         super.id(identifier);
-        if (subject == null) {
-            this.subject = (S) new IdentifiableNode().id(super.id());
-        }
+        //if (subject == null) {
+            this.subject = (S) new IdentifiableNode().id(identifier);
+        //}
         return this;
     }
 

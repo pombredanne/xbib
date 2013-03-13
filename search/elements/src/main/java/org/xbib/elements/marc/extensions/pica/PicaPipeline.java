@@ -31,17 +31,24 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
+import org.xbib.elements.marc.SubfieldValueMapper;
 import org.xbib.elements.ElementBuilderFactory;
+import org.xbib.elements.ElementMap;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.keyvalue.KeyValue;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
+import org.xbib.rdf.Resource;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class PicaPipeline extends KeyValuePipeline<FieldCollection, String, PicaElement, PicaContext> {
+
+    private final Logger logger = LoggerFactory.getLogger(PicaPipeline.class.getName());
 
     public PicaPipeline(int i,
                         BlockingQueue<List<KeyValue>> queue,
@@ -51,25 +58,72 @@ public class PicaPipeline extends KeyValuePipeline<FieldCollection, String, Pica
     }
 
     @Override
-    protected void build(FieldCollection key, String value) {
-        if (key == null) {
+    protected void build(FieldCollection fields, String value) {
+        if (fields == null) {
             return;
         }
-        PicaElement e = (PicaElement) map().get(key.getDesignators());
-            if (e != null) {
-                // field builder - check for subfield type and pass configured values
-                Map<String, String> subfields = (Map<String, String>) e.getSettings().get("subfields");
-                if (subfields == null) {
-                    e.fields(builder(), key, value);
-                } else {
-                    for (Field field : key) {
-                        String subfield = field.subfieldId();
-                        e.field(builder(), field, subfields.get(subfield));
+        String key = fields.toString();
+        PicaElement element = (PicaElement) ElementMap.getElement(key, map());
+        if (element != null) {
+            // element-based processing
+            element.fields(builder(), fields, value);
+            // optional indicator configuration
+            Map<String, Object> indicators = (Map<String, Object>) element.getSettings().get("indicators");
+            if (indicators != null) {
+                // TODO
+            }
+            // optional subfield configuration
+            Map<String, Object> subfields = (Map<String, Object>) element.getSettings().get("subfields");
+            if (subfields != null) {
+                // create new anoymous resource
+                Resource resource = builder().context().resource();
+                Resource newResource = builder().context().newResource();
+                // default predicate is the name of the element class
+                String predicate = element.getClass().getSimpleName();
+
+                // the _predicate field allows to select a field to name the resource by a coded value
+                if (element.getSettings().containsKey("_predicate")) {
+                    predicate = (String)element.getSettings().get("_predicate");
+                }
+                // put all found fields with configured subfield names to this resource
+                for (Field field : fields) {
+                    // is there a subield value decoder?
+                    Map.Entry<String, Object> me = SubfieldValueMapper.map(subfields, field);
+                    if (me.getKey() != null) {
+                        String v = me.getValue().toString();
+                        if (element.getSettings().containsKey(me.getKey())) {
+                            Map<String,Object> vm = (Map<String,Object>)element.getSettings().get(me.getKey());
+                            v = vm.containsKey(v) ? vm.get(v).toString() : v;
+                        }
+                        // is this the "resource type" field or a simple value?
+                        if (me.getKey().equals(predicate)) {
+                            predicate = v;
+                        } else {
+                            newResource.add(me.getKey(), v);
+                        }
+                    } else {
+                        // no decoder, simple add field data
+                        String property = (String)subfields.get(field.subfieldId());
+                        if (property == null) {
+                            property = field.subfieldId(); // unmapped subfield ID
+                        }
+                        newResource.add(property, field.data());
                     }
+                    element.field(builder(), field, value);
+                }
+                // add child resource
+                resource.add(predicate, newResource);
+                builder().context().newResource(resource); // switch back to old resource
+            }
+        } else {
+            if (detectUnknownKeys) {
+                unknownKeys.add(key);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("unknown key detected: {} {}", fields, value);
                 }
             }
-            // call the builder with a global key/value pair, even when e is null
-            builder().build(e, key, value);
+        }
+        builder().build(element, fields, value);
     }
 
 }

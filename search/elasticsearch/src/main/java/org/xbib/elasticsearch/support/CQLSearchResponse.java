@@ -87,7 +87,7 @@ public class CQLSearchResponse {
     }
 
     public long tookInMillis() {
-        return searchResponse.tookInMillis();
+        return searchResponse.getTookInMillis();
     }
 
     public long totalHits() {
@@ -95,7 +95,7 @@ public class CQLSearchResponse {
     }
 
     public boolean exists() {
-        return getResponse.exists();
+        return getResponse.isExists();
     }
 
     public CQLSearchResponse toJson(OutputStream out) throws IOException {
@@ -135,12 +135,12 @@ public class CQLSearchResponse {
             }
             return this;
         }
-        final boolean error = searchResponse.failedShards() > 0 || searchResponse.isTimedOut();
+        final boolean error = searchResponse.getFailedShards() > 0 || searchResponse.isTimedOut();
 
         // error handling
         if (error) {
             StringBuilder sb = new StringBuilder();
-            if (searchResponse.failedShards() > 0) {
+            if (searchResponse.getFailedShards() > 0) {
                 for (ShardSearchFailure shf : searchResponse.getShardFailures()) {
                     sb.append(Integer.toString(shf.shardId())).append("=").append(shf.reason()).append(" ");
                 }
@@ -203,7 +203,7 @@ public class CQLSearchResponse {
 
     public CQLSearchResponse singleDispatchTo(Formatter processor)
             throws TransformerException, XMLStreamException, IOException {
-        if (!getResponse.exists() || getResponse.isSourceEmpty()) {
+        if (!getResponse.isExists() || getResponse.isSourceEmpty()) {
             if (processor != null) {
                 processor.format(OutputStatus.EMPTY, format, jsonEmptyMessage("not found"));
             }
@@ -214,7 +214,7 @@ public class CQLSearchResponse {
             QName root = new QName(ES.NS_URI, "source", ES.NS_PREFIX); // TODO configure this element
             JsonXmlReader reader = new JsonXmlReader(root);
             String[] styles = stylesheets.split(",");
-            SAXSource source = new SAXSource(reader, new InputSource(new ByteArrayInputStream(getResponse.source())));
+            SAXSource source = new SAXSource(reader, new InputSource(new ByteArrayInputStream(getResponse.getSourceAsBytes())));
             if (styles.length == 1) {
                 transformer.setSource(source).setXsl(styles[0]).setTarget(target).apply();
             } else if (styles.length == 2) {
@@ -228,17 +228,17 @@ public class CQLSearchResponse {
             QName root = new QName(ES.NS_URI, "source", ES.NS_PREFIX); // TODO configure this element
             JsonXmlStreamer jsonXml = new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
             if (consumer != null) {
-                jsonXml.toXML(new ByteArrayInputStream(getResponse.source()), consumer, root);
+                jsonXml.toXML(new ByteArrayInputStream(getResponse.getSourceAsBytes()), consumer, root);
             } else if (target != null) {
                 XMLEventWriter events = jsonXml.openWriter(target, "UTF-8");
-                jsonXml.toXML(new ByteArrayInputStream(getResponse.source()), events, root);
+                jsonXml.toXML(new ByteArrayInputStream(getResponse.getSourceAsBytes()), events, root);
                 events.flush();
             }
             return this;
         }
         // json and other formats
         if (processor != null) {
-            processor.format(OutputStatus.OK, format, getResponse.source());
+            processor.format(OutputStatus.OK, format, getResponse.getSourceAsBytes());
         }
         return this;
     }

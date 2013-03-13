@@ -31,36 +31,43 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
+import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
-public class DNBPICAElementsTest {
+public class DNBPICAElementsTest extends Assert {
 
     private static final Logger logger = LoggerFactory.getLogger(DNBPICAElementsTest.class.getName());
 
     @Test
-    public void testSetupOfElements() throws Exception {
-        PicaBuilder builder = new PicaBuilder();
-        PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib").start(builder);
+    public void testPicaSetup() throws Exception {
+        PicaBuilderFactory factory = new PicaBuilderFactory();
+        PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib").start(factory);
         mapper.close();
     }
-    
+
     @Test
-    public void testBibElements() throws Exception {
-        logger.info("testBibElements");
-        PicaBuilder builder = new PicaBuilder();
+    public void testZdbBib() throws Exception {
+
         final AtomicLong counter = new AtomicLong();
         final ElementOutput output = new ElementOutput<ResourceContext>() {
 
@@ -68,13 +75,24 @@ public class DNBPICAElementsTest {
             public boolean enabled() {
                 return true;
             }
+
             @Override
             public void enabled(boolean enabled) {
-
             }
+
             @Override
             public void output(ResourceContext context) throws IOException {
                 if (context != null) {
+                    Resource r = context.resource();
+                    // index/type adressing via resource ID
+                    r.id(new IRI().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
+                    // dump all RDF triples
+                    StringBuilder sb = new StringBuilder();
+                    Iterator<Triple> it = r.iterator();
+                    while (it.hasNext()) {
+                        sb.append(it.next().toString()).append("\n");
+                    }
+                    logger.info("out={}", sb.toString());
                     counter.incrementAndGet();
                 }
             }
@@ -84,16 +102,66 @@ public class DNBPICAElementsTest {
                 return counter.get();
             }
         };
-        builder.addOutput(output);
-        PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib").start(builder);
-        MarcXchange2KeyValue keyvalues = new MarcXchange2KeyValue().addListener(mapper);
+
+        PicaBuilderFactory factory = new PicaBuilderFactory() {
+            public PicaBuilder newBuilder() {
+                return new PicaBuilder().addOutput(output);
+            }
+        };
+
+        PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib")
+                .detectUnknownKeys(true)
+                .start(factory);
+
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
+                .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
+                    @Override
+                    public String transform(String value) {
+                        return Normalizer.normalize(
+                                value,
+                                Normalizer.Form.NFKC);
+                    }
+                })
+                .addListener(mapper)
+                .addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
+                    @Override
+                    public void begin() {
+                        logger.debug("begin object");
+                    }
+
+                    @Override
+                    public void keyValue(FieldCollection key, String value) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("begin");
+                            for (Field f : key) {
+                                logger.debug("tag={} ind={} subf={} data={}",
+                                        f.tag(), f.indicator(), f.subfieldId(), f.data());
+                            }
+                            logger.debug("end");
+                        }
+                    }
+
+                    @Override
+                    public void end() {
+                        logger.debug("end object");
+                    }
+
+                    @Override
+                    public void end(Object info) {
+                        logger.debug("end object (info={})", info);
+                    }
+                });
+
         InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-        InputSource source = new InputSource(br);
-        DNBPICAXmlReader reader = new DNBPICAXmlReader(source).setListener(keyvalues);
-        reader.parse();
+        InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
+        new DNBPICAXmlReader(source).setListener(kv).parse();
+        in.close();
         mapper.close();
-        logger.info("counter = {}", counter.get());
+
+        logger.info("counter={}, detected unknown elements = {}",
+                counter.get(),
+                mapper.unknownKeys());
+        assertEquals(counter.get(), 50);
+
     }
-    
 }

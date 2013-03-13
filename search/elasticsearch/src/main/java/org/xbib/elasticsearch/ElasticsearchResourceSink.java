@@ -69,20 +69,20 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         return resourceCounter.longValue();
     }
 
-    final ResourceIndexer<C, R> resourceIndexer = new ResourceIndexer<C, R>() {
+    final ResourceIndexer<R> resourceIndexer = new ResourceIndexer<R>() {
         @Override
-        public void index(C context, R resource, String source) throws IOException {
-            String index = makeIndex(context, resource);
-            String type = makeType(context, resource);
-            String id = makeId(context, resource);
+        public void index(R resource, String source) throws IOException {
+            String index = makeIndex(resource);
+            String type = makeType(resource);
+            String id = makeId(resource);
             ingester.indexDocument(index, type, id, source);
         }
 
         @Override
-        public void delete(C context, R resource) throws IOException {
-            String index = makeIndex(context, resource);
-            String type = makeType(context, resource);
-            String id = makeId(context, resource);
+        public void delete(R resource) throws IOException {
+            String index = makeIndex(resource);
+            String type = makeType(resource);
+            String id = makeId(resource);
             ingester.deleteDocument(index, type, id);
         }
     };
@@ -91,20 +91,28 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     public void output(C context) throws IOException {
         Builder<C, R> builder = new Builder();
         Map<IRI,R> map = context.asMap();
-        for (R resource : map.values()) {
-            if (resource.id() == null) {
-                continue;
+        if (map.isEmpty()) {
+            output(context, builder, (R)context.resource());
+        } else {
+            for (R resource : map.values()) {
+                output(context, builder, resource);
             }
-            if (resource.isEmpty()) {
-                continue;
-            }
-            if (resource.isDeleted()) {
-                resourceIndexer.delete(context, resource);
-            } else {
-                resourceIndexer.index(context, resource, builder.build(context, resource));
-            }
-            resourceCounter.incrementAndGet();
         }
+    }
+
+    private void output(C context, Builder<C, R> builder, R resource) throws IOException{
+        if (resource.id() == null) {
+            return;
+        }
+        if (resource.isEmpty()) {
+            return;
+        }
+        if (resource.isDeleted()) {
+            resourceIndexer.delete(resource);
+        } else {
+            resourceIndexer.index(resource, builder.build(context, resource));
+        }
+        resourceCounter.incrementAndGet();
     }
 
     public void flush() {
@@ -114,33 +122,30 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     /**
      * The IRI host is the Elasticsearch index
      *
-     * @param context
      * @param resource
      * @return
      */
-    protected String makeIndex(C context, R resource) {
+    protected String makeIndex(R resource) {
         return resource.id().getHost();
     }
 
     /**
      * The IRI query is the Elasticsearch index type
      *
-     * @param context
      * @param resource
      * @return
      */
-    protected String makeType(C context, R resource) {
+    protected String makeType(R resource) {
         return resource.id().getQuery();
     }
 
     /**
      * The IRI fragment is the Elasticsearch document ID
      *
-     * @param context
      * @param resource
      * @return
      */
-    protected String makeId(C context, R resource) {
+    protected String makeId(R resource) {
         String id = resource.id().getFragment();
         if (id == null) {
             id = resource.id().toString();

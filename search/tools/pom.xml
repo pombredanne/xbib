@@ -33,6 +33,7 @@
                         <descriptor>${basedir}/src/main/assemblies/elasticsearch/ce.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearch/ezb.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearch/zdb.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/bibdatzdb.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

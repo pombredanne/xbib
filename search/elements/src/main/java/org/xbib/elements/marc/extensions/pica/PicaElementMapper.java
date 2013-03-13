@@ -31,8 +31,6 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import org.xbib.elements.ElementBuilder;
-import org.xbib.elements.ElementBuilderFactory;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.marc.FieldCollection;
@@ -42,22 +40,25 @@ public class PicaElementMapper
 
     public PicaElementMapper(String format) {
         super("/org/xbib/analyzer/elements/", format);
-        pipelines(Runtime.getRuntime().availableProcessors());
     }
 
-    public PicaElementMapper start() {
-        start(new PicaBuilder());
+    public PicaElementMapper pipelines(int pipelines) {
+        super.pipelines(pipelines);
         return this;
     }
 
-    public PicaElementMapper start(final PicaBuilder builder) {
-        super.start(new ElementBuilderFactory() {
+    public PicaElementMapper start() {
+        super.start(new PicaBuilderFactory());
+        return this;
+    }
 
-            @Override
-            public ElementBuilder newBuilder() {
-                return builder;
-            }
-        });
+    public PicaElementMapper start(PicaBuilderFactory factory) {
+        super.start(factory);
+        return this;
+    }
+
+    public PicaElementMapper detectUnknownKeys(boolean enabled) {
+        super.detectUnknownKeys(enabled);
         return this;
     }
 

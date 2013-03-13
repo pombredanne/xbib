@@ -246,7 +246,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
                 // Specified prefix is not legal or the prefix is already in use,
                 // generate a legal unique prefix
                 if (prefix.length() == 0 || !isLegalPrefix) {
-                    prefix = Identifier.BLANK_PREFIX;
+                    prefix = Identifier.GENID;
                 }
                 int number = 1;
                 while (context.getNamespaceURI(prefix + number) != null) {
@@ -342,7 +342,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             return;
         }
         // skip blank nodes 
-        if (!Identifier.BLANK_PREFIX.equals(subject.id().getScheme())) {
+        if (!Identifier.GENID.equals(subject.id().getScheme())) {
             writer.write('<');
             writer.write(subject.toString());
             writer.write("> ");

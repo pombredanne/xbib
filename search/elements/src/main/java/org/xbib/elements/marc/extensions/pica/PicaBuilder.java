@@ -74,9 +74,6 @@ public class PicaBuilder
      */
     @Override
     public void build(PicaElement element, FieldCollection fields, String value) {
-        logger.debug("got field list = {}", fields);
-        for (Field f : fields) {
-            logger.debug("field = " + f + " isSubField=" + f.isSubField());
-        }
+        // by default do nothing
     }
 }

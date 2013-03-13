@@ -118,12 +118,12 @@ public class ZDBHoldingsElementsTest extends Assert {
                     .addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
                         @Override
                         public void keyValue(FieldCollection key, String value) {
-                            logger.info("begin");
+                            logger.debug("begin");
                             for (Field f : key) {
-                                logger.info("tag={} ind={} subf={} data={}",
+                                logger.debug("tag={} ind={} subf={} data={}",
                                         f.tag(), f.indicator(), f.subfieldId(), f.data());
                             }
-                            logger.info("end");
+                            logger.debug("end");
                         }
 
                     });

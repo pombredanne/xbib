@@ -35,6 +35,9 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchangeListener;
@@ -48,7 +51,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DNBPICAXmlReader
         extends DefaultHandler implements DNBPICA, MarcXchangeListener {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(DNBPICAXmlReader.class.getName());
     private static final SAXParserFactory factory = SAXParserFactory.newInstance();
     private ContentHandler contentHandler;
     private MarcXchangeListener listener;
@@ -197,11 +201,11 @@ public class DNBPICAXmlReader
                 String indicator = null;
                 for (int i = 0; i < atts.getLength(); i++) {
                     String name = atts.getLocalName(i);
+                    String value = atts.getValue(i);
                     if (ID.equals(name)) {
                         tag = atts.getValue(i).substring(0, 3);
                         indicator = atts.getValue(i).substring(3);
                     }
-                    // OCC
                 }
                 Field field = new Field().tag(tag).indicator(indicator);
                 beginDataField(field);
@@ -214,13 +218,23 @@ public class DNBPICAXmlReader
                 field.subfieldId(null); // reset sub field ID
                 field.data(null); // reset data
                 for (int i = 0; i < atts.getLength(); i++) {
-                    if (ID.equals(atts.getLocalName(i))) {
-                        field.subfieldId(atts.getValue(i));
+                    String name = atts.getLocalName(i);
+                    String value = atts.getValue(i);
+                    if (ID.equals(name)) {
+                        field.subfieldId(value);
                     }
                 }
                 beginSubField(field);
                 fields.add(field);
                 break;
+            }
+            case GLOBAL : {
+                // ignore
+                break;
+            }
+            default : {
+                logger.error("unknown element {}", localName);
+                throw new IllegalArgumentException("unknown begin element: " + uri + " " + localName + " " + qName + " atts=" + atts.toString());
             }
         }
         if (contentHandler != null) {
@@ -247,11 +261,18 @@ public class DNBPICAXmlReader
                 break;
             }
             case SUBF: {
-                String subFieldId = content.substring(0,1);
-                String data = content.substring(1);
-                Field field = fields.getLast().subfieldId(subFieldId).data(data);
+                Field field = fields.getLast().data(content.toString());
                 endSubField(field);
                 break;
+            }
+            case GLOBAL : {
+                // ignore
+                break;
+            }
+            default : {
+                logger.error("unknown element {}", localName);
+                // stop processing, this is fatal
+                throw new IllegalArgumentException("unknown end element: " + uri + " " + localName + " " + qName);
             }
         }
         content.setLength(0);

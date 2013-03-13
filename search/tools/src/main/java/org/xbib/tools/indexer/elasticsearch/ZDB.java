@@ -286,6 +286,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
             // do the import
             long t0 = System.currentTimeMillis();
+
             ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
@@ -293,6 +294,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                             return new ZDB(sink);
                         }
                     }).execute();
+
             long t1 = System.currentTimeMillis();
             long docs = outputCounter.get();
             long bytes = es.getVolumeInBytes();

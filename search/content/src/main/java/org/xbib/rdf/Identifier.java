@@ -40,7 +40,7 @@ import org.xbib.iri.IRI;
  */
 public interface Identifier extends Node, Property {
 
-    String BLANK_PREFIX = "genid";
+    String GENID = "genid";
 
     /**
      * Set the identifier

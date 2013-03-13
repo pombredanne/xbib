@@ -31,32 +31,14 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
-public class ShortName extends PicaElement {
-    private final static ShortName instance = new ShortName();
+public class LibraryServiceDescription extends PicaElement {
+    private final static LibraryServiceDescription instance = new LibraryServiceDescription();
     
-    public static ShortName getInstance() {
+    public static LibraryServiceDescription getInstance() {
         return instance;
     }
-
-    @Override
-    public ShortName build(PicaBuilder builder, FieldCollection fields, String value) {
-        boolean valid = false;
-        for (Field field : fields) {
-            if (valid) {
-                builder.context().resource().add(LA_SHORTNAME, field.data());
-                valid = false;
-            } else {
-                // ugly to have hardcoded subfield IDs here
-                valid = field.subfieldId().equals("4") && field.data().equals("c");
-            }
-        }
-        return this;
-    }     
 
 }
 

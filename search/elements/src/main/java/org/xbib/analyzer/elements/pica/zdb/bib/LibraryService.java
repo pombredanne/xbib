@@ -32,20 +32,12 @@
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
 
-public class InterLibrary extends PicaElement {
-    private final static InterLibrary instance = new InterLibrary();
+public class LibraryService extends PicaElement {
+    private final static LibraryService instance = new LibraryService();
     
-    public static InterLibrary getInstance() {
+    public static LibraryService getInstance() {
         return instance;
-    }
-
-    @Override
-    public InterLibrary field(ElementBuilder builder, Field field, String subfieldType) {
-        builder.context().resource().add(LA_NS_URI + subfieldType, field.data());
-        return this;
     }
 
 }

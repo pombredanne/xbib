@@ -31,47 +31,15 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaContext;
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
-import org.xbib.rdf.Resource;
 
-public class Communication extends PicaElement {
-
-    private final static Communication instance = new Communication();
-
-    public static Communication getInstance() {
+public class LibraryServiceOrganization extends PicaElement {
+    private final static LibraryServiceOrganization instance = new LibraryServiceOrganization();
+    
+    public static LibraryServiceOrganization getInstance() {
         return instance;
     }
 
-    @Override
-    public Communication field(ElementBuilder<FieldCollection, String, PicaElement, PicaContext> builder, Field field, String subfieldType) {
-        if (subfieldType != null) {
-            Resource resource = builder.context().address();
-            if ("code".equals(subfieldType)) {
-                String type = "addressMain";
-                switch (field.data()) {
-                    case "S":
-                        type = "addressMain";
-                        break;
-                    case "P":
-                        type = "addressPostal";
-                        break;
-                    case "R":
-                        type = "addressInvoice";
-                        break;
-                    case "W":
-                        type = "addressOther";
-                        break;
-                }
-                resource = builder.context().address(LA_NS_URI + type);
-            }
-            if (resource != null) {
-                resource.add(LA_NS_URI + subfieldType, field.data());
-            }
-        }
-        return this;
-    }
 }
+
+

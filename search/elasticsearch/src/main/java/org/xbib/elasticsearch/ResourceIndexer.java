@@ -32,14 +32,13 @@
 package org.xbib.elasticsearch;
 
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.context.ResourceContext;
 
 import java.io.IOException;
 
-public interface ResourceIndexer<C extends ResourceContext, R extends Resource> {
+public interface ResourceIndexer<R extends Resource> {
 
-    void index(C context, R resource, String source) throws IOException;
+    void index(R resource, String source) throws IOException;
 
-    void delete(C context, R resource) throws IOException;
+    void delete(R resource) throws IOException;
 
 }

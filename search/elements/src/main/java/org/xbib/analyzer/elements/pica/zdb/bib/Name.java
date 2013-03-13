@@ -32,20 +32,12 @@
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
 
 public class Name extends PicaElement {
     private final static Name instance = new Name();
     
     public static Name getInstance() {
         return instance;
-    }
-
-    @Override
-    public Name field(ElementBuilder builder, Field field, String subfieldType) {
-        builder.context().resource().add(LA_NAME, field.data());
-        return this;
     }
 
 }

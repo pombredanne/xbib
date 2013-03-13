@@ -33,8 +33,12 @@ package org.xbib.marc.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
+
 import org.testng.annotations.Test;
-import org.xbib.keyvalue.KeyValueStreamListener;
+import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
+import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
+import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
@@ -105,35 +109,4 @@ public class DNBPICAXmlReaderTest {
         reader.parse();
     }
 
-    @Test
-    public void testZDBBIB2Keyvalue() throws Exception {
-        InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
-        InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
-        DNBPICAXmlReader reader = new DNBPICAXmlReader(source);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(new KeyValueStreamListener<FieldCollection, String>() {
-            @Override
-            public void begin() {
-                logger.debug("begin object");
-            }
-
-            @Override
-            public void keyValue(FieldCollection fields, String value) {
-                logger.debug(fields.getDesignators());
-                for (Field field : fields) {
-                    logger.debug("field = {}", field);
-                }
-            }
-
-            @Override
-            public void end() {
-                logger.debug("end object");
-            }
-
-            @Override
-            public void end(Object info) {
-                logger.debug("end object (info={})", info);
-            }
-        });
-        reader.setListener(kv).parse();
-    }
 }

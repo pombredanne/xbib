@@ -49,6 +49,13 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
 
     private final static char LF = '\n';
 
+    private IRI nullPredicate;
+
+    public NTripleWriter setNullPredicate(IRI iri) {
+        this.nullPredicate = iri;
+        return this;
+    }
+
     /**
      * Write to output stream
      *
@@ -82,11 +89,23 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
     }
 
     public String writeSubject(S subject) {
-        return "<" + escape(subject.toString()) + ">" ;
+        return Identifier.GENID.equals(subject.id().getScheme()) ?
+                subject.toString() :
+                "<" + escape(subject.toString()) + ">" ;
     }
 
     public String writePredicate(P predicate) {
-        return "<" + escape(predicate.toString()) + ">";
+        if (predicate.id().getScheme() == null && nullPredicate !=null) {
+            IRI iri = new IRI()
+                    .scheme(nullPredicate.getScheme())
+                    .host(nullPredicate.getHost())
+                    .path(nullPredicate.getPath() + "/" + predicate.id().getSchemeSpecificPart())
+                    .build();
+            return "<" + escape(iri.toString()) + ">";
+        }
+        return Identifier.GENID.equals(predicate.id().getScheme()) ?
+                predicate.toString() :
+                "<" + escape(predicate.toString()) + ">";
     }
 
     public String writeObject(O object) {
