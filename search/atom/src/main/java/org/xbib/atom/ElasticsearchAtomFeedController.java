@@ -28,6 +28,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.xbib.elasticsearch.support.CQLRequest;
+import org.xbib.elasticsearch.support.CQLSearchResponse;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.OutputFormat;
 import org.xbib.io.util.URIUtil;
@@ -117,12 +118,6 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
 
     public Feed createFeed(AtomFeedProperties config,
             String query) throws IOException {
-        if (!support.isConnected()) {
-            support.newClient();
-            if (!support.isConnected()) {
-                throw new IOException("elasticsearch client not connected");
-            }
-        }
         // load properties from feed config
         String feedConfigLocation = config.getFeedConfigLocation();
         Properties properties = new Properties();
@@ -142,9 +137,14 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
         if (properties.containsKey(FEED_SERVICE_PATH_KEY)) {
             config.setServicePath(properties.getProperty(FEED_SERVICE_PATH_KEY));
         }
-        String uriStr = properties.getProperty(FEED_URI_PROPERTY_KEY, "sniff://localhost:9300");
+        String uriStr = properties.getProperty(FEED_URI_PROPERTY_KEY, "es://localhost:9300?es.cluster.name=joerg");
         URI uri = URI.create(uriStr);
-        Properties p = URIUtil.getPropertiesFromURI(uri);
+        if (!support.isConnected()) {
+            support.newClient(uri);
+            if (!support.isConnected()) {
+                throw new IOException("elasticsearch client not connected");
+            }
+        }
         String index = properties.getProperty(FEED_INDEX);
         String type =  properties.getProperty(FEED_TYPE);
         try {
@@ -152,22 +152,23 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             this.builder = new AbderaFeedBuilder(config, query);
             String mediaType = "application/xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
-            support.newSearchRequest()
+            CQLRequest request = support.newSearchRequest()
                     .index(index)
-                    .type(type)
-                    .from(config.getFrom())
+                    .type(type);
+            CQLSearchResponse response =
+                    request.from(config.getFrom())
                     .size(config.getSize())
                     .cql(query)
-                    .execute(logger)
-                    .format(OutputFormat.formatOf(mediaType))
+                    .execute(logger);
+            response.format(OutputFormat.formatOf(mediaType))
                     .xmlEventConsumer(builder)
                     .dispatchTo(null);
             long t1 = System.currentTimeMillis();
             return builder.getFeed(query, t1 - t0,
                     -1L, config.getFrom(), config.getSize());
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("atom feed query " + query + " session is unresponsive", e);
-            throw e;
+            throw new IOException(e.getMessage());
         } finally {
             logger.info("atom feed query completed: {}", query);
         }

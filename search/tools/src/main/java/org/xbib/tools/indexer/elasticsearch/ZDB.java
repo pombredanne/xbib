@@ -82,9 +82,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
     private final static AtomicLong fileCounter = new AtomicLong(0L);
     private final static AtomicLong outputCounter = new AtomicLong(0L);
     private static Queue<URI> input;
-    private ElementOutput output;
     private static OptionSet options;
-    private boolean done = false;
     private static String index;
     private static String type;
     private static String shards;
@@ -94,9 +92,12 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
     private static int buffersize;
     private static boolean mock;
     private static boolean detect;
+    private ElementOutput output;
+    private boolean done;
 
     public ZDB(ElementOutput output) {
         this.output = output;
+        this.done = false;
     }
 
     @Override

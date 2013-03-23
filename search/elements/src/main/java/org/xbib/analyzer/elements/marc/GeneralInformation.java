@@ -31,12 +31,28 @@
  */
 package org.xbib.analyzer.elements.marc;
 
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 
 public class GeneralInformation extends MARCElement {
     private final static GeneralInformation instance = new GeneralInformation();
     
     public static MARCElement getInstance() {
         return instance;
+    }
+
+    /**
+     * Example "991118d19612006xx z||p|r ||| 0||||0ger c"
+     */
+    @Override
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+        for (Field field: fields) {
+            String data = field.data();
+            String dateEntered = data.substring(0,6);
+
+        }
     }
 }

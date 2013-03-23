@@ -31,27 +31,8 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.xbib.elements.dublincore.DublinCoreContext;
-import org.xbib.rdf.Resource;
 
 public class PicaContext extends DublinCoreContext {
 
-    private final Map<String,Resource> addresses = new HashMap();
-
-    private Resource address;
-    
-    public Resource address(String resourceID) {
-        if (!addresses.containsKey(resourceID)) {
-            addresses.put(resourceID, resource().newResource(resourceID));
-        }
-        address = addresses.get(resourceID);
-        return address;
-    }
-    
-    public Resource address() {
-        return address;
-    }
-    
 }

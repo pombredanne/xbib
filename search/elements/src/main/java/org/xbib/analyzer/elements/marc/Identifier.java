@@ -33,10 +33,11 @@ package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
 
-public class TitleStatement extends MARCElement {
-    private final static TitleStatement instance = new TitleStatement();
+public class Identifier extends MARCElement {
+    private final static Identifier instance = new Identifier();
     
     public static MARCElement getInstance() {
         return instance;
     }
+
 }

@@ -69,9 +69,6 @@ public class PicaPipeline extends KeyValuePipeline<FieldCollection, String, Pica
             element.fields(builder(), fields, value);
             // optional indicator configuration
             Map<String, Object> indicators = (Map<String, Object>) element.getSettings().get("indicators");
-            if (indicators != null) {
-                // TODO
-            }
             // optional subfield configuration
             Map<String, Object> subfields = (Map<String, Object>) element.getSettings().get("subfields");
             if (subfields != null) {

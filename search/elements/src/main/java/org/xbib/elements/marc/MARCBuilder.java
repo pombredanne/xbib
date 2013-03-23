@@ -36,21 +36,19 @@ import org.xbib.elements.ResourceContextFactory;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.FieldCollection;
 
 public class MARCBuilder
     extends AbstractElementBuilder<FieldCollection, String, MARCElement, MARCContext>
     implements DublinCoreProperties {
 
-    private final Logger logger = LoggerFactory.getLogger(MARCBuilder.class.getName());
+    //private final Logger logger = LoggerFactory.getLogger(MARCBuilder.class.getName());
 
     private final ResourceContextFactory<MARCContext> contextFactory = new ResourceContextFactory<MARCContext>() {
 
         @Override
         public MARCContext newContext() {
-            return new MARCContext().id(new IRI().host("marc").build());
+            return new MARCContext();/*.id(new IRI().host("marc").build());*/
         }
     };
     

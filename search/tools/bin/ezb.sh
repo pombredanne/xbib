@@ -1,7 +1,7 @@
 #!/bin/bash
 
 java \
-    -cp lib/xbib-tools-1.0-SNAPSHOT-elasticsearch-ezb.jar \
+    -cp bin:lib/xbib-search-tools-1.0-SNAPSHOT-elasticsearch-ezb.jar \
     org.xbib.tools.indexer.elasticsearch.EZB \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --threads 4 \

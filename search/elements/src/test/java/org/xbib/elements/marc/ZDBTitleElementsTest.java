@@ -29,14 +29,10 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.analyzer.elements.marc;
+package org.xbib.elements.marc;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elements.marc.MARCBuilder;
-import org.xbib.elements.marc.MARCBuilderFactory;
-import org.xbib.elements.marc.MARCElement;
-import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.keyvalue.KeyValueStreamAdapter;
@@ -46,6 +42,8 @@ import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
@@ -56,12 +54,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ZDBTitleElementsTest extends Assert {
 
     private static final Logger logger = LoggerFactory.getLogger(ZDBTitleElementsTest.class.getName());
 
+    @Test
     public void testZDBElements() throws Exception {
         logger.info("testZDBTitleElements");
         final AtomicLong counter = new AtomicLong();
@@ -79,6 +79,14 @@ public class ZDBTitleElementsTest extends Assert {
             @Override
             public void output(ResourceContext context) throws IOException {
                 if (!context.resource().isEmpty()) {
+                    Resource r = context.resource();
+                    r.id(new IRI().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
+                    /*StringBuilder sb = new StringBuilder();
+                    Iterator<Triple> it = r.iterator();
+                    while (it.hasNext()) {
+                        sb.append(it.next().toString()).append("\n");
+                    }
+                    logger.debug("out={}", sb.toString());*/
                     counter.incrementAndGet();
                 }
             }
@@ -91,8 +99,8 @@ public class ZDBTitleElementsTest extends Assert {
 
         final Charset UTF8 = Charset.forName("UTF-8");
         final Charset ISO88591 = Charset.forName("ISO-8859-1");
-        //InputStream in = getClass().getResourceAsStream("zdbtitutf8.mrc");
-        final InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1208zdbtitutf8.mrc");
+        InputStream in = getClass().getResourceAsStream("zdbtitutf8.mrc");
+            //new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1208zdbtitutf8.mrc");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, ISO88591))) {
             InputSource source = new InputSource(br);
             MARCBuilderFactory factory = new MARCBuilderFactory() {
@@ -102,6 +110,7 @@ public class ZDBTitleElementsTest extends Assert {
                 }
             };
             MARCElementMapper mapper = new MARCElementMapper("marc")
+                    .pipelines(Runtime.getRuntime().availableProcessors() * 2)
                     .detectUnknownKeys(true)
                     .start(factory);
             MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
@@ -147,9 +156,9 @@ public class ZDBTitleElementsTest extends Assert {
                 IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
             }
-            for (Field field : fields) {
+            /*for (Field field : fields) {
                 logger.debug("element={} field={}", element, field);
-            }
+            }*/
         }
     }
 }

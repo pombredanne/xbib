@@ -39,8 +39,8 @@ import org.xbib.marc.FieldCollection;
 
 import java.util.Map;
 
-public class OtherCodes extends MARCElement {
-    private final static OtherCodes instance = new OtherCodes();
+public class Codes extends MARCElement {
+    private final static Codes instance = new Codes();
     
     public static MARCElement getInstance() {
         return instance;

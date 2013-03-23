@@ -43,24 +43,21 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.classloader.URIClassLoader;
 import org.xbib.elements.scripting.ScriptElement;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
-public class ElementMap<K> {
+public class ElementMap {
 
-    public static int DEFAULT_BUFFER_SIZE = 8192;
     private final static Logger logger = LoggerFactory.getLogger(ElementMap.class.getName());
+    public static int DEFAULT_BUFFER_SIZE = 8192;
     private final static Map<String, Map> maps = new HashMap();
 
     public ElementMap() {
     }
 
-    public synchronized static Map getElementMap(String path, String format)
-            throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
-            NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-        return getElementMap(new URIClassLoader(), path, format);
+    public Map<String,Map> map() {
+        return maps;
     }
 
     public synchronized static Map getElementMap(ClassLoader cl, String path, String format)
@@ -87,9 +84,7 @@ public class ElementMap<K> {
         init(cl, path, format, elementMap, defs);
     }
 
-    private static void init(ClassLoader cl, String path, String format,
-            Map elementMap,
-            HashMap<String, Map<String, Object>> defs)
+    private static void init(ClassLoader cl, String path, String format, Map elementMap, Map<String, Map<String, Object>> defs)
                 throws IOException, ClassNotFoundException, InstantiationException,
                 IllegalAccessException, NoSuchMethodException, IllegalArgumentException,
                 InvocationTargetException {
@@ -97,7 +92,7 @@ public class ElementMap<K> {
             Map<String, Object> struct = defs.get(key);
             Element element = null;
             Collection<String> values = (Collection<String>) struct.get("values");
-            String type = (String) struct.get("type");
+            String type = (String) struct.get("_type");
             if (type != null && type.startsWith("application/x-")) {
                 String language = type.substring("application/x-".length());
                 String script = (String) struct.get("script");
@@ -127,20 +122,30 @@ public class ElementMap<K> {
                     // recursive
                     init(cl, path + key, format, elementMap, children);
                 } else {
-                    // load class
+                    // load class in this xbib element package
                     String clazzName = getPackageFromPath(path + format) + key;
                     Class clazz = loadClass(cl, clazzName);
+                    if (clazz == null) {
+                        // custom class name
+                        clazz = loadClass(cl, key);
+                    }
                     if (clazz != null) {
                         Method factoryMethod = clazz.getDeclaredMethod("getInstance");
-                        element = (Element) factoryMethod.invoke(null);
+                        try {
+                            element = (Element) factoryMethod.invoke(null);
+                        } catch (ClassCastException e) {
+                            logger.error("not an org.xbib.elements.Element class: " + clazz.getName());
+                        }
                         // set settings
                         element.setSettings(struct);
                     }
                 }
             }
             // connect each value to an element class
-            for (String value : values) {
-                addSegment(value, element, elementMap);
+            if (values != null) {
+                for (String value : values) {
+                    addSegment(value, element, elementMap);
+                }
             }
         }
         maps.put(format, elementMap);

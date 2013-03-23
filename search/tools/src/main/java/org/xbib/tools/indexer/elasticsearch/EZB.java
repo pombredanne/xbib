@@ -34,12 +34,14 @@ package org.xbib.tools.indexer.elasticsearch;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.text.NumberFormat;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.namespace.QName;
 
 import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
+import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
@@ -62,6 +64,7 @@ import org.xbib.rdf.io.xml.XmlResourceHandler;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+import org.xbib.tools.util.FormatUtil;
 
 public final class EZB extends AbstractImporter<Long, AtomicLong> {
 
@@ -75,87 +78,6 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
     private boolean done = false;
     private static String index;
     private static String type;
-
-    public static void main(String[] args) {
-        try {
-            OptionParser parser = new OptionParser() {
-                {
-                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
-                    accepts("index").withRequiredArg().ofType(String.class).required();
-                    accepts("type").withRequiredArg().ofType(String.class).required();
-                    accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
-                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
-                    accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                }
-            };
-            options = parser.parse(args);
-            if (options.hasArgument("help")) {
-                System.err.println("Help for " + EZB.class.getCanonicalName() + lf
-                        + " --help                 print this help message" + lf
-                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
-                        + " --index <index>        Elasticsearch index name" + lf
-                        + " --type <type>          Elasticsearch type name" + lf
-                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
-                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
-                        + " --overwrite <bool>     should index be deleted befefore indexing (optional, default: false)"
-                        );
-                System.exit(1);
-            }
-            
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
-            final Integer threads = (Integer) options.valueOf("threads");
-
-            logger.info("input = {},  threads = {}", input, threads);
-
-            URI esURI = URI.create(options.valueOf("elasticsearch").toString());
-            index = options.valueOf("index").toString();
-            type = options.valueOf("type").toString();
-            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
-            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
-            boolean overwrite = (Boolean) options.valueOf("overwrite");            
-            
-            final TransportClientIngestSupport es = new TransportClientIngestSupport();
-            
-            // we always delete index first, and we disable date detection
-            es.maxBulkActions(maxbulkactions)
-                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
-                    .newClient(esURI)
-                    .setIndex(index)
-                    .setType(type)
-                    .waitForHealthyCluster()
-                    .deleteIndex(overwrite)
-                    .dateDetection(false)
-                    .newIndex();
-
-            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
-                    new ElasticsearchResourceSink(es);
-
-            long t0 = System.currentTimeMillis();
-            new ImportService().threads(threads).factory(
-                    new ImporterFactory() {
-                        @Override
-                        public Importer newImporter() {
-                            return new EZB(sink);
-                        }
-                    }).execute().shutdown();
-            long t1 = System.currentTimeMillis();
-
-            double dps = sink.getCounter() * 1000 /  (t1-t0);
-            logger.info("Complete. {} files, {} docs, {} ms ({} dps)", fileCounter, sink.getCounter(), t1-t0, dps);
-
-            es.shutdown();
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.exit(0);
-    }
 
     public EZB(ElementOutput out) {
         this.out = out;
@@ -239,8 +161,8 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                 case "reference_url":
                 case "readme_url":
                     return URIUtil.decode(content, "UTF-8");
-                case "zdbid":                
-                    return content.replaceAll("\\-", "");
+                //case "zdbid":
+                //    return content.replaceAll("\\-", "");
             }
             return super.toLiteral(name, content);
         }
@@ -260,4 +182,105 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             return this;
         }
     }
+
+    public static void main(String[] args) {
+        try {
+            OptionParser parser = new OptionParser() {
+                {
+                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
+                    accepts("index").withRequiredArg().ofType(String.class).required();
+                    accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+                    accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                }
+            };
+            options = parser.parse(args);
+            if (options.hasArgument("help")) {
+                System.err.println("Help for " + EZB.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
+                        + " --threads <n>          the number of threads (optional, default: 1)"
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
+                        + " --overwrite <bool>     should index be deleted befefore indexing (optional, default: false)"
+                );
+                System.exit(1);
+            }
+
+            input = new Finder(options.valueOf("pattern").toString())
+                    .find(options.valueOf("path").toString())
+                    .chronologicallySorted()
+                    .getURIs();
+
+            final Integer threads = (Integer) options.valueOf("threads");
+
+            logger.info("input = {},  threads = {}", input, threads);
+
+            URI esURI = URI.create(options.valueOf("elasticsearch").toString());
+            index = options.valueOf("index").toString();
+            type = options.valueOf("type").toString();
+            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
+            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
+            boolean overwrite = (Boolean) options.valueOf("overwrite");
+
+            final TransportClientIngestSupport es = new TransportClientIngestSupport();
+
+            // we always delete index first, and we disable date detection
+            es.maxBulkActions(maxbulkactions)
+                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
+                    .newClient(esURI)
+                    .setIndex(index)
+                    .setType(type)
+                    .waitForHealthyCluster()
+                    .deleteIndex(overwrite)
+                    .dateDetection(false)
+                    .newIndex();
+
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
+                    new ElasticsearchResourceSink(es);
+
+            long t0 = System.currentTimeMillis();
+            ImportService service = new ImportService().threads(threads).factory(
+                    new ImporterFactory() {
+                        @Override
+                        public Importer newImporter() {
+                            return new EZB(sink);
+                        }
+                    }).execute().shutdown();
+
+            long t1 = System.currentTimeMillis();
+            long docs = sink.getCounter();
+            long bytes = es.getVolumeInBytes();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1.0); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            service.shutdown();
+
+            es.shutdown();
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
 }

@@ -32,8 +32,6 @@
 package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.FieldCollection;
 
 public class RecordIdentifier extends MARCElement {
 
@@ -43,7 +41,4 @@ public class RecordIdentifier extends MARCElement {
         return instance;
     }
 
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-    }
 }

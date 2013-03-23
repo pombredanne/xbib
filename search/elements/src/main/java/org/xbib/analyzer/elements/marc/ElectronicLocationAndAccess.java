@@ -44,11 +44,4 @@ public class ElectronicLocationAndAccess extends MARCElement {
         return instance;
     }
 
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        for (Field field : fields) {
-            String s = field.data().trim();
-            builder.context().resource().add("url",s);
-        }
-    }
 }

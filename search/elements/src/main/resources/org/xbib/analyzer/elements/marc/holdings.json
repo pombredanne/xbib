@@ -186,21 +186,22 @@
         "852$ $2$9=b",
         "852$ $2$9=bc"
         ],
+        "_predicate" : "location",
         "subfields" : {
-            "_predicate" : "location",
-            "=" : {
-                "a" : "loan",
-                "n" : "none",
-                "k" : "copy",
-                "l" : "copyloan"
-            },
+            "=" : "custom",
             "9" : "name",
             "a" : "marcorg",
             "b" : "collection",
             "c" : "shelvinglocation",
             "m" : null, /* drop "Ausleihindikator" */
             "z" : "publicnote"     
-        }  
+        },
+        "custom" : {
+                "a" : "loan",
+                "n" : "none",
+                "k" : "copy",
+                "l" : "copyloan"
+        }
     },
     "AdditionalLocation" : {
         "values" : [
@@ -211,18 +212,19 @@
         ],
         "subfields" : {
             "_predicate" : "additionallocation",
-            "=" : {
-                "a" : "loan",
-                "n" : "none",
-                "k" : "copy",
-                "l" : "copyloan"
-            },
+            "=" : "custom",
             "9" : "name",
             "a" : "marcorg",
             "b" : "collection",
             "c" : "shelvinglocation",
             "z" : "publicnote"            
-        }  
+        },
+        "custom" : {
+                "a" : "loan",
+                "n" : "none",
+                "k" : "copy",
+                "l" : "copyloan"
+        }
     },
     "Service" : {
         "values" : [
@@ -248,83 +250,48 @@
         "092$ $ $adkloz",
         "092$ $ $adkloze"
         ],
+        "_predicate": "service",
         "subfields" : {
-            "_predicate": "service",
-            /*MAB 071 b BIK */            
-            "a" : "bik",
-            /*MAB 071 c DBS-ID  */
-            "b" : "dbs",
-            /* MAB 071 d Regionales Bibliothekskennzeichen */
-            "c" : "localid",
-            /*MAB 071 a Kennzeichen der besitzenden Institution */
-            "d" : "organization",
-            /*MAB 071 d ISIL */
-            "e" :  "isil",
-            /*MAB 072 Leihverkehrsregion */
-            "k" : "region",
-            /*MAB 072 leihverkehrsrelevante Bibliothek */
-            "l" : {
-                "a" : {
-                    "servicetype" : "ILL"
-                },
-                "b" : {
-                    "servicetype" : "NONE"
-                },
-                "c" : {
-                    "servicetype" : "UNKNOWN"
-                },
-                "m" : {
-                    "servicetype" : null
-                }, /*Ausleihindikator*/
-                "n" : {
-                    "servicetype" : null
-                }, /* Geschäftsgangstatus */
-                "o" : {
-                    "servicetype" : null
-                } /* Fernleihindikator (alt)*/
-            },
+            "a" : "bik", /* MAB 071 b BIK */
+            "b" : "dbs", /* MAB 071 c DBS-ID */
+            "c" : "localid", /* MAB 071 d Regionales Bibliothekskennzeichen */
+            "d" : "organization", /* MAB 071 a Kennzeichen der besitzenden Institution */
+            "e" : "isil", /* MAB 071 d ISIL */
+            "k" : "region", /*MAB 072 Leihverkehrsregion */
+            "l" : "servicetype", /*MAB 072 leihverkehrsrelevante Bibliothek */
             "m" : null,
             "n" : null,
-            "o" : /* Fernleihindikator */ {
-                "a" : {
-                    "servicemode" : "loan"
-                },
-                "b" : {
-                    "servicemode" : "copy"
-                },
-                "c" : {
-                    "servicemode" : "copy-loan"
-                },
-                "d" : {
-                    "servicemode" : "none"
-                },
-                "e" : {
-                    "servicemode" : "electronic"
-                }
-            },
-            "p" : {
-                "a" : {
-                    "servicetransfer" :"domestic-only"
-                },
-                "b" : {
-                    "servicetransfer" :"postal"
-                }
-            },
+            "o" : "servicemode", /* Fernleihindikator */
+            "p" : "servicetransfer",
             "q" : "servicecomment", /* Kommentar zum Fernleihindikator*/
             "u" : "ssgnumber", /* SSG Nummer */
             "w" : "ssgnotation", /* SSG Notation */
             "y" : "zdbprio", /* ZDB Prioritätszahl */
-            "z" : /* Finanzierungsart */ {
-                "a" : {
-                    "fundedby" : "DFG"
-                },
-                "b" : {
-                    "fundedby" : "SELF"
-                },
-                "c" : {
-                    "fundedby" : "NONE"
-                }
-            }
+            "z" : "fund"
+        },
+        "servicetype" : {
+                "a" : "ILL",
+                "b" : "NONE",
+                "c" : "UNKNOWN",
+                "m" : null,
+                "n" : null,
+                "o" : null
+        },
+        "servicemode" : {
+                "a" : "loan",
+                "b" : "copy",
+                "c" : "copy-loan",
+                "d" : "none",
+                "e" : "electronic"
+        },
+        "servicetransfer" : {
+                "a" : "domestic-only",
+                "b" : "postal"
+        },
+        "fund" : {
+                "a" : "DFG",
+                "b" : "SELF",
+                "c" : "NONE"
         }
     },
     "LicenseInformation" : {
@@ -340,72 +307,41 @@
         "093$ $ $f",
         "093$ $ $g"
         ],
+        "_predicate" : "license",
         "subfields": {
-            "_predicate" : "license",
-            "a" : /* Herkunft, Erfassungsrichtung */ {
-                "a" : {
-                    "origin" : "EZB"
-                },
-                "b" : {
-                    "origin" : "ZDB"
-                },
-                "c" : {
-                    "origin" : "library-service"
-                },
-                "d" : {
-                    "origin" : "other"
-                }
-            },
-            "b" : /* Angaben zu den Zugriffsrechten */ {
-                "a" : {
-                    "access" : "restricted-to-domain"
-                },
-                "b" : {
-                    "access" : "unrestricted"
-                },
-                "c" : {
-                    "access" : "blocked"
-                },
-                "d" : {
-                    "access" : "restricted-to-domain"
-                }
-            },
-            "e" : /* Angaben zum Dokumenttyp */ {
-                "a" : {
-                    "type" : "online"
-                },
-                "b" : {
-                    "type" : "online-and-print"
-                },
-                "c" : {
-                    "type" : "self-hosted"
-                },
-                "d" : {
-                    "type" : "digitalization"
-                }
-            },
-            "f" : /* Angaben zum Lizenztyp */ {
-                "a" : {
-                    "scope" : "national"
-                },
-                "b" : {
-                    "scope" : "consortia"
-                },
-                "c" : {
-                    "scope" : "stand-alone"
-                }
-            },
-            "g" : /* Angaben zum Preistyp */ {
-                "a" : {
-                    "charge" : "no"
-                },
-                "b" : {
-                    "charge" : "no-with-print"
-                },
-                "c" : {
-                    "charge" : "yes"
-                }
-            }
+            "a" : "origin", /* Herkunft, Erfassungsrichtung */
+            "b" : "access", /* Angaben zu den Zugriffsrechten */
+            "e" : "type", /* Angaben zum Dokumenttyp */
+            "f" : "scope", /* Angaben zum Lizenztyp */
+            "g" : "charge" /* Angaben zum Preistyp */
+        },
+        "origin" : {
+                "a" : "EZB",
+                "b" : "ZDB",
+                "c" : "library-service",
+                "d" : "other"
+        },
+        "access" : {
+                "a" : "restricted-to-domain",
+                "b" : "unrestricted",
+                "c" : "blocked",
+                "d" : "restricted-to-domain"
+        },
+        "type" : {
+                "a" : "online",
+                "b" : "online-and-print",
+                "c" : "self-hosted",
+                "d" : "digitalization"
+        },
+        "scope" : {
+                "a" : "national",
+                "b" : "consortia",
+                "c" : "stand-alone"
+        },
+        "charge" : {
+                "a" : "no",
+                "b" : "no-with-print",
+                "c" : "yes"
         }
     },
     "SourceOfAcquisition" : {
@@ -435,8 +371,8 @@
     },
     "PhysicalDescription" : {
         "values" : [
-        "007",
-        "300$ $ $a"
+            "007",
+            "300$ $ $a"
         ],
         "tags" : {
             "007" : "codes",

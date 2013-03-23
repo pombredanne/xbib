@@ -33,8 +33,8 @@ package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
 
-public class OtherClassificationNumber extends MARCElement {
-    private final static OtherClassificationNumber instance = new OtherClassificationNumber();
+public class Language extends MARCElement {
+    private final static Language instance = new Language();
     
     public static MARCElement getInstance() {
         return instance;

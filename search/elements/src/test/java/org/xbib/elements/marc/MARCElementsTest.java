@@ -123,7 +123,9 @@ public class MARCElementsTest extends Assert {
                 return builder;
             }
         };
-        MARCElementMapper mapper = new MARCElementMapper("marc").start(factory);
+        MARCElementMapper mapper = new MARCElementMapper("marc")
+                .detectUnknownKeys(true)
+                .start(factory);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
@@ -136,5 +138,6 @@ public class MARCElementsTest extends Assert {
         StreamResult target = new StreamResult(w);
         transformer.transform(new SAXSource(reader, source), target);
         mapper.close();
+        logger.info("unknown elements = {}", mapper.unknownKeys());
     }
 }

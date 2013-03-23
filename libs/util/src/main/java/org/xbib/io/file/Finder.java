@@ -31,6 +31,7 @@
  */
 package org.xbib.io.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystems;
@@ -43,7 +44,10 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,9 +55,10 @@ import java.util.concurrent.TimeUnit;
 public class Finder extends SimpleFileVisitor<Path> {
 
     private final PathMatcher matcher;
-    private final ConcurrentLinkedQueue<URI> input = new ConcurrentLinkedQueue();
+    private final LinkedList<PathFile> input = new LinkedList();
     private final EnumSet opts;
     private FileTime modifiedSince;
+    private Comparator<PathFile> comparator;
 
     public Finder(String pattern) {
         this.matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
@@ -65,8 +70,30 @@ public class Finder extends SimpleFileVisitor<Path> {
         this.opts = opts;
     }
 
-    public Queue<URI> getURIs() {
+    public Finder chronologicallySorted() {
+        this.comparator = new Comparator<PathFile>(){
+            public int compare(PathFile p1, PathFile p2) {
+                return p1.getAttributes().lastModifiedTime().compareTo(p2.getAttributes().lastModifiedTime());
+            } };
+        return this;
+    }
+
+    public Queue<PathFile> getPathFiles() {
+        if (comparator != null) {
+            Collections.sort(input, comparator);
+        }
         return input;
+    }
+
+    public Queue<URI> getURIs() {
+        if (comparator != null) {
+            Collections.sort(input, comparator);
+        }
+        Queue<URI> uris = new ConcurrentLinkedQueue<>();
+        for (PathFile p : input) {
+            uris.add(p.getPath().toAbsolutePath().toUri());
+        }
+        return uris;
     }
 
     public Finder modifiedSince(long modifiedSince, TimeUnit tu) {
@@ -80,11 +107,11 @@ public class Finder extends SimpleFileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-        Path name = file.getFileName();
+    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+        Path name = path.getFileName();
         if (name != null && matcher.matches(name)) {
             if (modifiedSince == null || attrs.lastModifiedTime().toMillis() > modifiedSince.toMillis()) {
-                input.add(file.toAbsolutePath().toUri());
+                input.add(new PathFile(path,attrs));
             }
         }
         return FileVisitResult.CONTINUE;
@@ -94,4 +121,5 @@ public class Finder extends SimpleFileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
     }
+
 }

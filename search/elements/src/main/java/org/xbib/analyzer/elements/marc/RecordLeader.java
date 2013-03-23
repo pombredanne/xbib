@@ -31,12 +31,82 @@
  */
 package org.xbib.analyzer.elements.marc;
 
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.FieldCollection;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RecordLeader extends MARCElement {
     private final static RecordLeader instance = new RecordLeader();
     
     public static MARCElement getInstance() {
         return instance;
+    }
+
+    private Map<String,Object> codes;
+
+    private String predicate;
+
+    @Override
+    public MARCElement setSettings(Map params) {
+        super.setSettings(params);
+        this.codes= (Map<String,Object>)params.get("codes");
+        this.predicate = params.containsKey("_predicate") ?
+                        (String)params.get("_predicate") : "leader";
+        return this;
+    }
+
+    @Override
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+        for (String k : codes.keySet()) {
+            int pos = Integer.parseInt(k);
+            Map<String,String> v = (Map<String,String>)codes.get(k);
+            String code = value.length() > pos ? value.substring(pos,pos+1) : "";
+            if (v.containsKey(code)) {
+                builder.context().resource().add(predicate, v.get(code));
+            }
+        }
+        char ch6 = value.charAt(6);
+        char ch7 = value.charAt(7);
+
+        boolean isBook = (ch6 == 'a' || ch6 == 't') &&
+                (ch7 == 'a' || ch7 == 'c' || ch7 == 'd' || ch7 == 'm');
+        if (isBook) {
+            builder.context().resource().add("type", "book");
+        }
+
+        boolean isComputerFile = ch6 == 'm';
+        if (isComputerFile) {
+            builder.context().resource().add("type", "computerfile");
+        }
+
+        boolean isMap = (ch6 == 'e' || ch6 == 'f');
+        if (isMap) {
+            builder.context().resource().add("type", "map");
+        }
+
+        boolean isMusic = (ch6 == 'c' || ch6 == 'd' || ch6 == 'i' || ch6 == 'j');
+        if (isMusic) {
+            builder.context().resource().add("type", "music");
+        }
+
+        boolean isContinuingResource = ch6 == 'a' &&
+                (ch7 == 'b' || ch7 == 'i' || ch7 == 's');
+        if (isContinuingResource) {
+            builder.context().resource().add("type", "continuingresource");
+        }
+
+        boolean isVisualMaterial = (ch6 == 'g' || ch6 == 'k' || ch6 == 'o' || ch6 == 'r');
+        if (isVisualMaterial) {
+            builder.context().resource().add("type", "visualmaterial");
+        }
+
+        boolean isMixedMaterial = ch6 == 'p';
+        if (isMixedMaterial) {
+            builder.context().resource().add("type", "mixedmaterial");
+        }
     }
 }

@@ -31,23 +31,12 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
-public class StandardIdentifier extends MARCElement {
-    private final static StandardIdentifier instance = new StandardIdentifier();
+public class EnumerationAndChronology extends MARCElement {
+    private final static EnumerationAndChronology instance = new EnumerationAndChronology();
     
     public static MARCElement getInstance() {
         return instance;
-    }
-
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        for (Field field : fields) {
-            String s = field.data().trim();
-            builder.context().resource().add("identifier",s);
-        }
     }
 }

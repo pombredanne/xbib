@@ -104,8 +104,8 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
             numPipelines = 1;
         }
         // restrict numPipelines to a reasonable value
-        if (numPipelines >= 100) {
-            numPipelines = 100;
+        if (numPipelines >= 256) {
+            numPipelines = 256;
         }
         if (service == null) {
             this.service = Executors.newFixedThreadPool(numPipelines);
@@ -126,16 +126,12 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         }
         for (int i = 0; i < numPipelines; i++) {
             try {
-                queue.offer(new LinkedList(), 1, TimeUnit.SECONDS); // send poison element to all numPipelines
+                queue.put(new LinkedList()); // send poison element to all numPipelines
             } catch (InterruptedException e) {
                 logger.error("interrupted while close()");
             }
         }
-        try {
-            service.awaitTermination(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            service.shutdownNow();
-        }
+        service.shutdownNow();
         logger.info("closed");
     }
 
@@ -152,7 +148,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
     @Override
     public void end() {
         try {
-            queue.offer((List<KeyValue>) keyvalues.clone(), 2, TimeUnit.SECONDS);
+            queue.put((List<KeyValue>) keyvalues.clone());
             keyvalues.clear();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -166,7 +162,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
             if (keyvalues != null) {
                 keyvalues.add(new KeyValue(null, info));
                 // move shallow copy of key/values to pipeline, this ensures thread safety
-                queue.offer((List<KeyValue>) keyvalues.clone(), 2, TimeUnit.SECONDS);
+                queue.put((List<KeyValue>) keyvalues.clone());
                 keyvalues.clear();
             }
         } catch (Exception e) {

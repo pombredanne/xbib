@@ -35,16 +35,12 @@ import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ResourceContextFactory;
 import org.xbib.elements.dublincore.DublinCoreProperties;
 import org.xbib.elements.output.ElementOutput;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 
 public class PicaBuilder
         extends AbstractElementBuilder<FieldCollection, String, PicaElement, PicaContext>
         implements DublinCoreProperties {
 
-    private static final Logger logger = LoggerFactory.getLogger(PicaBuilder.class.getName());
     private final ResourceContextFactory<PicaContext> contextFactory = new ResourceContextFactory<PicaContext>() {
         @Override
         public PicaContext newContext() {

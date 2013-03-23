@@ -31,48 +31,25 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.elements.ElementBuilder;
-import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
+import org.xbib.logging.Logger;
+import org.xbib.logging.Loggers;
 
-import java.util.Map;
+public class Title extends MARCElement {
 
-public class PhysicalDescriptionCode extends MARCElement {
-    private final static PhysicalDescriptionCode instance = new PhysicalDescriptionCode();
+    private final static Logger logger = Loggers.getLogger(Title.class);
 
+    private final static Title instance = new Title();
+    
     public static MARCElement getInstance() {
         return instance;
     }
-    
+
     @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        Map<String,Object> codes = (Map<String,Object>)getSettings().get("codes");
-        if (codes != null) {
-            // position 0 is the selector
-            codes = (Map<String,Object>)codes.get("0");
-        }
-        for (Field field: fields) {
-            String data = field.data();
-            if (data == null) {
-                continue;
-            }
-            Map<String,Object> m = (Map<String,Object>)codes.get(data.substring(0,1));
-            if (m == null) {
-                continue;
-            }
-            // transform all codes except position 0
-            String predicate = (String)m.get("_predicate");
-            for (int i = 1; i < data.length(); i++) {
-                String ch = data.substring(i,i+1);
-                Map<String,Object> q = (Map<String,Object>)m.get(Integer.toString(i));
-                if (q != null) {
-                    String code = (String)q.get(ch);
-                    builder.context().resource().add(predicate, code);
-                }
-            }
-        }
+    public String data(String predicate, String property, String value) {
+        // let's make sorting markup character visible again
+        // 0098 = START OF STRING, 009c = END OF STRING
+        // --> 00ac = negation sign
+        return value.replace('\u0098', '\u00ac').replace('\u009c', '\u00ac');
     }
-    
 }

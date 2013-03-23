@@ -105,4 +105,13 @@ public abstract class MARCElement
         // overridden
     }
 
+    /**
+     * Transform field data
+     * @param value
+     * @return
+     */
+    public String data(String resourcePredicate, String property, String value) {
+        return value;
+    }
+
 }

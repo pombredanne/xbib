@@ -33,8 +33,8 @@ package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
 
-public class TableOfContents extends MARCElement {
-    private final static TableOfContents instance = new TableOfContents();
+public class PrecedingEntry extends MARCElement {
+    private final static PrecedingEntry instance = new PrecedingEntry();
     
     public static MARCElement getInstance() {
         return instance;

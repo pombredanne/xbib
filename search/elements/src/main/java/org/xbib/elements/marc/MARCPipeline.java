@@ -41,6 +41,7 @@ import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.rdf.Resource;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -57,47 +58,102 @@ public class MARCPipeline
         super(i, queue, map, factory);
     }
 
-    /**
-     * Pipeline processing of the fields/value stream of MARC data. The fields/value stream is
-     * organized with the subfield set as fields and the field data as value.
-     * THe builders of this mapper are iterated, and for each found mapped
-     * element, the element field builders are invoked. Subfield processing may
-     * be configured in the element settings. If there is a subfield processing
-     * setting, call the element field builder for each subfield.
-     */
     @Override
     protected void build(FieldCollection fields, String value) {
         if (fields == null) {
             return;
         }
         String key = fields.toString();
-        MARCElement element = (MARCElement) ElementMap.getElement(key, map());
+        MARCElement element = null;
+        try {
+            element = (MARCElement) ElementMap.getElement(key, map());
+        } catch (ClassCastException e) {
+            logger.error("not a MARCElement instance for key " + key);
+        }
         if (element != null) {
-            // field builder - check for subfield type and pass configured values
+            // element-based processing
+            element.fields(builder(), fields, value);
+            Map<String, Object> tags = (Map<String, Object>) element.getSettings().get("tags");
             Map<String, Object> subfields = (Map<String, Object>) element.getSettings().get("subfields");
-            if (subfields == null) {
-                element.fields(builder(), fields, value);
-            } else {
-                Resource resource = null;
-                if (subfields.containsKey("_predicate")) {
-                    resource = builder().context().resource().newResource((String) subfields.get("_predicate"));
-                } else {
-                    Map<String, Object> indicators = (Map<String, Object>) element.getSettings().get("indicators");
-                    if (indicators != null) {
-                        String ind = (String) indicators.get(fields.getFirst().indicator());
-                        resource = builder().context().resource().newResource(ind != null ? ind : "defaultresource");
-                    }
-                }
-                if (resource != null) {
+            if (subfields != null) {
+                Map<String, Object> defaultSubfields = subfields;
+                // optional indicator configuration
+                Map<String, Object> indicators = (Map<String, Object>) element.getSettings().get("indicators");
+                Map<Field, String> fieldNames = new HashMap();
+                if (indicators != null) {
                     for (Field field : fields) {
-                        Map.Entry<String, Object> me = SubfieldValueMapper.map(subfields, field);
+                        Map.Entry<String, Object> me = TagValueMapper.map(indicators, field);
                         if (me.getKey() != null) {
-                            resource.add(me.getKey(), me.getValue().toString());
+                            fieldNames.put(field, (String) me.getValue());
                         }
                     }
-                } else {
-                    element.fields(builder(), fields, value);
                 }
+                // create new anoymous resource
+                Resource resource = builder().context().resource();
+                Resource newResource = builder().context().newResource();
+                // default predicate is the name of the element class
+                String predicate = element.getClass().getSimpleName();
+                // the _predicate field allows to select a field to name the resource by a coded value
+                if (element.getSettings().containsKey("_predicate")) {
+                    predicate = (String) element.getSettings().get("_predicate");
+                }
+                boolean predicateFound = false;
+                // put all found fields with configured subfield names to this resource
+                for (Field field : fields) {
+                    subfields = defaultSubfields;
+                    // tag predicates?
+                    if (element.getSettings().containsKey("tags")) {
+                        if (tags.containsKey(field.tag())) {
+                            if (!predicateFound) {
+                                predicate = (String) tags.get(field.tag());
+                            }
+                            subfields = (Map<String, Object>) element.getSettings().get(predicate);
+                            if (subfields == null) {
+                                subfields = defaultSubfields;
+                            }
+                        }
+                    }
+                    // is there a subfield value decoder?
+                    Map.Entry<String, Object> me = SubfieldValueMapper.map(subfields, field);
+                    if (me.getKey() != null) {
+                        String v = me.getValue().toString();
+                        if (fieldNames.containsKey(field)) {
+                            // field-specific subfield map?
+                            Map<String, Object> vm = (Map<String, Object>) element.getSettings().get(fieldNames.get(field));
+                            v = vm.containsKey(v) ? vm.get(v).toString() : v;
+                        } else {
+                            // default subfield map
+                            if (element.getSettings().containsKey(me.getKey())) {
+                                Map<String, Object> vm = (Map<String, Object>) element.getSettings().get(me.getKey());
+                                v = vm.containsKey(v) ? vm.get(v).toString() : v;
+                            }
+                        }
+                        // is this the predicate field or a value?
+                        v = element.data(predicate, me.getKey(), v);
+                        if (me.getKey().equals(predicate)) {
+                            predicate = v;
+                            predicateFound = true;
+                        } else {
+                            newResource.add(me.getKey(), v);
+                        }
+                    } else {
+                        // no decoder, simple add field data
+                        String property = null;
+                        try {
+                            property = (String) subfields.get(field.subfieldId());
+                        } catch (ClassCastException e) {
+                            logger.error("cannot use string property of '" + field.subfieldId() + "' for field " + field);
+                        }
+                        if (property == null) {
+                            property = field.subfieldId(); // unmapped subfield ID
+                        }
+                        newResource.add(property, element.data(predicate, property, field.data()));
+                    }
+                    element.field(builder(), field, value);
+                }
+                // add child resource
+                resource.add(predicate, newResource);
+                builder().context().newResource(resource); // switch back to old resource
             }
         } else {
             if (detectUnknownKeys) {
@@ -107,7 +163,6 @@ public class MARCPipeline
                 }
             }
         }
-        // call the builder with a global fields/value pair, even if an element is not configured
         builder().build(element, fields, value);
     }
 
