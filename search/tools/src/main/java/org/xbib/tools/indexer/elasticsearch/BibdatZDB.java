@@ -191,7 +191,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void output(ResourceContext context) throws IOException {
             // set index/type adressing via resource ID
-            context.resource().id(new IRI().host(index).query(type)
+            context.resource().id(IRI.builder().host(index).query(type)
                     .fragment(context.resource().id().getFragment()).build());
             output.output(context);
             outputCounter.incrementAndGet();

@@ -127,7 +127,7 @@ public class ClientTest {
                 public void endDocument() throws SAXException {
                     handler.endDocument();
                     if (resource.id() == null) {
-                        resource.id(new IRI().host("test").query("test").fragment(getHeader().getIdentifier()).build());
+                        resource.id(IRI.builder().host("test").query("test").fragment(getHeader().getIdentifier()).build());
                     }
                     StringWriter sw = new StringWriter();
                     TurtleWriter t = new TurtleWriter();

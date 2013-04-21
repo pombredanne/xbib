@@ -31,21 +31,17 @@
  */
 package org.xbib.elements.marc;
 
-import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elements.items.LiaContext;
 import org.xbib.iri.IRI;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.simple.SimpleResource;
 
+/**
+ * A MARC builder builds Elements from MARC field collections. It uses a MARC context.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class MARCContext extends LiaContext {
-
-    protected static final Logger logger = LoggerFactory.getLogger(MARCContext.class.getName());
-
-    private final static AtomicLong counter = new AtomicLong(0L);
-    private String format;
-    private boolean continuing;
 
     @Override
     public MARCContext id(IRI id) {
@@ -58,27 +54,4 @@ public class MARCContext extends LiaContext {
         return new SimpleResource();
     }
 
-    public void setFormat(String format) {
-        this.format = format;
-    }
-    
-    public String getFormat() {
-        return format;
-    }
-    
-    public void setContinuing(boolean continuing) {
-        this.continuing = continuing;
-    }
-    
-    public boolean getContinuing() {
-        return continuing;
-    }
-    
-    public long increment() {
-        return counter.incrementAndGet();
-    }
-
-    public String toString() {
-        return "[Context:res=" + this.resource() + "]";
-    }
 }

@@ -35,17 +35,20 @@ class HttpScheme extends AbstractScheme {
 
     @Override
     public IRI normalize(IRI iri) {
-        StringBuilder buf = new StringBuilder();
         int port = (iri.getPort() == getDefaultPort()) ? -1 : iri.getPort();
         String host = iri.getHost();
-        if (host != null)
+        if (host != null) {
             host = host.toLowerCase();
-        String ui = iri.getUserInfo();
-        iri.buildAuthority(buf, ui, host, port);
-        String authority = buf.toString();
-        return new IRI(iri.schemeClass, iri.getScheme(), authority, ui, host, port, IRI.normalize(iri.getPath()),
-                       UrlEncoding.encode(UrlEncoding.decode(iri.getQuery()), Profile.IQUERY.filter()), UrlEncoding
-                           .encode(UrlEncoding.decode(iri.getFragment()), Profile.IFRAGMENT.filter()));
+        }
+        return IRI.builder()
+                .scheme(iri.getScheme())
+                .userinfo(iri.getUserInfo())
+                .host(host)
+                .port(port)
+                .path(IRI.normalize(iri.getPath()))
+                .query(UrlEncoding.encode(UrlEncoding.decode(iri.getQuery()), Profile.IQUERY.filter()))
+                .fragment(UrlEncoding.encode(UrlEncoding.decode(iri.getFragment()), Profile.IFRAGMENT.filter()))
+                .build();
     }
 
     // use the path normalization coded into the IRI class

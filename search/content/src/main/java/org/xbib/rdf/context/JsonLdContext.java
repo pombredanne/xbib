@@ -35,7 +35,7 @@ public class JsonLdContext
 
     @Override
     public Resource newResource() {
-        Resource<Resource,Property,Literal> root = new SimpleResource().id(new IRI().schemeSpecificPart("@context").build());
+        Resource<Resource,Property,Literal> root = new SimpleResource().id(IRI.builder().schemeSpecificPart("@context").build());
         Resource resource = root.newResource(CONTEXT);
         for (Map.Entry<String,String> me : namespaceContext().getNamespaces().entrySet()) {
             resource.add(me.getKey(), me.getValue());

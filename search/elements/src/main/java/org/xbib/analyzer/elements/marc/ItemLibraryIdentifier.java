@@ -74,8 +74,8 @@ public class ItemLibraryIdentifier extends MARCElement {
 
     private void createItemService(MARCBuilder b, String itemStatus) {
         LiaContext lia = b.context();
-        String format = b.context().getFormat();
-        boolean continuing = b.context().getContinuing();
+        String format = "marc"; //b.context().getFormat();
+        boolean continuing = true; //b.context().getContinuing();
         if (itemStatus == null) {
             // default service
             lia.getAccess().service(Service.INTER_LIBRARY_LOAN);

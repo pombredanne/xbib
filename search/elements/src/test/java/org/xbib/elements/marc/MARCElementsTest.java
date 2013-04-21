@@ -34,8 +34,10 @@ package org.xbib.elements.marc;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.context.ResourceContext;
@@ -73,7 +75,6 @@ public class MARCElementsTest extends Assert {
 
     @Test
     public void testZDBElements() throws Exception {
-        logger.info("testZDBElements");
         InputStream in = getClass().getResourceAsStream("1217zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/zdb.xml"), "UTF-8");
@@ -116,9 +117,11 @@ public class MARCElementsTest extends Assert {
                 return 0;
             }
         };
+
+
         MARCBuilderFactory factory = new MARCBuilderFactory() {
             public MARCBuilder newBuilder() {
-                MARCBuilder builder = new MARCBuilder();
+                MARCBuilder builder = new OurMARCBuilder();
                 builder.addOutput(output);
                 return builder;
             }
@@ -138,6 +141,26 @@ public class MARCElementsTest extends Assert {
         StreamResult target = new StreamResult(w);
         transformer.transform(new SAXSource(reader, source), target);
         mapper.close();
+        // check if increment works
+        assertEquals(id, "8676");
         logger.info("unknown elements = {}", mapper.unknownKeys());
     }
+
+    String id;
+
+    final class OurMARCBuilder extends MARCBuilder {
+
+        @Override
+        public void build(MARCElement element, FieldCollection fields, String value) {
+            if (context().resource().id() == null) {
+                id = Long.toString(context().increment());
+                IRI iri = IRI.builder().scheme("http")
+                        .host("dummy")
+                        .query("dummy")
+                        .fragment(id).build();
+                context().resource().id(iri);
+            }
+        }
+    }
+
 }

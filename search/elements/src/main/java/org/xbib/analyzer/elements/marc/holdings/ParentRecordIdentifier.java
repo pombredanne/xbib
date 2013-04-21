@@ -31,12 +31,12 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
-import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
+import org.xbib.elements.marc.MARCContext;
+import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.FieldCollection;
 
-public class ParentRecordIdentifier extends MARCElement {
+public class ParentRecordIdentifier extends org.xbib.analyzer.elements.marc.Identifier {
 
     private final static ParentRecordIdentifier instance = new ParentRecordIdentifier();
 
@@ -45,9 +45,12 @@ public class ParentRecordIdentifier extends MARCElement {
     }
 
     @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        for (Field field : fields) {
-            builder.context().resource().add("parent", field.data());
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
+        String predicate = getClass().getSimpleName();
+        if (getSettings().containsKey("_predicate")) {
+            predicate = (String) getSettings().get("_predicate");
         }
+        builder.context().resource().add(predicate, value);
     }
 }

@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import org.xbib.iri.IRI;
+import org.xbib.iri.IRISyntaxException;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
@@ -274,7 +275,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         IRI uri;
         try {
             uri = IRI.create(uriString);
-        } catch (IllegalArgumentException e) {
+        } catch (IRISyntaxException e) {
             // illegal URI, try repair
             uri = IRI.create(uriString
                   .replace(" ", "%20")
@@ -283,7 +284,9 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
                   .replace("]", "%5D")
                   .replace("<", "%3C")
                   .replace(">", "%3E")
-                  .replace("|", "%7C"));
+                  .replace("|", "%7C")
+                  .replace("`", "%60")
+            );
         }
         if (uri.isAbsolute()) {
             return uri;

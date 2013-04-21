@@ -31,10 +31,7 @@
  */
 package org.xbib.tools.ntriples;
 
-import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elements.marc.extensions.pica.PicaBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
 import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
@@ -50,7 +47,6 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
-import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.ntriple.NTripleWriter;
 import org.xbib.tools.opt.OptionParser;
@@ -142,7 +138,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         File f;
         FileWriter fw;
         NTripleWriter writer = new NTripleWriter().setNullPredicate(
-                new IRI().scheme("http").host("xbib.org").path("/adr").build());
+                IRI.builder().scheme("http").host("xbib.org").path("/adr").build());
 
         OurElementOutput(String filename) throws IOException {
             this.f = new File(filename);
@@ -160,7 +156,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void output(ResourceContext context) throws IOException {
-            IRI id = new IRI().scheme("http").host("xbib.org").path("/adr")
+            IRI id = IRI.builder().scheme("http").host("xbib.org").path("/adr")
                     .fragment(context.resource().id().getFragment()).build();
             context.resource().id(id);
             writer.write(context.resource(), fw);
@@ -265,6 +261,5 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         }
         System.exit(0);
     }
-
 
 }

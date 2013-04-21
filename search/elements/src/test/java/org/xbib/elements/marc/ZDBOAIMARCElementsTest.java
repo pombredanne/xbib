@@ -46,7 +46,6 @@ import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.xml.DNBPICAXmlReader;
 import org.xbib.rdf.context.ResourceContext;
 import org.xml.sax.InputSource;
 
@@ -106,7 +105,7 @@ public class ZDBOAIMARCElementsTest {
         @Override
         public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
-                IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+                IRI id = IRI.builder().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
             }
             for (Field field : fields) {

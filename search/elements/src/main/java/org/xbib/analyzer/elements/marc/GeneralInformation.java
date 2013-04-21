@@ -34,7 +34,6 @@ package org.xbib.analyzer.elements.marc;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 
 public class GeneralInformation extends MARCElement {
@@ -48,11 +47,24 @@ public class GeneralInformation extends MARCElement {
      * Example "991118d19612006xx z||p|r ||| 0||||0ger c"
      */
     @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        for (Field field: fields) {
-            String data = field.data();
-            String dateEntered = data.substring(0,6);
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
+        String date1 = value.substring(7,11);
+        builder.context().resource().add("date1", check(date1));
+        String date2 = value.substring(11,15);
+        builder.context().resource().add("date2", check(date2));
+    }
 
+    // check for valid date, else fill with 9999
+    private String check(String date) {
+        try {
+            int d = Integer.parseInt(date);
+            if (d < 1650) { // "0000"
+                return "9999";
+            }
+        } catch (Exception e) {
+            return "9999";
         }
+        return date;
     }
 }

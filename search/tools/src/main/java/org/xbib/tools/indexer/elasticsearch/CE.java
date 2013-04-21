@@ -175,7 +175,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                 id = pos >= 0 ? id.substring(pos + 1) : id;
                 // remove .txt and force uppercase
                 id = id.substring(0, id.length() - 4).toUpperCase();
-                IRI identifier = new IRI().scheme("urn").host("hbz").query("enrichment").fragment(id).build();
+                IRI identifier = IRI.builder().scheme("urn").host("hbz").query("enrichment").fragment(id).build();
                 Resource resource = ctx.newResource();
                 resource.id(identifier)
                         .add("dc:title", title)

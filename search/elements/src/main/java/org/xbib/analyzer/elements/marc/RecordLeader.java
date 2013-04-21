@@ -36,7 +36,6 @@ import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.FieldCollection;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class RecordLeader extends MARCElement {
@@ -61,6 +60,9 @@ public class RecordLeader extends MARCElement {
 
     @Override
     public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+        if (codes == null) {
+            return;
+        }
         for (String k : codes.keySet()) {
             int pos = Integer.parseInt(k);
             Map<String,String> v = (Map<String,String>)codes.get(k);

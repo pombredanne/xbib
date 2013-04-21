@@ -65,6 +65,13 @@ import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
+import org.xml.sax.SAXException;
+
+/**
+ *
+ * Format-Dokumenation
+ * http://www.zeitschriftendatenbank.de/fileadmin/user_upload/ZDB/pdf/services/Datenlieferdienst_ZDB_EZB_Lizenzdatenformat.pdf
+ */
 
 public final class EZB extends AbstractImporter<Long, AtomicLong> {
 
@@ -78,110 +85,6 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
     private boolean done = false;
     private static String index;
     private static String type;
-
-    public EZB(ElementOutput out) {
-        this.out = out;
-    }
-
-    @Override
-    public void close() throws IOException {
-        input.clear();
-    }
-
-    @Override
-    public boolean hasNext() {
-        return !done && !input.isEmpty();
-    }
-
-    @Override
-    public AtomicLong next() {
-        URI uri = input.poll();
-        done = uri == null;
-        if (done) {
-            return fileCounter;
-        }
-        try {
-            AbstractXmlHandler handler = new Handler(resourceContext)
-                    .setListener(new ResourceBuilder())
-                    .setDefaultNamespace("ezb", "http://ezb.uni-regensburg.de/ezeit/");
-            InputStream in = InputService.getInputStream(uri);
-            new XmlReader()
-                    .setNamespaces(false)
-                    .setHandler(handler)
-                    .parse(in);
-            in.close();
-            fileCounter.incrementAndGet();
-        } catch (Exception ex) {
-            logger.error("error while getting next document: " + ex.getMessage(), ex);
-        }
-        return fileCounter;
-    }
-
-    class Handler extends XmlResourceHandler {
-
-        public Handler(ResourceContext ctx) {
-            super(ctx);
-        }
-
-        @Override
-        public void identify(QName name, String value, IRI identifier) {
-            if ("license_entry_id".equals(name.getLocalPart()) && identifier == null) {
-                IRI id = new IRI().scheme("urn").host(index).query(type).fragment(value).build();
-                resourceContext.resource().id(id);
-            }
-        }
-
-        @Override
-        public boolean isResourceDelimiter(QName name) {
-            return "license_set".equals(name.getLocalPart());
-        }
-
-        @Override
-        public void closeResource() {
-            try { 
-                out.output(resourceContext);
-            } catch (IOException e ) {
-                logger.error(e.getMessage(), e);
-            }
-            super.closeResource();
-        }
-
-        @Override
-        public boolean skip(QName name) {
-            boolean skip =
-                    "ezb-export".equals(name.getLocalPart())
-                    || "release".equals(name.getLocalPart())
-                    || "version".equals(name.getLocalPart());
-            return skip;
-        }
-        
-        @Override
-        protected Object toLiteral(QName name, String content) {
-            switch (name.getLocalPart()) {
-                case "reference_url":
-                case "readme_url":
-                    return URIUtil.decode(content, "UTF-8");
-                //case "zdbid":
-                //    return content.replaceAll("\\-", "");
-            }
-            return super.toLiteral(name, content);
-        }
-    }
-
-    class ResourceBuilder implements TripleListener {
-
-        @Override
-        public ResourceBuilder newIdentifier(IRI identifier) {
-            resourceContext.resource().id(identifier);
-            return this;
-        }
-
-        @Override
-        public ResourceBuilder triple(Triple triple) {
-            resourceContext.resource().add(triple);
-            return this;
-        }
-    }
 
     public static void main(String[] args) {
         try {
@@ -254,8 +157,9 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                         public Importer newImporter() {
                             return new EZB(sink);
                         }
-                    }).execute().shutdown();
+                    }).execute();
 
+            // compute statistics
             long t1 = System.currentTimeMillis();
             long docs = sink.getCounter();
             long bytes = es.getVolumeInBytes();
@@ -281,6 +185,164 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    public EZB(ElementOutput out) {
+        this.out = out;
+    }
+
+    @Override
+    public void close() throws IOException {
+        input.clear();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !done && !input.isEmpty();
+    }
+
+    private String DEFAULT_NS = "http://ezb.uni-regensburg.de/ezeit/";
+
+    private String DEFAULT_NS_URI = "ezb";
+
+    @Override
+    public AtomicLong next() {
+        URI uri = input.poll();
+        done = uri == null;
+        if (done) {
+            return fileCounter;
+        }
+        try {
+            AbstractXmlHandler handler = new Handler(resourceContext)
+                    .setListener(new ResourceBuilder())
+                    .setDefaultNamespace(DEFAULT_NS_URI, DEFAULT_NS);
+            InputStream in = InputService.getInputStream(uri);
+            new XmlReader()
+                    .setNamespaces(false)
+                    .setHandler(handler)
+                    .parse(in);
+            in.close();
+            fileCounter.incrementAndGet();
+        } catch (Exception ex) {
+            logger.error("error while getting next document: " + ex.getMessage(), ex);
+        }
+        return fileCounter;
+    }
+
+    class Handler extends XmlResourceHandler {
+
+        private int firstDate;
+        private int lastDate;
+
+        public Handler(ResourceContext ctx) {
+            super(ctx);
+        }
+
+        @Override
+        public void endElement (String uri, String localName, String qName)
+                throws SAXException {
+            super.endElement(uri, localName, qName);
+
+        }
+
+        @Override
+        public void identify(QName name, String value, IRI identifier) {
+            if ("license_entry_id".equals(name.getLocalPart()) && identifier == null) {
+                IRI id = IRI.builder().scheme("iri").host(index).query(type).fragment(value).build();
+                resourceContext.resource().id(id);
+            }
+        }
+
+        @Override
+        public boolean isResourceDelimiter(QName name) {
+            boolean b = "license_set".equals(name.getLocalPart());
+            if (b) {
+                firstDate = -1;
+                lastDate = -1;
+            }
+            return b;
+        }
+
+        @Override
+        public void closeResource() {
+            try { 
+                out.output(resourceContext);
+            } catch (IOException e ) {
+                logger.error(e.getMessage(), e);
+            }
+            super.closeResource();
+        }
+
+        @Override
+        public boolean skip(QName name) {
+            boolean skip =
+                    "ezb-export".equals(name.getLocalPart())
+                    || "release".equals(name.getLocalPart())
+                    || "version".equals(name.getLocalPart());
+            return skip;
+        }
+        
+        @Override
+        protected Object toLiteral(QName name, String content) {
+            switch (name.getLocalPart()) {
+                case "reference_url":
+                    // fall-through
+                case "readme_url":
+                    return URIUtil.decode(content, "UTF-8");
+                case "zdbid": {
+                    return content.replaceAll("\\-", "").toLowerCase();
+                }
+                case "type_id": {
+                    switch (Integer.parseInt(content)) {
+                        case 1: return "Volltext nur online";
+                        case 2: return "Volltext online und Druckausgabe";
+                        case 9: return "lokale Zeitschrift";
+                        case 11: return "retrodigitalisiert";
+                    }
+                }
+                case "license_type_id" : {
+                    switch (Integer.parseInt(content)) {
+                        case 1 : return "Einzellizenz";
+                        case 2 : return "Konsortiallizenz";
+                        case 4 : return "Nationallizenz";
+                    }
+                }
+                case "price_type_id" : {
+                    switch (Integer.parseInt(content)) {
+                        case 1 : return "lizenzfrei";
+                        case 2 : return "Kostenlos mit Druckausgabe";
+                        case 3 : return "Kostenpflichtig";
+                    }
+                }
+                case "ill_code" : {
+                    switch (content) {
+                        case "n" : return "nein";
+                        case "l" : return "ja, Leihe und Kopie";
+                        case "k" : return "ja, nur Kopie";
+                        case "e" : return "ja, auch elektronischer Versand an Nutzer";
+                        case "ln" : return "ja, Leihe und Kopie (nur Inland)";
+                        case "kn" : return "ja, nur Kopie (nur Inland)";
+                        case "en" : return "ja, auch elektronischer Versand an Nutzer (nur Inland)";
+                    }
+                }
+            }
+            return super.toLiteral(name, content);
+        }
+    }
+
+    class ResourceBuilder implements TripleListener {
+
+        @Override
+        public ResourceBuilder newIdentifier(IRI identifier) {
+            resourceContext.resource().id(identifier);
+            return this;
+        }
+
+        @Override
+        public ResourceBuilder triple(Triple triple) {
+            resourceContext.resource().add(triple);
+            return this;
+        }
     }
 
 }

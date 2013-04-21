@@ -45,16 +45,5 @@ public class PhysicalDescription extends MARCElement {
     public static MARCElement getInstance() {
         return instance;
     }
-    
-    @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        Map<String,Object> tags = (Map<String,Object>) getSettings().get("tags");
-        for (Field field: fields) {
-            if ("codes".equals(tags.get(field.tag()))) {
-                String code = field.data();
-                builder.context().resource().add("physicaldescription", code);
-            }
-        }
-    }
-    
+
 }

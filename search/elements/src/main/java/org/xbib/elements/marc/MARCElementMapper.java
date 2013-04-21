@@ -34,6 +34,11 @@ package org.xbib.elements.marc;
 import org.xbib.elements.ElementMapper;
 import org.xbib.elements.KeyValuePipeline;
 
+/**
+ * A MARC element mapper. It provides MARC pipelines.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class MARCElementMapper extends ElementMapper {
 
     /**

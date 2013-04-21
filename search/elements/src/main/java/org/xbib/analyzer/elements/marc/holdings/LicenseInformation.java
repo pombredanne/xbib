@@ -32,8 +32,6 @@
 package org.xbib.analyzer.elements.marc.holdings;
 
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.FieldCollection;
 
 public class LicenseInformation extends MARCElement {
 
@@ -43,7 +41,4 @@ public class LicenseInformation extends MARCElement {
         return instance;
     }
 
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-    }
 }

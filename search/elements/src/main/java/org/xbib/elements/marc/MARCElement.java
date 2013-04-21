@@ -44,7 +44,13 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.MarcXchange;
+import org.xbib.rdf.Resource;
 
+/**
+ * A MARC element
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public abstract class MARCElement
         implements Element<FieldCollection, String, MARCBuilder>,
         DublinCoreProperties,
@@ -110,7 +116,7 @@ public abstract class MARCElement
      * @param value
      * @return
      */
-    public String data(String resourcePredicate, String property, String value) {
+    public String data(String resourcePredicate, Resource resource, String property, String value) {
         return value;
     }
 

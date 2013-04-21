@@ -45,7 +45,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * A MARC pipeline is a key/value pipeline specifically designed for MARC mapping.
+ * It performs the heavy lifting by looking up the structured information in the Element Map
+ * and processes the MARC fields.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class MARCPipeline
         extends KeyValuePipeline<FieldCollection, String, MARCElement, MARCContext> {
 
@@ -88,8 +97,9 @@ public class MARCPipeline
                         }
                     }
                 }
-                // create new anoymous resource
+                // lookup the current resource
                 Resource resource = builder().context().resource();
+                // create another anoymous resource
                 Resource newResource = builder().context().newResource();
                 // default predicate is the name of the element class
                 String predicate = element.getClass().getSimpleName();
@@ -120,16 +130,64 @@ public class MARCPipeline
                         if (fieldNames.containsKey(field)) {
                             // field-specific subfield map?
                             Map<String, Object> vm = (Map<String, Object>) element.getSettings().get(fieldNames.get(field));
-                            v = vm.containsKey(v) ? vm.get(v).toString() : v;
+                            int pos = v.indexOf(' ');
+                            String vv = pos > 0 ? v.substring(0,pos) : v;
+                            if (vm.containsKey(v)) {
+                                newResource.add(me.getKey() + "Source", v);
+                                v =  (String)vm.get(v);
+                            } else if (vm.containsKey(vv)) {
+                                newResource.add(me.getKey() + "Source", v);
+                                v = (String)vm.get(vv);
+                            } else {
+                                // relation by pattern?
+                                List<Map<String,String>> patterns = (List<Map<String, String>>) element.getSettings().get(fieldNames.get(field)+"pattern");
+                                if (patterns != null) {
+                                    for (Map<String,String> pattern : patterns) {
+                                        Map.Entry<String,String> mme = pattern.entrySet().iterator().next();
+                                        String p = mme.getKey();
+                                        String rel = mme.getValue();
+                                        Matcher m = Pattern.compile(p, Pattern.CASE_INSENSITIVE).matcher(v);
+                                        if (m.matches()) {
+                                            newResource.add(me.getKey() + "Source", v);
+                                            v = rel;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         } else {
                             // default subfield map
                             if (element.getSettings().containsKey(me.getKey())) {
                                 Map<String, Object> vm = (Map<String, Object>) element.getSettings().get(me.getKey());
-                                v = vm.containsKey(v) ? vm.get(v).toString() : v;
+                                int pos = v.indexOf(' ');
+                                String vv = pos > 0 ? v.substring(0,pos) : v;
+                                if (vm.containsKey(v)) {
+                                    newResource.add(me.getKey() + "Source", v);
+                                    v =  (String)vm.get(v);
+                                } else if (vm.containsKey(vv)) {
+                                    newResource.add(me.getKey() + "Source", v);
+                                    v = (String)vm.get(vv);
+                                } else {
+                                    // relation by pattern?
+                                    List<Map<String,String>> patterns = (List<Map<String, String>>) element.getSettings().get(me.getKey()+"pattern");
+                                    if (patterns != null) {
+                                        for (Map<String,String> pattern : patterns) {
+                                            Map.Entry<String,String> mme = pattern.entrySet().iterator().next();
+                                            String p = mme.getKey();
+                                            String rel = mme.getValue();
+                                            Matcher m = Pattern.compile(p, Pattern.CASE_INSENSITIVE).matcher(v);
+                                            if (m.matches()) {
+                                                newResource.add(me.getKey() + "Source", v);
+                                                v = rel;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         // is this the predicate field or a value?
-                        v = element.data(predicate, me.getKey(), v);
+                        v = element.data(predicate, newResource, me.getKey(), v);
                         if (me.getKey().equals(predicate)) {
                             predicate = v;
                             predicateFound = true;
@@ -145,15 +203,17 @@ public class MARCPipeline
                             logger.error("cannot use string property of '" + field.subfieldId() + "' for field " + field);
                         }
                         if (property == null) {
-                            property = field.subfieldId(); // unmapped subfield ID
+                            // unmapped subfield ID
+                            property = field.subfieldId();
                         }
-                        newResource.add(property, element.data(predicate, property, field.data()));
+                        newResource.add(property, element.data(predicate, newResource, property, field.data()));
                     }
                     element.field(builder(), field, value);
                 }
                 // add child resource
                 resource.add(predicate, newResource);
-                builder().context().newResource(resource); // switch back to old resource
+                // switch back to old resource
+                builder().context().newResource(resource);
             }
         } else {
             if (detectUnknownKeys) {

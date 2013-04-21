@@ -35,6 +35,11 @@ import org.xbib.marc.Field;
 
 import java.util.Map;
 
+/**
+ * A tag value mapper is a helper class to map MARC indicators to declarative names.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class TagValueMapper {
 
     private TagValueMapper() {

@@ -47,7 +47,8 @@ public class PhysicalDescriptionCode extends MARCElement {
     }
     
     @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
         Map<String,Object> codes = (Map<String,Object>)getSettings().get("codes");
         if (codes != null) {
             // position 0 is the selector

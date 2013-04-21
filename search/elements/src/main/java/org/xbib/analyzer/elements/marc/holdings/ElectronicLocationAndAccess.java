@@ -32,9 +32,6 @@
 package org.xbib.analyzer.elements.marc.holdings;
 
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.elements.ElementBuilder;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
 public class ElectronicLocationAndAccess extends MARCElement {
 
@@ -44,11 +41,4 @@ public class ElectronicLocationAndAccess extends MARCElement {
         return instance;
     }
 
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        for (Field field : fields) {
-            String s = field.data().trim();
-            builder.context().resource().add("url",s);
-        }
-    }
 }

@@ -33,7 +33,6 @@ package org.xbib.analyzer.elements.marc.holdings;
 
 import org.xbib.elements.marc.MARCElement;
 
-
 public class AdditionalLocation extends MARCElement {
 
     private final static AdditionalLocation instance = new AdditionalLocation();

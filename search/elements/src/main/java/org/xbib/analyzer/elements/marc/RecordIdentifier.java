@@ -31,7 +31,10 @@
  */
 package org.xbib.analyzer.elements.marc;
 
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.FieldCollection;
 
 public class RecordIdentifier extends MARCElement {
 
@@ -41,4 +44,13 @@ public class RecordIdentifier extends MARCElement {
         return instance;
     }
 
+    @Override
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
+        String predicate = getClass().getSimpleName();
+        if (getSettings().containsKey("_predicate")) {
+            predicate = (String) getSettings().get("_predicate");
+        }
+        builder.context().resource().add(predicate, value);
+    }
 }

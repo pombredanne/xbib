@@ -32,6 +32,7 @@
 package org.xbib.analyzer.elements.marc.holdings;
 
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.rdf.Resource;
 
 public class Identifier extends MARCElement {
 
@@ -41,4 +42,34 @@ public class Identifier extends MARCElement {
         return instance;
     }
 
+    @Override
+    public String data(String predicate, Resource resource, String property, String value) {
+        if ("IdentifierZDB".equals(predicate)) {
+            if ("value".equals(property)) {
+                if (value.startsWith("(DE-600)")) {
+                    resource.add("identifierDNB", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-601)")) {
+                    resource.add("identifierGBV", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-602)")) {
+                    resource.add("identifierKOBV", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-603)")) {
+                    resource.add("identifierHEBIS", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-604)")) {
+                    resource.add("identifierBVB", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-605)")) {
+                    resource.add("identifierHBZ", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else if (value.startsWith("(DE-576)")) {
+                    resource.add("identifierSWB", value.substring(8).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                }
+            }
+        }
+        return value;
+    }
 }

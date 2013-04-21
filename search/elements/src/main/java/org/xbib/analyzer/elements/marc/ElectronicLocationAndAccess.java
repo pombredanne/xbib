@@ -31,10 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
 
 public class ElectronicLocationAndAccess extends MARCElement {
 

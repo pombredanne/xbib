@@ -7,9 +7,12 @@ import javax.xml.namespace.QName;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.Loggers;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.io.TripleListener;
+import org.xbib.rdf.io.ntriple.NTripleWriter;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.CharUtils.Profile;
@@ -18,11 +21,13 @@ import org.xml.sax.InputSource;
 
 public class XmlReaderTest extends Assert {
 
+    private final Logger logger = Loggers.getLogger(XmlReaderTest.class);
+
     private final SimpleResourceContext resourceContext = new SimpleResourceContext();
 
     @Test
     public void testGenericXmlReader() throws Exception {
-        String filename = "/org/xbib/rdf/io/oro-eprint-25656.xml";
+        String filename = "/org/xbib/rdf/io/xml/oro-eprint-25656.xml";
         InputStream in = getClass().getResourceAsStream(filename);
         if (in == null) {
             throw new IOException("file " + filename + " not found");
@@ -60,7 +65,7 @@ public class XmlReaderTest extends Assert {
         StringWriter sw = new StringWriter();
         TurtleWriter t = new TurtleWriter();
         t.write(resourceContext.resource(), true, sw);
-        assertEquals(sw.toString().length(), /*1886*/ 1877);
+        assertEquals(sw.toString().length(), 1877);
     }
 
     class ResourceBuilder implements TripleListener {
@@ -77,4 +82,46 @@ public class XmlReaderTest extends Assert {
             return this;
         }
     }
+
+    @Test
+    public void testXmlArray() throws Exception {
+        String filename = "/org/xbib/rdf/io/xml/array.xml";
+        InputStream in = getClass().getResourceAsStream(filename);
+        if (in == null) {
+            throw new IOException("file " + filename + " not found");
+        }
+        IRINamespaceContext context = IRINamespaceContext.newInstance();
+        resourceContext.newNamespaceContext(context);
+        AbstractXmlHandler xmlHandler = new XmlResourceHandler(resourceContext) {
+
+            @Override
+            public boolean isResourceDelimiter(QName name) {
+                return false; // only one resource
+                //return "oai_dc".equals(name.getLocalPart());
+            }
+
+            @Override
+            public void identify(QName name, String value, IRI identifier) {
+                if (identifier ==null) {
+                    resourceContext.resource().id("id:1");
+                }
+            }
+
+            @Override
+            public boolean skip(QName name) {
+                return false;
+                // skip dc:dc element
+                //return "dc".equals(name.getLocalPart());
+            }
+
+        };
+        xmlHandler.setListener(new ResourceBuilder())
+                .setDefaultNamespace("xml", "http://xmltest");
+        new XmlReader().setHandler(xmlHandler).parse(new InputSource(in));
+        StringWriter sw = new StringWriter();
+        NTripleWriter writer = new NTripleWriter();
+        writer.write(resourceContext.resource(), sw);
+        logger.info(sw.toString());
+    }
+
 }

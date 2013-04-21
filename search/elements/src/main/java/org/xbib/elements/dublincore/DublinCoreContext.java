@@ -33,6 +33,8 @@ package org.xbib.elements.dublincore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.AbstractResourceContext;
 import org.xbib.rdf.context.ResourceContext;
@@ -41,6 +43,8 @@ import org.xbib.rdf.simple.SimpleResource;
 public class DublinCoreContext
         extends AbstractResourceContext
         implements ResourceContext, DublinCoreElements {
+
+    private final static AtomicLong counter = new AtomicLong(0L);
 
     private final Map<String,Resource> resources = new HashMap();
 
@@ -54,6 +58,10 @@ public class DublinCoreContext
             resources.put(name, resource.newResource(name));
         }
         return resources.get(name);
+    }
+
+    public long increment() {
+        return counter.incrementAndGet();
     }
 
 }

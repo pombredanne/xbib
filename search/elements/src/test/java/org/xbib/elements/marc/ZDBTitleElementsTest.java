@@ -63,44 +63,11 @@ public class ZDBTitleElementsTest extends Assert {
 
     @Test
     public void testZDBElements() throws Exception {
-        logger.info("testZDBTitleElements");
-        final AtomicLong counter = new AtomicLong();
-        final ElementOutput out = new ElementOutput() {
-
-            @Override
-            public boolean enabled() {
-                return true;
-            }
-
-            @Override
-            public void enabled(boolean enabled) {
-            }
-
-            @Override
-            public void output(ResourceContext context) throws IOException {
-                if (!context.resource().isEmpty()) {
-                    Resource r = context.resource();
-                    r.id(new IRI().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
-                    /*StringBuilder sb = new StringBuilder();
-                    Iterator<Triple> it = r.iterator();
-                    while (it.hasNext()) {
-                        sb.append(it.next().toString()).append("\n");
-                    }
-                    logger.debug("out={}", sb.toString());*/
-                    counter.incrementAndGet();
-                }
-            }
-
-            @Override
-            public long getCounter() {
-                return counter.get();
-            }
-        };
-
+        final ElementOutput out = new OurElementOutput();
         final Charset UTF8 = Charset.forName("UTF-8");
         final Charset ISO88591 = Charset.forName("ISO-8859-1");
         InputStream in = getClass().getResourceAsStream("zdbtitutf8.mrc");
-            //new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1208zdbtitutf8.mrc");
+        //new GZIPInputStream(new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1302zdbtitgesamt.mrc.gz"));
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, ISO88591))) {
             InputSource source = new InputSource(br);
             MARCBuilderFactory factory = new MARCBuilderFactory() {
@@ -145,7 +112,7 @@ public class ZDBTitleElementsTest extends Assert {
             logger.info("zdb title counter = {}", out.getCounter());
             logger.info("unknown keys = {}", mapper.unknownKeys());
         }
-        //assertEquals(out.getCounter(), 293);
+        assertEquals(out.getCounter(), 8);
     }
 
     class OurMARCBuilder extends MARCBuilder {
@@ -153,12 +120,43 @@ public class ZDBTitleElementsTest extends Assert {
         @Override
         public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
-                IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+                IRI id = IRI.builder().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
             }
-            /*for (Field field : fields) {
-                logger.debug("element={} field={}", element, field);
-            }*/
         }
     }
+
+    class OurElementOutput implements ElementOutput {
+        @Override
+        public boolean enabled() {
+            return true;
+        }
+
+        @Override
+        public void enabled(boolean enabled) {
+        }
+
+        @Override
+        public void output(ResourceContext context) throws IOException {
+            if (!context.resource().isEmpty()) {
+                Resource r = context.resource();
+                r.id(IRI.builder().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
+                StringBuilder sb = new StringBuilder();
+                Iterator<Triple> it = r.iterator();
+                while (it.hasNext()) {
+                    sb.append(it.next().toString()).append("\n");
+                }
+                logger.debug("out={}", sb.toString());
+                counter.incrementAndGet();
+            }
+        }
+
+        @Override
+        public long getCounter() {
+            return counter.get();
+        }
+    }
+
+    final AtomicLong counter = new AtomicLong();
+
 }

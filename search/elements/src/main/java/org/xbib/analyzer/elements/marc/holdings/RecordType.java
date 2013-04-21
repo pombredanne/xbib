@@ -34,8 +34,9 @@ package org.xbib.analyzer.elements.marc.holdings;
 import org.xbib.elements.marc.MARCElement;
 
 public class RecordType extends MARCElement {
+
     private final static RecordType instance = new RecordType();
-    
+
     public static MARCElement getInstance() {
         return instance;
     }

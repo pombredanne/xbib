@@ -95,6 +95,14 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
     Resource<S, P, O> add(String predicate, String object);
 
     /**
+     * Add a property to this resource
+     * @param predicate a predicate identifier
+     * @param number an integer
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, Integer number);
+
+    /**
      * Add a property to this resource.
      *
      * @param predicate a predicate identifier in its string representation form
@@ -126,6 +134,14 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
      * @return the new resource with the property added
      */
     Resource<S, P, O> add(P predicate, String object);
+
+    /**
+     * Add a property to this resource
+     * @param predicate a predicate identifier
+     * @param number an integer
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(P predicate, Integer number);
 
     /**
      * Add a property to this resource

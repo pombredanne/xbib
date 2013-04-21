@@ -32,12 +32,34 @@
 package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.rdf.Resource;
 
 public class Identifier extends MARCElement {
     private final static Identifier instance = new Identifier();
     
-    public static MARCElement getInstance() {
+    public static Identifier getInstance() {
         return instance;
     }
 
+    @Override
+    public String data(String predicate, Resource resource, String property, String value) {
+        if ("IdentifierZDB".equals(predicate)) {
+            if ("value".equals(property)) {
+                if (value.startsWith("(DE-599)")) {
+                    resource.add("identifierEKI", value.substring(8));
+                    return null;
+                } else if (value.startsWith("(OCoLC)")) {
+                    resource.add("identifierOCLC", value.substring(7).replaceAll("\\-", "").toLowerCase());
+                    return null;
+                } else {
+                    int pos = value.indexOf(')');
+                    String prefix = pos > 0 ? value.substring(1,pos).toUpperCase() : "";
+                    value = pos > 0 ? value.substring(pos + 1) : value;
+                    resource.add("identifier" + prefix, value.replaceAll("\\-", "").toLowerCase());
+                    return null;
+                }
+            }
+        }
+        return value;
+    }
 }

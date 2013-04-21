@@ -31,13 +31,7 @@
  */
 package org.xbib.analyzer.elements.marc;
 
-import org.xbib.elements.ElementBuilder;
-import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
-import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
-
-import java.util.Map;
 
 public class Codes extends MARCElement {
     private final static Codes instance = new Codes();
@@ -45,46 +39,4 @@ public class Codes extends MARCElement {
     public static MARCElement getInstance() {
         return instance;
     }
-
-    /**
-     * {
-     *     "tags": {
-     *         "<tag>" : {
-     *             "codes" : {
-     *                 "<subf>" : {
-     *                     "<data>" : "The label"
-     *                 }
-     *             }
-     *         }
-     *     }
-     * }
-     *
-     *
-     * @param builder
-     * @param fields
-     * @param value
-     */
-
-    @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
-        Map<String,Object> tags = (Map<String,Object>) getSettings().get("tags");
-        for (Field field: fields) {
-            String tag = field.tag();
-            String predicate = (String)tags.get(tag);
-            if (predicate == null) {
-                continue;
-            }
-            Map<String,Object> subfieldcodes = (Map<String,Object>) getSettings().get("codes");
-            if (subfieldcodes == null) {
-                continue;
-            }
-            Map<String,Object> codes = (Map<String,Object>) subfieldcodes.get(field.subfieldId());
-            if (codes == null) {
-                continue;
-            }
-            String code = (String)codes.get(field.data());
-            builder.context().resource().add(predicate, code);
-        }
-    }
-
 }

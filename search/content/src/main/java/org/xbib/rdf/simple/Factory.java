@@ -53,14 +53,14 @@ public final class Factory<S,P,O> {
     public S asSubject(Object subject) {
         return subject instanceof Identifier ? (S)subject :
                 subject instanceof IRI ? (S)new IdentifiableNode().id((IRI)subject) :
-                (S)new SimpleResource().id(new IRI().curi(subject.toString()).build());
+                (S)new SimpleResource().id(IRI.builder().curi(subject.toString()).build());
     }
 
     public P asPredicate(Object predicate) {
         return predicate == null ? null :
                 predicate instanceof Property ? (P)predicate :
                 predicate instanceof IRI ?  (P)new IdentifiableProperty((IRI)predicate) :
-                (P)new IdentifiableProperty(new IRI().curi(predicate.toString()).build());
+                (P)new IdentifiableProperty(IRI.builder().curi(predicate.toString()).build());
     }
 
     public O asObject(Object object) {

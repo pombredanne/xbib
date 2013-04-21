@@ -48,7 +48,7 @@ public class RecordIdentifier extends PicaElement {
     public void fields(ElementBuilder builder, FieldCollection fields, String value) {
         if (builder.context().resource().id() == null) {
             String v = fields.iterator().next().data();
-            IRI id = new IRI().scheme("res").host("zdb").query("bib").fragment(v).build();
+            IRI id = IRI.builder().scheme("iri").host("zdb").query("bib").fragment(v).build();
             builder.context().resource().id(id);
         }
     }

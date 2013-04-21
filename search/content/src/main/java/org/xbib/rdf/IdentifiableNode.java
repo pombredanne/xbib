@@ -57,7 +57,7 @@ public class IdentifiableNode implements Identifier {
     
     @Override
     public IdentifiableNode id(String id) {
-        id(new IRI().curi(Identifier.GENID, id).build());
+        id(IRI.builder().curi(Identifier.GENID, id).build());
         return this;
     }
     

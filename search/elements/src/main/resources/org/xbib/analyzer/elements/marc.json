@@ -93,92 +93,92 @@
                 "a" : { /* Map (007/00=a) */
                     "_predicate" : "physicalDescriptionMap",
                     "1" : { /* Specific material designation */
-                        "d" : "Atlas",
-                        "g" : "Diagram",
-                        "j" : "Map",
-                        "k" : "Profile",
-                        "q" : "Model",
-                        "r" : "Remote-sensing image",
-                        "s" : "Section",
+                        "d" : "atlas",
+                        "g" : "diagram",
+                        "j" : "map",
+                        "k" : "profile",
+                        "q" : "model",
+                        "r" : "remote-sensing image",
+                        "s" : "section",
                         "u" : null,
-                        "y" : "View",
-                        "z" : "Other"
+                        "y" : "view",
+                        "z" : "other"
                     },
                     "3" : { /* Color */
-                        "a" : "One color",
-                        "c" : "Multicolored"
+                        "a" : "one color",
+                        "c" : "multicolored"
                     },
                     "4" : { /* Physical medium */
-                        "a" : "Paper",
-                        "b" : "Wood",
-                        "c" : "Stone",
-                        "d" : "Metal",
-                        "e" : "Synthetic",
-                        "f" : "Skin",
-                        "g" : "Textiles",
-                        "i" : "Plastic",
-                        "j" : "Glass",
-                        "l" : "Vinyl",
-                        "n" : "Vellum",
-                        "p" : "Plaster",
-                        "q" : "Flexible base photographic, positive",
-                        "r" : "Flexible base photographic, negative",
-                        "s" : "Non-flexible base photographic, positive",
-                        "t" : "Non-flexible base photographic, negative",
-                        "u" : "Unknown",
-                        "v" : "Leather",
-                        "w" : "Parchment",
-                        "y" : "Other photographic medium",
-                        "z" : "Other"
+                        "a" : "paper",
+                        "b" : "wood",
+                        "c" : "stone",
+                        "d" : "metal",
+                        "e" : "synthetic",
+                        "f" : "skin",
+                        "g" : "textiles",
+                        "i" : "plastic",
+                        "j" : "glass",
+                        "l" : "vinyl",
+                        "n" : "vellum",
+                        "p" : "plaster",
+                        "q" : "flexible base photographic, positive",
+                        "r" : "flexible base photographic, negative",
+                        "s" : "non-flexible base photographic, positive",
+                        "t" : "non-flexible base photographic, negative",
+                        "u" : "unknown",
+                        "v" : "leather",
+                        "w" : "parchment",
+                        "y" : "other photographic medium",
+                        "z" : "other"
                     },
                     "5" : { /* Type of reproduction */
-                        "f" : "Facsimile",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "f" : "facsimile",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "6" : { /* Production/reproduction details */
-                        "a" : "Photocopy, blueline print",
-                        "b" : "Photocopy",
-                        "c" : "Pre-production",
-                        "d" : "Film",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "photocopy, blueline print",
+                        "b" : "photocopy",
+                        "c" : "pre-production",
+                        "d" : "film",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "7" : { /* Positive/negative aspect */
-                        "a" : "Positive",
-                        "b" : "Negative",
-                        "m" : "Mixed polarity",
-                        "n" : "Not applicable"
+                        "a" : "positive",
+                        "b" : "negative",
+                        "m" : "mixed polarity",
+                        "n" : "not applicable"
                     }
                 },
                 "c" : { /* 007/00=c Electronic resource */
                     "_predicate" : "physicalDescriptionElectronicResource",
                     "1" : { /* Specific material designation */
-                        "a" : "Tape cartridge",
-                        "b" : "Chip cartridge",
-                        "c" : "Computer optical disc cartridge",
-                        "d" : "Computer disc",
-                        "e" : "Computer disc cartridge",
-                        "f" : "Tape cassette",
-                        "h" : "Tape reel",
-                        "j" : "Magnetic disk",
-                        "k" : "Computer card",
-                        "m" : "Magneto-optical disc",
-                        "o" : "Optical disc",
-                        "r" : "Remote",
+                        "a" : "computer tape cartridge",
+                        "b" : "computer chip cartridge",
+                        "c" : "computer disc cartridge", /* "Computer optical disc cartridge", */
+                        "d" : "computer disc",
+                        "e" : "computer disc cartridge",
+                        "f" : "computer tape cassette",
+                        "h" : "computer tape reel",
+                        "j" : "computer disc", /* "Magnetic disk", */
+                        "k" : "computer card",
+                        "m" : "computer disc", /* "Magneto-optical disc", */
+                        "o" : "computer disc", /*"Optical disc",*/
+                        "r" : "online resource",
                         "u" : null,
-                        "z" : "Other"
+                        "z" : "other"
                     },
                     "3" : { /* Color */
-                        "a" : "One color",
-                        "b" : "Black-and-white",
-                        "c" : "Multicolored",
-                        "g" : "Gray scale",
-                        "m" : "Mixed",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "one color",
+                        "b" : "black-and-white",
+                        "c" : "multicolored",
+                        "g" : "gray scale",
+                        "m" : "mixed",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "4" : { /* Dimensions */
                         "a" : "3 1/2 in.",
@@ -186,148 +186,163 @@
                         "g" : "4 3/4 in. or 12 cm.",
                         "i" : "1 1/8 x 2 3/8 in.",
                         "j" : "3 7/8 x 2 1/2 in.",
-                        "n" : "Not applicable",
+                        "n" : "not applicable",
                         "o" : "5 1/4 in.",
-                        "u" : "Unknown",
+                        "u" : "unknown",
                         "v" : "8 in.",
-                        "z" : "Other"
+                        "z" : "other"
                     },
                     "5" : { /* Sound */
-                        "a" : "Sound",
+                        "a" : "sound",
                         "u" : "Unknown"
                     },
                     "10" : { /* Quality assurance target(s) */
-                        "a" : "Absent",
-                        "n" : "Not applicable",
-                        "p" : "Present",
-                        "u" : "Unknown"
+                        "a" : "absent",
+                        "n" : "not applicable",
+                        "p" : "present",
+                        "u" : "unknown"
                     }
                 },
                 "d" : {
                     "_predicate" : "physicalDescriptionGlobe"
                 },
+                "e" : {
+                    "_predicate" : "physicalDescriptionStereographicCarriers", /* RDA */
+                    "1" : {
+                        "h" : "stereograph card",
+                        "s" : "stereograph disc",
+                        "z" : "other"
+                    }
+                },
                 "f" : {
                     "_predicate" : "physicalDescriptionTactileMaterial",
                     "1" : {  /* Specific material designation */
-                        "a" : "Moon",
-                        "b" : "Braille",
-                        "c" : "Combination",
-                        "d" : "Tactile, with no writing system",
+                        "a" : "moon",
+                        "b" : "braille",
+                        "c" : "combination",
+                        "d" : "tactile, with no writing system",
                         "u" : null,
-                        "z" : "Other"
+                        "z" : "other"
                     },
                     "3" : { /* Class of braille writing */
-                        "a" : "Literary braille",
-                        "b" : "Format code braille",
-                        "c" : "Mathematics and scientific braille",
-                        "d" : "Computer braille",
-                        "e" : "Music braille",
-                        "m" : "Multiple braille types",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
+                        "a" : "literary braille",
+                        "b" : "format code braille",
+                        "c" : "mathematics and scientific braille",
+                        "d" : "computer braille",
+                        "e" : "music braille",
+                        "m" : "multiple braille types",
+                        "n" : "not applicable",
+                        "u" : "unknown",
                         "z" : "Other"
                     },
                     "4" : { /* Class of braille writing */
-                        "a" : "Literary braille",
-                        "b" : "Format code braille",
-                        "c" : "Mathematics and scientific braille",
-                        "d" : "Computer braille",
-                        "e" : "Music braille",
-                        "m" : "Multiple braille types",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "literary braille",
+                        "b" : "format code braille",
+                        "c" : "mathematics and scientific braille",
+                        "d" : "computer braille",
+                        "e" : "music braille",
+                        "m" : "multiple braille types",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "5": { /* Level of contraction */
-                        "a" : "Uncontracted",
-                        "b" : "Contracted",
-                        "m" : "Combination",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "uncontracted",
+                        "b" : "contracted",
+                        "m" : "combination",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "6" : {  /* Braille music format */
-                        "a" : "Bar over bar",
-                        "b" : "Bar by bar",
-                        "c" : "Line over line",
-                        "d" : "Paragraph",
-                        "e" : "Single line",
-                        "f" : "Section by section",
-                        "g" : "Line by line",
-                        "h" : "Open score",
-                        "i" : "Spanner short form scoring",
-                        "j" : "Short form scoring",
-                        "k" : "Outline",
-                        "l" : "Vertical score",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "bar over bar",
+                        "b" : "bar by bar",
+                        "c" : "line over line",
+                        "d" : "paragraph",
+                        "e" : "single line",
+                        "f" : "section by section",
+                        "g" : "line by line",
+                        "h" : "open score",
+                        "i" : "spanner short form scoring",
+                        "j" : "short form scoring",
+                        "k" : "outline",
+                        "l" : "vertical score",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "7" : {  /* Braille music format */
-                        "a" : "Bar over bar",
-                        "b" : "Bar by bar",
-                        "c" : "Line over line",
-                        "d" : "Paragraph",
-                        "e" : "Single line",
-                        "f" : "Section by section",
-                        "g" : "Line by line",
-                        "h" : "Open score",
-                        "i" : "Spanner short form scoring",
-                        "j" : "Short form scoring",
-                        "k" : "Outline",
-                        "l" : "Vertical score",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "bar over bar",
+                        "b" : "bar by bar",
+                        "c" : "line over line",
+                        "d" : "paragraph",
+                        "e" : "single line",
+                        "f" : "section by section",
+                        "g" : "line by line",
+                        "h" : "open score",
+                        "i" : "spanner short form scoring",
+                        "j" : "short form scoring",
+                        "k" : "outline",
+                        "l" : "vertical score",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "8" : {  /* Braille music format */
-                        "a" : "Bar over bar",
-                        "b" : "Bar by bar",
-                        "c" : "Line over line",
-                        "d" : "Paragraph",
-                        "e" : "Single line",
-                        "f" : "Section by section",
-                        "g" : "Line by line",
-                        "h" : "Open score",
-                        "i" : "Spanner short form scoring",
-                        "j" : "Short form scoring",
-                        "k" : "Outline",
-                        "l" : "Vertical score",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "bar over bar",
+                        "b" : "bar by bar",
+                        "c" : "line over line",
+                        "d" : "paragraph",
+                        "e" : "single line",
+                        "f" : "section by section",
+                        "g" : "line by line",
+                        "h" : "open score",
+                        "i" : "spanner short form scoring",
+                        "j" : "short form scoring",
+                        "k" : "outline",
+                        "l" : "vertical score",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     },
                     "9" : { /* Special physical characteristics */
-                        "a" : "Print/braille",
-                        "b" : "Jumbo or enlarged braille",
-                        "n" : "Not applicable",
-                        "u" : "Unknown",
-                        "z" : "Other"
+                        "a" : "print/braille",
+                        "b" : "jumbo or enlarged braille",
+                        "n" : "not applicable",
+                        "u" : "unknown",
+                        "z" : "other"
                     }
                 },
                 "g" : {
-                    "_predicate" : "physicalDescriptionProjectedGraphic"
+                    "_predicate" : "physicalDescriptionProjectedGraphic",
+                    "1" : {
+                        "d" : "filmslip",
+                        "f" : "filmstrip",
+                        "c" : "filmstrip cartridge",
+                        "t" : "overhead transparency",
+                        "s" : "slide"
+                    }
                 },
                 "h" : {
                     "_predicate" : "physicalDescriptionMicroform",
                     "1" : { /* Specific material designation */
-                    "a" : "Aperture card",
-                    "b" : "Microfilm cartridge",
-                    "c" : "Microfilm cassette",
-                    "d" : "Microfilm reel",
-                    "e" : "Microfiche",
-                    "f" : "Microfiche cassette",
-                    "g" : "Microopaque",
-                    "h" : "Microfilm slip",
-                    "j" : "Microfilm roll",
-                    "u" : "Unspecified",
-                    "z" : "Other"
+                    "a" : "aperture card",
+                    "b" : "microfilm cartridge",
+                    "c" : "microfilm cassette",
+                    "d" : "microfilm reel",
+                    "e" : "microfiche",
+                    "f" : "microfiche cassette",
+                    "g" : "microopaque",
+                    "h" : "microfilm slip",
+                    "j" : "microfilm roll",
+                    "u" : "unspecified",
+                    "z" : "other"
                     },
                     "3" : { /* Positive/negative aspect */
-                    "a" : "Positive",
-                    "b" : "Negative",
-                    "m" : "Mixed polarity",
-                    "u" : "Unknown"
+                    "a" : "positive",
+                    "b" : "negative",
+                    "m" : "mixed polarity",
+                    "u" : "unknown"
                     },
                     "4" : { /* Dimensions */
                     "a" : "8 mm",
@@ -339,63 +354,89 @@
                     "m" : "4x6 in (11x15 cm)",
                     "o" : "6x9 in (16x23 cm)",
                     "p" : "3 1/4 x 7 3/8 in (9x19 cm)",
-                    "u" : "Unknown",
-                    "z" : "Other"
+                    "u" : "unknown",
+                    "z" : "other"
                     },
                     "5" : { /* Reduction ratio range */
-                    "a" : "Low reduction ratio",
-                    "b" : "Normal reduction",
-                    "c" : "High reduction",
-                    "d" : "Very high reduction",
-                    "e" : "Ultra high reduction",
-                    "u" : "Unknown",
-                    "v" : "Reduction rate varies"
+                    "a" : "low reduction ratio",
+                    "b" : "normal reduction",
+                    "c" : "high reduction",
+                    "d" : "very high reduction",
+                    "e" : "ultra high reduction",
+                    "u" : "unknown",
+                    "v" : "reduction rate varies"
                     },
                     "9" : { /* Color */
-                    "b" : "Black-and-white",
-                    "c" : "Multicolored",
-                    "m" : "Mixed",
-                    "u" : "Unknown",
-                    "z" : "Other"
+                    "b" : "black-and-white",
+                    "c" : "multicolored",
+                    "m" : "mixed",
+                    "u" : "unknown",
+                    "z" : "other"
                     },
                     "10" : { /* Emulsion on film */
-                    "a" : "Silver halide",
-                    "b" : "Diazo",
-                    "c" : "Vesicular",
-                    "m" : "Mixed emulsion",
-                    "n" : "Not applicable",
-                    "u" : "Unknown",
-                    "z" : "Other"
+                    "a" : "silver halide",
+                    "b" : "diazo",
+                    "c" : "vesicular",
+                    "m" : "mixed emulsion",
+                    "n" : "not applicable",
+                    "u" : "unknown",
+                    "z" : "other"
                     },
                     "11" : { /* Generation */
-                    "a" : "First generation (master)",
-                    "b" : "Printing master",
-                    "c" : "Service copy",
-                    "m" : "Mixed generation",
-                    "u" : "Unknown"
+                    "a" : "first generation (master)",
+                    "b" : "printing master",
+                    "c" : "service copy",
+                    "m" : "mixed generation",
+                    "u" : "unknown"
                     },
                     "12" : {  /* Base of film */
-                    "a" : "Safety base, undetermined",
-                    "c" : "Safety base, acetate undetermined",
-                    "d" : "Safety base, diacetate",
-                    "i" : "Nitrate base",
-                    "m" : "Mixed base (nitrate and safety)",
-                    "n" : "Not applicable",
-                    "p" : "Safety base, polyester",
-                    "r" : "Safety base, mixed",
-                    "t" : "Safety base, triacetate",
-                    "u" : "Unknown",
-                    "z" : "Other"
+                    "a" : "safety base, undetermined",
+                    "c" : "safety base, acetate undetermined",
+                    "d" : "safety base, diacetate",
+                    "i" : "nitrate base",
+                    "m" : "mixed base (nitrate and safety)",
+                    "n" : "not applicable",
+                    "p" : "safety base, polyester",
+                    "r" : "safety base, mixed",
+                    "t" : "safety base, triacetate",
+                    "u" : "unknown",
+                    "z" : "other"
                     }
                 },
                 "k" : {
                     "_predicate" : "physicalDescriptionNonprojectedGraphic"
                 },
                 "m" : {
-                    "_predicate" : "physicalDescriptionMotionPicture"
+                    "_predicate" : "physicalDescriptionMotionPicture",
+                    "1" : {
+                        "c" : "film cartridge",
+                        "f" : "film cassette",
+                        "r" : "film reel",
+                        "o" : "film roll",
+                        "z" : "other"
+                    }
+                },
+                "n" : {
+                    "_predicate" : "physicalDescriptionUnmediatedCarriers",
+                    "1" : {
+                        "o" : "card",
+                        "n" : "flipchart",
+                        "a" : "roll",
+                        "b" : "sheet",
+                        "c" : "volume",
+                        "r" : "object",
+                        "z" : "other"
+                    }
                 },
                 "o" : {
                     "_predicate" : "physicalDescriptionKit"
+                },
+                "p" : {
+                    "_predicate" : "physicalDescriptionMicroscopicCarriers", /* RDA */
+                    "1" : {
+                        "p" : "microscopic slide",
+                        "z" : "other"
+                    }
                 },
                 "q" : {
                     "_predicate" : "physicalDescriptionNotatedMusic"
@@ -404,24 +445,44 @@
                     "_predicate" : "physicalDescriptionRemoteSensingImage"
                 },
                 "s" : {
-                    "_predicate" : "physicalDescriptionSoundRecording"
+                    "_predicate" : "physicalDescriptionSoundRecording",
+                    "1" : {
+                       "g" : "audio cartridge",
+                       "e" : "audio cylinder",
+                       "d" : "audio disc",
+                       "i" : "sound track reel",
+                       "q" : "audio roll",
+                       "s" : "audiocassette",
+                       "t" : "audiotape reel",
+                       "z" : "other"
+                    }
                 },
                 "t" : {
                     "_predicate" : "physicalDescriptionText",
                     "1" : {
-                       "a" : "Regular print",
-                       "b" : "Large print",
-                       "c" : "Braille",
-                       "d" : "Loose-leaf",
-                       "u" : null,
-                       "z" : "Other"
+                       "a" : "regular print",
+                       "b" : "large print",
+                       "c" : "braille",
+                       "d" : "loose-leaf",
+                       "u" : "unknown",
+                       "z" : "other"
                     }
                 },
                 "v" : {
-                    "_predicate" : "physicalDescriptionVideorecording"
+                    "_predicate" : "physicalDescriptionVideorecording",
+                    "1" : {
+                        "c" : "video cartridge",
+                        "f" : "videocassette",
+                        "d" : "videodisc",
+                        "r" : "videotape reel",
+                        "z" : "other"
+                    }
                 },
                 "z" : {
-                    "_predicate" : "physicalDescriptionUnspecified"
+                    "_predicate" : "physicalDescriptionUnspecified",
+                    "1" : {
+                        "u" : "unspecified"
+                    }
                 }
             }
         }
@@ -431,7 +492,7 @@
             "008"
         ],
         "codes" : {
-            "0,5" : "date",
+            "0-5" : "date",
             "6" : {
                 "b" : "No dates given",
                 "c" : "Continuing resource currently published",
@@ -442,7 +503,7 @@
                 "m" : "Multiple dates",
                 "n" : "Dates unknown"
             },
-            "7,10" : "date1",
+            "7-10" : "date1",
             "11-14" : "date2",
             "15-17" : {
                 "xx" : "no place",
@@ -467,6 +528,157 @@
                 "d" : "Other",
                 "u" : "Unknown"
             }
+        },
+        "continuingresource" : {
+            "18" : { /* Frequency (006/01) */
+            "a" : "Annual",
+            "b" : "Bimonthly",
+            "c" : "Semiweekly",
+            "d" : "Daily",
+            "e" : "Biweekly",
+            "f" : "Semiannual",
+            "g" : "Biennial",
+            "h" : "Triennial",
+            "i" : "Three times a week",
+            "j" : "Three times a month",
+            "k" : "Continuously updated",
+            "m" : "Monthly",
+            "q" : "Quarterly",
+            "s" : "Semimonthly",
+            "t" : "Three times a year",
+            "u" : "Unknown",
+            "w" : "Weekly",
+            "z" : "Other"
+            },
+            "19" : { /* Regularity (006/02) */
+            "n" : "Normalized irregular",
+            "r" : "Regular",
+            "u" : "Unknown",
+            "x" : "Completely irregular"
+            },
+            "21" : { /* Type of continuing resource (006/04) */
+            "d" : "Updating database",
+            "l" : "Updating loose-leaf",
+            "m" : "Monographic series",
+            "n" : "Newspaper",
+            "p" : "Periodical",
+            "w" : "Updating Web site"
+            },
+            "22" : { /* Form of original item (006/05) */
+            "a" : "Microfilm",
+            "b" : "Microfiche",
+            "c" : "Microopaque",
+            "d" : "Large print",
+            "e" : "Newspaper format",
+            "f" : "Braille",
+            "o" : "Online",
+            "q" : "Direct electronic",
+            "s" : "Electronic"
+            },
+            "23" : { /* Form of item (006/06) */
+            "a" : "Microfilm",
+            "b" : "Microfiche",
+            "c" : "Microopaque",
+            "d" : "Large print",
+            "f" : "Braille",
+            "o" : "Online",
+            "q" : "Direct electronic",
+            "r" : "Regular print reproduction",
+            "s" : "Electronic"
+            },
+            "24" : { /* Nature of entire work (006/07) */
+            "a" : "Abstracts/summaries",
+            "b" : "Bibliographies",
+            "c" : "Catalogs",
+            "d" : "Dictionaries",
+            "e" : "Encyclopedias",
+            "f" : "Handbooks",
+            "g" : "Legal articles",
+            "h" : "Biography",
+            "i" : "Indexes",
+            "k" : "Discographies",
+            "l" : "Legislation",
+            "m" : "Theses",
+            "n" : "Surveys of literature in a subject area",
+            "o" : "Reviews",
+            "p" : "Programmed texts",
+            "q" : "Filmographies",
+            "r" : "Directories",
+            "s" : "Statistics",
+            "t" : "Technical reports",
+            "u" : "Standards/specifications",
+            "v" : "Legal cases and case notes",
+            "w" : "Law reports and digests",
+            "y" : "Yearbooks",
+            "z" : "Treaties",
+            "5" : "Calendars",
+            "6" : "Comics/graphic novels"
+            },
+            "25" : {  /* Nature of contents (006/08-10) */
+            "a" : "Abstracts/summaries",
+            "b" : "Bibliographies",
+            "c" : "Catalogs",
+            "d" : "Dictionaries",
+            "e" : "Encyclopedias",
+            "f" : "Handbooks",
+            "g" : "Legal articles",
+            "h" : "Biography",
+            "i" : "Indexes",
+            "k" : "Discographies",
+            "l" : "Legislation",
+            "m" : "Theses",
+            "n" : "Surveys of literature in a subject area",
+            "o" : "Reviews",
+            "p" : "Programmed texts",
+            "q" : "Filmographies",
+            "r" : "Directories",
+            "s" : "Statistics",
+            "t" : "Technical reports",
+            "u" : "Standards/specifications",
+            "v" : "Legal cases and case notes",
+            "w" : "Law reports and digests",
+            "y" : "Yearbooks",
+            "z" : "Treaties",
+            "5" : "Calendars",
+            "6" : "Comics/graphic novels"
+            },
+            "28" : { /* Government publication (006/11) */
+            "a" : "Autonomous or semi-autonomous component",
+            "c" : "Multilocal",
+            "f" : "Federal/national",
+            "i" : "International intergovernmental",
+            "l" : "Local",
+            "m" : "Multistate",
+            "o" : "Government publication-level undetermined",
+            "s" : "State, provincial, territorial, dependent, etc.",
+            "u" : "Unknown if item is government publication",
+            "z" : "Other"
+            },
+            "29" : { /* Conference publication (006/12) */
+            "0" : "Not a conference publication",
+            "1" : "Conference publication"
+            },
+            "33" : { /* Original alphabet or script of title (006/16) */
+            "a" : "Basic Roman",
+            "b" : "Extended Roman",
+            "c" : "Cyrillic",
+            "d" : "Japanese",
+            "e" : "Chinese",
+            "f" : "Arabic",
+            "g" : "Greek",
+            "h" : "Hebrew",
+            "i" : "Thai",
+            "j" : "Devanagari",
+            "k" : "Korean",
+            "l" : "Tamil",
+            "u" : "Unknown",
+            "z" : "Other"
+            },
+            "34" : { /* Entry convention (006/17) */
+            "0" : "Successive entry",
+            "1" : "Latest entry",
+            "2" : "Integrated entry"
+            }
         }
     },
     "Identifier" : {
@@ -478,11 +690,6 @@
         "020$1$ $04a","020$1$ $04ab","020$1$ $04abg","020$1$ $04acd","020$1$ $04ad","020$1$ $04ade","020$1$ $04ae","020$1$ $0ab","020$1$ $5","020$1$ $ahi","020$1$0$09Da","020$1$0$0Da","020$1$0$0Dac","020$1$0$0Dad","020$1$0$8abi","020$1$0$8ai","020$1$0$8bi","020$1$0$8i","020$1$0$a","020$1$0$ab","020$1$0$abc","020$1$0$abch","020$1$0$abcnp","020$1$0$abn","020$1$0$abnp","020$1$0$ac","020$1$0$ach","020$1$0$acn","020$1$0$acnp","020$1$0$af","020$1$0$ah","020$1$0$an","020$1$0$anp","020$1$1$0Da","020$1$1$Aa","020$1$2$0Da","020$1$2$Aa","020$1$3$0Da","020$1$3$Aa","020$1$3$a","020$1$3$ai","020$1$4$Aa","020$1$7$02a","020$1$7$02ab","020$1$7$02ad","020$1$9$a","020$2$ $04a","020$2$ $04ab","020$2$ $04abg","020$2$ $04ag","020$2$ $0a","020$2$ $0ab","020$2$ $0abg","020$2$ $0ag","020$2$ $5","020$2$0$09Da","020$2$0$0Da","020$2$0$0Dad","020$2$1$0Da","020$2$1$Aa","020$2$2$0Da","020$2$2$Aa","020$2$3$0Da","020$2$3$Aa","020$2$4$Aa","020$2$7$02ac","020$3$ $5","020$3$ $ab","020$3$0$0Da","020$3$1$0Da","020$3$1$Aa","020$3$2$Aa","020$3$3$Aa","020$4$ $ux","020$8$ $a","020$a$a$a","020$r$ $a",
         "022$ $ $024a","022$ $ $2a","022$ $ $2aq","022$ $ $8b","022$ $ $8sz","022$ $ $a","022$ $ $abc","022$ $ $abcd","022$ $ $b","022$ $ $c","022$ $ $n","022$ $ $w","022$ $ $y","022$ $0$ab","022$ $7$02a","022$ $7$2a","022$0$ $5","022$0$ $a","022$0$0$0Da","022$0$0$8bi","022$0$0$itw","022$0$1$0Da","022$0$1$8ai","022$0$1$Aa","022$0$4$28aq","022$0$8$aitw","022$0$8$itw","022$1$0$8i","022$1$0$ab","022$1$0$abnp","022$1$0$ac","022$1$0$ach","022$1$0$af","022$1$3$a","022$1$3$ai","022$1$9$a","022$2$ $04ag","022$3$ $ab","022$4$ $ux","022$4$ $uxz","022$a$a$a","022$a$d$a","022$r$ $a",
         "024$ $ $024a","024$ $ $2a","024$ $ $2aq","024$ $ $7bc","024$ $ $a","024$ $ $abcd","024$ $ $c","024$ $ $n",
-        "024$0$ $a","024$0$0$aitw","024$0$8$aitw", /* ISRC */
-        "024$1$0$abc","024$1$0$abh", /* UPC */
-        "024$2$ $04ag","024$2$ $0a", /* ISMN */
-        "024$3$ $a","024$3$ $ab", /* IAN */
-        "024$4$ $uxz","024$4$0$ux", /* SICI */
         "024$7$ $2a", /* 2 = http://www.loc.gov/standards/sourcelist/standard-identifier.html */
         "024$8$ $a", /* ??? */
         "029$ $ $024a","029$ $ $2a","029$ $ $2aq","029$ $ $7bc","029$ $ $7bcf","029$ $ $8b","029$ $ $8s","029$ $ $8sz","029$ $ $a","029$ $ $ab","029$ $ $abc","029$ $ $abcd","029$ $ $abcef","029$ $ $ac","029$ $ $ace","029$ $ $ad","029$ $ $adf","029$ $ $adh","029$ $ $adhl","029$ $ $adl","029$ $ $adln","029$ $ $adn","029$ $ $ae","029$ $ $af","029$ $ $afl","029$ $ $afln","029$ $ $ah","029$ $ $ahl","029$ $ $al","029$ $ $aln","029$ $ $an","029$ $ $anr","029$ $ $b","029$ $ $bc","029$ $ $bcf","029$ $ $c","029$ $ $ce","029$ $ $e","029$ $ $l","029$ $ $n","029$ $ $r","029$ $ $w","029$ $0$a","029$ $0$ab","029$ $0$ux","029$ $7$029a","029$ $7$02a","029$ $7$02ag","029$ $7$02at","029$ $7$2a","029$ $7$2ax","029$ $7$2az",
@@ -501,7 +708,9 @@
         /* 032 - postal registration number */
         "032$ $ $a",
         /* 035 = system control number */
-        "035$ $ $a"
+        "035$ $ $a",
+        /* 912 = Produktsigel für NatLiz und digitale Sammlungen */
+        "912$ $ $a"
         ],
         "tags" : {
             "010" : "IdentifierLCCN",
@@ -512,7 +721,8 @@
             "030" : "IdentifierCODEN",
             "032" : "IdentifierPostal",
             "035" : "IdentifierZDB",
-            "083" : "IdentifierDDC"
+            "083" : "IdentifierDDC",
+            "912" : "IdentifierISIL"
         },
         "IdentifierISBN" : {
             "a" : "value",
@@ -533,11 +743,13 @@
         },
         "OtherStandardIdentifier" : {
             "a" : "value",
-            "0" : "identifierAuthorityISRC",
-            "1" : "identifierAuthorityUPC",
-            "2" : "identifierAuthorityISMN",
-            "3" : "identifierAuthorityIAN",
-            "4" : "identifierAuthoritySICI"
+            "c" : "termsOfAvailability",
+            "d" : "otherCodes",
+            "z" : "canceled",
+            "2" : "type"
+        },
+        "IdentifierISIL" : {
+            "a" : "value"
         },
         "subfields" : {
             "a" : "value",
@@ -548,7 +760,50 @@
         },
         "type" : {
             "DE-101" : "IdentifierDNB",
-            "DE-600" : "IdentifierZDB"
+            "DE-600" : "IdentifierZDB",
+            "doi" : "IdentifierDOI",
+            "urn" : "IdentifierURI",
+            "local" : "IdentifierLocal"
+        }
+    },
+    "IdentifierISRC" : {
+        "values" : [
+        "024$0$ $a","024$0$0$aitw","024$0$8$aitw" /*  International Standard Recording Code ISRC */
+        ],
+        "subfields" : {
+            "a" : "value"
+        }
+    },
+    "IdentifierUPC" : {
+        "values" : [
+        "024$1$0$abc","024$1$0$abh" /* Universal Product Code UPC */
+        ],
+        "subfields" : {
+            "a" : "value"
+        }
+    },
+    "IdentifierISMN" : {
+        "values" : [
+        "024$2$ $04ag","024$2$ $0a" /*  International Standard Music Number ISMN */
+        ],
+        "subfields" : {
+            "a" : "value"
+        }
+    },
+    "IdentifierIAN" : {
+        "values" : [
+        "024$3$ $a","024$3$ $ab" /* IAN */
+        ],
+        "subfields" : {
+            "a" : "value"
+        }
+    },
+    "IdentifierSICI" : {
+        "values" : [
+        "024$4$ $uxz","024$4$0$ux" /* SICI */
+        ],
+        "subfields" : {
+            "a" : "value"
         }
     },
     "CustomIdentifier" : {
@@ -573,7 +828,35 @@
         "values" : [
         /* 041 = language code */
         "041$ $ $024a","041$ $ $2a","041$ $ $2aq","041$ $ $a","041$ $ $ah","041$ $ $c","041$ $ $n","041$ $ $w","041$ $0$a","041$ $0$ab","041$0$ $a","041$0$0$itw","041$0$1$8bi","041$0$1$8i","041$0$8$aitw","041$0$8$itw","041$1$0$ab","041$1$0$af","041$1$3$a","041$2$ $0ag","041$3$ $ab","041$r$ $a"
-        ]
+        ],
+        "subfields" : {
+            "a" : "value",
+            "b" : "summaryOrAbstractLanguage",
+            "d" : "sungOrSpokenTextLanguage",
+            "e" : "librettoLanguage",
+            "f" : "tableOfContentLanguage",
+            "g" : "accompanyingMaterialLanguage",
+            "h" : "originalLanguage",
+            "j" : "subtitleOrCaptionLanguage",
+            "k" : "intermediateTranslationLanguage",
+            "m" : "originalAccompanyingMaterialLanguage",
+            "n" : "originalLibrettoLanguage",
+            "2" : "type"
+        }
+    },
+    "Country" : {
+        "values" : [
+        /* 044 = country of publishing code */
+        "044$ $ $c"
+        ],
+        "subfields" : {
+            "a" : "country",
+            "b" : "LocalSubentityCountry",
+            "c" : "isoCountry",
+            "2" : "type",
+            "6" : "linkage",
+            "8" : "sequenceNumber"
+        }
     },
     "ClassificationNumber" : {
         "values" : [
@@ -617,10 +900,11 @@
             "8" : "sequenceNumber"
         },
         "NBNClassificationNumber" : {
+            "_predicate" : "type",
             "a" : "value",
             "b" : "itemNumber",
             "q" : "agency",
-            "2" : "numberSource",
+            "2" : "type",
             "6" : "linkage",
             "8" : "sequenceNumber"
         },
@@ -688,9 +972,11 @@
               "c" : "paper-nonacidfree",
               "d" : "paper-deacidified"
         },
-        "genre" : {
+        "genre" : { /* http://www.zeitschriftendatenbank.de/erschliessung/arbeitsunterlagen/zeta/0600/ */
                 "ab" : "abstract",
+                "ad" : "dfg-alliance-license",
                 "ag" : "aggregator-database",
+                "al" : "alliance-license",
                 "am" : "law",
                 "ao" : "public-newspaper",
                 "az" : "advertisement",
@@ -698,8 +984,9 @@
                 "da" : "database",
                 "di" : "directory",
                 "dm" : "digitization-master",
+                "ee" : "publication-terminated",
                 "eo" : "non-public-newspaper",
-                "es" : "law-reports",
+                "es" : "acid-free-aging",
                 "fb" : "progress-report",
                 "fp" : "former-periodical",
                 "fr" : "former-series",
@@ -710,20 +997,30 @@
                 "il" : "illustrated-paper",
                 "in" : "index",
                 "ko" : "conference-paper",
-                "kt" : "catalog",
-                "la" : "longterm-archival",
-                "ld" : "layout-digitization",
+                "ks" : "acid-paper",
+                "kt" : "map",
+                "la" : "longterm-perservation",
+                "ld" : "layout-retention-digitization",
                 "lp" : "local-newspaper",
                 "mg" : "magazine",
                 "me" : "exhibition-journal",
+                "mm" : "microform-master",
+                "mt" : "music",
                 "mw" : "multipart-work",
                 "nt" : "music-notes",
+                "nk" : "national-consortia",
                 "nl" : "national-license",
+                "nw" : "new",
                 "pa" : "parliament",
                 "pu" : "pay-per-use",
+                "ra" : "dnb-series-a",
+                "rb" : "dnb-series-b",
+                "rc" : "dnb-series-c",
+                "rg" : "dnb-series-g",
                 "re" : "report",
                 "rf" : "dictionary",
                 "rp" : "regional-newspaper",
+                "ro" : "dnb-series-o",
                 "rs" : "restitution",
                 "sc" : "school",
                 "sm" : "secondary-microform",
@@ -733,14 +1030,20 @@
                 "ub" : "translator-journal",
                 "up" : "universal-newspaper",
                 "vi" : "video",
+                "vt" : "filmed-newspaper",
+                "wk" : "webclient-record",
                 "wl" : "weblog",
-                "ws" : "website"
+                "ws" : "website",
+                "zt" : "newspaper"
         }
     },
     "PersonalName" : {
         "values" : [
-        "100$ $ $", "100$ $ $c", "100$ $ $e",
-        "700$ $ $", "700$ $ $c", "700$ $ $e"
+            /* preferred name */
+            "100$ $ $", "100$ $ $c", "100$ $ $e",
+            /* 700 = added entry - personal name */
+            "700$ $ $", "700$ $ $c", "700$ $ $e",
+            "700$0$ $04a","700$0$ $04abcd","700$0$ $04abd","700$0$ $04ac","700$0$ $04acd","700$0$ $04ad","700$0$ $04ade","700$0$ $4a","700$1$ $04a","700$1$ $04ac","700$1$ $04acd","700$1$ $04ad","700$1$ $04ade","700$1$ $04ae","700$3$ $04acd"
         ],
         "subfields" : {
             "a" : "personalName",
@@ -748,15 +1051,19 @@
             "c" : "personalTitle",
             "d" : "personalDate",
             "e" : "relatorTerm",
-            "n" : "corporateNumber"
+            "n" : "personalNumber",
+            "0" : "identifier",
+            "4" : "roleTerm",
+            "7" : "unknown",
+            "9" : null
         }
     },
     "CorporateName" : {
         "values" : [
-        /* 110 = main entry / corporate name */
-        "110$ $ $a", "110$ $ $c", "110$ $ $024a","110$ $ $7","110$ $ $7bc","110$ $ $7bcf","110$ $ $7f","110$ $ $ab","110$ $ $abc","110$ $ $abce","110$ $ $abcef","110$ $ $abe","110$ $ $ac","110$ $ $ace","110$ $ $ad","110$ $ $adf","110$ $ $adfhl","110$ $ $adfl","110$ $ $adfln","110$ $ $adh","110$ $ $adhl","110$ $ $adhn","110$ $ $adl","110$ $ $adln","110$ $ $adn","110$ $ $ae","110$ $ $ael","110$ $ $af","110$ $ $afh","110$ $ $afhl","110$ $ $afl","110$ $ $afln","110$ $ $afn","110$ $ $ah","110$ $ $ahl","110$ $ $ahn","110$ $ $al","110$ $ $aln","110$ $ $an","110$ $ $aw","110$ $ $b","110$ $ $bc","110$ $ $bcf","110$ $ $ce","110$ $ $dl","110$ $ $e","110$ $ $f","110$ $ $fl","110$ $ $fln","110$ $ $hl","110$ $ $l","110$ $ $ln","110$ $ $nr","110$ $ $r","110$ $ $w","110$ $0$a","110$ $0$ab","110$ $0$ux","110$ $7$029a","110$ $7$029ax","110$ $7$02a","110$ $7$02ag","110$ $7$02at","110$ $7$02ax","110$ $7$2a","110$ $7$2ax","110$ $7$2az","110$0$ $04a","110$0$ $04ac","110$0$ $3a","110$0$ $5","110$0$ $a","110$0$ $ux","110$0$ $uxz","110$0$0$09Da","110$0$0$09Dax","110$0$0$0Da","110$0$0$0Dab","110$0$0$0Dabcd","110$0$0$0Dabg","110$0$0$0Dabgt","110$0$0$0Dac","110$0$0$0Dacd","110$0$0$0Dacdg","110$0$0$0Dacdn","110$0$0$0Dad","110$0$0$0Dade","110$0$0$0Dadt","110$0$0$0Dag","110$0$0$0Dat","110$0$0$0Dax","110$0$0$8","110$0$0$8a","110$0$0$8ab","110$0$0$8abi","110$0$0$8ai","110$0$0$8aij","110$0$0$8aijk","110$0$0$8aiu","110$0$0$8ajk","110$0$0$8b","110$0$0$8bi","110$0$0$8bij","110$0$0$8i","110$0$0$8ij","110$0$0$8ijk","110$0$0$8iu","110$0$0$8u","110$0$0$aitw","110$0$0$g","110$0$0$itw","110$0$0$t","110$0$1$09Da","110$0$1$0Da","110$0$1$0Dab","110$0$1$0Dabg","110$0$1$0Dag","110$0$1$0Dat","110$0$1$8","110$0$1$8a","110$0$1$8ab","110$0$1$8abi","110$0$1$8ai","110$0$1$8aij","110$0$1$8aijk","110$0$1$8aiu","110$0$1$8b","110$0$1$8bi","110$0$1$8bijk","110$0$1$8i","110$0$1$8ij","110$0$1$8ijk","110$0$1$8iu","110$0$1$8u","110$0$1$Aa","110$0$2$09Da","110$0$2$0Da","110$0$2$0Dab","110$0$2$0Dag","110$0$2$Aa","110$0$3$09Da","110$0$3$0Da","110$0$3$0Dab","110$0$3$0Dag","110$0$3$0Dat","110$0$3$Aa","110$0$4$0Da","110$0$4$0Dag","110$0$4$Aa","110$0$5$0Da","110$0$5$Aa","110$0$7$029a","110$0$7$02a","110$0$7$02abcd","110$0$7$02acd","110$0$7$02acdt","110$0$7$02ad","110$0$8$a","110$0$8$aitw","110$0$8$itw","110$0$8$t","110$1$ $04a","110$1$ $04ab","110$1$ $04abg","110$1$ $04abgn","110$1$ $04abn","110$1$ $04ad","110$1$ $04ade","110$1$ $04ae","110$1$ $0ab","110$1$ $0abg","110$1$ $0abgn","110$1$ $0abn","110$1$ $5","110$1$ $a","110$1$ $aci","110$1$ $ahi","110$1$ $ai","110$1$0$09Da","110$1$0$0Da","110$1$0$0Dab","110$1$0$0Dabcd","110$1$0$0Dabg","110$1$0$0Dad","110$1$0$0Dadt","110$1$0$0Dae","110$1$0$0Dag","110$1$0$0Dat","110$1$0$0Dax","110$1$0$8a","110$1$0$8ab","110$1$0$8abi","110$1$0$8ai","110$1$0$8aij","110$1$0$8aijk","110$1$0$8ak","110$1$0$8b","110$1$0$8bi","110$1$0$8bij","110$1$0$8bijk","110$1$0$8bik","110$1$0$8i","110$1$0$8ij","110$1$0$8ijk","110$1$0$8ik","110$1$0$a","110$1$0$ab","110$1$0$abc","110$1$0$abch","110$1$0$abchn","110$1$0$abchnp","110$1$0$abcn","110$1$0$abcnp","110$1$0$abh","110$1$0$abhn","110$1$0$abhnp","110$1$0$abn","110$1$0$abnp","110$1$0$ac","110$1$0$ach","110$1$0$achn","110$1$0$achnp","110$1$0$acn","110$1$0$acnp","110$1$0$af","110$1$0$ah","110$1$0$ahn","110$1$0$ahnp","110$1$0$an","110$1$0$anp","110$1$0$ay","110$1$1$09Da","110$1$1$0Da","110$1$1$0Dab","110$1$1$0Dad","110$1$1$0Dag","110$1$1$8bi","110$1$1$8i","110$1$1$8ik","110$1$1$Aa","110$1$2$09Da","110$1$2$0Da","110$1$2$0Dab","110$1$2$0Dabg","110$1$2$0Dad","110$1$2$0Dag","110$1$2$Aa","110$1$3$0Da","110$1$3$0Dab","110$1$3$Aa","110$1$3$a","110$1$3$ai","110$1$4$0Da","110$1$4$0Dag","110$1$4$Aa","110$1$5$0Da","110$1$5$Aa","110$1$7$02a","110$1$7$02ab","110$1$7$02abg","110$1$7$02abgt","110$1$7$02ad","110$1$7$02adt","110$1$7$02ag","110$1$7$02at","110$1$7$2a","110$1$7$2ax","110$1$9$a","110$2$ $04a","110$2$ $04ab","110$2$ $04abg","110$2$ $04abgn","110$2$ $04abn","110$2$ $04ag","110$2$ $04an","110$2$ $0a","110$2$ $0ab","110$2$ $0abg","110$2$ $0abgn","110$2$ $0abn","110$2$ $0ac","110$2$ $0acd","110$2$ $0ag","110$2$ $4a","110$2$ $5","110$2$0$09Da","110$2$0$0Da","110$2$0$0Dab","110$2$0$0Dabg","110$2$0$0Dac","110$2$0$0Dacdt","110$2$0$0Dad","110$2$0$0Dadt","110$2$0$0Dag","110$2$0$0Dat","110$2$1$09Da","110$2$1$0Da","110$2$1$0Dab","110$2$1$0Dabg","110$2$1$0Dad","110$2$1$0Dag","110$2$1$Aa","110$2$2$09Da","110$2$2$0Da","110$2$2$0Dabg","110$2$2$0Dag","110$2$2$Aa","110$2$3$0Da","110$2$3$0Dab","110$2$3$Aa","110$2$4$0Da","110$2$4$Aa","110$2$5$0Da","110$2$5$Aa","110$2$7$02a","110$2$7$02ac","110$2$7$02acdg","110$2$7$02acdn","110$2$7$02ade","110$2$7$02ae","110$2$7$02ag","110$3$ $5","110$3$ $ab","110$3$ $abef","110$3$0$09Da","110$3$0$0Da","110$3$0$0Dab","110$3$0$0Dabg","110$3$0$0Dacd","110$3$0$0Dad","110$3$0$0Dadt","110$3$0$0Dag","110$3$1$09Da","110$3$1$0Da","110$3$1$0Dag","110$3$1$Aa","110$3$2$0Da","110$3$2$Aa","110$3$3$09Da","110$3$3$0Da","110$3$3$0Dab","110$3$3$Aa","110$3$4$0Da","110$3$4$Aa","110$3$5$0Da","110$3$5$Aa","110$3$7$02ac","110$4$ $5","110$4$ $anqux","110$4$ $anquxz","110$4$ $anuxz","110$4$ $axz","110$4$ $quxz","110$4$ $ux","110$4$ $uxz","110$4$0$09Da","110$4$0$0Da","110$4$0$0Dab","110$4$0$0Dacd","110$4$0$0Dacdt","110$4$0$0Dad","110$4$0$0Dag","110$4$0$0Dat","110$4$0$0Dax","110$4$0$ux","110$4$1$0Da","110$4$1$0Dag","110$4$1$Aa","110$4$2$09Da","110$4$2$0Da","110$4$2$3mqu","110$4$2$3u","110$4$2$Aa","110$4$3$09Da","110$4$3$0Da","110$4$3$Aa","110$4$4$0Da","110$4$4$Aa","110$4$5$0Da","110$4$5$Aa","110$5$ $5","110$5$0$0Da","110$5$0$0Dab","110$5$0$0Dabcd","110$5$0$0Dad","110$5$0$0Dadt","110$5$0$0Dag","110$5$1$0Da","110$5$1$0Dacd","110$5$1$Aa","110$5$2$0Da","110$5$2$Aa","110$5$3$0Da","110$5$3$Aa","110$5$4$0Da","110$5$4$Aa","110$6$ $5","110$6$0$0Da","110$6$0$0Dab","110$6$0$0Dacdt","110$6$0$0Dag","110$6$1$0Da","110$6$1$Aa","110$6$2$09Da","110$6$2$0Da","110$6$2$Aa","110$6$3$0Da","110$6$3$Aa","110$6$4$Aa","110$7$ $5","110$7$0$0Da","110$7$0$0Dab","110$7$0$0Dacdt","110$7$0$0Dadt","110$7$0$0Dag","110$7$1$0Da","110$7$1$Aa","110$7$2$0Da","110$7$2$Aa","110$7$3$0Da","110$7$3$Aa","110$7$4$Aa","110$7$5$0Da","110$8$ $5","110$8$ $a","110$8$0$0Da","110$8$0$0Dab","110$8$0$0Dadt","110$8$1$09Da","110$8$1$0Da","110$8$2$0Da","110$8$2$Aa","110$8$3$0Da","110$8$3$Aa","110$8$4$Aa","110$8$5$0Da","110$9$ $5","110$9$0$0Da","110$9$0$0Dab","110$9$1$0Da","110$9$2$0Da","110$9$3$0Da","110$9$4$Aa","110$9$5$0Da","110$r$ $a",
-        /* 710 = added entry - corporate name */
-        "710$1$ $04ab","710$1$ $0ab","710$1$ $0abg","710$1$ $0abgn","710$1$ $0abn","710$2$ $049ag","710$2$ $04a","710$2$ $04ag","710$2$ $0a","710$2$ $0ab","710$2$ $0abg","710$2$ $0abgn","710$2$ $0abn","710$2$ $0ag","710$2$ $0an","710$2$ $a","710$2$ $ab"
+            /* 110 = main entry / corporate name */
+            "110$ $ $a", "110$ $ $c", "110$ $ $024a","110$ $ $7","110$ $ $7bc","110$ $ $7bcf","110$ $ $7f","110$ $ $ab","110$ $ $abc","110$ $ $abce","110$ $ $abcef","110$ $ $abe","110$ $ $ac","110$ $ $ace","110$ $ $ad","110$ $ $adf","110$ $ $adfhl","110$ $ $adfl","110$ $ $adfln","110$ $ $adh","110$ $ $adhl","110$ $ $adhn","110$ $ $adl","110$ $ $adln","110$ $ $adn","110$ $ $ae","110$ $ $ael","110$ $ $af","110$ $ $afh","110$ $ $afhl","110$ $ $afl","110$ $ $afln","110$ $ $afn","110$ $ $ah","110$ $ $ahl","110$ $ $ahn","110$ $ $al","110$ $ $aln","110$ $ $an","110$ $ $aw","110$ $ $b","110$ $ $bc","110$ $ $bcf","110$ $ $ce","110$ $ $dl","110$ $ $e","110$ $ $f","110$ $ $fl","110$ $ $fln","110$ $ $hl","110$ $ $l","110$ $ $ln","110$ $ $nr","110$ $ $r","110$ $ $w","110$ $0$a","110$ $0$ab","110$ $0$ux","110$ $7$029a","110$ $7$029ax","110$ $7$02a","110$ $7$02ag","110$ $7$02at","110$ $7$02ax","110$ $7$2a","110$ $7$2ax","110$ $7$2az","110$0$ $04a","110$0$ $04ac","110$0$ $3a","110$0$ $5","110$0$ $a","110$0$ $ux","110$0$ $uxz","110$0$0$09Da","110$0$0$09Dax","110$0$0$0Da","110$0$0$0Dab","110$0$0$0Dabcd","110$0$0$0Dabg","110$0$0$0Dabgt","110$0$0$0Dac","110$0$0$0Dacd","110$0$0$0Dacdg","110$0$0$0Dacdn","110$0$0$0Dad","110$0$0$0Dade","110$0$0$0Dadt","110$0$0$0Dag","110$0$0$0Dat","110$0$0$0Dax","110$0$0$8","110$0$0$8a","110$0$0$8ab","110$0$0$8abi","110$0$0$8ai","110$0$0$8aij","110$0$0$8aijk","110$0$0$8aiu","110$0$0$8ajk","110$0$0$8b","110$0$0$8bi","110$0$0$8bij","110$0$0$8i","110$0$0$8ij","110$0$0$8ijk","110$0$0$8iu","110$0$0$8u","110$0$0$aitw","110$0$0$g","110$0$0$itw","110$0$0$t","110$0$1$09Da","110$0$1$0Da","110$0$1$0Dab","110$0$1$0Dabg","110$0$1$0Dag","110$0$1$0Dat","110$0$1$8","110$0$1$8a","110$0$1$8ab","110$0$1$8abi","110$0$1$8ai","110$0$1$8aij","110$0$1$8aijk","110$0$1$8aiu","110$0$1$8b","110$0$1$8bi","110$0$1$8bijk","110$0$1$8i","110$0$1$8ij","110$0$1$8ijk","110$0$1$8iu","110$0$1$8u","110$0$1$Aa","110$0$2$09Da","110$0$2$0Da","110$0$2$0Dab","110$0$2$0Dag","110$0$2$Aa","110$0$3$09Da","110$0$3$0Da","110$0$3$0Dab","110$0$3$0Dag","110$0$3$0Dat","110$0$3$Aa","110$0$4$0Da","110$0$4$0Dag","110$0$4$Aa","110$0$5$0Da","110$0$5$Aa","110$0$7$029a","110$0$7$02a","110$0$7$02abcd","110$0$7$02acd","110$0$7$02acdt","110$0$7$02ad","110$0$8$a","110$0$8$aitw","110$0$8$itw","110$0$8$t","110$1$ $04a","110$1$ $04ab","110$1$ $04abg","110$1$ $04abgn","110$1$ $04abn","110$1$ $04ad","110$1$ $04ade","110$1$ $04ae","110$1$ $0ab","110$1$ $0abg","110$1$ $0abgn","110$1$ $0abn","110$1$ $5","110$1$ $a","110$1$ $aci","110$1$ $ahi","110$1$ $ai","110$1$0$09Da","110$1$0$0Da","110$1$0$0Dab","110$1$0$0Dabcd","110$1$0$0Dabg","110$1$0$0Dad","110$1$0$0Dadt","110$1$0$0Dae","110$1$0$0Dag","110$1$0$0Dat","110$1$0$0Dax","110$1$0$8a","110$1$0$8ab","110$1$0$8abi","110$1$0$8ai","110$1$0$8aij","110$1$0$8aijk","110$1$0$8ak","110$1$0$8b","110$1$0$8bi","110$1$0$8bij","110$1$0$8bijk","110$1$0$8bik","110$1$0$8i","110$1$0$8ij","110$1$0$8ijk","110$1$0$8ik","110$1$0$a","110$1$0$ab","110$1$0$abc","110$1$0$abch","110$1$0$abchn","110$1$0$abchnp","110$1$0$abcn","110$1$0$abcnp","110$1$0$abh","110$1$0$abhn","110$1$0$abhnp","110$1$0$abn","110$1$0$abnp","110$1$0$ac","110$1$0$ach","110$1$0$achn","110$1$0$achnp","110$1$0$acn","110$1$0$acnp","110$1$0$af","110$1$0$ah","110$1$0$ahn","110$1$0$ahnp","110$1$0$an","110$1$0$anp","110$1$0$ay","110$1$1$09Da","110$1$1$0Da","110$1$1$0Dab","110$1$1$0Dad","110$1$1$0Dag","110$1$1$8bi","110$1$1$8i","110$1$1$8ik","110$1$1$Aa","110$1$2$09Da","110$1$2$0Da","110$1$2$0Dab","110$1$2$0Dabg","110$1$2$0Dad","110$1$2$0Dag","110$1$2$Aa","110$1$3$0Da","110$1$3$0Dab","110$1$3$Aa","110$1$3$a","110$1$3$ai","110$1$4$0Da","110$1$4$0Dag","110$1$4$Aa","110$1$5$0Da","110$1$5$Aa","110$1$7$02a","110$1$7$02ab","110$1$7$02abg","110$1$7$02abgt","110$1$7$02ad","110$1$7$02adt","110$1$7$02ag","110$1$7$02at","110$1$7$2a","110$1$7$2ax","110$1$9$a","110$2$ $04a","110$2$ $04ab","110$2$ $04abg","110$2$ $04abgn","110$2$ $04abn","110$2$ $04ag","110$2$ $04an","110$2$ $0a","110$2$ $0ab","110$2$ $0abg","110$2$ $0abgn","110$2$ $0abn","110$2$ $0ac","110$2$ $0acd","110$2$ $0ag","110$2$ $4a","110$2$ $5","110$2$0$09Da","110$2$0$0Da","110$2$0$0Dab","110$2$0$0Dabg","110$2$0$0Dac","110$2$0$0Dacdt","110$2$0$0Dad","110$2$0$0Dadt","110$2$0$0Dag","110$2$0$0Dat","110$2$1$09Da","110$2$1$0Da","110$2$1$0Dab","110$2$1$0Dabg","110$2$1$0Dad","110$2$1$0Dag","110$2$1$Aa","110$2$2$09Da","110$2$2$0Da","110$2$2$0Dabg","110$2$2$0Dag","110$2$2$Aa","110$2$3$0Da","110$2$3$0Dab","110$2$3$Aa","110$2$4$0Da","110$2$4$Aa","110$2$5$0Da","110$2$5$Aa","110$2$7$02a","110$2$7$02ac","110$2$7$02acdg","110$2$7$02acdn","110$2$7$02ade","110$2$7$02ae","110$2$7$02ag","110$3$ $5","110$3$ $ab","110$3$ $abef","110$3$0$09Da","110$3$0$0Da","110$3$0$0Dab","110$3$0$0Dabg","110$3$0$0Dacd","110$3$0$0Dad","110$3$0$0Dadt","110$3$0$0Dag","110$3$1$09Da","110$3$1$0Da","110$3$1$0Dag","110$3$1$Aa","110$3$2$0Da","110$3$2$Aa","110$3$3$09Da","110$3$3$0Da","110$3$3$0Dab","110$3$3$Aa","110$3$4$0Da","110$3$4$Aa","110$3$5$0Da","110$3$5$Aa","110$3$7$02ac","110$4$ $5","110$4$ $anqux","110$4$ $anquxz","110$4$ $anuxz","110$4$ $axz","110$4$ $quxz","110$4$ $ux","110$4$ $uxz","110$4$0$09Da","110$4$0$0Da","110$4$0$0Dab","110$4$0$0Dacd","110$4$0$0Dacdt","110$4$0$0Dad","110$4$0$0Dag","110$4$0$0Dat","110$4$0$0Dax","110$4$0$ux","110$4$1$0Da","110$4$1$0Dag","110$4$1$Aa","110$4$2$09Da","110$4$2$0Da","110$4$2$3mqu","110$4$2$3u","110$4$2$Aa","110$4$3$09Da","110$4$3$0Da","110$4$3$Aa","110$4$4$0Da","110$4$4$Aa","110$4$5$0Da","110$4$5$Aa","110$5$ $5","110$5$0$0Da","110$5$0$0Dab","110$5$0$0Dabcd","110$5$0$0Dad","110$5$0$0Dadt","110$5$0$0Dag","110$5$1$0Da","110$5$1$0Dacd","110$5$1$Aa","110$5$2$0Da","110$5$2$Aa","110$5$3$0Da","110$5$3$Aa","110$5$4$0Da","110$5$4$Aa","110$6$ $5","110$6$0$0Da","110$6$0$0Dab","110$6$0$0Dacdt","110$6$0$0Dag","110$6$1$0Da","110$6$1$Aa","110$6$2$09Da","110$6$2$0Da","110$6$2$Aa","110$6$3$0Da","110$6$3$Aa","110$6$4$Aa","110$7$ $5","110$7$0$0Da","110$7$0$0Dab","110$7$0$0Dacdt","110$7$0$0Dadt","110$7$0$0Dag","110$7$1$0Da","110$7$1$Aa","110$7$2$0Da","110$7$2$Aa","110$7$3$0Da","110$7$3$Aa","110$7$4$Aa","110$7$5$0Da","110$8$ $5","110$8$ $a","110$8$0$0Da","110$8$0$0Dab","110$8$0$0Dadt","110$8$1$09Da","110$8$1$0Da","110$8$2$0Da","110$8$2$Aa","110$8$3$0Da","110$8$3$Aa","110$8$4$Aa","110$8$5$0Da","110$9$ $5","110$9$0$0Da","110$9$0$0Dab","110$9$1$0Da","110$9$2$0Da","110$9$3$0Da","110$9$4$Aa","110$9$5$0Da","110$r$ $a",
+            /* 710 = added entry - corporate name */
+            "710$1$ $04ab","710$1$ $0ab","710$1$ $0abg","710$1$ $0abgn","710$1$ $0abn","710$2$ $049ag","710$2$ $04a","710$2$ $04ag","710$2$ $0a","710$2$ $0ab","710$2$ $0abg","710$2$ $0abgn","710$2$ $0abn","710$2$ $0ag","710$2$ $0an","710$2$ $a","710$2$ $ab"
         ],
         "subfields" : {
             "a" : "corporateName",
@@ -767,7 +1074,7 @@
             "f" : "dateOfWork",
             "g" : "corporatePlace",
             "n" : "corporateNumber",
-            "0" : "corporateIdentifier",
+            "0" : "identifier",
             "4" : "roleTerm",
             "7" : "unknown",
             "9" : null
@@ -775,7 +1082,9 @@
     },
     "MeetingName" : {
         "values" : [
-            "111$2$ $04a","111$2$ $04ac","111$2$ $04acd","111$2$ $04acden","111$2$ $04acdg","111$2$ $04acdgn","111$2$ $04acdn","111$2$ $04acn","111$2$ $04ad","111$2$ $04adn","111$2$ $04ae","111$2$ $04aen","111$2$ $04ag"
+            "111$2$ $04a","111$2$ $04ac","111$2$ $04acd","111$2$ $04acden","111$2$ $04acdg","111$2$ $04acdgn","111$2$ $04acdn","111$2$ $04acn","111$2$ $04ad","111$2$ $04adn","111$2$ $04ae","111$2$ $04aen","111$2$ $04ag",
+            /* 711 = added entry - meeting name */
+            "711$2$ $0a","711$2$ $0ac","711$2$ $0acd","711$2$ $0acdg","711$2$ $0acdgn","711$2$ $0acdn","711$2$ $0ad","711$2$ $0adn","711$2$ $0ae","711$2$ $0aen","711$2$ $0ag"
         ],
         "subfields": {
             "a" : "meetingName",
@@ -792,10 +1101,12 @@
             "q" : "nameOfMeetingFollowingJurisdictionName",
             "t" : "titleofWork",
             "u" : "affiliation",
-            "0" : "authorityControlNumber",
+            "0" : "identifier",
             "4" : "relatorCode",
             "6" : "linkage",
-            "8" : "linkAndSequenceNumber"
+            "7" : "unknown",
+            "8" : "sequenceNumber",
+            "9" : null
         }
     },
     "Title" : {
@@ -840,6 +1151,15 @@
             "245" : "TitleStatement",
             "246" : "VaryingTitle",
             "247" : "FormerTitle"
+        },
+        "FormerTitle" : {
+            "a" : "titleMain",
+            "b" : "titleRemainder",
+            "f" : "titleDatesOrSequentialDesignation",
+            "g" : "titleInformation",
+            "h" : "titleMedium",
+            "n" : "titlePartNumber",
+            "p" : "titlePartName"
         },
         "subfields" : {
             "a" : "titleMain",
@@ -934,9 +1254,13 @@
     },
     "SeriesStatement" : {
         "values":[
-        /* 490 = series statement */
-        "490$0$ $3a","490$0$ $a","490$1$ $av",
-        "490$1$ $a"
+            /* 490 = series statement */
+            "490$0$ $3a","490$0$ $a","490$1$ $av",
+            "490$1$ $a",
+            /* 810 = series added entry - corporate name */
+            "810$2$ $4atvw",
+            /* 830 = series added entry = uniform title */
+            "830$ $0$9avw"
         ],
         "subfields" : {
             "a" : "value",
@@ -1044,7 +1368,6 @@
     },
     "Subject" : {
         "values" : [
-        "653$0$ $a",
         /* 600 = subject added entry - personal name */
         "600$0$7$02a","600$0$7$02abcd","600$0$7$02abcdt","600$0$7$02ac","600$0$7$02acd","600$0$7$02acdt","600$0$7$02ad","600$0$7$02adt","600$1$7$02a","600$1$7$02acd","600$1$7$02acdt","600$1$7$02ad","600$1$7$02adt","600$1$7$2a","600$1$7$2ax","600$3$7$02ac","600$3$7$02acd",
         /* 610 = subject added entry - corporate name */
@@ -1059,11 +1382,51 @@
         "650$ $7$029a","650$ $7$029ax","650$ $7$02a","650$ $7$02ax","650$ $7$2a","650$ $7$2ax",
         /* 651 = subject added entry - geographical name */
         "651$ $7$02a","651$ $7$02ag","651$ $7$02ax",
+        "653$0$ $a",
         /* 655 = index term - genre/form */
-        "655$ $7$02a","655$ $7$2a","655$ $7$2az"
-        ]
+        "655$ $7$02a","655$ $7$2a","655$ $7$2az",
+        /* 730 = added entry - uniform title */
+        "730$0$ $a",
+        /* 751 = added entry - geographic name */
+        "751$ $ $024a"
+        ],
+        "tags" : {
+            "600" : "subjectPersonalName"
+        },
+        "subfields" : {
+            "a" : "value",
+            "b" : "numeration",
+            "c" : "titles",
+            "d" : "dates",
+            "e" : "relatorTerm",
+            "f" : "dateOfaWork",
+            "g" : "miscInfo",
+            "h" : "medium",
+            "j" : "attribution",
+            "k" : "formSubheading",
+            "l" : "languageOfaWork",
+            "m" : "mediumOfPerformance",
+            "n" : "number",
+            "o" : "statement",
+            "p" : "part",
+            "q" : "fullForm",
+            "r" : "key",
+            "s" : "version",
+            "t" : "titleOfAWork",
+            "u" : "affiliation",
+            "v" : "formSubdivision",
+            "x" : "generalSubdivision",
+            "y" : "chronologicalSubdivision",
+            "z" : "geographicSubdivision",
+            "0" : "identifier",
+            "2" : "source",
+            "3" : "material",
+            "4" : "relatorCode",
+            "6" : "linkage",
+            "8" : "sequenceNumber"
+        }
     },
-    "LinkingEntries" : {
+    "LinkingEntry" : {
         "values":[
         /* 760 = Main Series Entry */
         "760$ $ $w",
@@ -1077,18 +1440,10 @@
         "787$0$8$024a","787$0$8$02Da","787$0$8$02a","787$0$8$05Da","787$0$8$0Da","787$0$8$2a","787$0$8$2ac","787$0$8$2ai","787$0$8$2aq","787$0$8$4a","787$0$8$5a","787$0$8$5itw","787$0$8$Aa","787$0$8$a","787$0$8$ab","787$0$8$abcd","787$0$8$ac","787$0$8$ad","787$0$8$aitw","787$0$8$i","787$0$8$itw","787$0$8$t"
         ],
         "tags" : {
-            "760" : "mainSeriesEntry",
-            "762" : "subseriesEntry",
-            "765" : "originalLanguageEntry",
-            "767" : "translationEntry",
-            "770" : "supplementSpecialIssueEntry",
-            "772" : "supplementParentEntry",
-            "773" : "hostItemEntry",
-            "774" : "constituentUnitEntry",
-            "775" : "otherEditionEntry",
-            "776" : "additionalPhysicalFormEntry",
-            "777" : "issuedWithEntry",
-            "786" : "dataSourceEntry",
+            "760" : "MainSeriesEntry",
+            "770" : "SupplementSpecialIssueEntry",
+            "772" : "SupplementParentEntry",
+            "775" : "OtherEditionEntry",
             "787" : "OtherRelationshipEntry"
         },
         "subfields" : {
@@ -1098,11 +1453,952 @@
             "w" : "identifier"
         },
         "relation" : {
+            "Original-Ausg." : "hasOriginalEdition",
+            "Orig.-Ausg." : "hasOriginalEdition",
+            "Blindenschr.-Ausg." : "hasBrailleEdition",
+            "Druckausgabe": "hasPrintEdition",
+            "Druckausg." : "hasPrintEdition",
+            "Druckausg.:" : "hasPrintEdition",
+            "Druckausg.#" : "hasPrintEdition",
+            "Druckausg," : "hasPrintEdition",
+            "Druckausg:" : "hasPrintEdition",
+            "Druckausg" : "hasPrintEdition",
+            "Druckausg.." : "hasPrintEdition",
+            "Druckausg. in" : "hasPrintEdition",
+            "druckausg." : "hasPrintEdition",
+            "Druckausg.---" : "hasPrintEdition",
+            "Druckausg. --->" : "hasPrintEdition",
+            "#Druckausg." : "hasPrintEdition",
+            "?Druckausg." : "hasPrintEdition",
+            "f#Druckausg." : "hasPrintEdition",
+            "s#Druckausg.": "hasPrintEdition",
+            "Druckausg.: #"  : "hasPrintEdition",
+            "Druckausg. in ind." : "hasPrintEdition",
+            "Druckausg. teils" : "hasPrintEdition",
+            "Druckausg. u. Vorg." : "hasPrintEdition",
+            "Druckausg. u. darin aufgeg." : "hasPrintEdition",
+            "Druckausg. u. aufgeg. in" : "hasPrintEdition",
+            "Erweit. Druckausg." : "hasPrintEdition",
+            "Frühere Druckausg." : "hasPrintEdition",
+            "Druckausg. vermutl." : "hasPrintEdition",
+            "Druckausg. anfangs" : "hasPrintEdition",
+            "Druckausg. teils" : "hasPrintEdition",
+            "Jährl. Druckausg" : "hasPrintEdition",
+            "Engl. Druckausg." : "hasPrintEdition",
+            "Dt. Druckausg." : "hasPrintEdition",
+            "Dt. Druckausg.:" : "hasPrintEdition",
+            "Engl. Druckausg.:" : "hasPrintEdition",
+            "Deutsche Druckausg." : "hasPrintEdition",
+            "Franz. Druckausg.": "hasPrintEdition",
+            "Russ. Druckausg." : "hasPrintEdition",
+            "Span. Druckausg." : "hasPrintEdition",
+            "Span. Druckausg.:" : "hasPrintEdition",
+            "Tschech. Druckausg." : "hasPrintEdition",
+            "Japan. Druckausg." : "hasPrintEdition",
+            "Ital. Druckausg." : "hasPrintEdition",
+            "Uigh. Druckausg." : "hasPrintEdition",
+            "Fläm. Druckausg." : "hasPrintEdition",
+            "Chines. Druckausg." : "hasPrintEdition",
+            "Druckausg. u.d.T.:" : "hasPrintEdition",
+            "Vollst. Druckausg." : "hasPrintEdition",
+            "Gekürzte Druckausg." : "hasPrintEdition",
+            "Verkürzte Druckausg." : "hasPrintEdition",
+            "Teil-Druckausg." : "hasPrintEdition",
+            "Teils Druckausg." : "hasPrintEdition",
+            "Darin Druckausg.": "hasPrintEdition",
+            "Druckausg. Geschäftsbericht" : "hasPrintEdition",
+            "Druckausg. Jahresbericht": "hasPrintEdition",
+            "Regionale Druckausg.": "hasPrintEdition",
+            "Vorg. u. Druckausg." : "hasPrintEdition",
+            "Vorg. u. Druckausg. eines enth. Werkes" : "hasPrintEdition",
+            "Druckaus.": "hasPrintEdition",
+            "Druckausag.": "hasPrintEdition",
+            "Druckausg.1.1995 - 4.1995": "hasPrintEdition",
+            "Druckausg.81.1926 - 87.1937; 92.1947 - 111.1966": "hasPrintEdition",
+            "Druckausg.u. Vorg.": "hasPrintEdition",
+            "Drucklausg.": "hasPrintEdition",
+            "Druckteilausg.": "hasPrintEdition",
+            "Druclausg.": "hasPrintEdition",
             "Online-Ausg." : "hasOnlineEdition",
-            "Beil. zu:" : "supplementEditionOf",
+            "Onlineausg." : "hasOnlineEdition",
+            "Online-Ausg" : "hasOnlineEdition",
+            "Online Ausg." : "hasOnlineEdition",
+            "Online-Ausg," : "hasOnlineEdition",
+            "Online-Ausg.:" : "hasOnlineEdition",
+            "Online-Ausg.#" : "hasOnlineEdition", /* 749160-8 */
+            "Online-Ausgabe" : "hasOnlineEdition",
+            "Online-Aus." : "hasOnlineEdition",
+            "Online-Ausg. in" : "hasOnlineEdition",
+            "Online- Ausg." : "hasOnlineEdition",
+            "Online-Ausgabe:" : "hasOnlineEdition",
+            "#Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg.: #" : "hasOnlineEdition",
+            "s#Online-Ausg." : "hasOnlineEdition",
+            "Erweit. Online-Ausg.#": "hasOnlineEdition",
+            "Online-Ausg.." : "hasOnlineEdition",
+            "Online-Aussg." : "hasOnlineEdition",
+            "Online-ausg." : "hasOnlineEdition",
+            "Online-Ressource" : "hasOnlineEdition",
+            "Online-Asug." : "hasOnlineEdition",
+            "Online-Aug." : "hasOnlineEdition",
+            "Online  Ausg." : "hasOnlineEdition",
+            "Inernetausg.": "hasOnlineEdition",
+            "Inhaltl. ident. mit Online-Ausg." : "hasOnlineEdition",
+            "Erw. Online-Ausg." : "hasOnlineEdition",
+            "Dt. Online-Ausg." : "hasOnlineEdition",
+            "Deutsche Online-Ausg." : "hasOnlineEdition",
+            "s#Engl. Online-Ausg."  : "hasOnlineEdition",
+            "s#Franz. Online-Ausg."   : "hasOnlineEdition",
+            "s#Als Franz. Online-Ausg. u. Forts. gilt" : "succeededBy",
+            "Engl. Online-Ausg." : "hasOnlineEdition",
+            "Engl. Online Ausg." : "hasOnlineEdition",
+            "Port. Online-Ausg."  : "hasOnlineEdition",
+            "Pt. Online-Ausg."  : "hasOnlineEdition",
+            "Als engl. Online-Ausg. gilt" : "hasOnlineEdition",
+            "Als Engl. Online-Ausg. gilt" : "hasOnlineEdition",
+            "Online-Ausg.in engl." : "hasOnlineEdition",
+            "Franz. Online-Ausg." : "hasOnlineEdition",
+            "Franz. Online Ausg." : "hasOnlineEdition",
+            "Als Franz. Online-Ausg. gilt" : "hasOnlineEdition",
+            "Als franz. Online-Ausg. gilt" : "hasOnlineEdition",
+            "Span. Online-Ausg." : "hasOnlineEdition",
+            "Niederl. Online-Ausg." : "hasOnlineEdition",
+            "Niederländ. Online-Ausg." : "hasOnlineEdition",
+            "Nied. Online-Ausg.": "hasOnlineEdition",
+            "Japan. Online-Ausg." : "hasOnlineEdition",
+            "Griech. Online-Ausg." : "hasOnlineEdition",
+            "Türk. Online-Ausg." : "hasOnlineEdition",
+            "Russ. Online-Ausg." : "hasOnlineEdition",
+            "Lit. Online-Ausg." : "hasOnlineEdition",
+            "Chines. Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg. in chin. Schr." : "hasOnlineEdition",
+            "Portug. Online-Ausg." : "hasOnlineEdition",
+            "Hebr. Online-Ausg." : "hasOnlineEdition",
+            "Tschech. Online-Ausg." : "hasOnlineEdition",
+            "Dän. Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg. enth. in" : "hasOnlineEdition",
+            "Online-Ausg. enthalten in" : "hasOnlineEdition",
+            "Online-Ausg. und Forts." : "hasOnlineEdition",
+            "Online-Ausg. u. Forts." : "hasOnlineEdition",
+            "Online-Ausg. u. Forts.:" : "hasOnlineEdition",
+            "Forts. als Online-Ausg." : "hasOnlineEdition",
+            "Forts. und Online-Ausg." : "hasOnlineEdition",
+            "Forts. u. Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg.ab": "hasOnlineEdition",
+            "Als Online-Ausg. gilt" : "hasOnlineEdition",
+            "Online-Ausg. vermutl." : "hasOnlineEdition",
+            "Online-Ausg. teils" : "hasOnlineEdition",
+            "Online-Teilausg." : "hasOnlineEdition",
+            "Online-Ausg. ohne Personalverz." : "hasOnlineEdition",
+            "Aufgeg. in Online-Ausg." : "hasOnlineEdition",
+            "Teils als Online-Ausg." : "hasOnlineEdition",
+            "Teils nur Online-Ausg." : "hasOnlineEdition",
+            "Teilausg. als Online-Ausg." : "hasOnlineEdition",
+            "Inhaltlich abweichende Online-Ausg." : "hasOnlineEdition",
+            "Vorg. u. Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg. in Einzelh." : "hasOnlineEdition",
+            "Vollst. Online-Ausg." : "hasOnlineEdition",
+            "Enth. in Online-Ausg." : "hasOnlineEdition",
+            "Verkürzte Online-Ausg." : "hasOnlineEdition",
+            "Verkürzte  Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg. d. Suppl." : "hasOnlineEdition",
+            "Online-Ausg. der Forts." : "hasOnlineEdition",
+            "Online-Ausg. anfangs" : "hasOnlineEdition",
+            "IOnline-Ausg." : "hasOnlineEdition",
+            "Engl. Internetteilausg." : "hasOnlineEdition",
+            "Vorabdr. ausgew. Aufsätze im Internet": "hasOnlineEdition",
+            "Hervorgeg. aus u. Online-Ausg." : "hasOnlineEdition",
+            "E-Paper" : "hasOnlineEdition",
+            "Mehrjahres-Internet-Ausg.": "hasOnlineEdition",
+            "Online-Ausg.2004-2006": "hasOnlineEdition",
+            "Online-Index": "hasOnlineEdition",
+            "Onlineausg.:": "hasOnlineEdition",
+            "Teilw. im Internet": "hasOnlineEdition",
+            "Website" : "hasOnlineEdition",
+            "Disketten-Ausg." : "hasDiskEdition",
+            "Diskettenausg. u.d.T.:" : "hasDiskEdition",
+            "Disketten-Index zu" : "isDiskEditionOf",
+            "Diskettenausg.": "hasDiskEdition",
+            "Diskettenausg. for Windows": "hasDiskEdition",
             "DVD-ROM-Ausg." : "hasDVDEdition",
-            "CD-ROM-Ausg." : "hasCDROMEdition",
-            "Franz. Ausg." : "hasFrenchEdition"
+            "DVD-ROM-Ausg.:" : "hasDVDEdition",
+            "DVD-Ausg." : "hasDVDEdition",
+            "DVD-Ausg.:" : "hasDVDEdition",
+            "DVD-ROM" : "hasDVDEdition",
+            "DVD-R-Ausg." : "hasDVDEdition",
+            "DVD-Archivausg." : "hasDVDEdition",
+            "DVD-Version" : "hasDVDEdition",
+            "Mehrjahres-DVD-ROM-Ausg. ab 2007" : "hasDVDEdition",
+            "Als DVD-Ausg. gilt" : "hasDVDEdition",
+            "CD-ROM- und DVD-Ausg.": "hasDVDEdition",
+            "DVD-Mehrjahresausg." : "hasDVDEdition",
+            "Teil-DVD-ROM-Ausg." : "hasDVDEdition",
+            "DVD-ROM-Teilausg." : "hasDVDEdition",
+            "Jahres-DVD-Ausg." : "hasDVDEdition",
+            "Jahrgangs-DVD-Ausg." : "hasDVDEdition",
+            "Jahresausg. DVD-Ausg." : "hasDVDEdition",
+            "Mehrjahres-DVD-Ausg." : "hasDVDEdition",
+            "10-Jahres-DVD-Ausg." : "hasDVDEdition",
+            "DVD-Jahresausg.": "hasDVDEdition",
+            "DVD-ROM-Beil." : "hasSupplement",
+            "CD-ROM-/DVD-ROM-Ausg." : "hasDVDEdition",
+            "CD-ROM- u. DVD-Ausg." : "hasDVDEdition",
+            "CD-ROM/DVD-Ausg." : "hasDVDEdition",
+            "CD-ROM-/DVD-Ausg." : "hasDVDEdition",
+            "CD-ROM, später DVD-Ausg." : "hasDVDEdition",
+            "Weitere CD-ROM-/DVD-Ausg.": "hasDVDEdition",
+            "Vorg. u. DVD-Ausg." : "precededBy",
+            "Als CD-ROM-Ausg. gilt" : "hasCDEdition",
+            "Als CD-Rom-Ausg. gilt" : "hasCDEdition",
+            "CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM.Ausg." : "hasCDEdition",
+            "CD-ROM-Aug." : "hasCDEdition",
+            "CD-ROM-Ausgabe" : "hasCDEdition",
+            "CD-Ausg." : "hasCDEdition",
+            "CD-Ausg.:" : "hasCDEdition",
+            "CD-ROM-Ausg"  : "hasCDEdition",
+            "CD-Rom-Ausg." : "hasCDEdition",
+            "CD-ROM-Ausg," : "hasCDEdition",
+            "CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Ausg.:" : "hasCDEdition",
+            "CD-ROM-.Ausg." : "hasCDEdition",
+            "CD-ROM_Ausg." : "hasCDEdition",
+            "CD-ROM-Ausg. enth. in" : "hasCDEdition",
+            "CD-ROM Ausg." : "hasCDEdition",
+            "CD-ROM Ausgabe" : "hasCDEdition",
+            "CD-ROM-Ausgabe:"  : "hasCDEdition",
+            "CD-ROM-Ausg:" : "hasCDEdition",
+            "CD-ROM-Ausg-:" : "hasCDEdition",
+            "CD-ROM-Aus." : "hasCDEdition",
+            "CD-ROM- Ausg." : "hasCDEdition",
+            "CD-ROM-Teil-Ausg." : "hasCDEdition",
+            "f#CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Ausg.#" : "hasCDEdition",
+            "CD-ROM-Ausg.?"  : "hasCDEdition",
+            "CD-ROM-Ausg.in"  : "hasCDEdition",
+            "CD-ROm-Ausg."  : "hasCDEdition",
+            "Kumulierte CD-ROM-Ausg.:" : "hasCDEdition",
+            "Zugl. in CD-ROM-Ausg."  : "hasCDEdition",
+            "Teil-CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Teilausg.": "hasCDEdition",
+            "Ausz. auf CD-ROM" : "hasCDEdition",
+            "Ausz. als CD-ROM-Ausg." : "hasCDEdition",
+            "Druck-/CD-ROM-Ausg.": "hasCDEdition",
+            "CD-Audio:" : "hasCDEdition",
+            "CD-ROM-Erg." : "hasCDEdition",
+            "CD-ROM-Facht. aus" : "hasCDEdition",
+            "Blindenhörbuch-Ausg. als CD-Ausg." : "hasCDEdition",
+            "Blindenhörbuchausg. als CD-Ausg."  : "hasCDEdition",
+            "Multilinguale CD-ROM-Ausg.": "hasCDEdition",
+            "CD-Version" : "hasCDEdition",
+            "CD-R-Ausg." : "hasCDEdition",
+            "CD-R-Ausg.:"  : "hasCDEdition",
+            "CD-R-Ausgabe" : "hasCDEdition",
+            "CD-R-Ausg-": "hasCDEdition",
+            "CD-ROM-Teilausg. zu"  : "isCDEditionOf",
+            "CD-ROM-Teilausg." : "hasCDEdition",
+            "Aktualisierte CD-ROM-Ausg." : "hasCDEdition",
+            "Jährliche CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Jahresausg." : "hasCDEdition",
+            "Mehrjährige CD-ROM-Ausg." : "hasCDEdition",
+            "Vierteljährl. CD-ROM-Ausg." : "hasCDEdition",
+            "Kumulierte CD-ROM-Ausg." : "hasCDEdition",
+            "Bundesweite CD-ROM-Ausg." : "hasCDEdition",
+            "Engl. CD-ROM-Ausg."  : "hasCDEdition",
+            "Reprint-CD-ROM-Ausg." : "hasCDEdition",
+            "Register-CD" : "hasCDEdition",
+            "Spätere CD-ROM-Ausg.:" : "hasCDEdition",
+            "Erweiterte CD-ROM-Ausg.": "hasCDEdition",
+            "Erweit. CD-ROM-Ausg." : "hasCDEdition",
+            "Erw. CD-ROM-Ausg." : "hasCDEdition",
+            "Gekürzte CD-ROM-Ausg." : "hasCDEdition",
+            "Abstract-CD-ROM-Ausg." : "hasCDEdition",
+            "Digitalisierung auf CD-ROM:": "hasCDEdition",
+            "CD-Ausg." : "hasCDEdition",
+            "Vollst. CD-ROM-Ausg.": "hasCDEdition",
+            "Erweit. CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Beil. zu" : "isSupplementOf",
+            "Dt. CD-ROM-Ausg." : "hasCDEdition",
+            "CD-ROM-Gesamtausg." : "hasCDEdition",
+            "Gesamtausg. als CD-ROM-Ausg."  : "hasCDEdition",
+            "Mehrjahres-CD-ROM-Ausg." : "hasCDEdition",
+            "5-Jahres-CD-ROM" : "hasCDEdition",
+            "Jahrgangs-CD-ROM-Ausg." : "hasCDEdition",
+            "Vorg. u. CD-ROM-Ausg." : "precededBy",
+            "Disketten/CD-ROM-Ausg." : "hasCDEdition",
+            "Forts. als CD-ROM-Ausg." : "succeededBy",
+            "Tonkassetten-Ausg." : "hasTapeEdition",
+            "Mikrofiche-Ausg." : "hasMicroformEdition",
+            "Microfiche-Ausg." : "hasMicroformEdition",
+            "Mikrofilm-Ausg.": "hasMicroformEdition",
+            "Microfiches-Ausg.": "hasMicroformEdition",
+            "Microfilm-Ausg.": "hasMicroformEdition",
+            "Microfilmausg.": "hasMicroformEdition",
+            "Mikrofiche-Kumulation:": "hasMicroformEdition",
+            "Mikrofilmausg. zu": "hasMicroformEdition",
+            "Digital." : "hasDigitizedEdition",
+            "Digital. Ausg." : "hasDigitizedEdition",
+            "Digital.Ausg" : "hasDigitizedEdition",
+            "Digital.Ausg." : "hasDigitizedEdition",
+            "Digital.-Ausg." : "hasDigitizedEdition",
+            "Digital. Ausg.:" : "hasDigitizedEdition",
+            "Digitalisierte Ausg." : "hasDigitizedEdition",
+            "Digitalisierte Ausg.:" : "hasDigitizedEdition",
+            "Digit. Ausg." : "hasDigitizedEdition",
+            "Digitale Ausg." : "hasDigitizedEdition",
+            "Digtal. Ausg." : "hasDigitizedEdition",
+            "Digital Ausg." : "hasDigitizedEdition",
+            "Digitale Ausg.:" : "hasDigitizedEdition",
+            "Digitatl. Ausg." : "hasDigitizedEdition",
+            "Digigtal. Ausg." : "hasDigitizedEdition",
+            "Digitasl. Ausg." : "hasDigitizedEdition",
+            "Digitale Ausg" : "hasDigitizedEdition",
+            "Digitale-Ausg." : "hasDigitizedEdition",
+            "Digital.Ausg.:" : "hasDigitizedEdition",
+            "Allianz-Lizenz eines Teilpaketes" : "hasOnlineEdition",
+            "Allianz-Lizenz mit Zugriff auf laufende Jg." : "hasOnlineEdition",
+            "Allianzlizenz mit Zugriff auch auf die laufenden Jahrgänge" : "hasOnlineEdition",
+            "Allianzlizenz mit Zugriff auch auf die laufenden Jg." : "hasOnlineEdition",
+            "Allianzlizenz mit Zugriff auf laufende Jg." : "hasOnlineEdition",
+            "Lat. Ausg." : "hasLanguageEdition",
+            "Latein. Ausg." : "hasLanguageEdition",
+            "Mehrspr. Ausg." : "hasLanguageEdition",
+            "Zweisprach. Ausg." : "hasLanguageEdition",
+            "Dt. Ausg." : "hasLanguageEdition",
+            "Dt.Ausg." : "hasLanguageEdition",
+            "Dt. Ausg.:" : "hasLanguageEdition",
+            "Dt. Ausg. --->" : "hasLanguageEdition",
+            "Dt.  Ausg." : "hasLanguageEdition",
+            "Dt. Ausg," : "hasLanguageEdition",
+            "Dt. Ausg. u. auch in" : "hasLanguageEdition",
+            "Dt Ausg.": "hasLanguageEdition",
+            "Dt. Allein-Ausg.": "hasLanguageEdition",
+            "Dt. Ausg. 10.1952": "hasLanguageEdition",
+            "Dt. Ausg. 1934/37": "hasLanguageEdition",
+            "Dt. Ausg. 1950 - 1972": "hasLanguageEdition",
+            "Dt. Ausg. 1987; 1988 u. 1991 ersch. zus. mit": "hasLanguageEdition",
+            "Dt. Ausg. 1998/99": "hasLanguageEdition",
+            "Dt. Ausg. ab 1989/90": "hasLanguageEdition",
+            "Dt. Ausg. ab 1999": "hasLanguageEdition",
+            "Dt. Ausg. ab 2008": "hasLanguageEdition",
+            "Dt. Ausg. bis 1988/89": "hasLanguageEdition",
+            "Dt. Ausg. bis 1997/98": "hasLanguageEdition",
+            "Dt. Ausg. bis 2006": "hasLanguageEdition",
+            "Dt. Ausg. bis 2007": "hasLanguageEdition",
+            "Dt. Ausg. bis 29.1997": "hasLanguageEdition",
+            "Dt. Ausg. f. d. DDR": "hasLanguageEdition",
+            "Dt. Ausg. in franz. Sprache": "hasLanguageEdition",
+            "Dt. Ausg. u. ab 2007 zus. ersch. mit": "hasLanguageEdition",
+            "Dt. Ausg. u. ersch. zus. mit": "hasLanguageEdition",
+            "Dt. Ausg. u. inhaltl. ident. mit": "hasLanguageEdition",
+            "Dt. Ausg. u.d.T.": "hasLanguageEdition",
+            "Dt. Ausg. von": "hasLanguageEdition",
+            "Dt. Ausg.1946/48": "hasLanguageEdition",
+            "Dt. Ausz. aus": "hasLanguageEdition",
+            "Dt. Ausz. von": "hasLanguageEdition",
+            "Dt. Auszug": "hasLanguageEdition",
+            "Dt. Auszüge aus:": "hasLanguageEdition",
+            "Dt. Beiträge": "hasLanguageEdition",
+            "Dt. Druckausg. 2001 - 2002": "hasLanguageEdition",
+            "Dt. Fassung": "hasLanguageEdition",
+            "Dt. Gesamtausg.": "hasLanguageEdition",
+            "Dt. Kurzfass. von": "hasLanguageEdition",
+            "Dt. Kurzfassung von": "hasLanguageEdition",
+            "Dt. Kurzfassung zu": "hasLanguageEdition",
+            "Dt. Sonderausg. zu": "hasLanguageEdition",
+            "Dt. Teilübers.": "hasLanguageEdition",
+            "Dt. Teilübers. von": "hasLanguageEdition",
+            "Dt. Untergrundausg.": "hasLanguageEdition",
+            "Dt. Zusammenfassung von": "hasLanguageEdition",
+            "Dt. Zusammenfassung von Artikeln aus": "hasLanguageEdition",
+            "Dt. Übers. von:": "hasLanguageEdition",
+            "Dt.-Engl. Ausg.": "hasLanguageEdition",
+            "Dt.-engl.-Ausg.": "hasLanguageEdition",
+            "Dt.-franz. Ausg.": "hasLanguageEdition",
+            "Dt.-ital. Ausg.": "hasLanguageEdition",
+            "Dt.-spr. Ausz. aus": "hasLanguageEdition",
+            "Dt.-sprach. Auszug aus": "hasLanguageEdition",
+            "Dt.-sprachiger Ausz.": "hasLanguageEdition",
+            "Dt./franz. Kurzausg. 1978 - 1981": "hasLanguageEdition",
+            "Dt./franz. Kurzausg. 1982 - 1983": "hasLanguageEdition",
+            "Dt./franz. Kurzausg. 1982 - 1986": "hasLanguageEdition",
+            "Dt./franz. Kurzausg. 1987": "hasLanguageEdition",
+            "Dt./franz. Kurzausg. ab 1988": "hasLanguageEdition",
+            "Deutsche Ausg." : "hasLanguageEdition",
+            "Deutsche Ausg.:" : "hasLanguageEdition",
+            "Deut. Ausg." : "hasLanguageEdition",
+            "Deutsche Ausg. s." : "hasLanguageEdition",
+            "Deutsche Ausgabe" : "hasLanguageEdition",
+            "Deutsche Beiträge" : "hasLanguageEdition",
+            "Deutsche Lizenzausg. zu" : "hasLanguageEdition",
+            "Deutsche Übers. von" : "isTranslationOf",
+            "Österr. Ausg." : "hasLanguageEdition",
+            "Schweizer Ausg." : "hasLanguageEdition",
+            "Österreich. Ausg." : "hasLanguageEdition",
+            "American Ed." : "hasLanguageEdition",
+            "American ed." : "hasLanguageEdition",
+            "Amerikan. Ausg. in dt. Sprache" : "hasLanguageEdition",
+            "Amerikan. Ausg. in engl. Sprache" : "hasLanguageEdition",
+            "Amerikan. Ausg. von" : "hasLanguageEdition",
+            "Amerikanische Ausg." : "hasLanguageEdition",
+            "Engl. Ausg." : "hasLanguageEdition",
+            "Engl. Ausg.:" : "hasLanguageEdition",
+            "Engl.. Ausg." : "hasLanguageEdition",
+            "Engl Ausg." : "hasLanguageEdition",
+            "Engl. Ausg.#" : "hasLanguageEdition",
+            "Engl.Ausg." : "hasLanguageEdition",
+            "Englische Ausg." : "hasLanguageEdition",
+            "Engl. Teilausg.": "hasLanguageEdition",
+            "Engl. Originalausg.": "hasLanguageEdition",
+            "Engl. Parallelausg." : "hasLanguageEdition",
+            "Engl. Ausg.u.d.T.:"  : "hasLanguageEdition",
+            "Engl.-franz.Ausg.:"  : "hasLanguageEdition",
+            "Engl. bzw. engl.-franz. Ausg." : "hasLanguageEdition",
+            "Engl. Ausg" : "hasLanguageEdition",
+            "Engl. Ausg. 1984 - 1985" : "hasLanguageEdition",
+            "Engl. Ausg. 1985" : "hasLanguageEdition",
+            "Engl. Ausg. 1986" : "hasLanguageEdition",
+            "Engl. Ausg. 1990" : "hasLanguageEdition",
+            "Engl. Ausg. 1991" : "hasLanguageEdition",
+            "Engl. Ausg. 1995" : "hasLanguageEdition",
+            "Engl. Ausg. 2003 u. 2005" : "hasLanguageEdition",
+            "Engl. Ausg. 22.1854/56 - 24.1856/57" : "hasLanguageEdition",
+            "Engl. Ausg. 7.1958" : "hasLanguageEdition",
+            "Engl. Ausg. ab 123.2002" : "hasLanguageEdition",
+            "Engl. Ausg. ab 1884" : "hasLanguageEdition",
+            "Engl. Ausg. ab 1983" : "hasLanguageEdition",
+            "Engl. Ausg. ab 1994" : "hasLanguageEdition",
+            "Engl. Ausg. ab 1995" : "hasLanguageEdition",
+            "Engl. Ausg. bis 1990" : "hasLanguageEdition",
+            "Engl. Ausg. bis 1997:" : "hasLanguageEdition",
+            "Engl. Ausg. bis 77.1995" : "hasLanguageEdition",
+            "Engl. Ausg. f. d. gesamte Tschechoslowakei" : "hasLanguageEdition",
+            "Engl. Ausg. u. Online-Ausg." : "hasLanguageEdition",
+            "Engl. Ausg. u. teils darin" : "hasLanguageEdition",
+            "Engl. Ausg. u.d.T." : "hasLanguageEdition",
+            "Engl. Ausg. von" : "hasLanguageEdition",
+            "Engl. Ausg. von 6.1933" : "hasLanguageEdition",
+            "Engl. Ausg. zu" : "hasLanguageEdition",
+            "Engl. Ausg.; gekürzte Übers. ab 2002" : "hasLanguageEdition",
+            "Engl. Ausgabe" : "hasLanguageEdition",
+            "Engl. Branchen-Telefonbuch zu" : "hasLanguageEdition",
+            "Engl. Druckausg. 2003 und 2004" : "hasLanguageEdition",
+            "Engl. Kurz-Ausg." : "hasLanguageEdition",
+            "Engl. Kurzausg. ab 8.1995 von" : "hasLanguageEdition",
+            "Engl. Kurzausg. von" : "hasLanguageEdition",
+            "Engl. Kurzfassung von" : "hasLanguageEdition",
+            "Engl. Teilausg. von" : "hasLanguageEdition",
+            "Engl. Teilausg. zu" : "hasLanguageEdition",
+            "Engl. Teilübers. 1993 - 2000 von" : "hasLanguageEdition",
+            "Engl. Teilübers. ab 2000 von" : "hasLanguageEdition",
+            "Engl. Teilübers. bis 1999 von" : "hasLanguageEdition",
+            "Engl. Teilübers. daraus" : "hasLanguageEdition",
+            "Engl. Zsfassung" : "hasLanguageEdition",
+            "Engl. Zsfassung auch in" : "hasLanguageEdition",
+            "Engl. Zsfassung von" : "hasLanguageEdition",
+            "Engl. number" : "hasLanguageEdition",
+            "Engl. summary zu" : "hasLanguageEdition",
+            "Engl. verkürzte Ausg. von" : "hasLanguageEdition",
+            "Engl. Übers. ab 2001 von" : "hasLanguageEdition",
+            "Engl. Übers. von:" : "hasLanguageEdition",
+            "Engl. Übers. zu" : "hasLanguageEdition",
+            "Engl., franz. u. deutsches summary von" : "hasLanguageEdition",
+            "Engl.-Franz. Ausg." : "hasLanguageEdition",
+            "Engl.-chines. Ausg." : "hasLanguageEdition",
+            "Engl.-franz. Ausg." : "hasLanguageEdition",
+            "Engl.-franz. Ausg.:" : "hasLanguageEdition",
+            "Engl./franz. Ausg." : "hasLanguageEdition",
+            "Engl.Ausg.:" : "hasLanguageEdition",
+            "Englische Ausgabe" : "hasLanguageEdition",
+            "Englischspr. Ausg." : "hasLanguageEdition",
+            "English ed." : "hasLanguageEdition",
+            "UK-Ausg.": "hasLanguageEdition",
+            "Franz." : "hasLanguageEdition",
+            "Franz. Ausg." : "hasLanguageEdition",
+            "Franz.Ausg." : "hasLanguageEdition",
+            "Franz. Ausg.:" : "hasLanguageEdition",
+            "Franz. Ausg. --->" : "hasLanguageEdition",
+            "Französische Ausg." : "hasLanguageEdition",
+            "Französische Ausg," : "hasLanguageEdition",
+            "Frz. Ausg." : "hasLanguageEdition",
+            "Franz.-Engl. Ausg." : "hasLanguageEdition",
+            "Span. Ausg" : "hasLanguageEdition",
+            "Span. Ausg." : "hasLanguageEdition",
+            "Span. Ausg.:" : "hasLanguageEdition",
+            "Spanische Ausg." : "hasLanguageEdition",
+            "Span. Ausg --" : "hasLanguageEdition",
+            "Katalan. Ausg." : "hasLanguageEdition",
+            "Ital. Ausg." : "hasLanguageEdition",
+            "Italienische Ausg." : "hasLanguageEdition",
+            "Ital. Ausg.:" : "hasLanguageEdition",
+            "Ital. Übers." : "hasLanguageEdition",
+            "Italien. Ausg." : "hasLanguageEdition",
+            "Russ. Ausg." : "hasLanguageEdition",
+            "Russ. Ausg," : "hasLanguageEdition",
+            "Russ. Ausg.:" : "hasLanguageEdition",
+            "Russ Ausg." : "hasLanguageEdition",
+            "Russ. Ausg" : "hasLanguageEdition",
+            "Chines Ausg." : "hasLanguageEdition",
+            "Chines. Ausg. bis 1931" : "hasLanguageEdition",
+            "Chines. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Chines. Ausgabe" : "hasLanguageEdition",
+            "Chines. Orig.-Ausg." : "hasLanguageEdition",
+            "Chines. Originalausg." : "hasLanguageEdition",
+            "Chines. Teilübers. von" : "hasLanguageEdition",
+            "Chines. simplified Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Weißruss. Ausg." : "hasLanguageEdition",
+            "Schwed. Ausg." : "hasLanguageEdition",
+            "Schwedische Ausg." : "hasLanguageEdition",
+            "Schwed. Ausg": "hasLanguageEdition",
+            "Finn. Ausg." : "hasLanguageEdition",
+            "Finnische Ausg."  : "hasLanguageEdition",
+            "Norweg. Ausg." : "hasLanguageEdition",
+            "Niederländ. Ausg." : "hasLanguageEdition",
+            "Niederländ. Ausg.:" : "hasLanguageEdition",
+            "Niederl. Ausg." : "hasLanguageEdition",
+            "Fläm. Ausg." : "hasLanguageEdition",
+            "Fläm. Ausg" : "hasLanguageEdition",
+            "Flämische Ausg." : "hasLanguageEdition",
+            "Dän. Ausg." : "hasLanguageEdition",
+            "Portug. Ausg." : "hasLanguageEdition",
+            "Poln. Ausg." : "hasLanguageEdition",
+            "Tschech. Ausg." : "hasLanguageEdition",
+            "Ukrain. Ausg." : "hasLanguageEdition",
+            "Kroat. Ausg." : "hasLanguageEdition",
+            "Estn. Ausg.": "hasLanguageEdition",
+            "Lett. Ausg." : "hasLanguageEdition",
+            "Lit. Ausg." : "hasLanguageEdition",
+            "Estn. Ausg." : "hasLanguageEdition",
+            "Slovak. Ausg." : "hasLanguageEdition",
+            "Ungar. Ausg." : "hasLanguageEdition",
+            "Slowak. Ausg." : "hasLanguageEdition",
+            "Serb. Ausg." : "hasLanguageEdition",
+            "Slowen. Ausg." : "hasLanguageEdition",
+            "Jugoslaw. Ausg." : "hasLanguageEdition",
+            "Bulg. Ausg." : "hasLanguageEdition",
+            "Griech. Ausg." : "hasLanguageEdition",
+            "Mazedon. Ausg." : "hasLanguageEdition",
+            "Alban. Ausg." : "hasLanguageEdition",
+            "Serbokroat. Ausg." : "hasLanguageEdition",
+            "Rumän. Ausg." : "hasLanguageEdition",
+            "Ruthenisch-ukrain. Ausg.": "hasLanguageEdition",
+            "Hebr. Ausg." : "hasLanguageEdition",
+            "Hebr. Ausg.": "hasLanguageEdition",
+            "Pop. Ausg.": "hasLanguageEdition",
+            "Maltes. Ausg." : "hasLanguageEdition",
+            "Swahili-Ausg." : "hasLanguageEdition",
+            "Kasach. Ausg." : "hasLanguageEdition",
+            "Mongol. Ausg." : "hasLanguageEdition",
+            "Tibet. Ausg." : "hasLanguageEdition",
+            "Uigur. Ausg." : "hasLanguageEdition",
+            "Usbek. Ausg." : "hasLanguageEdition",
+            "Türk. Ausg." : "hasLanguageEdition",
+            "Iran. Ausg." : "hasLanguageEdition",
+            "Turkotatar. Ausg." : "hasLanguageEdition",
+            "Pers. Ausg." : "hasLanguageEdition",
+            "Amerik. Ausg.": "hasLanguageEdition",
+            "Amerikan. Ausg." : "hasLanguageEdition",
+            "Amerikan. Ausg.:" : "hasLanguageEdition",
+            "US-Ausg." : "hasLanguageEdition",
+            "Afrikaans Ausg." : "hasLanguageEdition",
+            "Afrikaans-Ausg." : "hasLanguageEdition",
+            "Afrikaan. Ausg." : "hasLanguageEdition",
+            "Ausg. in Afrikaans" : "hasLanguageEdition",
+            "Südafrikan. Ausg." : "hasLanguageEdition",
+            "Argent. Ausg." : "hasLanguageEdition",
+            "Afghan. Ausg." : "hasLanguageEdition",
+            "Chin. Ausg." : "hasLanguageEdition",
+            "Chines. Ausg": "hasLanguageEdition",
+            "Chines. Ausg." : "hasLanguageEdition",
+            "Jap. Ausg." : "hasLanguageEdition",
+            "Japan. Ausg." : "hasLanguageEdition",
+            "Korean. Ausg.:" : "hasLanguageEdition",
+            "Korean. Ausg." : "hasLanguageEdition",
+            "Koran. Ausg." : "hasLanguageEdition",
+            "Indische Ausg." : "hasLanguageEdition",
+            "Hindi-Ausg.": "hasLanguageEdition",
+            "Ausg. in Hindi" : "hasLanguageEdition",
+            "Birman. Ausg." : "hasLanguageEdition",
+            "Baschkir. Ausg." : "hasLanguageEdition",
+            "Malaiische Ausg." : "hasLanguageEdition",
+            "Vietnam. Ausg." : "hasLanguageEdition",
+            "Arab. Ausg." : "hasLanguageEdition",
+            "Arabische Ausg." : "hasLanguageEdition",
+            "Neugriech. Ausg." : "hasLanguageEdition",
+            "Mexikan. Ausg." : "hasLanguageEdition",
+            "Ukrain. Ausg." : "hasLanguageEdition",
+            "Fläm.Ausg.:" : "hasLanguageEdition",
+            "Argent. Ausg. in dt. Sprache" : "hasLanguageEdition",
+            "Argent. Ausg.:" : "hasLanguageEdition",
+            "Argentinische Ausg." : "hasLanguageEdition",
+            "Armen. Ausg." : "hasLanguageEdition",
+            "Armen. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Aserbaidschan. Ausg."  : "hasLanguageEdition",
+            "Aserbaidschan. Ausg. in kyrill. Schr. u.d.T.:"  : "hasLanguageEdition",
+            "Azerb. Ausg." : "hasLanguageEdition",
+            "Azerbaidsch. Übers. von" : "hasTranslation",
+            "Dän. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Dän. Übers.:" : "hasTranslation",
+            "Dän.-dt.-ital. Ausg." : "hasLanguageEdition",
+            "Dt. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Dt. Ausg.#" : "hasLanguageEdition",
+            "Dt. Ausg"  : "hasLanguageEdition",
+            "Dt. Ausg. :" : "hasLanguageEdition",
+            "Dt. Ausgabe" : "hasLanguageEdition",
+            "Dt. Ausgabe." : "hasLanguageEdition",
+            "Dt, Ausg." : "hasLanguageEdition",
+            "Dt. Langfassung" : "hasLanguageEdition",
+            "Dt. Teilausgabe" : "hasLanguageEdition",
+            "Dt. Teilausg. zu" : "isLanguageEditionOf",
+            "Dt. Kurzausg."  : "hasLanguageEdition",
+            "Gekürzte dt. Ausg." : "hasLanguageEdition",
+            "Dt. Lizenzausg." : "hasLanguageEdition",
+            "Dt.-franz., später dt. Ausg."  : "hasLanguageEdition",
+            "Dt. Übers. u. später dt. Ausz." : "hasLanguageEdition",
+            "Engl. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Engl. Teilausg.:" : "hasLanguageEdition",
+            "Tschech. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Tschech. Ausg" : "hasLanguageEdition",
+            "Tschech Ausg." : "hasLanguageEdition",
+            "Dt. Ausg.u.d.T.:" : "hasLanguageEdition",
+            "Poln. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Ungar. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Ital. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Span. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Portug. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Schwed. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Franz. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Türk. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Türkische Ausg." : "hasLanguageEdition",
+            "Niederländ. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Russ. Ausg. u.d.T.:" : "hasLanguageEdition",
+            "Dreisprach. Ausg.": "hasLanguageEdition",
+            "Brasil. Ausg." : "hasLanguageEdition",
+            "Brasilian. Ausg. in dt. Sprache": "hasLanguageEdition",
+            "Bulg. Ausg. u.d.T.:": "hasLanguageEdition",
+            "Bulgar. Ausg. u.d.T.:": "hasLanguageEdition",
+            "Isländ. Ausg. u.d.T.:": "hasLanguageEdition",
+            "Ital. Ausg. 1994 - 1999": "hasLanguageEdition",
+            "Ital. Ausg. bis 1996/97": "hasLanguageEdition",
+            "Ital. Gesamtausg.": "hasLanguageEdition",
+            "Ital. Teilübers. von": "hasLanguageEdition",
+            "Japan. Ausg. von": "hasLanguageEdition",
+            "Japan. Monatsausg.": "hasLanguageEdition",
+            "Japan. Orig.-Ausg.": "hasLanguageEdition",
+            "Japanische Ausgabe u.d.T.:": "hasLanguageEdition",
+            "Kirgis. Ausg.": "hasLanguageEdition",
+            "Kirgis. Ausg. u.d.T.:": "hasLanguageEdition",
+            "Kirgis. Übers. von": "hasLanguageEdition",
+            "Parallelausg.:" : "hasAdditionalEdition",
+            "Parallele Ausg." : "hasAdditionalEdition",
+            "Parallele Ausg.:" : "hasAdditionalEdition",
+            "Dt. Parallelausg." : "hasAdditionalEdition",
+            "Andere Ausg." : "hasAdditionalEdition",
+            "Andere Aufl." : "hasAdditionalEdition",
+            "Vorläufige Ausg." : "hasAdditionalEdition",
+            "Revidierte Ausg.": "hasAdditionalEdition",
+            "Verkürzte Ausg." : "hasAdditionalEdition",
+            "Gekürzte Ausg." : "hasAdditionalEdition",
+            "Erweit. Ausg." : "hasAdditionalEdition",
+            "Erweiterte Ausg." : "hasAdditionalEdition",
+            "Selbst. Ausg." : "hasAdditionalEdition",
+            "Separatabdr. aus" : "isReproductionOf",
+            "Abdr." : "isReproductionOf",
+            "Abdruck aus" : "isReproductionOf",
+            "Übers." : "hasTranslation",
+            "Dt. Übers." : "hasTranslation",
+            "Dt. Übers.:": "hasTranslation",
+            "Dt. Übersetzung" : "hasTranslation",
+            "Deutsche Übers." : "hasTranslation",
+            "Engl. Übersetzung" : "hasTranslation",
+            "Engl. Übers." : "hasTranslation",
+            "Engl Übers." : "hasTranslation",
+            "Engl. Teilübers." : "hasTranslation",
+            "Engl. Übersetzungsausg." : "hasTranslation",
+            "engl. Teilübers." : "hasTranslation",
+            "Engl. Teilübers. von" : "isTranslationOf",
+            "Span. Übers." : "hasTranslation",
+            "Übers. von" : "isTranslationOf",
+            "Dt. Übers. von" : "isTranslationOf",
+            "Dt. Übers.:" : "hasTranslation",
+            "Engl. Übers. von" : "isTranslationOf",
+            "Engl. übers."  : "hasTranslation",
+            "Teilübersetzung von" : "isTranslationOf",
+            "Russ. Übers." : "hasTranslation",
+            "Chines. Übers." : "hasTranslation",
+            "Arab. Übers." : "hasTranslation",
+            "Lat. Übers." : "hasTranslation",
+            "Poln. Übers." : "hasTranslation",
+            "Thail. Übers." : "hasTranslation",
+            "Russ.-engl. Übers." : "hasTranslation",
+            "Chines. Übers. von" : "isTranslationOf",
+            "Französ. Übers. von" : "isTranslationOf",
+            "Armen. Übers. von" : "isTranslationOf",
+            "Ital. Übers." : "isTranslationOf",
+            "Ital. Übers. von" : "isTranslationOf",
+            "Entspricht inhaltl." : "hasAdditionalEdition",
+            "Ersch. auch als:" : "hasAdditionalEdition",
+            "Inhaltl. ident." : "hasAdditionalEdition",
+            "Inhaltl. ident. Ausg." : "hasAdditionalEdition",
+            "Inhaltl. orientiert an" : "hasAdditionalEdition",
+            "Inhaltl. ident. mit" : "hasAdditionalEdition",
+            "Ersch. inhaltl. auch in": "hasAdditionalEdition",
+            "Ersch. teilw. zugleich als" : "hasAdditionalEdition",
+            "Ersch. auch selbständig" : "hasAdditionalEdition",
+            "Selbständige Ausg." : "hasAdditionalEdition",
+            "Auch selbst. ersch. als" : "hasAdditionalEdition",
+            "Ersch. unselbst. in" : "hasAdditionalEdition",
+            "Ersch. auch unselbständig in" : "hasAdditionalEdition",
+            "Unselbst. Ausg." : "hasAdditionalEdition",
+            "Ersch. auch in" : "hasAdditionalEdition",
+            "Ersch. auch als" : "hasAdditionalEdition",
+            "Ersch. an Stelle von" : "hasAdditionalEdition",
+            "Verl.-Ausg.": "hasAdditionalEdition",
+            "Auch ersch. in" : "hasAdditionalEdition",
+            "Auch in" : "hasAdditionalEdition",
+            "Teils inhaltl. ident. mit" : "hasAdditionalEdition",
+            "{Inhaltl. ident. mit" : "hasAdditionalEdition", /* 552391-6 */
+            "Inhalt. ident mit" : "hasAdditionalEdition",
+            "Inhalt. ident. mit" : "hasAdditionalEdition",
+            "Inhalt. identisch mit" : "hasAdditionalEdition",
+            "Inhalt. indent. mit" : "hasAdditionalEdition",
+            "Inhalt. teils ident. mit" : "hasAdditionalEdition",
+            "Inhaltl. Erg. auch" : "hasAdditionalEdition",
+            "Inhaltl. ergänzt durch" : "hasAdditionalEdition",
+            "Inhaltl. größtenteils ident. mit" : "hasAdditionalEdition",
+            "Inhaltl. ident. Ausg. von" : "hasAdditionalEdition",
+            "Inhaltl. ident. Buchhandelsausg. zu" : "hasAdditionalEdition",
+            "Inhaltl. ident. Lizenzausg." : "hasAdditionalEdition",
+            "Inhaltl. ident. Nebenausg. zu" : "hasAdditionalEdition",
+            "Inhaltl. ident. mit T. 2 d. Schweizer Ausg." : "hasAdditionalEdition",
+            "Inhaltl. ident. mit T. 2 d. österr. Ausg." : "hasAdditionalEdition",
+            "Inhaltl. ident. mit d. Hauptteil von" : "hasAdditionalEdition",
+            "Inhaltl. ident. mit:" : "hasAdditionalEdition",
+            "Inhaltl. identisch mit" : "hasAdditionalEdition",
+            "Inhaltl. indentisch mit" : "hasAdditionalEdition",
+            "Inhaltl. nicht ident. englische Ausg." : "hasAdditionalEdition",
+            "Inhaltl. teilident. mit" : "hasAdditionalEdition",
+            "Inhaltl. teils ident. Lokal-Ausg." : "hasAdditionalEdition",
+            "Inhaltl. teils ident. franz.Ausg." : "hasAdditionalEdition",
+            "Inhaltl. teils ident. mit" : "hasAdditionalEdition",
+            "Inhaltl. teilw. ident. mit" : "hasAdditionalEdition",
+            "Inhaltl. weitgehend ident. mit" : "hasAdditionalEdition",
+            "Inhaltl. weitgehend identisch mit" : "hasAdditionalEdition",
+            "Inhaltlich größtenteils identisch mit" : "hasAdditionalEdition",
+            "Inhaltlich ident. mit" : "hasAdditionalEdition",
+            "Inhaltlich identisch mit" : "hasAdditionalEdition",
+            "Inhaltlich identisch mit 4,406 von" : "hasAdditionalEdition",
+            "Heimatausg." : "hasSpatialEdition",
+            "Nebenausg." : "hasLocalEdition", /* regionale Augabe einer Zeitung */
+            "Nebenausg. von" : "isLocalEditionOf", /* regionale Augabe einer Zeitung */
+            "Lokalausg." : "isLocalEditionOf",
+            "Steir. Ausg." : "hasSpatialEdition",
+            "Wiener Ausg." : "hasSpatialEdition",
+            "Ausg. Waldviertel" : "hasSpatialEdition",
+            "Salzburger Ausg." : "hasSpatialEdition",
+            "Oberösterr. Ausg." : "hasSpatialEdition",
+            "Internat. Ausg." : "hasSpatialEdition",
+            "Europ. Ausg." : "hasSpatialEdition",
+            "Auslands-Ausg. von" : "hasSpatialEdition",
+            "Auslandsausg.": "hasSpatialEdition",
+            "Auslandsteil zu": "hasSpatialEdition",
+            "Westdt. Ausg." : "hasSpatialEdition",
+            "Ausg. für die neuen Bundesländer" : "hasSpatialEdition",
+            "Holl. Ausg." : "hasSpatialEdition",
+            "Belg. Ausg." : "hasSpatialEdition",
+            "Schweiz. Ausg." : "hasSpatialEdition",
+            "Schweizer. Ausg." : "hasSpatialEdition",
+            "Außeramerikan. Ausg." : "hasSpatialEdition",
+            "Ausg. Berlin" : "hasSpatialEdition",
+            "Berliner Ausg." : "hasSpatialEdition",
+            "Westl. Ausg.": "hasSpatialEdition",
+            "Regional-Ausg." : "hasSpatialEdition",
+            "Heimatausg. von" : "hasSpatialEdition",
+            "Lokalausg. von" : "hasSpatialEdition",
+            "Regionalausg.": "hasSpatialEdition",
+            "Abendausg." : "hasSpatialEdition",
+            "Sonntagsausg. von" : "isTemporalEditionOf",
+            "Wöchentl. Ausg." : "hasTemporalEdition",
+            "Wöchentl. Ausg. zu" : "isTemporalEditionOf",
+            "Halbwochenausg." : "hasTemporalEdition",
+            "Monatl. Ausg.": "hasTemporalEdition",
+            "Monatsausg." : "hasTemporalEdition",
+            "Tägl. Ausg." : "hasTemporalEdition",
+            "Vierteljährl. Ausg." : "hasTemporalEdition",
+            "Jahresausg." : "hasTemporalEdition",
+            "Mehrjahresausg." : "hasTemporalEdition",
+            "Mehrjahresausg. von" : "isTemporalEditionOf",
+            "Ferienausg. von" : "isTemporalEditionOf",
+            "Ersch. alternierend mit" : "isTemporalEditionOf",
+            "Vollst. Ausg." : "isPartialEditionOf",
+            "Teilausg." : "hasPartialEdition",
+            "Teilausg. von" : "isPartialEditionOf",
+            "Teilident. Ausg." : "hasPartialEdition",
+            "Teils in" : "hasPartialEdition",
+            "Ersch. teils zus. mit" : "hasPartialEdition",
+            "Dt. Teilausg." : "hasPartialEdition",
+            "Auszug" : "hasPartialEdition",
+            "Ausz." : "hasPartialEdition",
+            "Ausw." : "hasPartialEdition",
+            "Ausw. ab 1898" : "hasPartialEdition",
+            "Ausw. aus" : "hasPartialEdition",
+            "Ausw. bis 1896" : "hasPartialEdition",
+            "Ausw. von" : "hasPartialEdition",
+            "Auswahl" : "hasPartialEdition",
+            "Auswahl aus" : "hasPartialEdition",
+            "Auswahlausg. zu" : "hasPartialEdition",
+            "Auswahlindex" : "hasPartialEdition",
+            "Auswahlkum." : "hasPartialEdition",
+            "Auswahlrepr. zu" : "hasPartialEdition",
+            "Auswahlsammlung" : "hasPartialEdition",
+            "Auszugsweise auch in" : "hasPartialEdition",
+            "Auszugsweise auch in 17/18 von" : "hasPartialEdition",
+            "Auszugsweise auch in 31 von" : "hasPartialEdition",
+            "Auszugsweiser Vorabdr." : "hasPartialEdition",
+            "Auszüge" : "hasPartialEdition",
+            "Auszüge aus" : "isPartialEditionOf",
+            "Auszüge daraus" : "hasPartialEdition",
+            "Auzüge aus" : "isPartialEditionOf",
+            "Aktualisierte Kurzfassung von" : "isVersionOf",
+            "Aktualisierte u. erw. Ausg. von" : "isVersionOf",
+            "Aktualisierung" : "isVersionOf",
+            "Aktualisierung zu" : "isVersionOf",
+            "Bearb. Ausg." : "hasDerivedEdition",
+            "Überarb. Ausg." : "hasDerivedEdition",
+            "Wohlfeile Ausg." : "hasAdditionalEdition", /* kostengünstige Ausgabe, Sonderangebot */
+            "Gebundene Ausg." : "hasHardcoverEdition",
+            "Maschinenschriftl. Ausg." : "hasManuscriptEdition",
+            "Ausg. in Folio" : "hasHardcoverEdition",
+            "Kassetten-Ausg." : "hasBoxedEdition",
+            "Anl." : "hasSupplement",
+            "Anl.-Bd." : "hasSupplement",
+            "Anlage" : "hasSupplement",
+            "Anlage A" : "hasSupplement",
+            "Anlage I" : "hasSupplement",
+            "Anlage II" : "hasSupplement",
+            "Anlagebd.zu" : "hasSupplement",
+            "Anlagenbd." : "hasSupplement",
+            "Anfangs Anh." : "hasSupplement",
+            "Anfangs Anl. 4, dann Anl. 5" : "hasSupplement",
+            "Anfangs Anl. 5, dann Anl. 7" : "hasSupplement",
+            "Anfangs Anl. III, ab 2001 Anl. II" : "hasSupplement",
+            "Anfangs Sonderabdr. aus": "hasSupplement",
+            "Anfangs Sonderausg. zu u. später inhaltl. ident. mit": "hasSupplement",
+            "Anfangs Sonderdr. aus": "hasSupplement",
+            "Anfangs Sonderh.": "hasSupplement",
+            "App.": "hasSupplement",
+            "App. zu": "hasSupplement",
+            "Append.": "hasSupplement",
+            "Appendice": "hasSupplement",
+            "Beil.:" : "hasSupplement",
+            "Suppl." : "hasSupplement",
+            "Suppl. zu" : "isSupplementOf",
+            "Ersch. zusammen mit" : "isSupplementOf",
+            "Ersch. zs mit" : "isSupplementOf",
+            "Ersch. zus. mit" : "isSupplementOf",
+            "Beil zu" : "isSupplementOf",
+            "Beil. zu:" : "isSupplementOf",
+            "Beil. teils." : "isSupplementOf",
+            "Sonderausg." : "hasSupplement",
+            "Sonderbeil." : "hasSupplement",
+            "Sonderh." : "isSupplementOf",
+            "Sonderh. zu" : "isSupplementOf",
+            "Sonderabdr." : "hasSupplement",
+            "Separatabdr." : "hasSupplement",
+            "Sonderpubl.": "hasSupplement",
+            "Sonderdr." : "hasSupplement",
+            "Sonderdruck" : "hasSupplement",
+            "Sonderdr.:" : "hasSupplement",
+            "Auch Sonderdr. aus": "hasSupplement",
+            "Auch Sonderdr. zu" : "hasSupplement",
+            "Teils Sonderdr."  : "hasSupplement",
+            "Sonderdr. aus" : "isSupplementOf",
+            "Sonderabdr. aus" : "isSupplementOf",
+            "Separatdr." : "hasSupplement",
+            "Dt. Sonderausg." : "isSupplementOf",
+            "Jubiläumsausg." : "isSupplementOf",
+            "Special issue" : "isSupplementOf",
+            "Spec. ed." : "isSupplementOf",
+            "Erw. Abdr.": "hasReproduction",
+            "Nachdr. von" : "isReproductionOf",
+            "Teilabdr. von" : "isReproductionOf",
+            "Repr." : "hasReproduction",
+            "Repr.-Ausg." : "hasReproduction",
+            "Repr. in" : "hasReproduction",
+            "Repr. von" : "isReproductionOf",
+            "In" : "isPartOf",
+            "In#": "isPartOf",
+            "In:": "isPartOf",
+            "Darin" : "isPartOf",
+            "Daraus" : "hasPart",
+            "Enth. in" : "isPartOf",
+            "Aus" : "isPartOf",
+            "Ausz. aus" : "isPartOf",
+            "Dt. Ausz." : "hasPart", /* Auszug */
+            "Ersch. später in" : "succeededBy",
+            "Teils inhaltl. ident. u. aufgeg. in" : "succeededBy",
+            "Früher u.d.T.:" : "precededBy",
+            "Hervorgeg. aus und Beil. zu" : "precededBy",
+            "Anfangs Beil." : "hasSupplement",
+            "Anfangs Beil. zu" : "precededBy",
+            "Später Beil. zu" : "succeededBy",
+            "Spätere Ausg." : "succeededBy",
+            "Neuausg. von" : "precededBy",
+            "Darin aufgeg.:" : "succeededBy",
+             "Kumulation von" : "isSummaryOf",
+            "Zssfassung von" : "isSummaryOf",
+            "Engl. Zusammenfassung" : "hasSummary",
+            "Engl. Kurzfassung" : "hasSummary",
+            "Abstracts in Engl."  : "hasSummary",
+            "Dt. Zsfassung"  : "hasSummary",
+            "Dt. Zsfassungen" : "hasSummary",
+            "Abstracts zu" : "isSummaryOf",
+            "Abstract of abstracts" : "isSummaryOf",
+            "Abstracts" : "isSummaryOf",
+            "Abstracts in English" : "isSummaryOf",
+            "Index" : "hasSupplement",
+            "Index zu" : "isSupplementOf",
+            "Anh. zu"  : "isSupplementOf",
+            "Beih. zu" : "isSupplementOf",
+            "Erg." : "hasSupplement",
+            "Erg. Bd." : "hasSupplement",
+            "Erg. Bd. 1960/61 - 1961/62" : "hasSupplement",
+            "Erg. Tab." : "hasSupplement",
+            "Erg. Tabellen" : "hasSupplement",
+            "Erg. ab 1992" : "hasSupplement",
+            "Erg. ab 1993" : "hasSupplement",
+            "Erg. zu" : "hasSupplement",
+            "Erg. zu 1974/75 von" : "hasSupplement",
+            "Erg. zu 1975/76 von" : "hasSupplement",
+            "Erg. zu 1976/77 von" : "hasSupplement",
+            "Erg.-Ausg. zu" : "hasSupplement",
+            "Erg.-Bd." : "hasSupplement",
+            "Erg.-Bd. 1884" : "hasSupplement",
+            "Erg.-Bd. zu 2.1997" : "hasSupplement",
+            "Erg.-Bl." : "hasSupplement",
+            "Erg.-Blätter" : "hasSupplement",
+            "Erg.-H." : "hasSupplement",
+            "Erg.-H. 1898 - 1938" : "hasSupplement",
+            "Erg.-H. zu" : "hasSupplement",
+            "Erg.-H. zu T.2" : "hasSupplement",
+            "Erg.-Lfg." : "hasSupplement",
+            "Erg.-Liste" : "hasSupplement",
+            "Erg.-Reihe" : "hasSupplement",
+            "Erg.-Schr." : "hasSupplement",
+            "Erg.-Tab. u. CD-ROM-Ausg." : "hasSupplement",
+            "Erg.Bd." : "hasSupplement",
+            "Ergänzende Dokumentation zu"  : "hasSupplement",
+            "Ergänzter Ausz. aus" : "hasSupplement",
+            "Ergänzter Auszug aus" : "hasSupplement",
+            "Ergänzung" : "hasSupplement",
+            "Ergänzung zu" : "hasSupplement",
+            "Ergänzungen" : "hasSupplement",
+            "Ergänzungs-Bd. zu" : "hasSupplement",
+            "Ergänzungsausg." : "hasSupplement",
+            "Ergänzungsbd." : "hasSupplement",
+            "Ergänzungsbl." : "hasSupplement",
+            "Ergänzungsheft" : "hasSupplement",
+            "Ergänzungsschr." : "hasSupplement"
         },
         "OtherRelationshipEntry" : {
             "a" : "mainEntryHeading",
@@ -1122,7 +2418,7 @@
             "s" : "uniformTitle",
             "t" : "title",
             "u" : "standardTechnicalReportNumber",
-            "w" : "recordControlNumber",
+            "w" : "identifier",
             "x" : "issn",
             "y" : "coden",
             "z" : "isbn",
@@ -1134,7 +2430,508 @@
                   2 - Type of record
                   3 - Bibliographic level */
             "8" : "sequenceNumber"
-        }
+        },
+        "relationshipInformationpattern" : [
+            {
+                 ".*von" : "isPartOf"
+             }
+        ],
+        "relationpattern" : [
+            {
+                "Vorg..*u. Forts." : "hasTransientEdition"
+            },
+            {
+                "Vorg. u..*" : "precededBy"
+            },
+            {
+                ".*Beil. zu" : "isSupplementOf"
+            },
+            {
+                ".*Beil.*" : "hasSupplement"
+            },
+            {
+                ".*Suppl.*" : "hasSupplement"
+            },
+            {
+                ".*Anhang.*" : "hasSupplement"
+            },
+            {
+                ".*Annex.*" : "hasSupplement"
+            },
+            {
+                ".*Appendix.*" : "hasSupplement"
+            },
+            {
+                ".*Beiheft.*" : "hasSupplement"
+            },
+            {
+                ".*Extra.*" : "hasSupplement"
+            },
+            {
+                ".*Nachtrag.*" : "hasSupplement"
+            },
+            {
+                ".*Sonderband.*" : "hasSupplement"
+            },
+            {
+                ".*Sonderausgabe.*" : "hasSupplement"
+            },
+            {
+                ".*Sonderbericht.*" : "hasSupplement"
+            },
+            {
+                ".*Sonderdruck.*" : "hasSupplement"
+            },
+            {
+                ".*Sonderheft.*" : "hasSupplement"
+            },
+            {
+                ".*Special edition.*" : "hasSupplement"
+            },
+            {
+                ".*Spezial.*" : "hasSupplement"
+            },
+            {
+                ".*Spezialausgabe.*" : "hasSupplement"
+            },
+            {
+                "\\d+\\.\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            },
+            {
+                "\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            }
+        ]
+    },
+    "PrecedingEntry" : {
+        "values" : [
+        /* 780 = preceeding entry */
+        "780$0$0$aitw","780$0$0$itw","780$0$0$t"
+        ],
+        "subfields" : {
+            "i" : "relation",
+            "a" : "author",
+            "t" : "title",
+            "w" : "identifier"
+        },
+        "relation" : {
+            "Vorg." : "precededBy",
+            "Vorg.:" : "precededBy",
+            "Vorg. --->" : "precededBy",
+            "Als Vorgänger gilt" : "precededBy",
+            "Als Vorg. gilt" : "precededBy",
+            "Als Vorg. gilt.:" : "precededBy",
+            "Als Vorg. gilt:" : "precededBy",
+            "Als Vorg.gilt:" : "precededBy",
+            "Als Vorg. gilt::" : "precededBy",
+            "Als Vorg. gilt:." : "precededBy",
+            "Als Vorg. gilt auch" : "precededBy",
+            "Als Vorg. gilt." : "precededBy",
+            "Als Vorläufer gilt" : "precededBy",
+            "Zeitl. Vorg." : "precededBy",
+            "Zeitl. Vorg.:" : "precededBy",
+            "Zeitl.Vorg.": "precededBy",
+            "Als zeitl. Vorg. gilt": "precededBy",
+            "{Zeitl. Vorg.}": "precededBy",
+            "Gilt als Vorg.": "precededBy",
+            "In und Vorg.": "precededBy",
+            "Teils Vorg." : "precededBy",
+            "Ergänzung zu u. Vorg." : "precededBy",
+            "u." : "precededBy",
+            "u.:" : "precededBy",
+            "und" : "precededBy",
+            "und:" : "precededBy",
+            "Anfangs in" : "precededBy",
+            "Als Anf. gilt" : "precededBy",
+            "Frühere Ausg.": "precededBy",
+            "Hervorg. aus" : "precededBy",
+            "Hervorg.aus" : "precededBy",
+            "Hervorg. aus." : "precededBy",
+            "Hervorgeg." : "precededBy",
+            "Hervorgeg. aus" : "precededBy",
+            "Hervorgeg.aus" : "precededBy",
+            "Hervorgeg.aus:" : "precededBy",
+            "hervorgeg. aus" : "precededBy",
+            "Hevorgeg. aus" : "precededBy",
+            "Hervorgegangen aus" : "precededBy",
+            "Hervorgangen aus:" : "precededBy",
+            "Hervorgegangen aus:" : "precededBy",
+            "hervorgegangen aus" : "precededBy",
+            "Teils daraus hervorgeg." : "precededBy",
+            "Teils hervorgeg. aus" : "precededBy",
+            "Teilw. hervorgeg. aus" : "precededBy",
+            "Teilw.hervorgeg.aus": "precededBy",
+            "Vermutl. hervorgeg. aus" : "precededBy",
+            "Vermutl. hervorg. aus"  : "precededBy",
+            "Verm. hervorgeg. aus" : "precededBy",
+            "{Hervorgeg. aus}" : "precededBy",
+            "Vermutl. Nachfolger von" : "precededBy",
+            "Als Sonderdr. hervorgeg. aus" : "precededBy",
+            "Anfangs teilident. Ausg. von u. später hervorgeg. aus" : "precededBy",
+            "Entstanden aus" : "precededBy",
+            "Entstanden aus:" : "precededBy",
+            "Enststanden aus:": "precededBy",
+            "Enstanden aus:" : "precededBy",
+            "Vereinigt mit"  : "precededBy",
+            "Zugl. Bd. von, dann aufgeg. in" : "precededBy",
+            "Fortsetzung von:" : "precededBy",
+            "Forts von:" : "precededBy",
+            "Forts. von:" : "precededBy",
+            "Forts. von" : "precededBy",
+            "Gilt als Forts. von": "precededBy",
+            "Gilt als Forts. von:" : "precededBy",
+            "Versteht sich als Forts. von" : "precededBy",
+            "Bildet Forts. von:" : "precededBy",
+            "Teilw. Forts. von" : "precededBy",
+            "Früher in" : "precededBy",
+            "Früheres in" : "precededBy",
+            "Früher u.d.T.:" : "precededBy",
+            "Früheres in" : "precededBy",
+            "Früher als Teil in" : "precededBy",
+            "Früher unselbst. in" : "precededBy",
+            "Spätere Ausg. von": "precededBy",
+            "Ersetzt u. führt fort" : "precededBy",
+            "Davor unselbst. in" : "precededBy",
+            "Darin" : "precededBy",
+            "Darin aufgegangen" : "precededBy",
+            "Darin aufgegangen:" : "precededBy",
+            "Darin Aufgegangen:" : "precededBy",
+            "Darin aufgegangen.:" : "precededBy",
+            "Darin aufg." : "precededBy",
+            "Darin aufgeg" : "precededBy",
+            "{Darin aufgeg.}" : "precededBy",
+            "Darin aufgeg." : "precededBy",
+            "Darin. aufgeg." : "precededBy",
+            "Darin aufgeg.:" : "precededBy",
+            "Darin aufgeg.::" : "precededBy",
+            "Darin aufgeg.f#": "precededBy",
+            "#Darin aufgeg.:": "precededBy",
+            "darin aufgegangen" : "precededBy",
+            "Darin teilw. aufgeg." : "precededBy",
+            "Darin vermutl. aufgeg." : "precededBy",
+            "Darin teils aufgeg." : "precededBy",
+            "Darin teilw. aufgeg." : "precededBy",
+            "Darin teilw. aufrgeg." : "precededBy",
+            "Darin aufgeg." : "precededBy",
+            "Darin verm. aufgeg.": "precededBy",
+            "Darin aufgeg. in" : "precededBy",
+            "Darin aufgegangen :" : "precededBy",
+            "Aufgegangen in:" : "succeededBy",
+            "Aufgeg.in" : "succeededBy",
+            "Aufgeg. in" : "succeededBy",
+            "Aufgeg. in:" : "succeededBy",
+            "Aufgeg.in" : "succeededBy",
+            "Später aufgeg. in" : "succeededBy",
+            "Beil u. dann darin aufgeg." : "precededBy",
+            "Beil. u. dann darin aufgeg." : "precededBy",
+            "Beil. u. hervorgeg. aus"  : "precededBy",
+            "Neuaufl. von" : "precededBy",
+            "Neue Aufl. von" : "precededBy",
+            "Neue Folge von" : "precededBy",
+            "Vereinigt mit:" : "precededBy",
+            "Vereingt mit" : "precededBy",
+            "Vereinigt aus:" : "precededBy",
+            "Vereinigt. mit:" : "precededBy",
+            "Verschmelzung aus:" : "precededBy",
+            "Verschmolzen mit" : "precededBy",
+            "Forts. verschmolzen mit:" : "precededBy",
+            "Forts. von.:"  : "precededBy",
+            "Forts.von:"  : "precededBy",
+            "Forts. von." : "precededBy",
+            "Forst. von:" : "precededBy",
+            "Es schließt an" : "succeededBy",
+            "Daraus hervorg." : "succeededBy",
+            "Daraus hervorgeg." : "succeededBy",
+            "Inhaltl. fortgeführt in" : "succeededBy",
+            "Forts. bildet:" : "succeededBy",
+            "Als Forts. gilt:" : "succeededBy",
+            "Als Forts. gilt" : "succeededBy",
+            "Gilt als Forts.. von:" : "precededBy",
+            "Gilt als Neuausg. u. Online-Ausg. von" : "precededBy",
+            "Bildet Forts. zu:" : "succeededBy",
+            "Diskettenausg. und Vorg.:" : "precededBy",
+            "Früher Druckausg." : "precededBy",
+            "Als Vorg. gilt Druckausg." : "precededBy",
+            "Als. Vorg. gilt" : "precededBy",
+            "Als. Vorg. gilt:" : "precededBy",
+            "Als Vorg. gilt:.:" : "precededBy",
+            "Als Vorg.gilt" : "precededBy",
+            "Als Vorg gilt" : "precededBy",
+            "Als Vorg. gilt teils" : "precededBy",
+            "Vorgänger als Druckausg." : "precededBy",
+            "Vorg u. Druckausg." : "precededBy",
+            "Vorg.u.Druckausg." : "precededBy",
+            "Vorg.als Druckausg." : "precededBy",
+            "Vorgg. als Druckausg." : "precededBy",
+            "Sonderdr. aus, dann als Vorg." : "precededBy",
+            "Anfangs in, dann hervorgeg. aus" : "precededBy",
+            "Darin u. daraus hervorgeg." : "precededBy",
+            "Forts. als Online-Ausg." : "succeededBy",
+            "Forts.als Online-Ausg." : "succeededBy",
+            "Forts. als DVD-Ausg." : "succeededBy",
+            "Internetausg. u. Forts." : "succeededBy",
+            "Druckausg." : "hasPrintEdition",
+            "Druckausg.:" : "hasPrintEdition",
+            "{Druckausg.}" : "hasPrintEdition",
+            "Kassettenausg." : "hasCassetteEdition",
+            "CD-ROM-Ausg." : "hasCDEdition",
+            "{Vorg. u. Druckausg.}" : "hasPrintEdition",
+            "{Druckausg. u. Vorg}" : "hasPrintEdition",
+            "Druckausgabe" : "hasPrintEdition",
+            "Duckausg." : "hasPrintEdition",
+            "Durckausg." : "hasPrintEdition",
+            "Online-Ausg." : "hasOnlineEdition",
+            "Suppl. zu" : "isSupplementOf",
+            "Sonderdr. aus" : "isSupplementOf",
+            "Probeausg." : "hasSupplement",
+            "Enth. in:" : "isPartOf",
+            "in:" : "isPartOf",
+            "Als inhalt. Vorg. gilt" : "hasAlternativeEdition",
+            "Früher unselbst. in" : "hasAlternativeEdition",
+            "Früheres unselbständig in" : "hasAlternativeEdition",
+            "Vorg. u. Forts.:" : "hasTransientEdition",
+            "Darin vorübergehend aufgeg." : "hasTransientEdition",
+            "Daraus hervorgeg. u. darin aufgeg." :  "hasTransientEdition",
+            "Hervorgeg.aus, Gegenausg. zu u. aufgeg. in" : "hasTransientEdition"
+        },
+        "relationpattern" : [
+            {
+                "Vorg\\..*u. Forts." : "hasTransientEdition"
+            },
+            {
+                "Vorg\\..*" : "precededBy"
+            },
+            {
+                ".*u\\. Vorg\\." : "precededBy"
+            },
+            {
+                ".*hervorgeg\\. aus" : "precededBy"
+            },
+            {
+                ".*Forts\\. von" : "precededBy"
+            },
+            {
+                ".*darin aufgeg.*" : "precededBy"
+            },
+            {
+                "Früher.*" : "precededBy"
+            },
+            {
+                "Bis\\s.*u\\.d\\.T\\.:" : "precededBy"
+            },
+            {
+                "Von\\s.*bis\\s.*u\\.d\\.T\\.:" : "precededBy"
+            },
+            {
+                "Ab\\s.*u\\.d\\.T\\.:" : "succeededBy"
+            },
+            {
+                "CD\\-ROM\\-Ausg\\..*" : "hasCDEdition"
+            },
+            {
+                "\\d+\\.\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            },
+            {
+                "\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            },
+            {
+                ".*" : "other"
+            }
+        ]
+    },
+    "SucceedingEntry" : {
+        "values" : [
+        /* 785 = succeeding entry */
+        "785$0$0$aitw","785$0$0$itw","785$0$0$t","785$0$8$aitw","785$0$8$itw","785$0$8$t"
+        ],
+        "subfields" : {
+            "i" : "relation",
+            "a" : "author",
+            "t" : "title",
+            "w" : "identifier"
+        },
+        "relation" : {
+            "Forts." : "succeededBy",
+            "Forts. " : "succeededBy",
+            "Forts.:" : "succeededBy",
+            "Forts. --->" : "succeededBy",
+            "Forts. bildet:" : "succeededBy",
+            "{Forts. bildet:" : "succeededBy",
+            "Forts. bildet" : "succeededBy",
+            "Forts bildet:"  : "succeededBy",
+            "Forts. Kriegsgemeinschaftsausg." : "succeededBy",
+            "Forts. vermutl." : "succeededBy",
+            "Vermutl. Forts." : "succeededBy",
+            "Mutmaßl. Forts." : "succeededBy",
+            "Zeitl. Forts." : "succeededBy",
+            "Forts. als Druckausg." : "succeededBy",
+            "Druckausg. u. Forts." : "succeededBy",
+            "Engl. Forts."  : "succeededBy",
+            "Forts. in" : "succeededBy",
+            "Als Forts." : "succeededBy",
+            "Als Forts. gilt" : "succeededBy",
+            "Als Forts. gilt:" : "succeededBy",
+            "Als Forts. gilt auch": "succeededBy",
+            "Forts. teils" : "succeededBy",
+            "Teilw. Forts." : "succeededBy",
+            "Fiktive Forts." : "succeededBy",
+            "Fortsetzung bildet:" : "succeededBy",
+            "Später u.d.T.:" : "succeededBy",
+            "Spätere Ausg." : "succeededBy",
+            "Aufgeg.:"  : "succeededBy",
+            "Aufgegangen in" : "succeededBy",
+            "Aufgegangen in:" : "succeededBy",
+            "Aufgeg." : "succeededBy",
+            "Aufgeg. in" : "succeededBy",
+            "Aufgeg. in:" : "succeededBy",
+            "Aufgeg. in :" : "succeededBy",
+            "Aufg. in" : "succeededBy",
+            "Aufg. in:" : "succeededBy",
+            "Aufgeg. in." : "succeededBy",
+            "Aufgeg.  in" : "succeededBy",
+            "aufgeg. in" : "succeededBy",
+            "aufgeg. in:" : "succeededBy",
+            "#Aufgeg. in" : "succeededBy",
+            "Aufgeg. in#" : "succeededBy",
+            "Aufgeg in"  : "succeededBy",
+            "Aufgeg. in.:" : "succeededBy",
+            "Aufgeg.in" : "succeededBy",
+            "Aufgegang. in" : "succeededBy",
+            "{Aufgeg. in}" : "succeededBy",
+            "{Aufgegangen in}": "succeededBy",
+            "Aufgeangen in:" : "succeededBy",
+            "{Aufgegangen in:" : "succeededBy",
+            "aufgegangen in": "succeededBy",
+            "Teilw. aufgeg. in" : "succeededBy",
+            "Teilw.aufgeg.in" : "succeededBy",
+            "Teils inhalt. ident. mit u. später aufgeg.in"  : "succeededBy",
+            "Hervorgeg." : "succeededBy",
+            "Daraus hervorg." : "succeededBy",
+            "Daraus hervorgeg." : "succeededBy",
+            "Daraus hervorgeg.:" : "succeededBy",
+            "Daraus hervorgegangen:" : "succeededBy",
+            "Daraus hervorgegangen" : "succeededBy",
+            "Daraus hervorgeg. engl. Ausg." : "succeededBy",
+            "Beil. u. daraus hervorgeg." : "succeededBy",
+            "Teils daraus hervorgeg." : "succeededBy",
+            "Aufgeteilt in" : "succeededBy",
+            "Aufgeteilt in:" : "succeededBy",
+            "und" : "succeededBy",
+            "und:" : "succeededBy",
+            "Es schließen an": "succeededBy",
+            "Es schließt an": "succeededBy",
+            "Als Kriegsausg. schließt an" : "succeededBy",
+            "Online-Ausg. u. Forts." : "succeededBy",
+            "Onlineausg. u. Fort." : "succeededBy",
+            "Druckausg. u. Forts." : "succeededBy",
+            "Nachfolger u. Druckausg.": "succeededBy",
+            "Zeitl. Nachfolger" : "succeededBy",
+            "Druckausg. u. Vorg." : "precededBy",
+            "Druckausg. u.Vorg." : "precededBy",
+            "Forts. als Online-Ausg." : "succeededBy",
+            "#Forts. als Online-Ausg."  : "succeededBy",
+            "Als Online-Ausg. u. Forts. gilt" : "succeededBy",
+            "Online-Ausg.u. Forts." : "succeededBy",
+            "CD-ROM-Ausg. als Forts." : "succeededBy",
+            "CD-ROM-Ausg. u.Forts." : "succeededBy",
+            "CD-ROM-Ausg. und Forts." : "succeededBy",
+            "Fortsetzung als Online-Ausg." : "succeededBy",
+            "Als Online-Ausg. und Forts. gilt" : "succeededBy",
+            "Als Forts. gilt Online-Ausg." : "succeededBy",
+            "Forts.als Online-Ausg." : "succeededBy",
+            "Fort. als Online-Ausg." : "succeededBy",
+            "Forts als CD-ROM-Ausg." : "succeededBy",
+            "Fort.s bildet:": "succeededBy",
+            "Darin u. später Forts." : "succeededBy",
+            "Anfangs Mikrofiche-Ausg. u. später Forts." : "succeededBy",
+            "Neuaufl."  : "succeededBy",
+            "Neue Aufl." : "succeededBy",
+            "zu"  : "succeededBy",
+            "zu:"  : "succeededBy",
+            "In"  : "isPartOf",
+            "Darin" : "hasPart",
+            "Ab"  : "succeededBy",
+            "In u. aufgeg. in"  : "succeededBy",
+            "In u. aufgeg.in"  : "succeededBy",
+            "Teils fortges. durch" : "succeededBy",
+            "Teilw. fortges.": "succeededBy",
+            "unselbs. fortges. in" : "succeededBy",
+            "Nachtrag in"  : "succeededBy",
+            "Vereinigt mit" : "precededBy",
+            "Vereinigt mit:" : "precededBy",
+            "Verschmolzen mit" : "precededBy",
+            "Verschmolzen mit:" : "precededBy",
+            "Vereinigt mit" : "precededBy",
+            "Vorg.:" : "precededBy",
+            "Vorg." : "precededBy",
+            "E-Mail-Ausg. u. Vorg." : "precededBy",
+            "USB-Stick" : "hasUSBEdition",
+            "Forts als USB-Stick" : "succeededBy",
+            "CD-ROM-Ausg. u. Vorg.": "precededBy",
+            "Darin aufgeg." : "precededBy",
+            "Teils darin aufgeg." : "precededBy",
+            "Online-Ausg." : "hasOnlineEdition",
+            "Online-Ausg.:" : "hasOnlineEdition",
+            "{Online-Ausg.}" : "hasOnlineEdition",
+            "Onlineausg. und Forts." : "succeededBy",
+            "Ersch. alternierend mit" : "hasAlternativeEdition",
+            "Ersch. alternierend zu; später Forts." : "succeededBy",
+            "Sonderdr." : "hasSupplement",
+            "Vorg. u. Forts.:" : "hasTransientEdition",
+            "Vorg. u.Forts.:" : "hasTransientEdition",
+            "In u. Vorg. u. Forts."  : "hasTransientEdition",
+            "Darin aufgeg. u. hervorgeg. aus" : "hasTransientEdition",
+            "Vorübergehend darin aufgeg." : "hasTransientEdition",
+            "Daraus hervorg., Beil. u. darin aufgeg." : "hasTransientEdition",
+            "Interimsausg." : "hasTransientEdition",
+            "Zwischenzeitl. darin aufgeg." : "hasTransientEdition",
+            "Vorg.u.Forts." : "hasTransientEdition",
+            "Zeitweise" : "hasTransientEdition",
+            "Zeitweise:" : "hasTransientEdition",
+            "Darin vorübergehend aufgeg." : "hasTransientEdition",
+            "Früher u. später u.d.T."  : "hasTransientEdition",
+            "Früher und später:": "hasTransientEdition"
+        },
+        "relationpattern" : [
+            {
+                "Vorg\\..* u.\\s*Forts\\." : "hasTransientEdition"
+            },
+            {
+                "Vorg\\..*" : "precededBy"
+            },
+            {
+                ".*daraus hervorgeg\\." : "precededBy"
+            },
+            {
+                ".*Forts\\..*" : "succeededBy"
+            },
+            {
+                ".*aufgeg\\. in" : "succeededBy"
+            },
+            {
+                ".*darin aufgeg\\." : "succeededBy"
+            },
+            {
+                "Ab.*" : "succeededBy"
+            },
+            {
+                "Daraus hervorgeg.*" : "succeededBy"
+            },
+            {
+                "Später.*" : "succeededBy"
+            },
+            {
+                "CD\\-ROM\\-Ausg\\..*" : "hasCDEdition"
+            },
+            {
+                "\\d+\\.\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            },
+            {
+                "\\d{4}.*" : "hasPart" /* einzelne Jahre und Hefte */
+            },
+            {
+                ".*" : "other"
+            }
+        ]
     },
     "ElectronicLocationAndAccess" : {
         "values" : [
@@ -1177,54 +2974,20 @@
             "z" : "publicnote"
         }
     },
-    "PrecedingEntry" : {
-        "values" : [
-        /* 780 = preceeding entry */
-        "780$0$0$aitw","780$0$0$itw","780$0$0$t"
-        ],
-        "subfields" : {
-            "i" : "relation",
-            "a" : "author",
-            "t" : "title",
-            "w" : "identifier"
-        },
-        "relation" : {
-            "Vorg.:" : "precededBy",
-            "Darin aufgeg." : "precededBy",
-            "Hervorgeg. aus" : "precededBy"
-        }
-    },
-    "SucceedingEntry" : {
-        "values" : [
-        /* 785 = succeeding entry */
-        "785$0$0$aitw","785$0$0$itw","785$0$0$t","785$0$8$aitw","785$0$8$itw","785$0$8$t"
-        ],
-        "subfields" : {
-            "i" : "relation",
-            "a" : "author",
-            "t" : "title",
-            "w" : "identifier"
-        },
-        "relation" : {
-            "Forts.:" : "succeededBy",
-            "Aufgeg. in" : "succeededBy",
-            "Vorg. u. Forts.:" : "succeededBy"
-        }
-    },
     "Skip" : {
         "values" : [
-        "801$ $ $a",
+        /*  Control Number Identifier */
         "003$",
+        /* Date and Time of Latest Transaction */
         "005$",
+        /*Fixed-Length Data Elements - Additional Material Characteristics  */
         "006$",
-        /* */
+        /* ??? */
         "012$5$3$",
         /* 040 = cataloging source */
         "040$ $ $abcd",
         /* 043 = geographic area */
         "043$ $ $c",
-        /* 044 = country of publishing code */
-        "044$ $ $c",
         /* ??? */
         "200$9$0$","200$t$u$",
         /* 255 = cartographic mathematical data */
@@ -1233,26 +2996,15 @@
         "365$ $ $b",
         /* RSWK */
         "689$0$ $5","689$0$0$09Da","689$0$0$09Dat","689$0$0$09Dax","689$0$0$0Da","689$0$0$0Dab","689$0$0$0Dabcd","689$0$0$0Dabcdt","689$0$0$0Dabg","689$0$0$0Dabgt","689$0$0$0Dabn","689$0$0$0Dabt","689$0$0$0Dac","689$0$0$0Dacd","689$0$0$0Dacdg","689$0$0$0Dacdgn","689$0$0$0Dacdn","689$0$0$0Dacdt","689$0$0$0Dacg","689$0$0$0Dad","689$0$0$0Dade","689$0$0$0Dadt","689$0$0$0Dae","689$0$0$0Dag","689$0$0$0Dat","689$0$0$0Dax","689$0$0$0Daz","689$0$1$09Da","689$0$1$09Dax","689$0$1$0Da","689$0$1$0Dab","689$0$1$0Dabg","689$0$1$0Dac","689$0$1$0Dacd","689$0$1$0Dad","689$0$1$0Dadt","689$0$1$0Dag","689$0$1$0Dagz","689$0$1$0Dat","689$0$1$0Dax","689$0$1$0Daz","689$0$1$Aa","689$0$2$09Da","689$0$2$09Dax","689$0$2$0Da","689$0$2$0Dab","689$0$2$0Dad","689$0$2$0Dag","689$0$2$0Dat","689$0$2$0Daz","689$0$2$Aa","689$0$3$09Da","689$0$3$09Dax","689$0$3$0Da","689$0$3$0Dab","689$0$3$0Dad","689$0$3$0Dag","689$0$3$0Dat","689$0$3$Aa","689$0$4$09Da","689$0$4$0Da","689$0$4$0Dab","689$0$4$0Dac","689$0$4$0Dad","689$0$4$0Dag","689$0$4$0Dat","689$0$4$Aa","689$0$5$09Da","689$0$5$0Da","689$0$5$Aa","689$1$ $5","689$1$0$09Da","689$1$0$09Dat","689$1$0$09Dax","689$1$0$0Da","689$1$0$0Dab","689$1$0$0Dabcd","689$1$0$0Dabcdt","689$1$0$0Dabg","689$1$0$0Dac","689$1$0$0Dacd","689$1$0$0Dacdg","689$1$0$0Dacdn","689$1$0$0Dacdt","689$1$0$0Dad","689$1$0$0Dadt","689$1$0$0Dae","689$1$0$0Dag","689$1$0$0Dat","689$1$0$0Dax","689$1$1$09Da","689$1$1$0Da","689$1$1$0Dab","689$1$1$0Dabg","689$1$1$0Dacd","689$1$1$0Dad","689$1$1$0Dadt","689$1$1$0Dag","689$1$1$0Dat","689$1$1$0Dax","689$1$1$0Daz","689$1$1$Aa","689$1$2$09Da","689$1$2$0Da","689$1$2$0Dab","689$1$2$0Dabg","689$1$2$0Dac","689$1$2$0Dacd","689$1$2$0Dad","689$1$2$0Dag","689$1$2$0Dat","689$1$2$0Dax","689$1$2$0Daz","689$1$2$Aa","689$1$3$09Da","689$1$3$0Da","689$1$3$0Dab","689$1$3$0Dad","689$1$3$0Dag","689$1$3$0Dat","689$1$3$Aa","689$1$4$09Da","689$1$4$0Da","689$1$4$0Dag","689$1$4$0Dat","689$1$4$Aa","689$1$5$09Da","689$1$5$0Da","689$1$5$Aa","689$2$ $5","689$2$0$09Da","689$2$0$09Dax","689$2$0$0Da","689$2$0$0Dab","689$2$0$0Dabcd","689$2$0$0Dabg","689$2$0$0Dac","689$2$0$0Dacd","689$2$0$0Dacdt","689$2$0$0Dacg","689$2$0$0Dad","689$2$0$0Dadt","689$2$0$0Dae","689$2$0$0Dag","689$2$0$0Dat","689$2$0$0Dax","689$2$1$09Da","689$2$1$0Da","689$2$1$0Dab","689$2$1$0Dabg","689$2$1$0Dad","689$2$1$0Dadt","689$2$1$0Dag","689$2$1$0Dat","689$2$1$0Dax","689$2$1$0Daz","689$2$1$Aa","689$2$2$09Da","689$2$2$0Da","689$2$2$0Dab","689$2$2$0Dabg","689$2$2$0Dad","689$2$2$0Dag","689$2$2$0Dat","689$2$2$Aa","689$2$3$09Da","689$2$3$0Da","689$2$3$0Dab","689$2$3$0Dad","689$2$3$0Dag","689$2$3$Aa","689$2$4$09Da","689$2$4$0Da","689$2$4$Aa","689$2$5$0Da","689$2$5$Aa","689$3$ $5","689$3$0$09Da","689$3$0$0Da","689$3$0$0Dab","689$3$0$0Dabcd","689$3$0$0Dabg","689$3$0$0Dac","689$3$0$0Dacd","689$3$0$0Dad","689$3$0$0Dadt","689$3$0$0Dag","689$3$0$0Dat","689$3$0$0Dax","689$3$1$09Da","689$3$1$0Da","689$3$1$0Dab","689$3$1$0Dac","689$3$1$0Dad","689$3$1$0Dag","689$3$1$0Dat","689$3$1$0Dax","689$3$1$Aa","689$3$2$09Da","689$3$2$0Da","689$3$2$0Dad","689$3$2$0Dag","689$3$2$0Dat","689$3$2$0Dax","689$3$2$Aa","689$3$3$09Da","689$3$3$0Da","689$3$3$0Dab","689$3$3$0Dabg","689$3$3$0Dag","689$3$3$Aa","689$3$4$0Da","689$3$4$0Dag","689$3$4$Aa","689$3$5$0Da","689$3$5$Aa","689$4$ $5","689$4$0$09Da","689$4$0$0Da","689$4$0$0Dab","689$4$0$0Dabcd","689$4$0$0Dabg","689$4$0$0Dac","689$4$0$0Dacd","689$4$0$0Dacdt","689$4$0$0Dad","689$4$0$0Dadt","689$4$0$0Dag","689$4$0$0Dat","689$4$0$0Dax","689$4$1$09Da","689$4$1$0Da","689$4$1$0Dab","689$4$1$0Dabg","689$4$1$0Dag","689$4$1$0Dat","689$4$1$Aa","689$4$2$09Da","689$4$2$0Da","689$4$2$0Dab","689$4$2$0Dad","689$4$2$0Dag","689$4$2$0Dat","689$4$2$Aa","689$4$3$09Da","689$4$3$0Da","689$4$3$0Dab","689$4$3$0Dag","689$4$3$Aa","689$4$4$0Da","689$4$4$0Dag","689$4$4$Aa","689$4$5$0Da","689$4$5$Aa","689$5$ $5","689$5$0$09Da","689$5$0$0Da","689$5$0$0Dab","689$5$0$0Dabcd","689$5$0$0Dabg","689$5$0$0Dac","689$5$0$0Dacd","689$5$0$0Dad","689$5$0$0Dadt","689$5$0$0Dag","689$5$0$0Dat","689$5$1$09Da","689$5$1$0Da","689$5$1$0Dab","689$5$1$0Dacd","689$5$1$0Dad","689$5$1$0Dat","689$5$1$Aa","689$5$2$09Da","689$5$2$0Da","689$5$2$0Dab","689$5$2$Aa","689$5$3$09Da","689$5$3$0Da","689$5$3$0Dab","689$5$3$Aa","689$5$4$0Da","689$5$4$Aa","689$5$5$0Da","689$5$5$Aa","689$6$ $5","689$6$0$09Da","689$6$0$0Da","689$6$0$0Dab","689$6$0$0Dabg","689$6$0$0Dacdt","689$6$0$0Dad","689$6$0$0Dadt","689$6$0$0Dag","689$6$0$0Dat","689$6$1$09Da","689$6$1$0Da","689$6$1$0Dat","689$6$1$Aa","689$6$2$09Da","689$6$2$0Da","689$6$2$0Dab","689$6$2$0Dag","689$6$2$Aa","689$6$3$09Da","689$6$3$0Da","689$6$3$Aa","689$6$4$09Da","689$6$4$0Da","689$6$4$Aa","689$6$5$0Da","689$6$5$Aa","689$7$ $5","689$7$0$09Da","689$7$0$0Da","689$7$0$0Dab","689$7$0$0Dabg","689$7$0$0Dacdt","689$7$0$0Dad","689$7$0$0Dadt","689$7$0$0Dag","689$7$0$0Dat","689$7$1$09Da","689$7$1$0Da","689$7$1$0Dag","689$7$1$Aa","689$7$2$09Da","689$7$2$0Da","689$7$2$Aa","689$7$3$0Da","689$7$3$Aa","689$7$4$0Da","689$7$4$Aa","689$7$5$0Da","689$7$5$Aa","689$8$ $5","689$8$0$09Da","689$8$0$0Da","689$8$0$0Dab","689$8$0$0Dad","689$8$0$0Dadt","689$8$0$0Dag","689$8$0$0Dat","689$8$1$09Da","689$8$1$0Da","689$8$1$0Dad","689$8$1$0Dag","689$8$1$0Dat","689$8$1$Aa","689$8$2$0Da","689$8$2$Aa","689$8$3$0Da","689$8$3$0Dag","689$8$3$Aa","689$8$4$0Da","689$8$4$Aa","689$8$5$0Da","689$8$5$Aa","689$9$ $5","689$9$0$0Da","689$9$0$0Dab","689$9$0$0Dag","689$9$1$0Da","689$9$1$Aa","689$9$2$0Da","689$9$2$Aa","689$9$3$0Da","689$9$3$Aa","689$9$4$0Da","689$9$4$Aa","689$9$5$0Da","689$9$5$Aa",
-        /* 700 = added entry - personal name */
-        "700$0$ $04a","700$0$ $04abcd","700$0$ $04abd","700$0$ $04ac","700$0$ $04acd","700$0$ $04ad","700$0$ $04ade","700$0$ $4a","700$1$ $04a","700$1$ $04ac","700$1$ $04acd","700$1$ $04ad","700$1$ $04ade","700$1$ $04ae","700$3$ $04acd",
-        /* 711 = added entry - meeting name */
-        "711$2$ $0a","711$2$ $0ac","711$2$ $0acd","711$2$ $0acdg","711$2$ $0acdgn","711$2$ $0acdn","711$2$ $0ad","711$2$ $0adn","711$2$ $0ae","711$2$ $0aen","711$2$ $0ag",
-        /* 730 = added entry - uniform title */
-        "730$0$ $a",
-        /* 751 = added entry - geographic name */
-        "751$ $ $024a",
-        /* 810 = series added entry - corporate name */
-        "810$2$ $4atvw",
-        /* 830 = series added entry = uniform title */
-        "830$ $0$9avw",
-        /* 882 = replacement record information*/
+        /* ??? */
+        "801$ $ $a",
+        /* 882 = replacement record information* /
         "882$ $ $aw",
         /* 889 = Angaben zum umgelenkten Datensatz */
         "889$ $ $w",
-        /* 912 = Produktsigel für NatLiz und digitale Sammlungen */
-        "912$ $ $a",
+        /* ??? */
         "925$r$ $a",
-        /* Unterreihenangabe in strukturierter Form
+        /* 930 = Unterreihenangabe in strukturierter Form
           $a Titel der Unterreihe
           $d Zusatz zum Titel
           $e Körperschaftliche Ergänzung
@@ -1269,10 +3021,6 @@
         "931$ $ $ab",
         /* 932 = OLC Ausschnittskennung */
         "932$ $ $a"
-        ]
-    },
-    "Error" : {
-        "values" : [
         ]
     }
 }

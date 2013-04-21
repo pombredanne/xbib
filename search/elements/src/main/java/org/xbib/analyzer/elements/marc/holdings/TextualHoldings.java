@@ -31,12 +31,12 @@
  */
 package org.xbib.analyzer.elements.marc.holdings;
 
-import org.xbib.analyzer.elements.marc.support.EnumerationAndChronology;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.rdf.Resource;
+import org.xbib.elements.support.EnumerationAndChronology;
 
 import java.util.List;
 import java.util.Map;
@@ -80,8 +80,7 @@ public class TextualHoldings extends MARCElement {
             builder.context().resource().add("textualholdings", field.data());
             if (field.subfieldId().equals("a")) {
                 Resource r = builder.context().resource().newResource("holdings");
-                Resource parsedHoldings =
-                        EnumerationAndChronology.parse(field.data(), r, getMovingwallPatterns());
+                Resource parsedHoldings = EnumerationAndChronology.parse(field.data(), r, getMovingwallPatterns());
                 if (!parsedHoldings.isEmpty()) {
                     Set<Integer> dates = EnumerationAndChronology.dates(parsedHoldings);
                     builder.context().resource().add("dates", dates);
@@ -91,4 +90,5 @@ public class TextualHoldings extends MARCElement {
             }
         }
     }
+
 }

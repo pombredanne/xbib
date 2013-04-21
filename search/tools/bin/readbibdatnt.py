@@ -1,3 +1,5 @@
+# rdflib is slow...
+
 import rdflib
 g = rdflib.Graph()
 result = g.parse('bibdat.nt', format='n3')

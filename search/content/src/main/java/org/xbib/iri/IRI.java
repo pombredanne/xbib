@@ -53,7 +53,100 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     private String a_userinfo;
     private String a_authority;
 
-    public IRI() {
+    public static class Builder {
+
+        protected Scheme schemeClass;
+        private String scheme;
+        private String schemeSpecificPart;
+        private String authority;
+        private String userinfo;
+        private String host;
+        private int port = -1;
+        private String path;
+        private String query;
+        private String fragment;
+
+        private Builder() {
+
+        }
+
+        public Builder scheme(String scheme) {
+            this.scheme = scheme;
+            this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
+            return this;
+        }
+
+        public Builder schemeSpecificPart(String schemeSpecificPart) {
+            this.schemeSpecificPart = schemeSpecificPart;
+            return this;
+        }
+
+        public Builder curi(String scheme, String path) {
+            this.scheme = scheme;
+            this.path = path;
+            return this;
+        }
+
+        public Builder curi(String schemeAndPath) {
+            int pos = schemeAndPath.indexOf(':');
+            this.scheme = pos > 0 ? schemeAndPath.substring(0,pos) : null;
+            this.path = pos > 0 ? schemeAndPath.substring(pos+1) : schemeAndPath;
+            return this;
+        }
+
+        public Builder authority(String authority) {
+            this.authority = authority;
+            return this;
+        }
+
+        public Builder userinfo(String userinfo) {
+            this.userinfo = userinfo;
+            return this;
+        }
+
+        public Builder host(String host) {
+            this.host = host;
+            return this;
+        }
+
+        public Builder port(int port) {
+            this.port = port;
+            return this;
+        }
+
+        public Builder path(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder query(String query) {
+            this.query = query;
+            return this;
+        }
+
+        public Builder fragment(String fragment) {
+            this.fragment = fragment;
+            return this;
+        }
+
+        public IRI build() {
+            return schemeSpecificPart != null ?
+                    new IRI(scheme, schemeSpecificPart, fragment) :
+                    new IRI(schemeClass,
+                    scheme,
+                    authority,
+                    userinfo,
+                    host,
+                    port,
+                    path,
+                    query,
+                    fragment);
+        }
+
+    }
+
+
+    private IRI() {
 
     }
 
@@ -69,11 +162,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         build();
     }
 
-    public IRI(String iri) {
-        parse(CharUtils.stripBidi(iri));
-        build();
-    }
-    
     public IRI(String scheme, String schemeSpecificPart, String fragment) {
         this.scheme = scheme;
         this.schemeSpecificPart = schemeSpecificPart;
@@ -81,11 +169,16 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         build();
     }
 
+    public IRI(String iri) {
+        parse(CharUtils.stripBidi(iri));
+        build();
+    }
+    
     public IRI(String iri, Normalizer.Form nf) throws IOException {
         this(Normalizer.normalize(CharUtils.stripBidi(iri), nf).toString());
     }
 
-    public IRI(String scheme, String userinfo, String host, int port, String path, String query, String fragment) {
+    /*public IRI(String scheme, String userinfo, String host, int port, String path, String query, String fragment) {
         this.scheme = scheme;
         this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
         this.userinfo = userinfo;
@@ -98,8 +191,9 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         buildAuthority(buf, userinfo, host, port);
         this.authority = (buf.length() != 0) ? buf.toString() : null;
         build();
-    }
+    }*/
 
+/*
     public IRI(String scheme, String authority, String path, String query, String fragment) {
         this.scheme = scheme;
         this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
@@ -114,8 +208,8 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     public IRI(String scheme, String host, String path, String fragment) {
         this(scheme, null, host, -1, path, null, fragment);
     }
-
-    IRI(Scheme _scheme,
+*/
+    IRI(Scheme schemeClass,
             String scheme,
             String authority,
             String userinfo,
@@ -124,7 +218,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
             String path,
             String query,
             String fragment) {
-        this.schemeClass = _scheme;
+        this.schemeClass = schemeClass;
         this.scheme = scheme;
         this.authority = authority;
         this.userinfo = userinfo;
@@ -140,7 +234,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         return new IRI(iri);
     }
 
-    public IRI scheme(String scheme) {
+    /*public IRI scheme(String scheme) {
         this.scheme = scheme;
         this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
         return this;
@@ -197,15 +291,17 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     public IRI fragment(String fragment) {
         this.fragment = fragment;
         return this;
-    }
+    }*/
 
-    public IRI build() {
+    private IRI build() {
         if (authority == null && (userinfo != null || host != null)) {
             StringBuilder buf = new StringBuilder();
             buildAuthority(buf, userinfo, host, port);
-            this.authority = (buf.length() != 0) ? buf.toString() : null;
+            authority = (buf.length() != 0) ? buf.toString() : null;
         }
-        schemeSpecificPart = buildSchemeSpecificPart(authority, path, query, fragment);
+        StringBuilder buf = new StringBuilder();
+        buildSchemeSpecificPart(buf, authority, path, query, fragment);
+        schemeSpecificPart = buf.toString();
         return this;
     }
 
@@ -342,30 +438,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         return userinfo;
     }
 
-    void buildAuthority(StringBuilder buf, String aui, String ah, int port) {
-        if (aui != null && aui.length() != 0) {
-            buf.append(aui);
-            buf.append('@');
-        }
-        if (ah != null && ah.length() != 0) {
-            buf.append(ah);
-        }
-        if (port != -1) {
-            buf.append(':');
-            buf.append(port);
-        }
-    }
-
-    private String buildASCIIAuthority() {
-        if (schemeClass instanceof HttpScheme) {
-            StringBuilder buf = new StringBuilder();
-            buildAuthority(buf, getASCIIUserInfo(),  getASCIIHost(), getPort());
-            return buf.toString();
-        } else {
-            return UrlEncoding.encode(authority, Profile.AUTHORITY.filter());
-        }
-    }
-
     public String getASCIIAuthority() {
         if (authority != null && a_authority == null) {
             a_authority = buildASCIIAuthority();
@@ -403,29 +475,21 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
 
     public String getASCIISchemeSpecificPart() {
         if (a_schemeSpecificPart == null) {
-            a_schemeSpecificPart = buildSchemeSpecificPart(getASCIIAuthority(), getASCIIPath(), getASCIIQuery(), getASCIIFragment());
+            StringBuilder buf = new StringBuilder();
+            buildSchemeSpecificPart(buf, getASCIIAuthority(), getASCIIPath(), getASCIIQuery(), getASCIIFragment());
+            a_schemeSpecificPart = buf.toString();
         }
         return a_schemeSpecificPart;
     }
 
-    private String buildSchemeSpecificPart(String authority, String path, String query, String fragment) {
-        StringBuilder buf = new StringBuilder();
-        if (authority != null) {
-            buf.append("//");
-            buf.append(authority);
+    private String buildASCIIAuthority() {
+        if (schemeClass instanceof HttpScheme) {
+            StringBuilder buf = new StringBuilder();
+            buildAuthority(buf, getASCIIUserInfo(),  getASCIIHost(), getPort());
+            return buf.toString();
+        } else {
+            return UrlEncoding.encode(authority, Profile.AUTHORITY.filter());
         }
-        if (path != null && path.length() > 0) {
-            buf.append(path);
-        }
-        if (query != null) {
-            buf.append('?');
-            buf.append(query);
-        }
-        if (fragment != null) {
-            buf.append('#');
-            buf.append(fragment);
-        }
-        return buf.toString();
     }
 
     public Object clone() {
@@ -465,8 +529,15 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
                 return c;
             }
         }
-        IRI iri = new IRI(null, null, null, null, null, -1, normalize(cpath.substring(bpath.length())), c.getQuery(), c
-                .getFragment());
+        IRI iri = new IRI(null,
+                null,
+                null,
+                null,
+                null,
+                -1,
+                normalize(cpath.substring(bpath.length())),
+                c.getQuery(),
+                c.getFragment());
         return iri;
     }
 
@@ -483,6 +554,14 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         return scheme == null && authority == null
                 && (path == null || path.length() == 0 || path.equals("."))
                 && query == null;
+    }
+
+    public IRI resolve(IRI iri) {
+        return resolve(this, iri);
+    }
+
+    public IRI resolve(String iri) {
+        return resolve(this, new IRI(iri));
     }
 
     public static IRI resolve(IRI b, String c) throws IOException {
@@ -606,6 +685,38 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         return buf.toString();
     }
 
+    private static void buildAuthority(StringBuilder buf, String aui, String ah, int port) {
+        if (aui != null && aui.length() != 0) {
+            buf.append(aui);
+            buf.append('@');
+        }
+        if (ah != null && ah.length() != 0) {
+            buf.append(ah);
+        }
+        if (port != -1) {
+            buf.append(':');
+            buf.append(port);
+        }
+    }
+
+    private static void buildSchemeSpecificPart(StringBuilder buf, String authority, String path, String query, String fragment) {
+        if (authority != null) {
+            buf.append("//");
+            buf.append(authority);
+        }
+        if (path != null && path.length() > 0) {
+            buf.append(path);
+        }
+        if (query != null) {
+            buf.append('?');
+            buf.append(query);
+        }
+        if (fragment != null) {
+            buf.append('#');
+            buf.append(fragment);
+        }
+    }
+
     private static String resolve(String bpath, String cpath) {
         if (bpath == null && cpath == null) {
             return null;
@@ -628,14 +739,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
             buf.insert(0, '/');
         }
         return normalize(buf.toString());
-    }
-
-    public IRI resolve(IRI iri) {
-        return resolve(this, iri);
-    }
-
-    public IRI resolve(String iri) {
-        return resolve(this, new IRI(iri));
     }
 
     public String toString() {
@@ -670,6 +773,10 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
 
     public java.net.URL toURL() throws MalformedURLException, URISyntaxException {
         return toURI().toURL();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     private void parseAuthority() {

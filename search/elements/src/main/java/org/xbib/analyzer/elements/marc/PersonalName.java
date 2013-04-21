@@ -32,11 +32,30 @@
 package org.xbib.analyzer.elements.marc;
 
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.rdf.Resource;
 
 public class PersonalName extends MARCElement {
     private final static PersonalName instance = new PersonalName();
     
     public static MARCElement getInstance() {
         return instance;
+    }
+
+    @Override
+    public String data(String predicate, Resource resource, String property, String value) {
+        if ("identifier".equals(property)) {
+            if (value.startsWith("(DE-588)")) {
+                resource.add("identifierGND", value.substring(8).replaceAll("\\-","").toLowerCase());
+                return null;
+            } else if (value.startsWith("(DE-600)")) {
+                resource.add("identifierZDB", value.substring(8).replaceAll("\\-","").toLowerCase());
+                return null;
+            } else if (value.startsWith("(DE-101)")) {
+                resource.add("identifierDNB", value.substring(8).replaceAll("\\-","").toLowerCase());
+                return null;
+            }
+            return value.replaceAll("\\-","").toLowerCase();
+        }
+        return value;
     }
 }

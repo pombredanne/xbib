@@ -85,14 +85,14 @@ public class DNBPICAElementsTest extends Assert {
                 if (context != null) {
                     Resource r = context.resource();
                     // index/type adressing via resource ID
-                    r.id(new IRI().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
+                    r.id(IRI.builder().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
                     // dump all RDF triples
                     StringBuilder sb = new StringBuilder();
                     Iterator<Triple> it = r.iterator();
                     while (it.hasNext()) {
                         sb.append(it.next().toString()).append("\n");
                     }
-                    logger.info("out={}", sb.toString());
+                    logger.debug("out={}", sb.toString());
                     counter.incrementAndGet();
                 }
             }

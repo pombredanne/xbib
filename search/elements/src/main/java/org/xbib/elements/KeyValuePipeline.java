@@ -50,10 +50,10 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
     private final BlockingQueue<List<KeyValue>> queue;
     private final ElementBuilder<K,V,E,C> builder;
     private final Map map;
+    private final Logger logger;
     private long counter;
     protected boolean detectUnknownKeys;
     protected Set<String> unknownKeys;
-    private final Logger logger;
 
     public KeyValuePipeline(int i,
                             BlockingQueue<List<KeyValue>> queue,

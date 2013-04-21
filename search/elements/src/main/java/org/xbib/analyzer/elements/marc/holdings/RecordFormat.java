@@ -35,7 +35,7 @@ import org.xbib.elements.marc.MARCElement;
 
 public class RecordFormat extends MARCElement {
     private final static RecordFormat instance = new RecordFormat();
-    
+
     public static MARCElement getInstance() {
         return instance;
     }

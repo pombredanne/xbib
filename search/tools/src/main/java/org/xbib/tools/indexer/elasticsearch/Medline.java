@@ -193,7 +193,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void identify(QName name, String value, IRI identifier) {
             if ("PMID".equals(name.getLocalPart())) {
-               resourceContext.resource().id(new IRI().curi("pmid", value).build());
+               resourceContext.resource().id(IRI.builder().curi("pmid", value).build());
             }
         }
 

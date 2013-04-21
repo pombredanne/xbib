@@ -1,7 +1,7 @@
 #!/bin/bash
 
 java \
-    -cp bin:lib/xbib-search-tools-1.0-SNAPSHOT-elasticsearch-bibdatzdb.jar \
+    -cp bin:lib/xbib-search-tools-1.0-SNAPSHOT-elasticsearch.jar \
     org.xbib.tools.indexer.elasticsearch.BibdatZDB \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --mock false \

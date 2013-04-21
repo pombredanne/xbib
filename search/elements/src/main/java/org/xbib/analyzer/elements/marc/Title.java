@@ -34,6 +34,7 @@ package org.xbib.analyzer.elements.marc;
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.logging.Logger;
 import org.xbib.logging.Loggers;
+import org.xbib.rdf.Resource;
 
 public class Title extends MARCElement {
 
@@ -46,8 +47,8 @@ public class Title extends MARCElement {
     }
 
     @Override
-    public String data(String predicate, String property, String value) {
-        // let's make sorting markup character visible again
+    public String data(String predicate, Resource resource, String property, String value) {
+        // let's make "sorting" marker characters visible again
         // 0098 = START OF STRING, 009c = END OF STRING
         // --> 00ac = negation sign
         return value.replace('\u0098', '\u00ac').replace('\u009c', '\u00ac');

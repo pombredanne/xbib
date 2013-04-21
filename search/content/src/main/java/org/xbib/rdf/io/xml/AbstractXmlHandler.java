@@ -42,6 +42,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ *
+ */
 public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHandler {
 
     protected final ResourceContext resourceContext;

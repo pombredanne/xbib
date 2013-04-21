@@ -35,7 +35,7 @@ import org.xbib.elements.marc.MARCElement;
 
 public class RecordLeader extends MARCElement {
     private final static RecordLeader instance = new RecordLeader();
-    
+
     public static MARCElement getInstance() {
         return instance;
     }

@@ -105,7 +105,7 @@ public class GND {
                     }
                 }
             });
-            IRI id = new IRI().scheme("http").host("d-nb.info").path("/gnd/").build();
+            IRI id = IRI.builder().scheme("http").host("d-nb.info").path("/gnd/").build();
             TurtleReader reader = new TurtleReader(id);
             reader.setListener(builder);
             reader.parse(in);

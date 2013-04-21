@@ -27,13 +27,8 @@
                     <outputDirectory>${basedir}/lib</outputDirectory>
                     <descriptors>
                         <descriptor>${basedir}/src/main/assemblies/source.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/alephseq2marcxml.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/gnd.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/medline.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/ce.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/ezb.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/zdb.xml</descriptor>
-                        <descriptor>${basedir}/src/main/assemblies/elasticsearch/bibdatzdb.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/content.xml</descriptor>
+                        <descriptor>${basedir}/src/main/assemblies/elasticsearch.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

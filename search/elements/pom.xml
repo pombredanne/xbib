@@ -16,9 +16,8 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- enable system classloader for our custom charsets -->
                     <forkMode>once</forkMode>
-                    <useSystemClassLoader>true</useSystemClassLoader> -->
+                    <useSystemClassLoader>true</useSystemClassLoader>
                 </configuration>
             </plugin>
         </plugins>

@@ -56,8 +56,8 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     @Override
     public void begin() {
         C context = contextFactory().newContext();
-        // set a context identifier to make this context valid for resources
-        context.id(new IRI().host("element").build());
+        // set a random resource identifier to make this context valid for resources
+        context.id(IRI.builder().host("element").build());
         context.newResource(context.newResource());
         contexts.set(context);
     }

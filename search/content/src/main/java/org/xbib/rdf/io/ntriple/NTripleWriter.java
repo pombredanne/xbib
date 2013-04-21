@@ -96,7 +96,7 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
 
     public String writePredicate(P predicate) {
         if (predicate.id().getScheme() == null && nullPredicate !=null) {
-            IRI iri = new IRI()
+            IRI iri = IRI.builder()
                     .scheme(nullPredicate.getScheme())
                     .host(nullPredicate.getHost())
                     .path(nullPredicate.getPath() + "/" + predicate.id().getSchemeSpecificPart())

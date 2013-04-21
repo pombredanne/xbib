@@ -172,7 +172,10 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void build(MARCElement element, FieldCollection fields, String value) {
             if (context().resource().id() == null) {
-                IRI id = new IRI().scheme("http").host(index).query(type).fragment(Long.toString(context().increment())).build();
+                IRI id = IRI.builder().scheme("http")
+                        .host(index)
+                        .query(type)
+                        .fragment(Long.toString(context().increment())).build();
                 context().resource().id(id);
             }
         }

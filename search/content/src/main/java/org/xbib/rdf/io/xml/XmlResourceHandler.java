@@ -66,14 +66,12 @@ public abstract class XmlResourceHandler extends AbstractXmlHandler {
     public void openPredicate(QName parent, QName name, int level) {
         // nested resource creation
         // always create newResource, even if there will be only a single literal. We will compact later.
-        Resource r = stack.peek()
-                .newResource(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
+        Resource r = stack.peek().newResource(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
         stack.push(r);
     }
 
     @Override
     public void addToPredicate(String content) {
-        //stack.peek().setValue(content);
     }
 
     @Override

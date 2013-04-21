@@ -38,17 +38,20 @@ import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.marc.FieldCollection;
 
+/**
+ * A MARC builder builds Elements from MARC field collections. It uses a MARC context.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class MARCBuilder
     extends AbstractElementBuilder<FieldCollection, String, MARCElement, MARCContext>
     implements DublinCoreProperties {
-
-    //private final Logger logger = LoggerFactory.getLogger(MARCBuilder.class.getName());
 
     private final ResourceContextFactory<MARCContext> contextFactory = new ResourceContextFactory<MARCContext>() {
 
         @Override
         public MARCContext newContext() {
-            return new MARCContext();/*.id(new IRI().host("marc").build());*/
+            return new MARCContext();
         }
     };
     
@@ -65,8 +68,13 @@ public class MARCBuilder
 
     @Override
     public void build(MARCElement element, FieldCollection fields, String value) {
+        // by default, we just assign an ID to the resource
         if (context().resource().id() == null) {
-            IRI id = new IRI().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
+            IRI id = IRI.builder()
+                    .scheme("http")
+                    .host("xbib.org")
+                    .fragment(Long.toString(context().increment()))
+                    .build();
             context().resource().id(id);
         }
     }
