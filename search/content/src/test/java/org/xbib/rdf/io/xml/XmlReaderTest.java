@@ -1,3 +1,34 @@
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
 package org.xbib.rdf.io.xml;
 
 import java.io.IOException;
@@ -9,9 +40,7 @@ import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.Loggers;
-import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.ntriple.NTripleWriter;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResourceContext;
@@ -34,6 +63,7 @@ public class XmlReaderTest extends Assert {
         }
 
         IRINamespaceContext context = IRINamespaceContext.newInstance();
+        context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
         context.addNamespace("oaidc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         resourceContext.newNamespaceContext(context);
 
@@ -60,27 +90,16 @@ public class XmlReaderTest extends Assert {
             }
 
         };
-        xmlHandler.setListener(new ResourceBuilder());
-        new XmlReader().setHandler(xmlHandler).parse(new InputSource(in));
         StringWriter sw = new StringWriter();
-        TurtleWriter t = new TurtleWriter();
-        t.write(resourceContext.resource(), true, sw);
-        assertEquals(sw.toString().length(), 1877);
-    }
-
-    class ResourceBuilder implements TripleListener {
-
-        @Override
-        public ResourceBuilder newIdentifier(IRI uri) {
-            resourceContext.resource().id(uri);
-            return this;
-        }
-
-        @Override
-        public ResourceBuilder triple(Triple triple) {
-            resourceContext.resource().add(triple);
-            return this;
-        }
+        TurtleWriter t = new TurtleWriter()
+                .output(sw)
+                .setContext(context)
+                .writeNamespaces();
+        xmlHandler.setListener(t);
+        new XmlReader().setHandler(xmlHandler).parse(new InputSource(in));
+        t.close();
+        //logger.info(sw.toString().trim());
+        assertEquals(sw.toString().trim().length(), 1960);
     }
 
     @Test
@@ -115,12 +134,11 @@ public class XmlReaderTest extends Assert {
             }
 
         };
-        xmlHandler.setListener(new ResourceBuilder())
+        StringWriter sw = new StringWriter();
+        NTripleWriter writer = new NTripleWriter().output(sw);
+        xmlHandler.setListener(writer)
                 .setDefaultNamespace("xml", "http://xmltest");
         new XmlReader().setHandler(xmlHandler).parse(new InputSource(in));
-        StringWriter sw = new StringWriter();
-        NTripleWriter writer = new NTripleWriter();
-        writer.write(resourceContext.resource(), sw);
         logger.info(sw.toString());
     }
 

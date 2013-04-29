@@ -74,7 +74,11 @@ public class SRUResponseAdapter implements SRUResponseListener {
     }
 
     @Override
-    public void extraRecordData(Collection<XMLEvent> record) {
+    public void extraRecordData(Collection<XMLEvent> extra) {
+    }
+
+    public void facetedResults(Collection<XMLEvent> facets) {
+
     }
 
     @Override

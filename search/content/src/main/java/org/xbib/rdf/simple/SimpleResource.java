@@ -32,6 +32,7 @@
 package org.xbib.rdf.simple;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.xbib.iri.IRI;
@@ -43,7 +44,9 @@ import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
+import org.xbib.rdf.TripleIterator;
 import org.xbib.rdf.Visitor;
+import org.xbib.rdf.context.ResourceContext;
 
 /**
  * A simple resource is a sequence of properties and of associated resources.
@@ -54,10 +57,25 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
         extends AbstractResource<S, P, O> {
 
     private transient final Factory<S,P,O> factory = Factory.getInstance();
-    
+
+    private ResourceContext context = new SimpleResourceContext();
+
+    @Override
+    public SimpleResource<S, P, O> context(ResourceContext context) {
+        this.context = context;
+        return this;
+    }
+
+    @Override
+    public ResourceContext context() {
+        return context;
+    }
+
     @Override
     public Resource<S,P,O> newResource(P predicate) {
-        Resource<S,P,O> r = new SimpleResource().id(new IdentifiableNode().blank().id());
+        IRI blank = new IdentifiableNode().blank().id();
+        Resource<S,P,O> r = new SimpleResource().id(blank);
+        context().asMap().put(blank, r);
         attributes.put(predicate, r);
         return r;
     }

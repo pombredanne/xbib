@@ -31,28 +31,39 @@
  */
 package org.xbib.rdf.io.rdfxml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
-public class RdfXmlReaderTest {
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+
+public class GNDRdfXmlReaderTest {
+
+    private final Logger logger = LoggerFactory.getLogger(GNDRdfXmlReaderTest.class.getName());
 
     @Test
-    public void testReader() throws Exception {
-        String filename = "/org/xbib/rdf/io/rdfxml/118540238.xml";
+    public void testGND() throws Exception {
+        String filename = "/org/xbib/rdf/io/rdfxml/GND.rdf";
         InputStream in = getClass().getResourceAsStream(filename);
         if (in == null) {
             throw new IOException("file " + filename + " not found");
         }
-        StringWriter sw = new StringWriter();
-        TurtleWriter turtle = new TurtleWriter()
-                .output(sw);
-        RdfXmlReader reader = new RdfXmlReader();
-        reader.setListener(turtle);
-        reader.parse(new InputSource(in));
-    }
 
+        StringWriter sw = new StringWriter();
+
+        TurtleWriter writer  = new TurtleWriter()
+                .output(sw);
+
+        RdfXmlReader reader = new RdfXmlReader();
+        reader.setListener(writer);
+        reader.parse(new InputSource(in));
+        writer.close();
+
+        logger.info(sw.toString());
+
+    }
 }

@@ -92,6 +92,16 @@ public class ElasticsearchOAITest {
             final TripleListener stmt = new TripleListener() {
 
                 @Override
+                public TripleListener startPrefixMapping(String prefix, String uri) {
+                    return this;
+                }
+
+                @Override
+                public TripleListener endPrefixMapping(String prefix) {
+                    return this;
+                }
+
+                @Override
                 public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
                     return this;
@@ -117,10 +127,11 @@ public class ElasticsearchOAITest {
                 public void endDocument() throws SAXException {
                     handler.endDocument();
                     //es.output(null); // TODO
-                    StringWriter sw = new StringWriter();
-                    TurtleWriter t = new TurtleWriter();
                     try {
-                        t.write(getResource(), true, sw);
+                        StringWriter sw = new StringWriter();
+                        TurtleWriter t = new TurtleWriter()
+                               .output(sw)
+                               .write(getResource());
                         logger.info(sw.toString());
                     } catch (IOException ex) {
                         logger.error(ex.getMessage(), ex);

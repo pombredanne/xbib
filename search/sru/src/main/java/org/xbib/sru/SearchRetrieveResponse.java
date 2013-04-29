@@ -156,6 +156,13 @@ public class SearchRetrieveResponse extends AbstractResponse
     }
 
     @Override
+    public void facetedResults(Collection<XMLEvent> record) {
+        if (listener != null && record != null) {
+            listener.facetedResults(record);
+        }
+    }
+
+    @Override
     public void extraRecordData(Collection<XMLEvent> record) {
         if (listener != null && record != null) {
             listener.extraRecordData(record);

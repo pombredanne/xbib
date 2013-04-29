@@ -140,6 +140,16 @@ public class GND {
         }
 
         @Override
+        public TripleListener startPrefixMapping(String prefix, String uri) {
+            return this;
+        }
+
+        @Override
+        public TripleListener endPrefixMapping(String prefix) {
+            return this;
+        }
+
+        @Override
         public ElasticBuilder newIdentifier(IRI uri) {
             flush();
             resource.id(uri);

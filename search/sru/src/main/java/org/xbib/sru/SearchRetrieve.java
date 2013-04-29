@@ -43,6 +43,11 @@ public class SearchRetrieve extends AbstractSRURequest {
     private int maxRecords;
     private int ttl;
     private String sortKeys;
+    private String facetLimit;
+    private String facetStart;
+    private String facetSort;
+    private String facetCount;
+
     private String data;
     private String encoding;
     private String path;
@@ -124,13 +129,6 @@ public class SearchRetrieve extends AbstractSRURequest {
         return recordPacking;
     }
 
-    /*
-     * The Explain document lists the XML schemas for a given database 
-     * in which records may be transferred. Every schemas is unambiguously 
-     * identified by a URI and a server may assign a short name, which 
-     * may or may not be the same as the short name listed in the table 
-     * below (and may differ from the short name that another server assigns).
-     */
     public SearchRetrieve setRecordSchema(String recordSchema) {
         this.recordSchema = recordSchema;
         return this;
@@ -156,6 +154,42 @@ public class SearchRetrieve extends AbstractSRURequest {
 
     public String getSortKeys() {
         return sortKeys;
+    }
+
+    public SearchRetrieve setFacetLimit(String limitSpec) {
+        this.facetLimit = limitSpec;
+        return this;
+    }
+
+    public String getFacetLimit() {
+        return facetLimit;
+    }
+
+    public SearchRetrieve setFacetStart(String startSpec) {
+        this.facetStart = startSpec;
+        return this;
+    }
+
+    public String getFacetStart() {
+        return facetStart;
+    }
+
+    public SearchRetrieve setFacetCount(String countSpec) {
+        this.facetCount = countSpec;
+        return this;
+    }
+
+    public String getFacetCount() {
+        return facetCount;
+    }
+
+    public SearchRetrieve setFacetSort(String sortSpec) {
+        this.facetSort = sortSpec;
+        return this;
+    }
+
+    public String getFacetSort() {
+        return facetSort;
     }
 
     public SearchRetrieve setEncoding(String encoding) {

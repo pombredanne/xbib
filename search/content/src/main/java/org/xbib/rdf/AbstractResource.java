@@ -42,6 +42,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.context.ResourceContext;
 
 /**
@@ -53,21 +55,11 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         extends IdentifiableNode
         implements Resource<S, P, O>, Comparable<Resource<S, P, O>> {
 
+    private final Logger logger = LoggerFactory.getLogger(AbstractResource.class.getName());
+
     protected Multimap<P, Node> attributes = LinkedHashMultimap.create();
-    private ResourceContext context;
     private S subject;
     private boolean deleted;
-
-    @Override
-    public AbstractResource<S, P, O> context(ResourceContext context) {
-        this.context = context;
-        return this;
-    }
-
-    @Override
-    public ResourceContext context() {
-        return context;
-    }
 
     @Override
     public AbstractResource<S, P, O> id(IRI identifier) {
@@ -90,6 +82,40 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     @Override
     public S subject() {
         return subject;
+    }
+
+
+    @Override
+    public Resource<S, P, O> add(Triple<S,P,O> triple) {
+        if (triple.subject().id().equals(id())) {
+            attributes.put(triple.predicate(), triple.object());
+            if (triple.object() instanceof Resource) {
+                context().asMap().put(((Resource) triple.object()).id(), triple.object());
+            }
+        } else {
+            Resource<S, P, O> r = findResource(context(), triple);
+            if (r == null) {
+                logger.warn("ignoring triple: {}, no resource in {}", triple, this);
+                return this;
+            }
+            return r.add(triple);
+        }
+        return this;
+    }
+
+    private Resource<S, P, O> findResource(ResourceContext context, Triple<S,P,O> triple) {
+        if (context.asMap().containsKey(triple.subject().id())) {
+            return (Resource<S, P, O>)context.asMap().get(triple.subject().id());
+        } else {
+            Collection<Resource> c = (Collection<Resource>)context.asMap().values();
+            for (Resource<S, P, O> r : c) {
+                Resource<S,P,O> found = findResource(r.context(), triple);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -144,12 +170,6 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     @Override
     public Map<P, Collection<Node>> nodeMap() {
         return attributes.asMap();
-    }
-
-    @Override
-    public Resource<S, P, O> add(Triple<S,P,O> triple) {
-        attributes.put(triple.predicate(), triple.object());
-        return this;
     }
 
     /**
@@ -227,8 +247,8 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
 
     private final static Predicate<Node> resources = new Predicate<Node>() {
         @Override
-        public boolean apply(Node input) {
-            return input instanceof Resource;
+        public boolean apply(Node n) {
+            return n instanceof Resource;
         }
     };
 

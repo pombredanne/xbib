@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
@@ -48,7 +50,8 @@ import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.xml.CompactingNamespaceContext;
+import org.xbib.rdf.io.TripleListener;
+import org.xbib.rdf.simple.SimpleResource;
 
 /**
  * RDF Turtle serialization
@@ -60,110 +63,179 @@ import org.xbib.xml.CompactingNamespaceContext;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class TurtleWriter<S extends Identifier, P extends Property, O extends Node> {
+public class TurtleWriter<S extends Identifier, P extends Property, O extends Node>
+    implements TripleListener<S,P,O> {
+
+    private final Logger logger = LoggerFactory.getLogger(TurtleWriter.class.getName());
 
     private final static char LF = '\n';
     private final static char TAB = '\t';
-    /**
-     * Writer
-     */
+
     private Writer writer;
+
+    private Resource resource;
     /**
      * A Namespace context with URI-related methods
      */
     private IRINamespaceContext context;
+
     /**
      * Flag for write start
      */
     private boolean writingStarted;
-    /**
-     * indicate whether a triple being written is in a resource or not
-     */
+
     private boolean sameSubject;
-    /*
-     * The subject last visited
-     */
-    private S lastSubject;
-    /**
-     * The predicate last visited
-     */
-    private P lastPredicate;
+    private boolean samePredicate;
     /**
      * for indenting
      */
-    private Stack<S> subjects;
-    private Stack<P> predicates;
+    private Stack<Triple<S,P,O>> stack;
+
+    private S lastSubject;
+
+    private P lastPredicate;
     /**
      * the current triple
      */
     private Triple<S,P,O> triple;
-    /**
-     * counter for written triples
-     */
-    private long tripleCounter;
+
+    private boolean nsWritten;
+
+    private String translatePicaSortMarker;
+
+    private StringBuilder sb;
+
+    private long byteCounter;
+
+    private long idCounter;
+
 
     public TurtleWriter() {
-        this(IRINamespaceContext.getInstance());
-    }
-
-    public TurtleWriter(IRINamespaceContext context) {
-        this.context = context;
-    }
-
-    /**
-     *
-     * @param resource
-     * @param withPrefixes
-     * @param out
-     * @throws IOException
-     */
-    public void write(Resource<S, P, O> resource, boolean withPrefixes, OutputStream out) throws IOException {
-        write(resource, withPrefixes, new OutputStreamWriter(out, "UTF-8"));
-    }
-
-    /**
-     *
-     * @param resource
-     * @param withPrefixes
-     * @param writer
-     * @throws IOException
-     */
-    public void write(Resource<S, P, O> resource, boolean withPrefixes, Writer writer) throws IOException {
-        if (resource == null) {
-            throw new NullPointerException("resource is null");
-        }
-        this.writer = writer;
+        this.context = IRINamespaceContext.newInstance();
+        this.nsWritten = false;
+        this.resource = new SimpleResource();
         this.writingStarted = false;
         this.sameSubject = false;
-        this.lastSubject = null;
-        this.lastPredicate = null;
-        this.subjects = new Stack<>();
-        this.predicates = new Stack<>();
-        start();
-        if (withPrefixes) {
-            writeNamespaces(context, resource);
-        }
-        writeResource(resource);
-        end();
+        this.samePredicate = false;
+        this.stack = new Stack();
+        this.byteCounter = 0L;
+        this.idCounter = 0L;
+        this.sb = new StringBuilder();
+        this.translatePicaSortMarker = null;
     }
 
-    public void writeNamespaces(CompactingNamespaceContext context) throws IOException {
-        boolean written = false;
-        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
-            if (entry.getValue().length() > 0) {
-                String nsURI = entry.getValue().toString();
-                if (!RDF.NS_URI.equals(nsURI)) {
-                    writeNamespace(entry.getKey(), nsURI);
-                    written = true;
+    public long getByteCounter() {
+        return byteCounter;
+    }
+
+    public long getIdentifierCounter() {
+        return idCounter;
+    }
+
+    public TurtleWriter translatePicaSortMarker(String marker) {
+        this.translatePicaSortMarker = marker;
+        return this;
+    }
+
+    @Override
+    public TurtleWriter newIdentifier(IRI iri) {
+        if (!iri.equals(resource.id())) {
+            try {
+                if (!nsWritten) {
+                    writeNamespaces();
                 }
+                write(resource);
+                idCounter++;
+                resource = new SimpleResource();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
             }
         }
-        if (written) {
-            writer.write(LF);
+        resource.id(iri);
+        return this;
+    }
+
+    @Override
+    public TurtleWriter triple(Triple triple) {
+        resource.add(triple);
+        return this;
+    }
+
+    @Override
+    public TurtleWriter startPrefixMapping(String prefix, String uri) {
+        context.addNamespace(prefix, uri);
+        return this;
+    }
+
+    @Override
+    public TurtleWriter endPrefixMapping(String prefix) {
+        // hmmm keep it, for last resource writing in close()
+        //context.removeNamespace(prefix);
+        return this;
+    }
+
+    public void close() {
+        try {
+            write(resource);
+            idCounter++;
+            writer.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
-    private void writeNamespaces(IRINamespaceContext context, Resource<S, P, O> resource) throws IOException {
+    public TurtleWriter setContext(IRINamespaceContext context) {
+        this.context = context;
+        return this;
+    }
+
+    public TurtleWriter output(OutputStream out) throws IOException {
+        this.writer = new OutputStreamWriter(out, "UTF-8");
+        return this;
+    }
+
+    public TurtleWriter output(Writer writer) throws IOException {
+        this.writer = writer;
+        return this;
+    }
+
+    public TurtleWriter write(Resource<S, P, O> resource) throws IOException {
+        if (resource != null) {
+            start();
+            Iterator<Triple<S, P, O>> it = resource.iterator();
+            while (it.hasNext()) {
+                writeTriple(it.next());
+            }
+            end();
+            writer.write(sb.toString());
+            byteCounter += sb.length();
+            sb.setLength(0);
+        }
+        return this;
+    }
+
+    private void start() throws IOException {
+        if (writingStarted) {
+            throw new IOException("document writing has already started");
+        }
+        writingStarted = true;
+    }
+
+    private void end() throws IOException {
+        if (!writingStarted) {
+            throw new IOException("document writing has not yet started");
+        }
+        try {
+            closeStatement();
+        } finally {
+            writingStarted = false;
+        }
+    }
+
+    private void writeDynamicNamespaces(Resource<S, P, O> resource) throws IOException {
+        if (resource == null) {
+            return;
+        }
         // first, collect namespace URIs and prefixes
         IRINamespaceContext newContext = IRINamespaceContext.newInstance();
         Iterator<Triple<S,P,O>> it = resource.iterator();
@@ -190,151 +262,80 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
                 }
             }
         }
-        // second, write namespaces in use
-        writeNamespaces(newContext);
         this.context = newContext;
+        writeNamespaces();
     }
 
-    private void writeResource(Resource<S, P, O> resource) throws IOException {
-        Iterator<Triple<S, P, O>> it = resource.iterator();
-        while (it.hasNext()) {
-            Triple stmt = it.next();
-            handleStatement(stmt);
-            tripleCounter++;
+    public TurtleWriter writeNamespaces() throws IOException {
+        if (context == null) {
+            return this;
         }
-    }
-
-    public long getTripleCounter() {
-        return tripleCounter;
-    }
-
-    public void start() throws IOException {
-        if (writingStarted) {
-            throw new IOException("document writing has already started");
-        }
-        writingStarted = true;
-    }
-
-    public void end() throws IOException {
-        if (!writingStarted) {
-            throw new IOException("document writing has not yet started");
-        }
-        try {
-            if (sameSubject) {
-                closeResource();
-                writer.write('.');
+        nsWritten = false;
+        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
+            if (entry.getValue().length() > 0) {
+                String nsURI = entry.getValue().toString();
+                if (!RDF.NS_URI.equals(nsURI)) {
+                    writeNamespace(entry.getKey(), nsURI);
+                    nsWritten = true;
+                }
             }
-        } finally {
-            writer.flush();
-            writingStarted = false;
         }
+        if (nsWritten) {
+            sb.append(LF);
+        }
+        return this;
+    }
+
+    private void writeNamespace(String prefix, String name) throws IOException {
+        sb.append("@prefix ")
+                .append(prefix)
+                .append(": <")
+                .append(encodeURIString(name))
+                .append("> .")
+                .append(LF);
     }
 
     /**
-     * Serialize namespace declaration
-     *
-     * @param prefix
-     * @param name
-     * @throws IOException
-     */
-    public void handleNamespace(String prefix, String name) throws IOException {
-        if (context.getPrefix(name) == null) {
-            // Namespace not yet mapped to a prefix, try to give it the
-            // specified prefix
-            boolean isLegalPrefix = prefix.length() == 0 || isLegalPrefix(prefix);
-            if (!isLegalPrefix || context.getNamespaceURI(prefix) != null) {
-                // Specified prefix is not legal or the prefix is already in use,
-                // generate a legal unique prefix
-                if (prefix.length() == 0 || !isLegalPrefix) {
-                    prefix = Identifier.GENID;
-                }
-                int number = 1;
-                while (context.getNamespaceURI(prefix + number) != null) {
-                    number++;
-                }
-                prefix += number;
-            }
-            context.addNamespace(prefix, name);
-            if (writingStarted) {
-                closeSubject();
-                writeNamespace(prefix, name);
-                writer.write(LF);
-            }
-        }
-    }
-
-    /**
-     * Serialize triple
+     * Write triple
      *
      * @param stmt
      * @throws IOException
      */
-    public void handleStatement(Triple<S,P,O> stmt) throws IOException {
+    public void writeTriple(Triple<S,P,O> stmt) throws IOException {
         if (!writingStarted) {
             throw new IOException("document writing has not yet been started");
         }
         this.triple = stmt;
-        S subj = stmt.subject();
-        P pred = stmt.predicate();
-        O obj = stmt.object();
-        if (subj.equals(lastSubject)) {
-            if (pred.equals(lastPredicate)) {
-                // continous object enumeration if same subject and predicate
-                writer.write(", ");
+        S subject = stmt.subject();
+        P predicate = stmt.predicate();
+        O object = stmt.object();
+        if (subject.equals(lastSubject)) {
+            if (predicate.equals(lastPredicate)) {
+                sb.append(", ");
+                writeObject(object);
             } else {
-                // same subject, new predicate
-                writer.write(";");
-                writer.write(LF);
-                writeIndent(subjects.size() + 1);
-                writePredicate(pred);
+                // same subject, predicate changed
+                sb.append(';');
+                sb.append(LF);
+                writeIndent(stack.size() + 1);
+                writePredicate(predicate);
+                writeObject(object);
             }
         } else {
-            // another subject or blank node, let's indent
-            closeSubject();
-            writeIndent(subjects.size());
+            // another subject
+            closeStatement();
+            writeIndent(stack.size());
             if (!sameSubject) {
-                writeSubject(subj);
+                writeSubject(subject);
+                writePredicate(predicate);
                 sameSubject = true;
+                samePredicate = true;
+            } else if (!samePredicate) {
+                writePredicate(predicate);
+                samePredicate = true;
             }
-            writePredicate(pred);
+            writeObject(object);
         }
-        writeObject(obj);
-    }
-
-    /**
-     * Serialize comment
-     *
-     * @param comment
-     * @throws IOException
-     */
-    public void handleComment(String comment) throws IOException {
-        closeSubject();
-        if (comment.indexOf('\r') != -1 || comment.indexOf('\n') != -1) {
-            // Comment is not allowed to contain newlines or line feeds.
-            // Split comment in individual lines and write comment lines
-            // for each of them.
-            StringTokenizer st = new StringTokenizer(comment, "\r\n");
-            while (st.hasMoreTokens()) {
-                writeCommentLine(st.nextToken());
-            }
-        } else {
-            writeCommentLine(comment);
-        }
-    }
-
-    private void writeCommentLine(String line) throws IOException {
-        writer.write("# ");
-        writer.write(line);
-        writer.write(LF);
-    }
-
-    private void writeNamespace(String prefix, String name) throws IOException {
-        writer.write("@prefix ");
-        writer.write(prefix);
-        writer.write(": <");
-        writer.write(encodeURIString(name));
-        writer.write("> .");
-        writer.write(LF);
     }
 
     private void writeSubject(S subject) throws IOException {
@@ -342,31 +343,36 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             return;
         }
         // skip blank nodes 
-        if (!Identifier.GENID.equals(subject.id().getScheme())) {
-            writer.write('<');
-            writer.write(subject.toString());
-            writer.write("> ");
+        if (!isBlank(subject)) {
+            sb.append('<')
+                .append(subject.toString())
+                .append("> ");
         }
         lastSubject = subject;
     }
 
     private void writePredicate(P predicate) throws IOException {
         if ("rdf:type".equals(predicate.toString()) || predicate.toString().equals(RDF.NS_URI + "type")) {
-            writer.write("a ");
+            sb.append("a ");
         } else {
             writeURI(predicate.id());
-            writer.write(" ");
+            sb.append(" ");
         }
         lastPredicate = predicate;
     }
 
-    // SuppressWarnings("unchecked")
     private void writeObject(O object) throws IOException {
-        if (object instanceof Identifier) {
-            sameSubject = false;
-            openResource((Identifier) object);
-        } else if (object instanceof Resource) {
-            writeURI(((Resource<S, P, O>) object).id());
+        if (object instanceof Resource) {
+            Resource r = (Resource<S,P,O>)object;
+            if (isBlank(r)) {
+                // blank node?
+                openResource();
+                sameSubject = false;
+                samePredicate = false;
+                lastSubject = (S)r;
+            } else {
+                writeURI(r.id());
+            }
         } else if (object instanceof Literal) {
             writeLiteral((Literal<?>) object);
         } else {
@@ -374,21 +380,21 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         }
     }
 
-    private void openResource(Identifier node) throws IOException {
-        writer.write("[");
-        writer.write(LF);
+    private void openResource() throws IOException {
+        stack.push(triple);
+        sb.append('[')
+           .append(LF);
         writeIndent(1);
-        subjects.push(triple.subject());
-        predicates.push(triple.predicate());
     }
 
     private void closeResource() throws IOException {
-        if (!subjects.isEmpty()) {
-            writer.write(LF);
-            writeIndent(subjects.size());
-            writer.write("]");
-            lastSubject = subjects.pop();
-            lastPredicate = predicates.pop();
+        if (!stack.isEmpty()) {
+            sb.append(LF);
+            writeIndent(stack.size());
+            sb.append(']');
+            Triple<S,P,O> t = stack.pop();
+            lastSubject = t.subject();
+            lastPredicate = t.predicate();
         } else {
             lastSubject = null;
             lastPredicate = null;
@@ -398,54 +404,81 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private void writeURI(IRI uri) throws IOException {
         String abbrev = context.compact(uri, ':', false);
         if (!abbrev.equals(uri.toString())) {
-            writer.write(abbrev);
+            sb.append(abbrev);
             return;
         }
         if (context.getNamespaceURI(uri.getScheme()) != null) {
-            writer.write(uri.toString());
+            sb.append(uri.toString());
             return;
         }
         // Write full URI
-        writer.write("<");
-        writer.write(encodeURIString(uri.toString()));
-        writer.write(">");
+        sb.append('<')
+            .append(encodeURIString(uri.toString()))
+            .append('>');
     }
 
     private void writeLiteral(Literal literal) throws IOException {
+        if (translatePicaSortMarker != null) {
+            literal = recognizeSortOrder(literal, translatePicaSortMarker);
+        }
         String value = literal.object().toString();
         if (value.indexOf('\n') > 0 || value.indexOf('\r') > 0 || value.indexOf('\t') > 0) {
             // Write label as long string
-            writer.write("\"\"\"");
-            writer.write(encodeLongString(value));
-            writer.write("\"\"\"");
+            sb.append("\"\"\"")
+            .append(encodeLongString(value))
+            .append("\"\"\"");
         } else {
             // Write label as normal string
-            writer.write("\"");
-            writer.write(encodeString(value));
-            writer.write("\"");
+            sb.append('\"')
+                .append(encodeString(value))
+                .append('\"');
         }
         if (literal.type() != null) {
             // Append the literal's type
-            writer.write("^^");
-            //writeURI(literal.type()); // we always assume compact type URI
-            writer.write(literal.type().toString());
+            sb.append("^^")
+                .append(literal.type().toString());
         } else if (literal.language() != null) {
             // Append the literal's language
-            writer.write("@");
-            writer.write(literal.language());
+            sb.append('@')
+              .append(literal.language());
         }
     }
 
-    private void closeSubject() throws IOException {
+    /**
+     * see http://www.w3.org/International/articles/language-tags/
+     *
+     * @param literal
+     * @param language
+     * @return
+     */
+    private Literal recognizeSortOrder(Literal literal, String language) {
+        String value = literal.object().toString();
+        if (value.indexOf('@') == 0) {
+            literal.object(value.substring(1));
+        }
+        int pos = value.indexOf(" @"); // PICA mechanical word order marker
+        if (pos > 0) {
+            literal.object('\u0098' + value.substring(0,pos+1) + '\u009c' + value.substring(pos+2))
+                    .language(language);
+        }
+        return literal;
+    }
+
+    private void closeStatement() throws IOException {
         if (sameSubject) {
             closeResource();
             if (triple.subject().equals(lastSubject)) {
-                writer.write(";");
-                writer.write(LF);
-                writeIndent(1); // ?
+                if (triple.predicate().equals(lastPredicate)) {
+                    sb.append(',');
+                } else {
+                    sb.append(';')
+                    .append(LF);
+                    writeIndent(1);
+                    samePredicate = false;
+                }
             } else {
-                writer.write(".");
-                writer.write(LF);
+                sb.append(".")
+                .append(LF);
                 sameSubject = false;
             }
         }
@@ -453,7 +486,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
 
     private void writeIndent(int indentLevel) throws IOException {
         for (int i = 0; i < indentLevel; i++) {
-            writer.write(TAB);
+            sb.append(TAB);
         }
     }
 
@@ -568,5 +601,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         // Add the part after the last occurence.
         buf.append(text.substring(prevIndex));
         return buf.toString();
+    }
+
+    private boolean isBlank(Identifier n) {
+        return Identifier.GENID.equals(n.id().getScheme());
     }
 }

@@ -41,10 +41,6 @@ public interface SRU {
     
     String NS_PREFIX = "srw";
     
-    String VERSION_1_1 = "1.1";
-    
-    String VERSION_1_2 = "1.2";
-
     String SEARCH_RETRIEVE_COMMAND = "searchRetrieve";
     
     String SCAN_COMMAND = "scan";
@@ -98,13 +94,35 @@ public interface SRU {
      * Either way, the data is transfered within the 'recordData' field. 
      * If the server cannot comply with this packing request, then it 
      * must return a diagnostic.
-     */    
-    /**
-     * A string to determine how the record should be escaped in the response. 
+     *
+     * A string to determine how the record should be escaped in the response.
      * Defined values are 'string' and 'xml'. The default is 'xml'.
      */
     String RECORD_PACKING_PARAMETER = "recordPacking";
-    
+
+    /**
+     * For those responses where records are transferred in XML,
+     * In order that records which are not well formed do not break
+     * the entire message, it is possible to request that they be transferred
+     * as a single string with the ‘<’, ‘>’ and ‘&’ characters escaped to
+     * their entity forms. Moreover some toolkits may not be able to
+     * distinguish record XML from the XML that forms the response.
+     * However, some clients may prefer that the records be transferred as
+     * XML in order to manipulate them directly with a stylesheet that renders
+     * the records and potentially also the user interface.
+     *
+     *  This distinction is made via the request parameter recordXMLEscaping.
+     *  This parameter is defined for requests only in cases when the
+     *  response records are to be transferred in XML.  Its value is
+     *  'string' or 'xml' (default is 'xml' if omitted).   If the
+     *  value of the parameter is 'string', then the server should
+     *  perform the conversion (escape the relevant characters) before
+     *  transferring records. If the value is 'xml', then it should embed the
+     *  XML directly into the response. If the server cannot comply with
+     *  this request, then it MUST return a diagnostic.
+     */
+    String RECORD_XML_ESCAPING_PARAMETER = "recordXMLEscaping";
+
     /**
      * The schema in which the records MUST be returned. The value is the 
      * URI identifier for the schema or the short name for it published 
@@ -191,7 +209,90 @@ public interface SRU {
     String RESULT_SET_TTL_PARAMETER = "resultSetTTL";
     
     String SORT_KEYS_PARAMETER = "sortKeys";
-    
+
+    /**
+     * The request parameter  httpAccept may be supplied to indicate the
+     * preferred format of the response.  The value is an internet media type.
+     * For example if the client wants the response to be supplied in the
+     * ATOM format, the value of the parameter is ‘application/atom+xml’.
+     *
+     * The default value for the response type is ‘application/sru+xml’.
+     * The intent of the httpAccept parameter can be accomplished with
+     * an HTTP Accept header. Servers SHOULD support either mechanism.
+     * In either case (via the httpAccept parameter or HTTP Accept
+     * header), if the server does not support the requested media type t
+     * hen the server MUST respond with a 406 status code and SHOULD
+     * return an HTML message with pointers to that  resource in
+     * supported media types.
+     * If an SRU server supports multiple media types and uses content
+     * negotiation to determine the media type of the response, then
+     * the server SHOULD provide a URL in the Content-Location header
+     * of the response pointing directly to the response in that mime-type.
+     * For instance, if the client had sent the URL
+     *    http://example.org/sru?query=dog
+     * with an Accept header of  ‘application/rss+xml’,
+     * then the server SHOULD return a Content-Location value of
+     * http://example.org/sru?query=dog&httpAccept=application/rss+xml.
+     * This Content-Location header is returned along with the content
+     * itself, presumably in the application/rss+xml format. (It would
+     * also be acceptable to return a redirect to that URL instead, but
+     * that behavior is not encouraged as it is inefficient.)
+     * The default response type is application/sru+xml.  That is, if
+     * there is neither an Accept header (or if there is an Accept header
+     * of “*”) nor an httpAccept parameter, the response should be of
+     * media type application/sru+xml, and a corresponding Content-Location
+     * header should be returned with the response. For example if the request is
+     *   http://example.org/sru?query=dog
+     * a Content-Location header of
+     *   http://example.org/sru?query=dog&httpAccept=application/sru+xml
+     * should be returned.
+     */
+
+    String HTTP_ACCEPT_PARAMETER = "httpAccept";
+
+
+    /**
+     * The maximum number of counts that should be reported per facet field.
+     *
+     * The facetLimit parameter can specify a limit on a per field basis,
+     * and/or a global limit applying to all fields.
+     *
+     */
+    String FACET_LIMIT_PARAMETER = "facetLimit";
+
+    /**
+     * An offset into the list of counts, to allow paging.  It is 1-based and the default
+     * value is 1 (meaning start with the first count). This parameter can be
+     * specified on a per field basis.
+     */
+
+    String FACET_START_PARAMETER = "facetStart";
+
+    /**
+     * The facetSort parameter is a sort specification for the facet results.
+     * It is non-repeatable, and has the following components.
+     * sortBy: One of the following:
+     *    ‘recordCount’ (the number of records matching the facet value)
+     *    ‘alphanumeric‘
+     * order:  Optional, one of:
+     *    ‘ascending’  (default for sortby=alphanumeric)
+     *    ‘descending’ (default for sortby=recordCount)
+     * caseSensitivity: Optional, and meaningful only for ‘alphanumeric’.  One of:
+     *    ‘caseSensitive’
+     *    ‘caseInsensitive’ (default)
+     */
+
+    String FACET_SORT_PARAMETER = "facetSort";
+
+    /**
+     * This parameter may be used to request the facet count for a specific term,
+     * instead of the matching facet values.
+     * The parameter may be repeated, but should not be used in conjunction
+     * with any other facet parameter.
+     */
+
+    String FACET_COUNT_PARAMETER = "facetCount";
+
     /**
      * SRU messages may include additional information through a built 
      * in extension mechanism. Additional information may be included in 

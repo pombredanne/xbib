@@ -50,9 +50,9 @@ import org.xbib.rdf.io.Triplifier;
 import org.xbib.rdf.simple.SimpleTriple;
 
 /**
- * Parser for NTriple RDF serialization format
+ * Parser for NTriple RDF format
  *
- * See also the <a href="http://www.w3.org/TR/rdf-testcases/#ntriples">NTriple
+ * See also the <a href="http://www.w3.org/TR/rdf-testcases/#convert">NTriple
  * specification</a>
  */
 public class NTripleReader<S extends Identifier, P extends Property, O extends Node>

@@ -66,7 +66,7 @@ public final class Factory<S,P,O> {
     public O asObject(Object object) {
         return object == null ? null :
                 object instanceof Literal ? (O) object :
-                object instanceof IRI ? (O) new SimpleResource().id((IRI) object) :
+                object instanceof IRI ? (O) new SimpleResource().id((IRI)object) :
                 (O) new SimpleLiteral(object);
     }
 

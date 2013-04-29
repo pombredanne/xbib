@@ -48,6 +48,8 @@ import java.util.Map;
 import java.util.Stack;
 import org.xbib.iri.IRI;
 import org.xbib.iri.IRISyntaxException;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
@@ -79,9 +81,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * model.
  *
  * Note that the XMLLiteral datatype is not fully supported.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfXmlReader<S extends Identifier, P extends Property, O extends Node>
         implements RDF, XmlTriplifier<S,P,O> {
+
+    private final Logger logger = LoggerFactory.getLogger(RdfXmlReader.class.getName());
 
     private final Factory<S,P,O> factory = Factory.getInstance();
 
@@ -90,22 +96,6 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     // counter for blank node generation
     private int bn = 0;
 
-    public RdfXmlReader<S,P,O> setHandler(XmlHandler handler) {
-        this.xmlHandler = handler;
-        return this;
-    }
-
-    /**
-     * Set the triple listener that gets called every time a triple is read.
-     *
-     * @param tripleHandler the triple listener
-     */
-    @Override
-    public RdfXmlReader setListener(TripleListener<S,P,O> tripleHandler) {
-        this.listener = tripleHandler;
-        return this;
-    }
-    
     @Override
     public RdfXmlReader parse(InputStream in) throws IOException {
         return parse(new InputStreamReader(in, "UTF-8"));
@@ -129,7 +119,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
 
     @Override
     public RdfXmlReader parse(XMLReader reader, InputSource source) throws IOException, SAXException {
-        Handler xmlHandler = new Handler();
+        xmlHandler.setListener(listener);
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
@@ -137,18 +127,29 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
 
     @Override
     public RdfXmlReader parse(XMLFilterReader reader, InputSource source) throws IOException, SAXException {
-        Handler xmlHandler = new Handler();
+        xmlHandler.setListener(listener);
         reader.setContentHandler(xmlHandler);
         reader.parse(source);
         return this;
     }
 
-    @Override
-    public XmlHandler getHandler() {
-        return new Handler();
+    public RdfXmlReader<S,P,O> setHandler(XmlHandler handler) {
+        this.xmlHandler = handler;
+        return this;
     }
 
-    private void yield(Object s, IRI p, Object o) {
+    @Override
+    public RdfXmlReader setListener(TripleListener<S,P,O> tripleHandler) {
+        this.listener = tripleHandler;
+        return this;
+    }
+
+    @Override
+    public XmlHandler getHandler() {
+        return xmlHandler;
+    }
+
+    private void yield(Object s, Object p, Object o) {
         yield(new SimpleTriple(factory.asSubject(s), factory.asPredicate(p), factory.asObject(o)));
     }
 
@@ -270,7 +271,10 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         return new IdentifiableNode().id(s);
     }
 
-    // resolve relative uri's against the in-scope xml:base URI
+    /*
+     * Resolve relative uri's against the in-scope xml:base URI.
+     * IRI creation/parsing comes with very weak performance.
+     */
     private IRI resolve(String uriString, Stack<Frame> stack) {
         IRI uri;
         try {
@@ -295,7 +299,10 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         }
     }
 
-    // the complicated logic to determine the subject uriref
+    /**
+     *
+     *  The complicated logic to determine the subject uri ref
+     */
     private void getSubjectNode(Frame frame, Stack<Frame> stack, Attributes attrs) throws SAXException {
         String about = attrs.getValue(RDF.toString(), "about");
         if (about != null) {
@@ -387,17 +394,17 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
 
     class Frame {
 
-        public IRI node = null; // the subject/object
-        public String lang = null; // the language tag
-        public String base = null; // the xml:base
-        public String datatype = null; // a predicate's datatype
-        public IRI reification = null; // when reifying, the triple's uriRef
-        public List<IRI> collection = null; // for parseType=Collection, the items
-        public Triple<S, P, O> collectionHead = null; // for parseType=Collection, the head triple
-        public boolean isSubject = false; // is there a subject at this frame
-        public boolean isPredicate = false; // is there a predicate at this frame
-        public boolean isCollection = false; // is the predicate at this frame a collection
-        public int li = 1;
+        IRI node = null; // the subject/object
+        String lang = null; // the language tag
+        String base = null; // the xml:base
+        String datatype = null; // a predicate's datatype
+        IRI reification = null; // when reifying, the triple's uriRef
+        List<IRI> collection = null; // for parseType=Collection, the items
+        Triple<S, P, O> collectionHead = null; // for parseType=Collection, the head triple
+        boolean isSubject = false; // is there a subject at this frame
+        boolean isPredicate = false; // is there a predicate at this frame
+        boolean isCollection = false; // is the predicate at this frame a collection
+        int li = 1;
     }
 
     class Handler extends DefaultHandler implements XmlHandler {
@@ -405,16 +412,28 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         private Stack<Frame> stack = new Stack<>();
         private StringBuilder pcdata = null;
         private StringBuilder xmlLiteral = null;
-        int literalLevel = 0; // level in XMLLiteral
         private TripleListener listener;
+        private int literalLevel = 0; // level in XMLLiteral
 
         public Handler setListener(TripleListener listener) {
             this.listener = listener;
             return this;
         }
 
-        public TripleListener getListener() {
-            return listener;
+        @Override
+        public void startPrefixMapping (String prefix, String uri)
+                throws SAXException {
+            if (listener != null) {
+                listener.startPrefixMapping(prefix, uri);
+            }
+        }
+
+        @Override
+        public void endPrefixMapping (String prefix)
+                throws SAXException {
+            if (listener != null) {
+                listener.endPrefixMapping(prefix);
+            }
         }
 
         @Override
@@ -619,5 +638,5 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
                 xmlLiteral.append("<?").append(target).append(" ").append(data).append("?>");
             }
         }
-    };
+    }
 }

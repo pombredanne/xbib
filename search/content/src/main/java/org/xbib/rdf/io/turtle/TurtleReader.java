@@ -64,11 +64,13 @@ import org.xbib.xml.XMLNamespaceContext;
  * @see <a href="http://www.w3.org/TeamSubmission/turtle/">Turtle - Terse RDF
  * Triple Language</a>
  *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TurtleReader<S extends Identifier, P extends Property, O extends Node>
         implements Triplifier<S, P, O> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TurtleReader.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(TurtleReader.class.getName());
+
     private final Factory<S,P,O> factory = Factory.getInstance();
     /**
      * The base URI
@@ -413,7 +415,6 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
                 logger.warn("{} unescaped ''>'' in URI: {}", subject, sb);
             }
         } while (!ended);
-        //decoded = decodeTurtleString(decoded)              
         String decoded = decode(sb.toString(), "UTF-8");
         IRI u = IRI.create(decoded);
         u = baseURI.resolve(u);

@@ -62,8 +62,7 @@ public interface SRUResponseListener extends ResponseListener {
      * @param recordPosition 
      */
     void recordMetadata(String recordSchema, String recordPacking, 
-         String recordIdentifier,
-         int recordPosition);
+         String recordIdentifier, int recordPosition);
     
     /**
      * SRU record data
@@ -73,10 +72,12 @@ public interface SRUResponseListener extends ResponseListener {
     
     /**
      * SRU extra record data
-     * @param record 
+     * @param extra
      */
-    void extraRecordData(Collection<XMLEvent> record);
-    
+    void extraRecordData(Collection<XMLEvent> extra);
+
+    void facetedResults(Collection<XMLEvent> facets);
+
     /**
      * End SRU record
      */

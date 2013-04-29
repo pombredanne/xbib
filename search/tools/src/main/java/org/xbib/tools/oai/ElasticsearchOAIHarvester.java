@@ -107,6 +107,16 @@ public final class ElasticsearchOAIHarvester {
             final TripleListener stmt = new TripleListener() {
 
                 @Override
+                public TripleListener startPrefixMapping(String prefix, String uri) {
+                    return this;
+                }
+
+                @Override
+                public TripleListener endPrefixMapping(String prefix) {
+                    return this;
+                }
+
+                @Override
                 public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
                     return this;

@@ -36,6 +36,10 @@ import org.xbib.rdf.Triple;
 
 public interface TripleListener<S,P,O> {
 
+    TripleListener<S,P,O> startPrefixMapping(String prefix, String uri);
+
+    TripleListener<S,P,O> endPrefixMapping(String prefix);
+
     TripleListener<S,P,O> newIdentifier(IRI identifier);
 
     TripleListener<S,P,O> triple(Triple<S, P, O> triple);

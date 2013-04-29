@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.rdf.simple;
+package org.xbib.rdf;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,6 +39,7 @@ import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
+import org.xbib.rdf.simple.SimpleTriple;
 
 /**
  * Iterate over a resource and generate statements 
@@ -66,8 +67,7 @@ public class TripleIterator<S extends Identifier, P extends Property, O extends 
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        Triple<S, P, O> triple = triples.poll();
-        return triple;
+        return triples.poll();
     }
 
     @Override

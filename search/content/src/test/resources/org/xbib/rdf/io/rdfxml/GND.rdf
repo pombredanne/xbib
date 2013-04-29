@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:gnd="http://d-nb.info/standards/elementset/gnd#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:bibo="http://purl.org/ontology/bibo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:isbd="http://iflastandards.info/ns/isbd/elements/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+
+	<rdf:Description rdf:about="http://d-nb.info/gnd/4000196-9">
+		<gnd:gndIdentifier>4000196-9</gnd:gndIdentifier>
+		<gnd:oldAuthorityNumber>(DE-588c)4000196-9</gnd:oldAuthorityNumber>
+		<gnd:variantNameForTheWork>Abrogans deutsch</gnd:variantNameForTheWork>
+		<gnd:variantNameForTheWork>Deutsches Abrogans</gnd:variantNameForTheWork>
+		<gnd:variantNameForTheWork>Keronisches Glossar</gnd:variantNameForTheWork>
+		<gnd:preferredNameForTheWork>Abrogans</gnd:preferredNameForTheWork>
+		<gnd:broaderTermInstantial rdf:resource="http://d-nb.info/gnd/4157654-8" />
+		<gnd:gndSubjectCategory rdf:resource="http://d-nb.info/vocab/gnd-sc#11.3d" />
+		<gnd:geographicAreaCode rdf:resource="http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE" />
+		<gnd:languageCode rdf:resource="http://id.loc.gov/vocabulary/iso639-2/goh" />
+		<gnd:definition xml:lang="de">Lateinisch-althochdeutsches Glossar, um 765 entstanden</gnd:definition>
+		<rdf:type rdf:resource="http://d-nb.info/standards/elementset/gnd#Work" />
+	</rdf:Description>
+
+	<rdf:Description rdf:about="http://d-nb.info/gnd/4001191-4">
+		<gnd:gndIdentifier>4001191-4</gnd:gndIdentifier>
+		<gnd:oldAuthorityNumber>(DE-588c)4001191-4</gnd:oldAuthorityNumber>
+		<gnd:variantNameForTheWork>Chanson d&apos;Aliscans</gnd:variantNameForTheWork>
+		<gnd:variantNameForTheWork>La @bataille d&apos;Aliscans</gnd:variantNameForTheWork>
+		<gnd:preferredNameForTheWork>Aliscans</gnd:preferredNameForTheWork>
+		<gnd:broaderTermPartitive rdf:resource="http://d-nb.info/gnd/4189913-1" />
+		<gnd:gndSubjectCategory rdf:resource="http://d-nb.info/vocab/gnd-sc#12.2b" />
+		<gnd:geographicAreaCode rdf:resource="http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-FR" />
+		<rdf:type rdf:resource="http://d-nb.info/standards/elementset/gnd#Work" />
+	</rdf:Description>
+
+	<rdf:Description rdf:about="http://d-nb.info/gnd/4001270-0">
+		<gnd:gndIdentifier>4001270-0</gnd:gndIdentifier>
+		<gnd:oldAuthorityNumber>(DE-588c)4001270-0</gnd:oldAuthorityNumber>
+		<gnd:preferredNameForTheWork>Allgemeine deutsche Bibliothek &lt;Zeitschrift&gt;</gnd:preferredNameForTheWork>
+		<gnd:broaderTermInstantial rdf:resource="http://d-nb.info/gnd/4035949-9" />
+		<gnd:gndSubjectCategory rdf:resource="http://d-nb.info/vocab/gnd-sc#12.1b" />
+		<gnd:gndSubjectCategory rdf:resource="http://d-nb.info/vocab/gnd-sc#2.3" />
+		<gnd:geographicAreaCode rdf:resource="http://d-nb.info/standards/vocab/gnd/geographic-area-code#XA-DE" />
+		<gnd:languageCode rdf:resource="http://id.loc.gov/vocabulary/iso639-2/ger" />
+		<gnd:relatedPlaceOrGeographicName rdf:resource="http://d-nb.info/gnd/4011882-4" />
+		<rdf:type rdf:resource="http://d-nb.info/standards/elementset/gnd#Work" />
+	</rdf:Description>
+
+        <rdf:Description rdf:about="http://d-nb.info/gnd/100003893">
+                <foaf:page rdf:resource="http://de.wikipedia.org/wiki/Adamantios" />
+                <owl:sameAs rdf:resource="http://dbpedia.org/resource/Adamantius" />
+                <gnd:gndIdentifier>100003893</gnd:gndIdentifier>
+                <gnd:oldAuthorityNumber>(DE-588a)100003893</gnd:oldAuthorityNumber>
+                <gnd:variantNameForThePerson>Adamantius &lt;aus Alexandrien&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>aus Alexandrien</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantios &lt;Sophista&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantios</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Sophista</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantius &lt;Sophista&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Sophista</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantius &lt;Iudaeus&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Iudaeus</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantius &lt;Medicus&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Medicus</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantius &lt;Physiognomonicus&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Physiognomonicus</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantios &lt;Mediziner&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantios</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Mediziner</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantios &lt;Arzt&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantios</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Arzt</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantios &lt;von Alexandria&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantios</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>von Alexandria</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:variantNameForThePerson>Adamantios &lt;von Alexandreia&gt;</gnd:variantNameForThePerson>
+                <gnd:variantNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantios</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>von Alexandreia</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:variantNameEntityForThePerson>
+                <gnd:preferredNameForThePerson>Adamantius &lt;Alexandrinus&gt;</gnd:preferredNameForThePerson>
+                <gnd:preferredNameEntityForThePerson rdf:parseType="Resource">
+                        <gnd:personalName>Adamantius</gnd:personalName>
+                        <gnd:epithetGenericNameTitleOrTerritory>Alexandrinus</gnd:epithetGenericNameTitleOrTerritory>
+                </gnd:preferredNameEntityForThePerson>
+                <gnd:publication>Adamantius &lt;Sophista&gt;: Physiognomonica. - 1540</gnd:publication>
+                <gnd:publication>Adamantius &lt;Sophista&gt;: Physiognomica. - 1587</gnd:publication>
+                <gnd:publication>Adamantius &lt;Sophista&gt;: Physiognomonicon. - 1544</gnd:publication>
+                <gnd:publication>Adamantius &lt;Sophista&gt;: Physionomia. - 1545</gnd:publication>
+                <gnd:publication>Adamantius &lt;Sophista&gt;: Adamantii Sophistae Physiognomonicon. - 1544</gnd:publication>
+                <gnd:publication>Aristoteles: Physiognomonica Pseudoaristotelis, graece et latine, Adamantii cum epitomis *</gnd:publication>
+                <gnd:publication>Polemon, Marcus Antonius: Physiognomica</gnd:publication>
+                <gnd:dateOfBirthAndDeath>4./5. Jh. n. Chr.</gnd:dateOfBirthAndDeath>
+                <rdf:type rdf:resource="http://d-nb.info/standards/elementset/gnd#DifferentiatedPerson" />
+                <gnd:gender rdf:resource="http://d-nb.info/standards/vocab/gnd/Gender#notKnown" />
+        </rdf:Description>
+
+</rdf:RDF>

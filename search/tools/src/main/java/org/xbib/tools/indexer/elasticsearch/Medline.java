@@ -208,6 +208,16 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
     class ResourceBuilder implements TripleListener {
 
         @Override
+        public TripleListener startPrefixMapping(String prefix, String uri) {
+            return this;
+        }
+
+        @Override
+        public TripleListener endPrefixMapping(String prefix) {
+            return this;
+        }
+
+        @Override
         public ResourceBuilder newIdentifier(IRI identifier) {
             resourceContext.resource().id(identifier);
             return this;
