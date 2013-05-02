@@ -36,7 +36,6 @@ import java.net.URI;
 import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.support.CQLRequest;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.elasticsearch.support.Formatter;
 import org.xbib.elasticsearch.support.OutputFormat;
@@ -59,8 +58,9 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUAdapter.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
-    private final String recordPacking = "xml";
-    private final String recordSchema = "mods";
+    private final String recordPacking = bundle.getString("recordPacking");//"xml";
+    private final String recordSchema = bundle.getString("recordSchema"); //"mods";
+    private final String version = bundle.getString("version"); // 1.2
     private StylesheetTransformer transformer;
     private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
@@ -82,13 +82,9 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         this.transformer = transformer;
     }
 
-    @Override
-    public String getRecordSchema() {
-        return recordSchema;
-    }
 
     @Override
-    public void explain(Explain op, ExplainResponse response) throws Diagnostics, IOException {
+    public void explain(Explain op, ExplainResponse response) throws IOException {
         response.write();
     }
 
@@ -122,7 +118,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
         transformer.addParameter("recordPacking", getRecordPacking());
         transformer.addParameter("recordSchema", getRecordSchema());
         try {
-            String mediaType = "application/x-mods";
+            String mediaType = bundle.getString("mediatype");//"application/x-mods+xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchSRUAdapter.class.getName());
             es.newSearchRequest()
                     .index(getIndex(request))
@@ -130,6 +126,7 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
                     .from(request.getStartRecord() - 1)
                     .size(request.getMaximumRecords())
                     .cql(getQuery(request))
+                    .facet(request.getFacetLimit(), request.getFacetSort(), null)
                     .execute(logger)
                     .format(OutputFormat.formatOf(mediaType))
                     .styleWith(transformer, getStylesheet(), response.getOutput())
@@ -139,17 +136,20 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
                     response.getOutput().write(message);
                 }
             });
+        } catch (SyntaxException e) {
+            logger.error("SRU " + adapterURI + ": database does not exist", e);
+            throw new Diagnostics(10, e.getMessage());
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (IndexMissingException e) {
             logger.error("SRU " + adapterURI + ": database does not exist", e);
             throw new Diagnostics(1, e.getMessage());
-        } catch (SyntaxException e) {
-            logger.error("SRU " + adapterURI + ": database does not exist", e);
-            throw new Diagnostics(10, e.getMessage());
         } catch (IOException e) {
             logger.error("SRU " + adapterURI + ": database is unresponsive", e);
+            throw new Diagnostics(1, e.getMessage());
+        } catch (Exception e) {
+            logger.error("SRU " + adapterURI + ": unknown error", e);
             throw new Diagnostics(1, e.getMessage());
         } finally {
             logger.info("SRU completed: query = {}", request.getQuery());
@@ -157,18 +157,23 @@ public class ElasticsearchSRUAdapter implements SRUAdapter {
     }
 
     @Override
-    public void scan(Scan request, ScanResponse response) throws Diagnostics, IOException {
+    public void scan(Scan request, ScanResponse response) throws IOException {
         // todo
     }
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return version;
     }
 
     @Override
     public String getRecordPacking() {
-        return "xml";
+        return recordPacking;
+    }
+
+    @Override
+    public String getRecordSchema() {
+        return recordSchema;
     }
 
     @Override

@@ -33,14 +33,23 @@ package org.xbib.elasticsearch.support;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.support.BasicRequest;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.xbib.logging.Logger;
 import org.xbib.query.cql.CQLParser;
 import org.xbib.query.cql.elasticsearch.ESGenerator;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 public class CQLRequest extends BasicRequest {
 
@@ -126,11 +135,73 @@ public class CQLRequest extends BasicRequest {
         return this;
     }
 
-    public CQLRequest facets(String facets) {
+    public CQLRequest facet(final String limit, final String sort,
+                            final Map<String,String> facetTypes) {
         if (searchRequestBuilder() != null) {
-            searchRequestBuilder().setFacets(facets.getBytes());
+            Map<String,Integer> facets = parseFacet(limit);
+            List<String> sortSpec = Arrays.asList(sort.split(","));
+            // all facets disabled?
+            Integer globalSize = facets.get("*");
+            if (globalSize == 0 ) {
+                return this;
+            }
+            // count, term
+            String order = "count";
+            for (String s : sortSpec) {
+                if ("recordCount".equals(s)){
+                    order = "count";
+                } else if ("alphanumeric".equals(s)) {
+                    order = "term";
+                } else if ("descending".equals(s)) {
+                    order = "reverse_" + order;
+                }
+            }
+            try {
+                XContentBuilder builder = jsonBuilder();
+                builder.startObject();
+                int n = 1;
+                for (String field : facets.keySet()) {
+                    if ("*".equals(field)) {
+                        continue;
+                    }
+                    String facetType = facetTypes != null && facetTypes.containsKey(field) ?
+                            facetTypes.get(field) : "terms";
+                    Integer size = facets.get(field);
+                    builder.field(field + n)
+                            .startObject()
+                            .field(facetType).startObject()
+                            .field("field", field)
+                            .field("size", size > 0 ? size : globalSize > 0 ? globalSize : Integer.MAX_VALUE)
+                            .field("order", order)
+                            .endObject()
+                            .endObject();
+                    n++;
+                }
+                builder.endObject();
+                searchRequestBuilder().setFacets(builder);
+            } catch (IOException e) {
+                // drop exception
+                return this;
+            }
         }
         return this;
+    }
+
+    private Map<String,Integer> parseFacet(String s) {
+        Map<String,Integer> m = new HashMap();
+        String[] params = s.split(",");
+        for (String param : params) {
+            int pos = param.indexOf(':');
+            if (pos > 0) {
+                // dc.subject -> 10
+                int n =  Integer.parseInt(param.substring(0, pos));
+                m.put(param.substring(pos+1), n);
+            } else {
+                int n =  Integer.parseInt(param);
+                m.put("*", n );
+            }
+        }
+        return m;
     }
 
     public CQLRequest timeout(TimeValue timeout) {

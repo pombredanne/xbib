@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class Options {
-    public String base = null;
-    public Boolean strict = null;
+    private String base = null;
+    private  Boolean strict = null;
     public Boolean graph = null;
     public Boolean optimize = null;
     public Map<String, Object> optimizeCtx = null;
@@ -54,6 +54,25 @@ public class Options {
     public Boolean isIgnored(String key) {
         return ignoredKeys.contains(key);
     }
+
+    public Options setBase(String base) {
+        this.base = base;
+        return this;
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public Options setStrict(Boolean strict) {
+        this.strict = strict;
+        return this;
+    }
+
+    public Boolean getStrict() {
+        return strict;
+    }
+
 
     public Options clone() {
         Options rval = new Options(base);

@@ -128,7 +128,7 @@ public final class ElasticsearchOAIHarvester {
                     return this;
                 }
             };
-            reader.setListener(stmt);
+            reader.setTripleListener(stmt);
             final XmlHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 

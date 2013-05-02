@@ -140,11 +140,29 @@ public class SearchRetrieveResponse extends AbstractResponse
     }
 
     @Override
-    public void recordMetadata(String recordSchema, String recordPacking,
-            String recordIdentifier, int recordPosition) {
+    public void recordSchema(String recordSchema) {
         if (listener != null) {
-            listener.recordMetadata(recordSchema, recordPacking,
-                    recordIdentifier, recordPosition);
+            listener.recordSchema(recordSchema);
+        }
+    }
+
+    @Override
+    public void recordPacking(String recordPacking) {
+        if (listener != null) {
+            listener.recordPacking(recordPacking);
+        }
+    }
+
+    @Override
+    public void recordIdentifier(String recordIdentifier) {
+        if (listener != null) {
+            listener.recordIdentifier(recordIdentifier);
+        }
+    }
+    @Override
+    public void recordPosition(int recordPosition) {
+        if (listener != null) {
+            listener.recordPosition(recordPosition);
         }
     }
 

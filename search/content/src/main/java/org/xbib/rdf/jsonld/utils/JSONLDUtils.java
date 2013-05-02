@@ -302,8 +302,7 @@ public class JSONLDUtils implements JsonLd {
         Pattern regex = Pattern.compile("(http|https)://(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!\\-/]))?");
 
         if (cycles.size() > MAX_CONTEXT_URLS) {
-            throw new JSONLDProcessingError("Maximum number of @context URLs exceeded.")
-                    .setType(JSONLDProcessingError.Error.CONTEXT_URL_ERROR)
+            throw new JSONLDProcessingError("Maximum number of @context URLs exceeded")
                     .setDetail("max", MAX_CONTEXT_URLS);
         }
 
@@ -322,8 +321,7 @@ public class JSONLDUtils implements JsonLd {
             if (Boolean.FALSE.equals((Boolean) urls.get(url))) {
                 // validate URL
                 if (!regex.matcher(url).matches()) {
-                    throw new JSONLDProcessingError("Malformed URL.")
-                            .setType(JSONLDProcessingError.Error.INVALID_URL)
+                    throw new JSONLDProcessingError("Malformed URL")
                             .setDetail("url", url);
                 }
                 queue.add(url);
@@ -335,8 +333,7 @@ public class JSONLDUtils implements JsonLd {
         for (String url : queue) {
             // check for context URL cycle
             if (cycles.containsKey(url)) {
-                throw new JSONLDProcessingError("Cyclical @context URLs detected.")
-                        .setType(JSONLDProcessingError.Error.CONTEXT_URL_ERROR)
+                throw new JSONLDProcessingError("Cyclical @context URLs detected")
                         .setDetail("url", url);
             }
             Map<String, Object> _cycles = (Map<String, Object>) clone(cycles);
@@ -359,12 +356,10 @@ public class JSONLDUtils implements JsonLd {
                 //		.setType(JSONLDProcessingError.Error.INVALID_URL)
                 //		.setDetail("url", url);
             } catch (MalformedURLException e) {
-                throw new JSONLDProcessingError("Malformed URL.")
-                        .setType(JSONLDProcessingError.Error.INVALID_URL)
+                throw new JSONLDProcessingError("Malformed URL")
                         .setDetail("url", url);
             } catch (IOException e) {
-                throw new JSONLDProcessingError("Unable to open URL.")
-                        .setType(JSONLDProcessingError.Error.INVALID_URL)
+                throw new JSONLDProcessingError("Unable to open URL")
                         .setDetail("url", url);
             }
         }

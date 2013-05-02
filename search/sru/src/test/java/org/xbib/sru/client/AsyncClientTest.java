@@ -87,22 +87,32 @@ public class AsyncClientTest {
                 }
 
                 @Override
-                public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
-                    logger.info("got record:"
-                            + " recordSchema=" + recordSchema
-                            + " recordPacking=" + recordPacking
-                            + " recordIdentifier=" + recordIdentifier
-                            + " recordPosition=" + recordPosition);
+                public void recordSchema(String recordSchema) {
+                    logger.info("got record scheme:" + recordSchema);
+                }
+
+                @Override
+                public void recordPacking(String recordPacking) {
+                    logger.info("got recordPacking: " + recordPacking);
+                }
+                @Override
+                public void recordIdentifier(String recordIdentifier) {
+                    logger.info("got recordIdentifier=" + recordIdentifier);
+                }
+
+                @Override
+                public void recordPosition(int recordPosition) {
+                    logger.info("got recordPosition=" + recordPosition);
                 }
 
                 @Override
                 public void recordData(Collection<XMLEvent> record) {
-                    //logger.info("recordData = " + record + " events");
+                    logger.info("recordData = " + record + " events");
                 }
 
                 @Override
                 public void extraRecordData(Collection<XMLEvent> record) {
-                    //logger.info("extraRecordData = " + record + " events");
+                    logger.info("extraRecordData = " + record + " events");
                 }
 
                 @Override

@@ -102,6 +102,16 @@ public class ClientTest {
             final TripleListener listener = new TripleListener() {
 
                 @Override
+                public TripleListener startPrefixMapping(String prefix, String uri) {
+                    return this;
+                }
+
+                @Override
+                public TripleListener endPrefixMapping(String prefix) {
+                    return this;
+                }
+
+                @Override
                 public TripleListener newIdentifier(IRI uri) {
                     getResource().id(uri);
                     return this;
@@ -113,7 +123,7 @@ public class ClientTest {
                     return this;
                 }
             };
-            reader.setListener(listener);
+            reader.setTripleListener(listener);
             final XmlHandler handler = reader.getHandler();
             MetadataReader metadataReader = new MetadataReader() {
 
@@ -130,9 +140,10 @@ public class ClientTest {
                         resource.id(IRI.builder().host("test").query("test").fragment(getHeader().getIdentifier()).build());
                     }
                     StringWriter sw = new StringWriter();
-                    TurtleWriter t = new TurtleWriter();
                     try {
-                        t.write(getResource(), true, sw);
+                        TurtleWriter t = new TurtleWriter().output(sw);
+                        t.write(getResource());
+                        t.close();
                         logger.info(sw.toString());
                     } catch (IOException ex) {
                         logger.error(ex.getMessage(), ex);

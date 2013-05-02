@@ -53,7 +53,7 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 public interface OAIClient {
     
-    String USER_AGENT = "Elasticsearch OAI River/20120504";
+    String USER_AGENT = "OAI/20130502";
     
     OAIClient setURI(URI uri);
     

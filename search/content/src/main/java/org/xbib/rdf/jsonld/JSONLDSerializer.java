@@ -16,6 +16,10 @@ import org.xbib.rdf.jsonld.utils.Obj;
  */
 public abstract class JSONLDSerializer {
 
+    private List<Map<String,Object>> statements = new ArrayList();
+
+    private Map<String, String> _bns;
+
     // name generator
     Iterator<String> _ng = new Iterator<String>() {
 		int i = 0;
@@ -34,7 +38,6 @@ public abstract class JSONLDSerializer {
 			return true;
 		}
 	};
-    Map<String, String> _bns;
 
     public JSONLDSerializer() {
         reset();
@@ -44,23 +47,9 @@ public abstract class JSONLDSerializer {
      * Resets the Serializer. Call this if you want to reuse the serializer for a different document
      */
     public void reset() {
-        _bns = new HashMap<String, String>();
+        _bns = new HashMap();
     }
 
-    protected String getNameForBlankNode(String node) {
-        if (!_bns.containsKey(node)) {
-            _bns.put(node, _ng.next());
-        }
-        return _bns.get(node);
-    }
-   
-    public void setPrefix(String fullUri, String prefix) {
-    	// TODO: graphs?
-    	//_context.put(prefix, fullUri);
-    }
-    
-    private List<Map<String,Object>> statements = new ArrayList<Map<String,Object>>();
-    
     public List<Map<String,Object>> getStatements() {
 		return statements;
 	}
@@ -108,8 +97,8 @@ public abstract class JSONLDSerializer {
 	}
     
 	protected void triple(String s, String p, String o, String g) {
-    	Map<String,Object> statement = new HashMap<String, Object>();
-    	Map<String,Object> subject = new HashMap<String, Object>();
+    	Map<String,Object> statement = new HashMap();
+    	Map<String,Object> subject = new HashMap();
     	subject.put("nominalValue", s);
     	if (s.startsWith("_:")) {
     		subject.put("interfaceName", "BlankNode");
@@ -117,11 +106,11 @@ public abstract class JSONLDSerializer {
     		subject.put("interfaceName", "IRI");
     	}
     	statement.put("subject", subject);
-    	Map<String,Object> property = new HashMap<String, Object>();
+    	Map<String,Object> property = new HashMap();
     	property.put("nominalValue", p);
     	property.put("interfaceName", "IRI");
     	statement.put("property", property);
-    	Map<String,Object> object = new HashMap<String, Object>();
+    	Map<String,Object> object = new HashMap();
     	object.put("nominalValue", o);
     	if (o.startsWith("_:")) {
     		object.put("interfaceName", "BlankNode");
@@ -130,7 +119,7 @@ public abstract class JSONLDSerializer {
     	}
     	statement.put("object", object);
     	if (g != null) {
-    		Map<String,Object> graph = new HashMap<String, Object>();
+    		Map<String,Object> graph = new HashMap();
         	graph.put("nominalValue", g);
         	if (g.startsWith("_:")) {
         		graph.put("interfaceName", "BlankNode");
@@ -195,13 +184,6 @@ public abstract class JSONLDSerializer {
     	statements.add(statement);
     }
     
-    /**
-     * internal function to avoid repetition of code
-     * 
-     * @param s
-     * @param p
-     * @param o
-     */
     protected void triple(String s, String p, String o) {
         triple(s, p, o, null);
     }
@@ -210,7 +192,7 @@ public abstract class JSONLDSerializer {
      * Call this to add a literal to the JSON-LD document
      * 
      * @param s
-     *            the subjuct URI
+     *            the subject URI
      * @param p
      *            the predicate URI
      * @param value

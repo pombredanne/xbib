@@ -63,7 +63,7 @@ public class XmlReader<S extends Identifier, P extends Property, O extends Node>
      * @param listener the triple listener
      */
     @Override
-    public XmlReader setListener(TripleListener listener) {
+    public XmlReader setTripleListener(TripleListener listener) {
         this.listener = listener;
         return this;
     }

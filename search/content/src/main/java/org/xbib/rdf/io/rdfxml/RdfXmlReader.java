@@ -139,7 +139,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     }
 
     @Override
-    public RdfXmlReader setListener(TripleListener<S,P,O> tripleHandler) {
+    public RdfXmlReader setTripleListener(TripleListener<S,P,O> tripleHandler) {
         this.listener = tripleHandler;
         return this;
     }

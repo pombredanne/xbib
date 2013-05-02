@@ -113,8 +113,7 @@ public class SRUAction extends AbstractAction {
                 }
 
                 @Override
-                public void recordMetadata(String recordSchema, String recordPacking,
-                        String recordIdentifier, int recordPosition) {
+                public void recordSchema(String recordSchema) {
                     Collection<XMLEvent> events = getResponse().getEvents();
                     if (events instanceof List) {
                         List<XMLEvent> list = (List<XMLEvent>) events;
@@ -126,9 +125,64 @@ public class SRUAction extends AbstractAction {
                                 it.next();
                                 // disguised namespaces for SRU.
                                 it.add(eventFactory.createProcessingInstruction("recordSchema", recordSchema));
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void recordPacking(String recordPacking) {
+                    Collection<XMLEvent> events = getResponse().getEvents();
+                    if (events instanceof List) {
+                        List<XMLEvent> list = (List<XMLEvent>) events;
+                        ListIterator<XMLEvent> it = list.listIterator(events.size());
+                        while (it.hasPrevious()) {
+                            XMLEvent e = it.previous();
+                            if (e.isStartDocument()) {
+                                it.next(); // step to element
+                                it.next();
+                                // disguised namespaces for SRU.
                                 it.add(eventFactory.createProcessingInstruction("recordPacking", recordPacking));
-                                it.add(eventFactory.createProcessingInstruction("recordIdentifier", 
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void recordIdentifier(String recordIdentifier) {
+                    Collection<XMLEvent> events = getResponse().getEvents();
+                    if (events instanceof List) {
+                        List<XMLEvent> list = (List<XMLEvent>) events;
+                        ListIterator<XMLEvent> it = list.listIterator(events.size());
+                        while (it.hasPrevious()) {
+                            XMLEvent e = it.previous();
+                            if (e.isStartDocument()) {
+                                it.next(); // step to element
+                                it.next();
+                                // disguised namespaces for SRU.
+                                it.add(eventFactory.createProcessingInstruction("recordIdentifier",
                                         getBase() + "/" + name + "#" + recordIdentifier.trim()));
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+                @Override
+                public void recordPosition(int recordPosition) {
+                    Collection<XMLEvent> events = getResponse().getEvents();
+                    if (events instanceof List) {
+                        List<XMLEvent> list = (List<XMLEvent>) events;
+                        ListIterator<XMLEvent> it = list.listIterator(events.size());
+                        while (it.hasPrevious()) {
+                            XMLEvent e = it.previous();
+                            if (e.isStartDocument()) {
+                                it.next(); // step to element
+                                it.next();
+                                // disguised namespaces for SRU.
                                 it.add(eventFactory.createProcessingInstruction("recordPosition", Integer.toString(recordPosition)));
                                 break;
                             }

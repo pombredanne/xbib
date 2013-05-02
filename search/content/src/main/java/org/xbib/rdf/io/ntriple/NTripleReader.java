@@ -75,7 +75,7 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
     private TripleListener<S, P, O> listener;
 
     @Override
-    public NTripleReader setListener(TripleListener<S, P, O> listener) {
+    public NTripleReader setTripleListener(TripleListener<S, P, O> listener) {
         this.listener = listener;
         return this;
     }

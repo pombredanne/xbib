@@ -163,7 +163,10 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
             } else if ("recordIdentifier".equals(localname)) {
                 recordIdentifier = content;
             } else if ("record".equals(localname)) {
-                response.recordMetadata(recordSchema, recordPacking, recordIdentifier, recordPosition);
+                response.recordSchema(recordSchema);
+                response.recordPacking(recordPacking);
+                response.recordIdentifier(recordIdentifier);
+                response.recordPosition(recordPosition);
                 response.endRecord();
             } else if ("echoedSearchRetrieveRequest".equals(localname)) {
                 echo = false;

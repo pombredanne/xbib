@@ -35,11 +35,11 @@ public class API implements JsonLd {
         if (input == null) {
             return null;
         }
-        if (opts.base == null) {
-            opts.base = "";
+        if (opts.getBase() == null) {
+            opts.setBase("");
         }
-        if (opts.strict == null) {
-            opts.strict = true;
+        if (opts.getStrict() == null) {
+            opts.setStrict(true);
         }
         if (opts.graph == null) {
             opts.graph = false;
@@ -54,8 +54,7 @@ public class API implements JsonLd {
         try {
             expanded = p.expand(new ActiveContext(), new UniqueNamer("_:t"), null, input);
         } catch (JSONLDProcessingError e) {
-            throw new JSONLDProcessingError("Could not expand input before compaction.")
-                    .setType(JSONLDProcessingError.Error.COMPACT_ERROR)
+            throw new JSONLDProcessingError("Could not expand input before compaction")
                     .setDetail("cause", e);
         }
         // process context
@@ -63,8 +62,7 @@ public class API implements JsonLd {
         try {
             activeCtx = processContext(activeCtx, ctx, opts);
         } catch (JSONLDProcessingError e) {
-            throw new JSONLDProcessingError("Could not process context before compaction.")
-                    .setType(JSONLDProcessingError.Error.COMPACT_ERROR)
+            throw new JSONLDProcessingError("Could not process context before compaction")
                     .setDetail("cause", e);
         }
         if (opts.optimize) {
@@ -142,8 +140,8 @@ public class API implements JsonLd {
      * @throws JSONLDProcessingError
      */
     public static Object expand(Object input, Options opts) throws JSONLDProcessingError {
-        if (opts.base == null) {
-            opts.base = "";
+        if (opts.getBase() == null) {
+            opts.setBase("");
         }
 
         // resolve all @context URLs in the input
@@ -258,8 +256,8 @@ public class API implements JsonLd {
      *              [resolver(url, callback(err, jsonCtx))] the URL resolver to use.
      */
     public static Object normalize(Object input, Options opts) throws JSONLDProcessingError {
-        if (opts.base == null) {
-            opts.base = "";
+        if (opts.getBase() == null) {
+            opts.setBase("");
         }
 
         Object expanded = API.expand(input, opts);
@@ -285,8 +283,8 @@ public class API implements JsonLd {
         if (opts == null) {
             return;
         }
-        if (opts.base == null) {
-            opts.base = "";
+        if (opts.getBase() == null) {
+            opts.setBase("");
         }
         if (opts.collate == null) {
             opts.collate = false;
@@ -335,8 +333,8 @@ public class API implements JsonLd {
         if (opts == null) {
             return null;
         }
-        if (opts.base == null) {
-            opts.base = "";
+        if (opts.getBase() == null) {
+            opts.setBase("");
         }
         JSONLDProcessorImpl processor = new JSONLDProcessorImpl(opts);
         return simplify(processor, opts, input);

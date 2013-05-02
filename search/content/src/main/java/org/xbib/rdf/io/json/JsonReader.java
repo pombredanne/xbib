@@ -63,13 +63,9 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
     }
 
     @Override
-    public JsonReader setListener(TripleListener listener) {
+    public JsonReader setTripleListener(TripleListener listener) {
         this.listener = listener;
         return this;
-    }
-
-    public TripleListener getListener() {
-        return listener;
     }
 
     public JsonReader setHandler(AbstractXmlHandler handler) {

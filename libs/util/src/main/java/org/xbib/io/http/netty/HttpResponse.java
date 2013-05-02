@@ -91,4 +91,18 @@ public class HttpResponse extends HttpPacket {
     public boolean ok() {
        return getStatusCode() == 200 && getThrowable() == null;
     }
+
+    public boolean forbidden() {
+        return getStatusCode() == 403;
+    }
+
+    public boolean notfound() {
+        return getStatusCode() == 404;
+    }
+
+    public boolean fatal() {
+        return (getStatusCode() >= 500 && getStatusCode() < 600) || getThrowable() != null;
+    }
+
+
 }

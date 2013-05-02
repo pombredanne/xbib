@@ -5,9 +5,6 @@ public interface JsonLd {
     String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     String XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 
-    String XSD_ANYTYPE = XSD_NS + "anyType";
-    String XSD_ANYURI = XSD_NS + "anyURI";
-
     String XSD_BOOLEAN = XSD_NS + "boolean";
     String XSD_DOUBLE = XSD_NS + "double";
     String XSD_INTEGER = XSD_NS + "integer";

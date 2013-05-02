@@ -133,7 +133,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     }
 
     @Override
-    public TurtleReader setListener(TripleListener<S, P, O> listener) {
+    public TurtleReader setTripleListener(TripleListener<S, P, O> listener) {
         this.listener = listener;
         return this;
     }

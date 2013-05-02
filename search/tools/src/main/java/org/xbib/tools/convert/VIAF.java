@@ -169,7 +169,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
                             break;
                         }
                         RdfXmlReader rdfxml = new RdfXmlReader();
-                        rdfxml.setListener(writer);
+                        rdfxml.setTripleListener(writer);
                         rdfxml.parse(new InputSource(new StringReader(line)));
                     }
                     writer.close();
@@ -186,7 +186,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
                             break;
                         }
                         RdfXmlReader rdfxml = new RdfXmlReader();
-                        rdfxml.setListener(writer);
+                        rdfxml.setTripleListener(writer);
                         rdfxml.parse(new InputSource(new StringReader(line)));
                     }
                     writer.close();

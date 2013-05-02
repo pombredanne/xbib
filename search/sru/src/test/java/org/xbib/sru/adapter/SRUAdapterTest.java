@@ -87,12 +87,22 @@ public class SRUAdapterTest {
                     }
 
                     @Override
-                    public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
-                        logger.info("got record from: adapter=" + adapter.getURI()
-                                + " recordSchema=" + recordSchema
-                                + " recordPacking=" + recordPacking
-                                + " recordIdentifier=" + recordIdentifier
-                                + " recordPosition=" + recordPosition);
+                    public void recordSchema(String recordSchema) {
+                        logger.info("got record scheme:" + recordSchema);
+                    }
+
+                    @Override
+                    public void recordPacking(String recordPacking) {
+                        logger.info("got recordPacking: " + recordPacking);
+                    }
+                    @Override
+                    public void recordIdentifier(String recordIdentifier) {
+                        logger.info("got recordIdentifier=" + recordIdentifier);
+                    }
+
+                    @Override
+                    public void recordPosition(int recordPosition) {
+                        logger.info("got recordPosition=" + recordPosition);
                     }
 
                     @Override

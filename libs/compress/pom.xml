@@ -11,4 +11,14 @@
     <name>xbib-compress</name>
     <description>xbib - Compression codecs</description>
     <packaging>jar</packaging>
+
+   <dependencies>
+       <dependency>
+           <groupId>org.xbib</groupId>
+           <artifactId>xbib-logging</artifactId>
+           <type>jar</type>
+           <scope>test</scope>
+       </dependency>
+   </dependencies>
+
 </project>

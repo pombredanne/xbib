@@ -51,7 +51,7 @@ public class RdfXmlReaderTest {
         TurtleWriter turtle = new TurtleWriter()
                 .output(sw);
         RdfXmlReader reader = new RdfXmlReader();
-        reader.setListener(turtle);
+        reader.setTripleListener(turtle);
         reader.parse(new InputSource(in));
     }
 

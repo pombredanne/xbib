@@ -38,7 +38,7 @@ public enum OutputFormat {
 
     JSON("application/json"),
     XML("application/xml"),
-    MODS("application/x-mods"),
+    MODS("application/mods+xml"), // http://tools.ietf.org/html/rfc6207
     XHTML("application/xhtml+xml");
     
     private String mime;

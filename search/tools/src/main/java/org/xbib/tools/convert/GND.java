@@ -113,7 +113,7 @@ public class GND extends AbstractImporter<Long, AtomicLong> {
                     .translatePicaSortMarker(marker)
                     .output(out);
                 RdfXmlReader reader = new RdfXmlReader();
-                reader.setListener(turtle);
+                reader.setTripleListener(turtle);
                 reader.parse(new InputSource(in));
                 turtle.close();
                 in.close();
@@ -126,7 +126,7 @@ public class GND extends AbstractImporter<Long, AtomicLong> {
                     .translatePicaSortMarker(marker)
                     .output(out);
                 RdfXmlReader reader = new RdfXmlReader();
-                reader.setListener(ntriples);
+                reader.setTripleListener(ntriples);
                 reader.parse(new InputSource(in));
                 ntriples.close();
                 in.close();

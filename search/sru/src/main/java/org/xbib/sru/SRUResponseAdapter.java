@@ -66,7 +66,19 @@ public class SRUResponseAdapter implements SRUResponseListener {
     }
 
     @Override
-    public void recordMetadata(String recordSchema, String recordPacking, String recordIdentifier, int recordPosition) {
+    public void recordSchema(String recordSchema) {
+    }
+
+    @Override
+    public void recordPacking(String recordPacking) {
+    }
+
+    @Override
+    public void recordIdentifier(String recordIdentifier) {
+    }
+
+    @Override
+    public void recordPosition(int recordPosition) {
     }
 
     @Override

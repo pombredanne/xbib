@@ -88,8 +88,9 @@ public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListene
     @Override
     public void beginRecord(String format, String type) {
         response.beginRecord();
-        // no recordIdentifier possible at this time, will be "plugged" later
-        response.recordMetadata(recordSchema, recordPacking, "", recordPosition);
+        response.recordSchema(recordSchema);
+        response.recordPacking(recordPacking);
+        response.recordPosition(recordPosition);
         Collection<XMLEvent> events = response.getEvents();
         if (events != null) {
             events.add(eventFactory.createStartDocument());

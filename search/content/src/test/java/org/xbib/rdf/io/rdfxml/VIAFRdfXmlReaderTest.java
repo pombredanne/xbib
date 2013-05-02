@@ -59,7 +59,7 @@ public class VIAFRdfXmlReaderTest {
                 .output(sw);
 
         RdfXmlReader reader = new RdfXmlReader();
-        reader.setListener(writer);
+        reader.setTripleListener(writer);
         reader.parse(new InputSource(in));
         writer.close();
 

@@ -36,9 +36,12 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.xbib.io.Session;
+import org.xbib.io.http.netty.FatalException;
+import org.xbib.io.http.netty.ForbiddenException;
 import org.xbib.io.http.netty.HttpResponse;
 import org.xbib.io.http.netty.HttpSession;
 import org.xbib.date.DateUtil;
+import org.xbib.io.http.netty.NotFoundException;
 import org.xbib.oai.GetRecordRequest;
 import org.xbib.oai.IdentifyRequest;
 import org.xbib.oai.IdentifyResponse;
@@ -172,15 +175,7 @@ public class SimpleOAIClient implements OAIClient {
 
     @Override
     public void execute() throws IOException {
-        if (session != null && session.isOpen()) {
-            if (listener != null) {
-                session.addListener(listener);
-            }
-            session.execute();
-            if (listener != null) {
-                session.removeListener(listener);
-            }
-        } else throw new IOException("can't execute");
+        execute(30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -192,6 +187,18 @@ public class SimpleOAIClient implements OAIClient {
             session.execute(l, tu);
             if (listener != null) {
                 session.removeListener(listener);
+            }
+            HttpResponse response = session.getResult(uri);
+            if (response != null) {
+                if (response.notfound()) {
+                    throw new NotFoundException(uri);
+                }
+                if (response.forbidden()) {
+                    throw new ForbiddenException(uri);
+                }
+                if (response.fatal()) {
+                    throw new FatalException(uri);
+                }
             }
         } else throw new IOException("can't execute");
     }

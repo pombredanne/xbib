@@ -107,7 +107,7 @@ public class GND {
             });
             IRI id = IRI.builder().scheme("http").host("d-nb.info").path("/gnd/").build();
             TurtleReader reader = new TurtleReader(id);
-            reader.setListener(builder);
+            reader.setTripleListener(builder);
             reader.parse(in);
             builder.close();
             System.err.println("done, indexed resources have " + builder.getTripleCounter() + " triples.");

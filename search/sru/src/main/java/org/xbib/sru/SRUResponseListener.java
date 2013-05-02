@@ -55,15 +55,29 @@ public interface SRUResponseListener extends ResponseListener {
     void beginRecord();
     
     /**
-     * SRU record metdata
+     * SRU record schema
      * @param recordSchema
-     * @param recordPacking
-     * @param recordIdentifier
-     * @param recordPosition 
      */
-    void recordMetadata(String recordSchema, String recordPacking, 
-         String recordIdentifier, int recordPosition);
-    
+    void recordSchema(String recordSchema);
+
+    /**
+     * SRU record packing
+     * @param recordPacking
+     */
+    void recordPacking(String recordPacking);
+
+    /**
+     * SRU record identifier
+     * @param recordIdentifier
+     */
+    void recordIdentifier(String recordIdentifier);
+
+    /**
+     * SRU record position
+     * @param recordPosition
+     */
+    void recordPosition(int recordPosition);
+
     /**
      * SRU record data
      * @param record 
