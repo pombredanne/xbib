@@ -68,8 +68,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPOutputStream;
 
-import static org.xbib.tools.util.FormatUtil.formatMillis;
-
 
 public class VIAF extends AbstractImporter<Long, AtomicLong> {
 

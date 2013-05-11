@@ -31,19 +31,20 @@
  */
 package org.xbib.objectstorage.action;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.xbib.objectstorage.Container;
 import org.xbib.objectstorage.ItemInfo;
 import org.xbib.objectstorage.ObjectStorageRequest;
 import org.xbib.util.ILL;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 public class UploadItemJournalAction extends AbstractInsertAction {
 
     private final ItemInfo itemInfo;
     private final Container container;
-    
+
     public UploadItemJournalAction(String sql, ItemInfo itemInfo, Container container) {
         super(sql);
         this.itemInfo = itemInfo;
@@ -64,16 +65,17 @@ public class UploadItemJournalAction extends AbstractInsertAction {
         long id = ill.getNumber();
         final Map<String, Object> params = new HashMap<>();
         params.put(ITEM_PARAMETER, id);
+        params.put(NAME_PARAMETER, request.getUserAttributes().getName());
         params.put("message", itemInfo.isWrittenSuccessfully() ?
-                "Datei " + itemInfo.getKey().getName() 
-                + ", Ordner '" + container.getDescription() 
-                + "', Client " + request.getUser()
-                + ", " + itemInfo.getOctets() + " bytes, SHA1 " + itemInfo.getChecksum() 
+                "Datei " + itemInfo.getKey().getName()
+                        + ", Ordner '" + container.getDescription()
+                        + "', Client " + request.getUser()
+                        + ", " + itemInfo.getOctets() + " bytes, SHA1 " + itemInfo.getChecksum()
                 : "Ein Fehler ist aufgetreten beim Schreiben der Datei " + itemInfo.getKey().getName()
                 + " in den Ordner " + container.getDescription()
-                );
-        params.put(NAME_PARAMETER, request.getUserAttributes().getName());
+        );
         params.put("msgcode", itemInfo.isWrittenSuccessfully() ? "UPLOAD" : "IOERROR");
+        logger.debug("upload item journal action = {} params = {}", sql, params);
         return params;
     }
 }

@@ -31,15 +31,15 @@
  */
 package org.xbib.objectstorage.action;
 
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
 import org.xbib.objectstorage.ObjectStorageRequest;
 import org.xbib.objectstorage.ObjectStorageResponse;
 import org.xbib.objectstorage.action.sql.SQLService;
 import org.xbib.objectstorage.adapter.AbstractAdapter;
+
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public abstract class AbstractUpdateAction extends AbstractQueryAction {
 
@@ -56,7 +56,7 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
             service = SQLService.getInstance(a);
             int rows = -1;
             try (PreparedStatement p = service.getConnection().prepareStatement(sql)) {
-                rows = service.execute(service.bind(p, createBindKeys(), createParams(request)));
+                rows = service.executeUpdate(service.bind(p, createBindKeys(), createParams(request)));
                 if (rows > 0) {
                     response.builder().status(200);
                     buildResponse(rows, request, response);
@@ -69,7 +69,7 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-update-millis", t1 - t0);
-                logger.debug("{0} rows, update took {1} ms", new Object[]{rows, t1 - t0});
+                logger.debug("{} rows, update took {} ms", rows, t1 - t0);
             }
         }
     }

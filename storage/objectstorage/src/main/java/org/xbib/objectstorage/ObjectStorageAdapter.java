@@ -31,55 +31,51 @@
  */
 package org.xbib.objectstorage;
 
+import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import javax.ws.rs.core.SecurityContext;
 
 public interface ObjectStorageAdapter {
 
     URI getAdapterURI();
-    
+
     ObjectStorageAdapter init();
-    
+
     void connect(URI baseURI) throws IOException;
-    
+
     void disconnect() throws IOException;
-    
+
     String getDefaultContainerName();
-    
-    Container getContainer(String containerName) throws IOException;    
-    
+
+    Container getContainer(String containerName) throws IOException;
+
     String getRoot();
-    
+
     URI getBaseURI();
-        
+
     MessageDigest getMessageDigest() throws NoSuchAlgorithmException;
-    
+
     Principal getPrincipal(SecurityContext context);
-    
+
     ObjectStorageRequest newRequest() throws IOException;
-    
+
     ItemInfo newItemInfo(String container, String item) throws IOException;
 
     Action getContainerHeadAction(String container) throws IOException;
-    
-    Action getContainerHeadByDateAction(String container) throws IOException;
 
     Action getContainerGetAction(String container) throws IOException;
-    
-    Action getContainerGetByDateAction(String container) throws IOException;
 
     Action getItemHeadAction(String container) throws IOException;
-    
+
     Action getItemGetAction(String mimeType) throws IOException;
 
     Action getItemUpdateAction(String container) throws IOException;
-    
+
     Action getItemJournalAction(String container, ItemInfo itemInfo) throws IOException;
 
     boolean canUploadTo(String mimeType, String container);
-        
+
 }

@@ -31,12 +31,6 @@
  */
 package org.xbib.objectstorage.adapter.container;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xbib.objectstorage.Action;
 import org.xbib.objectstorage.Container;
 import org.xbib.objectstorage.ContainerInfo;
@@ -46,6 +40,11 @@ import org.xbib.objectstorage.action.ContainerHeadAction;
 import org.xbib.objectstorage.action.ItemGetAction;
 import org.xbib.objectstorage.action.ItemHeadAction;
 import org.xbib.objectstorage.action.ItemUpdateAction;
+
+import java.io.IOException;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractContainer implements Container {
 

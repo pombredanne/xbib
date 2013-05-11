@@ -31,6 +31,15 @@
  */
 package org.xbib.objectstorage.adapter;
 
+import org.xbib.objectstorage.Action;
+import org.xbib.objectstorage.Container;
+import org.xbib.objectstorage.ItemInfo;
+import org.xbib.objectstorage.ObjectStorageAPI;
+import org.xbib.objectstorage.ObjectStorageAdapter;
+
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.net.URI;
 import java.security.MessageDigest;
@@ -39,14 +48,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.ws.rs.core.SecurityContext;
-import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.Container;
-import org.xbib.objectstorage.ItemInfo;
-import org.xbib.objectstorage.ObjectStorageAPI;
-import org.xbib.objectstorage.ObjectStorageAdapter;
 
 public abstract class AbstractAdapter implements ObjectStorageAdapter {
 
@@ -124,21 +125,9 @@ public abstract class AbstractAdapter implements ObjectStorageAdapter {
     }
 
     @Override
-    public Action getContainerHeadByDateAction(String container) throws IOException {
-        ensureContainer(container);
-        return getContainer(container).getContainerByDateHeadAction();
-    }
-
-    @Override
     public Action getContainerGetAction(String container) throws IOException {
         ensureContainer(container);
         return getContainer(container).getContainerGetAction();
-    }
-
-    @Override
-    public Action getContainerGetByDateAction(String container) throws IOException {
-        ensureContainer(container);
-        return getContainer(container).getContainerGetByDateAction();
     }
 
     @Override
@@ -192,9 +181,9 @@ public abstract class AbstractAdapter implements ObjectStorageAdapter {
     public abstract String getDriverClassName();
 
     public abstract String getUser();
-    
+
     public abstract String getPassword();
-    
+
     public abstract String getConnectionSpec();
 
     public abstract String getStatementBundleName();

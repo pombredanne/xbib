@@ -37,10 +37,10 @@ import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.OutputKeys;
@@ -54,7 +54,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MARCElementsTest extends Assert {
 
@@ -97,6 +99,8 @@ public class MARCElementsTest extends Assert {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
         final ElementOutput output = new ElementOutput<ResourceContext>() {
+            final AtomicLong counter = new AtomicLong();
+
             @Override
             public boolean enabled() {
                 return true;
@@ -109,19 +113,27 @@ public class MARCElementsTest extends Assert {
 
             @Override
             public void output(ResourceContext context) throws IOException {
-                logger.debug(context.resource().toString());
+                IRI iri = IRI.builder().scheme("http")
+                        .host("dummy")
+                        .query("dummy")
+                        .fragment(Long.toString(counter.getAndIncrement())).build();
+                context.resource().id(iri);
+                StringWriter sw = new StringWriter();
+                TurtleWriter tw = new TurtleWriter().output(sw);
+                tw.write(context.resource());
+                logger.debug("out={}", sw.toString());
             }
 
             @Override
             public long getCounter() {
-                return 0;
+                return counter.get();
             }
         };
 
 
         MARCBuilderFactory factory = new MARCBuilderFactory() {
             public MARCBuilder newBuilder() {
-                MARCBuilder builder = new OurMARCBuilder();
+                MARCBuilder builder = new MARCBuilder();
                 builder.addOutput(output);
                 return builder;
             }
@@ -142,25 +154,8 @@ public class MARCElementsTest extends Assert {
         transformer.transform(new SAXSource(reader, source), target);
         mapper.close();
         // check if increment works
-        assertEquals(id, "8676");
+        assertEquals(output.getCounter(), 8676);
         logger.info("unknown elements = {}", mapper.unknownKeys());
-    }
-
-    String id;
-
-    final class OurMARCBuilder extends MARCBuilder {
-
-        @Override
-        public void build(MARCElement element, FieldCollection fields, String value) {
-            if (context().resource().id() == null) {
-                id = Long.toString(context().increment());
-                IRI iri = IRI.builder().scheme("http")
-                        .host("dummy")
-                        .query("dummy")
-                        .fragment(id).build();
-                context().resource().id(iri);
-            }
-        }
     }
 
 }

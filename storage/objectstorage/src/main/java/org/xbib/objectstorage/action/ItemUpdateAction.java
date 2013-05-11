@@ -31,11 +31,12 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.util.ILL;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.util.ILL;
 
 public class ItemUpdateAction extends AbstractUpdateAction {
 
@@ -54,10 +55,11 @@ public class ItemUpdateAction extends AbstractUpdateAction {
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");
         }
-        long id = ill.getNumber();
+        long number = ill.getNumber();
         final Map<String, Object> params = new HashMap<>();
-        params.put(ITEM_PARAMETER, id);
-        params.put(STATE_PARAMETER, request.getLongParameter(STATE_PARAMETER, 0L));
+        params.put(ITEM_PARAMETER, number);
+        params.put(STATE_PARAMETER, request.getStringParameter(STATE_PARAMETER, "IDLE"));
+        logger.debug("item update action = {} params = {}", sql, params);
         return params;
     }
 }

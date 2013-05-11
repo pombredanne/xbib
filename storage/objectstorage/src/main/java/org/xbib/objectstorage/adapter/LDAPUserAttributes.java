@@ -31,8 +31,9 @@
  */
 package org.xbib.objectstorage.adapter;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -40,23 +41,27 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LDAPUserAttributes implements UserAttributes {
 
+    private final static Logger logger = LoggerFactory.getLogger(LDAPUserAttributes.class.getName());
+
     private final DirContext context;
-    private final String base;
     private final String user;
-    private Map<String, String> attributes;
+    private final Map<String, String> attributes;
 
     public LDAPUserAttributes(DirContext context, String user) throws NamingException {
         this.context = context;
         this.user = user;
-        this.base = context.getEnvironment().containsKey("ldap_basedn")
-                ? (String) context.getEnvironment().get("ldap_basedn") : null;
-        retrieve();
+        this.attributes = makeAttributes();
+        logger.debug("LDAP user attributes: user = {} attrs = {}", user, attributes);
     }
 
-    private void retrieve() throws NamingException {
+    private Map<String,String> makeAttributes() throws NamingException {
+        Map<String, String> m = new HashMap();
+        String base = (String)context.getEnvironment().get("ldap_basedn");
         SearchControls sc = new SearchControls();
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         String filter = "(uid=" + user + ")";
@@ -65,24 +70,22 @@ public class LDAPUserAttributes implements UserAttributes {
             SearchResult sr = results.next();
             Attributes attrs = sr.getAttributes();
             NamingEnumeration<? extends Attribute> en = attrs.getAll();
-            attributes = new HashMap<>(); // single result
             while (en.hasMore()) {
                 Attribute attr = en.next();
-                attributes.put(attr.getID(), attr.get(0).toString());
+                m.put(attr.getID(), attr.get(0).toString());
             }
         }
-        context.close();
+        return m;
     }
 
     @Override
     public String getName() {
-        return (attributes.containsKey("description") ?
-                attributes.get("description") : attributes.get("uid"));
+        return attributes.containsKey("description") ?
+                attributes.get("description") : attributes.get("uid");
     }
 
     @Override
-    public Map<String,String> getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
     }
-
 }

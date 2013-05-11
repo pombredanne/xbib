@@ -11,7 +11,10 @@
     "RecordIdentifier" : {
         "values"  :[
             "003$@$0"
-        ]
+        ],
+        "subfields" : {
+           "0" : "identifierForTheRecord"
+        }
     },
     "Identifier" : {
         "values" : [

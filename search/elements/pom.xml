@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>xbib-util</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>xbib-content</artifactId>
             <type>jar</type>
         </dependency>

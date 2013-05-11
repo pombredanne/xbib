@@ -31,12 +31,13 @@
  */
 package org.xbib.objectstorage;
 
+import org.xbib.objectstorage.adapter.DefaultAdapter;
+
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
-import org.xbib.objectstorage.adapter.DefaultAdapter;
 
 public class ObjectStorageAdapterService {
 
@@ -70,10 +71,10 @@ public class ObjectStorageAdapterService {
         throw new IllegalArgumentException("FileStorage adapter " + uri + " not found in " + factories);
     }
 
-    public ObjectStorageAdapter getAdapter(String className) 
+    public ObjectStorageAdapter getAdapter(String className)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Class<?> cls = Class.forName(className);
-        ObjectStorageAdapter adapter = (ObjectStorageAdapter)cls.newInstance();
+        ObjectStorageAdapter adapter = (ObjectStorageAdapter) cls.newInstance();
         adapter.init();
         return adapter;
     }

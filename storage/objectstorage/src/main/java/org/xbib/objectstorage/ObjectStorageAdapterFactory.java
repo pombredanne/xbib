@@ -40,6 +40,6 @@ public class ObjectStorageAdapterFactory {
 
     public static ObjectStorageAdapter getAdapter(String name) {
         return new PropertiesAdapter(name);
-    }    
-    
+    }
+
 }

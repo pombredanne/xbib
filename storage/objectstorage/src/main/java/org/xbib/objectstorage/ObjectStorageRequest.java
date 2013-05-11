@@ -31,29 +31,31 @@
  */
 package org.xbib.objectstorage;
 
+import org.xbib.objectstorage.adapter.UserAttributes;
+
 import java.io.IOException;
 import java.util.Date;
-import org.xbib.objectstorage.adapter.UserAttributes;
 
 public interface ObjectStorageRequest {
 
     ObjectStorageAdapter getAdapter();
-    
+
     ObjectStorageRequest setUser(String user);
-    
+
     String getUser();
-    
+
     ObjectStorageRequest setContainer(String container);
+
     String getContainer();
-    
+
     ObjectStorageRequest setItem(String item);
-    
+
     String getItem();
-    
+
     UserAttributes getUserAttributes() throws IOException;
-    
+
     ObjectStorageRequest addStringParameter(String key, String value);
-    
+
     ObjectStorageRequest addLongParameter(String key, Long value);
 
     ObjectStorageRequest addDateParameter(String key, Date value);
@@ -61,8 +63,6 @@ public interface ObjectStorageRequest {
     String getStringParameter(String key, String defaultValue);
 
     Long getLongParameter(String key, Long defaultValue);
-    
-    Date getDateParameter(String key, Date defaultValue);
 
-    
+    Date getDateParameter(String key, Date defaultValue);
 }

@@ -352,6 +352,10 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     }
 
     private void writePredicate(P predicate) throws IOException {
+        if (predicate == null) {
+            sb.append("<> ");
+            return;
+        }
         if ("rdf:type".equals(predicate.toString()) || predicate.toString().equals(RDF.NS_URI + "type")) {
             sb.append("a ");
         } else {

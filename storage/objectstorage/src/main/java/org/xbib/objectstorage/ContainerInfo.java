@@ -34,7 +34,6 @@ package org.xbib.objectstorage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -52,17 +51,17 @@ public class ContainerInfo {
     public ContainerInfo(ObjectStorageAdapter adapter, Container container) throws IOException {
         this(container.getName(), new File(container.createPath(adapter, "")));
     }
-    
+
     /**
      * @param containerCount The number of objects in the container
-     * @param totalSize The total size of the container (in bytes)
+     * @param totalSize      The total size of the container (in bytes)
      */
     public ContainerInfo(String name, File root) throws IOException {
         this.name = name;
         this.root = root;
         update();
     }
-    
+
     /**
      * @return the name
      */
@@ -87,9 +86,9 @@ public class ContainerInfo {
                 public void process(File file) throws IOException {
                     setObjectCount(getObjectCount() + 1);
                     setTotalSize(getTotalSize() + file.length());
-                    
+
                 }
-                
+
             });
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -117,7 +116,7 @@ public class ContainerInfo {
      * @return The total size of the objects in the container (in bytes)
      */
     public synchronized long getTotalSize() {
-       this.totalSize = 0L;
+        this.totalSize = 0L;
         return totalSize;
     }
 
@@ -125,11 +124,11 @@ public class ContainerInfo {
         this.pattern = pattern;
         return this;
     }
-    
+
     public Pattern getPattern() {
         return pattern;
     }
-    
+
     /**
      * Returns the size as a human readable string, rounding to the nearest
      * KB/MB/GB
@@ -150,7 +149,7 @@ public class ContainerInfo {
             return totalSize + " Bytes";
         }
     }
-    
+
     public void traverse(File file, FileProcessor processor) throws IOException {
         if (file.exists() && file.canRead()) {
             processor.process(file);
@@ -162,7 +161,7 @@ public class ContainerInfo {
                 public boolean accept(File file, String string) {
                     return getPattern() != null ? getPattern().matcher(file.getName()).matches() : true;
                 }
-                
+
             });
             if (list != null) {
                 for (String s : list) {
@@ -171,17 +170,16 @@ public class ContainerInfo {
             }
         }
     }
-    
+
     public interface FileProcessor {
         void process(File file) throws IOException;
     }
-        
-    
+
+
     public ItemInfo getItemInfo(Item item) throws IOException {
-       // Files.getAttribute(null, name, null);
-       return null;
+        // Files.getAttribute(null, name, null);
+        return null;
     }
-    
-    
-    
+
+
 }

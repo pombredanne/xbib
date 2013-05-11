@@ -31,10 +31,7 @@
  */
 package org.xbib.analyzer.elements.pica.zdb.bib;
 
-import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaElement;
-import org.xbib.iri.IRI;
-import org.xbib.marc.FieldCollection;
 
 public class RecordIdentifier extends PicaElement {
 
@@ -42,15 +39,6 @@ public class RecordIdentifier extends PicaElement {
 
     public static RecordIdentifier getInstance() {
         return instance;
-    }
-
-    @Override
-    public void fields(ElementBuilder builder, FieldCollection fields, String value) {
-        if (builder.context().resource().id() == null) {
-            String v = fields.iterator().next().data();
-            IRI id = IRI.builder().scheme("iri").host("zdb").query("bib").fragment(v).build();
-            builder.context().resource().id(id);
-        }
     }
 
 }

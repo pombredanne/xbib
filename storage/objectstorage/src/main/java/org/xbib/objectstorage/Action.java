@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public interface Action extends ObjectStorageParameter, ObjectStorageMimeTypes {
-    
+
     void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception;
 
     Action waitFor(long l, TimeUnit tu) throws IOException;

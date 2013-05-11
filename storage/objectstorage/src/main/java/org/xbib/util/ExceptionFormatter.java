@@ -31,6 +31,8 @@
  */
 package org.xbib.util;
 
+import org.xbib.xml.XMLUtil;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -47,11 +49,10 @@ public final class ExceptionFormatter {
 
     /**
      * Append Exception to string builder
-     *
      */
     @SuppressWarnings("rawtypes")
     public static void append(StringBuilder buf, Throwable t,
-            int level, boolean details) {
+                              int level, boolean details) {
         try {
             if (((t != null) && (t.getMessage() != null))
                     && (t.getMessage().length() > 0)) {
@@ -92,12 +93,17 @@ public final class ExceptionFormatter {
      * Format exception with stack trace
      *
      * @param t the thrown object
-     *
      * @return the formatted exception
      */
-    public static String format(Throwable t) {
+    public static String toPlainText(Throwable t) {
         StringBuilder sb = new StringBuilder();
         append(sb, t, 0, true);
         return sb.toString();
+    }
+
+    public static String toXML(Throwable t) {
+        StringBuilder sb = new StringBuilder();
+        append(sb, t, 0, true);
+        return "<error><![CDATA[" + XMLUtil.escape(sb.toString()) + "]]></error>";
     }
 }

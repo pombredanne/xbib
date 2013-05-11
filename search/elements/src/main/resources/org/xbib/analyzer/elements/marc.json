@@ -79,7 +79,10 @@
     "RecordIdentifier" : {
         "values" : [
         "001"
-        ] 
+        ],
+        "tags" : {
+            "001" : "identifierForTheRecord"
+        }
     },
     "PhysicalDescriptionCode" : {
         "values" : [

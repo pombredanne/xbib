@@ -31,20 +31,21 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.ObjectStorageResponse;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
 
 public class StateHeadAction extends ContainerHeadAction {
-        
+
     public StateHeadAction(String sql) {
         super(sql);
     }
-    
+
     @Override
     protected String[] createBindKeys() {
         return new String[]{};
@@ -53,14 +54,15 @@ public class StateHeadAction extends ContainerHeadAction {
     @Override
     protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
+        logger.debug("state head action = {} params = {}", sql, params);
         return params;
     }
-    
+
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) 
+    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
             throws SQLException {
         while (result.next()) {
-                response.builder().header("X-state", result.getString(1));
+            response.builder().header("X-state", result.getString(1));
         }
         return 1;
     }

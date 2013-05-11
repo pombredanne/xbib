@@ -31,6 +31,13 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.date.DateUtil;
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.adapter.container.rows.ContainerRow;
+import org.xbib.standardnumber.InvalidStandardNumberException;
+import org.xbib.util.ILL;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,13 +46,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import org.xbib.date.DateUtil;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.objectstorage.adapter.container.rows.ContainerRow;
-import org.xbib.standardnumber.InvalidStandardNumberException;
-import org.xbib.util.ILL;
 
 public class ContainerGetAction extends AbstractQueryAction {
 
@@ -57,19 +57,22 @@ public class ContainerGetAction extends AbstractQueryAction {
     public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
         super.execute(request, response);
     }
-    
+
     @Override
     protected String[] createBindKeys() {
-        return new String[]{NAME_PARAMETER, STATE_PARAMETER, SIZE_PARAMETER, FROM_PARAMETER};
+        return new String[]{NAME_PARAMETER, STATE_PARAMETER, FROM_DATE_PARAMETER, TO_DATE_PARAMETER, SIZE_PARAMETER, FROM_PARAMETER};
     }
 
     @Override
-    protected Map<String,Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
         params.put(STATE_PARAMETER, request.getStringParameter(STATE_PARAMETER, "PENDING"));
-        params.put(SIZE_PARAMETER, request.getLongParameter(FROM_PARAMETER, 1L) + request.getLongParameter(SIZE_PARAMETER, 10L) - 1);
         params.put(FROM_PARAMETER, request.getLongParameter(FROM_PARAMETER, 1L));
+        params.put(SIZE_PARAMETER, request.getLongParameter(FROM_PARAMETER, 1L) + request.getLongParameter(SIZE_PARAMETER, 10L) - 1);
+        params.put(FROM_DATE_PARAMETER, DateUtil.formatDateISO(request.getDateParameter(FROM_DATE_PARAMETER, DateUtil.midnight())));
+        params.put(TO_DATE_PARAMETER, DateUtil.formatDateISO(request.getDateParameter(TO_DATE_PARAMETER, DateUtil.midnight(DateUtil.tomorrow()))));
+        logger.debug("container get action = {} params = {}", sql, params);
         return params;
     }
 

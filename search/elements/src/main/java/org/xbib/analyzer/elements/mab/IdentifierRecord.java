@@ -16,12 +16,12 @@ public class IdentifierRecord extends MABElement {
         return element;
     }
 
-    @Override
+   /* @Override
     public IdentifierRecord build(MABBuilder b, FieldCollection key, String value) {
         value = value.trim();
         b.context().resource().id(IRI.create("http://xbib.org#" + value)); // temporal ID
         b.context().resource().add(XBIB_IDENTIFIER_AUTHORITY_MAB, value);
         return this;
-    }
+    }*/
 
 }

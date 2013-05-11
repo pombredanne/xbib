@@ -31,17 +31,17 @@
  */
 package org.xbib.objectstorage.action;
 
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.xbib.objectstorage.Action;
 import org.xbib.objectstorage.ObjectStorageRequest;
 import org.xbib.objectstorage.ObjectStorageResponse;
 import org.xbib.objectstorage.action.sql.SQLService;
 import org.xbib.objectstorage.adapter.AbstractAdapter;
+
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractInsertAction extends AbstractQueryAction {
 
@@ -61,23 +61,22 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
             SQLService service = SQLService.getInstance(a);
             try (PreparedStatement p = service.getConnection().prepareStatement(sql)) {
-                service.execute(service.bind(p, createBindKeys(), createParams(request)));
-                response.builder().status(200);
+                boolean success = service.execute(service.bind(p, createBindKeys(), createParams(request)));
+                response.builder().status(success ? 200 : 500);
             } catch (SQLException | IOException e) {
                 logger.error(e.getMessage(), e);
                 throw e;
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-insert-millis", t1 - t0);
-                logger.debug("insert took {1} ms",  t1 - t0);
+                logger.debug("insert took {} ms", t1 - t0);
             }
         }
     }
-    
 
     @Override
     protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException {
         return -1;
-    }    
+    }
 
 }

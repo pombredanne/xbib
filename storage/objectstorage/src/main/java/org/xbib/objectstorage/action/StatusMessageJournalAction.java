@@ -31,13 +31,14 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.ItemInfo;
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.util.ILL;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.objectstorage.ItemInfo;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.util.ILL;
 
 public class StatusMessageJournalAction extends AbstractInsertAction {
 
@@ -59,19 +60,19 @@ public class StatusMessageJournalAction extends AbstractInsertAction {
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");
         }
-        long id = ill.getNumber();
         InputStream in = itemInfo.getInputStream();
         StringBuilder sb = new StringBuilder();
         byte[] b = new byte[4096];
-        for (int n; (n = in.read(b)) != -1;) {
+        for (int n; (n = in.read(b)) != -1; ) {
             sb.append(new String(b, 0, n));
         }
-        final Map<String, Object> params = new HashMap<>();
-        params.put("message", sb.toString());
-        params.put("id", id);
+        final Map<String, Object> params = new HashMap();
+        params.put(ITEM_PARAMETER, ill.getNumber());
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
+        params.put("message", sb.toString());
         params.put("msgcode", itemInfo.getMessage().getCode());
+        logger.debug("status message journal update = {} params = {}", sql, params);
         return params;
     }
-    
+
 }

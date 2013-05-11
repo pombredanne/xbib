@@ -34,29 +34,29 @@ package org.xbib.objectstorage;
 public interface Container {
 
     String getName();
-    
+
     String getDescription();
-    
+
     ContainerInfo getContainerInfo(ObjectStorageAdapter adapter);
-    
+
     Action getContainerHeadAction();
-    
+
     Action getContainerByDateHeadAction();
 
     Action getContainerGetAction();
-    
+
     Action getContainerGetByDateAction();
-    
+
     Action getItemHeadAction();
-    
+
     Action getItemGetAction();
 
     Action getItemUpdateAction();
-    
+
     Action getItemJournalAction(ItemInfo itemInfo);
-    
+
     String createPath(ObjectStorageAdapter adapter, String filename);
-    
+
     boolean canUpload(String mimeType);
 
 }

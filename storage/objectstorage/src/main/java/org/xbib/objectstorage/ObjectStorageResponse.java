@@ -31,22 +31,24 @@
  */
 package org.xbib.objectstorage;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.StreamingOutput;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.adapter.container.rows.ContainerRow;
 import org.xbib.objectstorage.adapter.container.rows.ItemRow;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
 public class ObjectStorageResponse implements StreamingOutput {
 
-    private final static Logger logger = LoggerFactory.getLogger(ObjectStorageResponse.class.getName());    
+    private final static Logger logger = LoggerFactory.getLogger(ObjectStorageResponse.class.getName());
+    private Response response;
     private ResponseBuilder builder;
     private String textResponse;
     private GenericEntity<List<ContainerRow>> containerResponse;
@@ -59,6 +61,11 @@ public class ObjectStorageResponse implements StreamingOutput {
         t0 = System.currentTimeMillis();
     }
 
+    public ObjectStorageResponse(Response response) {
+        this.response = response;
+
+    }
+
     @Override
     public void write(OutputStream out) throws IOException, WebApplicationException {
     }
@@ -68,25 +75,26 @@ public class ObjectStorageResponse implements StreamingOutput {
     }
 
     public Response getResponse() {
+        if (response != null) {
+            return response;
+        }
         t1 = System.currentTimeMillis();
         builder.header("X-millis", t1 - t0);
         if (containerResponse != null) {
             logger.info("entity is container response ");
             builder.entity(containerResponse);
-        }
-        else if (itemResponse != null) {
+        } else if (itemResponse != null) {
             logger.info("entity is item response ");
             builder.entity(itemResponse);
-        }
-        else if (textResponse != null) {
+        } else if (textResponse != null) {
             logger.info("entity is text response ");
             builder.entity(textResponse);
         }
-        Response response = builder.build();
+        Response r = builder.build();
         containerResponse = null;
         itemResponse = null;
         textResponse = null;
-        return response;
+        return r;
     }
 
     public void setTextResponse(String response) {
@@ -95,6 +103,7 @@ public class ObjectStorageResponse implements StreamingOutput {
 
     public void setContainerResponse(List<ContainerRow> response) {
         this.containerResponse = new GenericEntity<List<ContainerRow>>(response) {
+
         };
     }
 

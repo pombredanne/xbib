@@ -86,46 +86,12 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
     S subject();
 
     /**
-     * Add a property to this resource.
-     *
-     * @param predicate a predicate identifier in its string representation form
+     * Add a property to this resource with a string object value
+     * @param predicate a predicate identifier
      * @param object an object in its string representation form
      * @return the new resource with the property added
      */
-    Resource<S, P, O> add(String predicate, String object);
-
-    /**
-     * Add a property to this resource
-     * @param predicate a predicate identifier
-     * @param number an integer
-     * @return the new resource with the property added
-     */
-    Resource<S, P, O> add(String predicate, Integer number);
-
-    /**
-     * Add a property to this resource.
-     *
-     * @param predicate a predicate identifier in its string representation form
-     * @param literal an object in its string representation form
-     * @return the new resource with the property added
-     */
-    Resource<S, P, O> add(String predicate, Literal literal);
-
-    /**
-     * Add a property to this resource
-     * @param predicate
-     * @param externalResource
-     * @return the new resource with the property added
-     */
-    Resource<S, P, O> add(String predicate, IRI externalResource);
-
-    /**
-     * Add a property to this resource
-     * @param predicate
-     * @param literals
-     * @return the new resource with the property added
-     */
-    Resource<S, P, O> add(String predicate, Collection literals);
+    Resource<S, P, O> add(P predicate, O object);
 
     /**
      * Add a property to this resource with a string object value
@@ -175,6 +141,49 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
      * @return the new resource with the resource added
      */
     Resource<S, P, O> add(P predicate, Resource<S, P, O> resource);
+
+    /**
+     * Add a property to this resource.
+     *
+     * @param predicate a predicate identifier in its string representation form
+     * @param object an object in its string representation form
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, String object);
+
+    /**
+     * Add a property to this resource
+     * @param predicate a predicate identifier
+     * @param number an integer
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, Integer number);
+
+    /**
+     * Add a property to this resource.
+     *
+     * @param predicate a predicate identifier in its string representation form
+     * @param literal an object in its string representation form
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, Literal literal);
+
+    /**
+     * Add a property to this resource
+     * @param predicate
+     * @param externalResource
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, IRI externalResource);
+
+    /**
+     * Add a property to this resource
+     * @param predicate
+     * @param literals
+     * @return the new resource with the property added
+     */
+    Resource<S, P, O> add(String predicate, Collection literals);
+
 
     /**
      * Add another resource to this resource

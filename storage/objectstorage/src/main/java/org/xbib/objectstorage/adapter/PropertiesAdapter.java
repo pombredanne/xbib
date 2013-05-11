@@ -31,24 +31,25 @@
  */
 package org.xbib.objectstorage.adapter;
 
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.adapter.container.DefaultContainer;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.adapter.container.DefaultContainer;
 
 public class PropertiesAdapter extends AbstractAdapter {
 
-    private final static Logger logger = Logger.getLogger(PropertiesAdapter.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(PropertiesAdapter.class.getName());
     private final Properties properties = new Properties();
 
     public PropertiesAdapter() {
@@ -65,7 +66,7 @@ public class PropertiesAdapter extends AbstractAdapter {
                 addContainer(new DefaultContainer(getDefaultContainerName(), "Default Container",
                         ResourceBundle.getBundle(properties.getProperty("container_bundle"))));
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         } else {
             throw new IllegalArgumentException("adapter " + name + " not found");

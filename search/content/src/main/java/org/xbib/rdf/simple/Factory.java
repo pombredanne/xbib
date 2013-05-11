@@ -38,6 +38,7 @@ import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
+import org.xbib.rdf.Visitor;
 
 public final class Factory<S,P,O> {
 
@@ -101,13 +102,32 @@ public final class Factory<S,P,O> {
         return l.object(value);        
     }
 
-    private final static Property TYPE = new IdentifiableProperty(RDF.RDF_TYPE);
+    private final static Property TYPE = new Property() {
+      @Override
+      public IRI id() {
+          return RDF.RDF_TYPE;
+      }
+
+      @Override
+      public void accept(Visitor visitor) {
+      }
+  };
 
     public P rdfType() {
         return (P)TYPE;
     }
 
-    private final static Property LANG = new IdentifiableProperty(RDF.RDF_LANGUAGE);
+    private final static Property LANG = new Property() {
+
+        @Override
+        public IRI id() {
+            return RDF.RDF_LANGUAGE;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+        }
+    };
 
     public P rdfLang() {
         return (P)LANG;

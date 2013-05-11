@@ -317,13 +317,18 @@
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-server</artifactId>
-                <version>1.12</version>
+                <artifactId>jersey-bundle</artifactId>
+                <version>1.17.1</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-bundle</artifactId>
-                <version>1.12</version>
+                <artifactId>jersey-server</artifactId>
+                <version>1.17.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-multipart</artifactId>
+                <version>1.17.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.abdera</groupId>
@@ -338,6 +343,11 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>1.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
                 <version>1.7.2</version>
             </dependency>
            <dependency>
@@ -384,6 +394,11 @@
                 <groupId>org.jruby</groupId>
                 <artifactId>jruby-complete</artifactId>
                 <version>1.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet</groupId>
+                <artifactId>mimepull</artifactId>
+                <version>1.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

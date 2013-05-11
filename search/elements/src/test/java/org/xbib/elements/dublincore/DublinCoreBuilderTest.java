@@ -49,10 +49,11 @@ public class DublinCoreBuilderTest extends Assert {
 
     @Test
     public void testDublinCoreBuilder() throws Exception {
-        final AtomicLong counter = new AtomicLong(0L);
         StringReader sr = new StringReader("100=John Doe\n200=Hello Word\n300=2012\n400=1");
         ElementOutput<DublinCoreContext> output = new ElementOutput<DublinCoreContext>() {
-            
+
+            final AtomicLong counter = new AtomicLong(0L);
+
             @Override
             public boolean enabled() {
                 return true;

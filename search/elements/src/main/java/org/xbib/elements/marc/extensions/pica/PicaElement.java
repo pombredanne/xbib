@@ -42,7 +42,6 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
-import org.xbib.rdf.Property;
 
 import java.util.Map;
 

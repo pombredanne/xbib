@@ -1,17 +1,19 @@
 package org.xbib.objectstorage.adapter;
 
-import java.util.Date;
-import java.util.HashMap;
 import org.xbib.objectstorage.ObjectStorageParameter;
 import org.xbib.objectstorage.ObjectStorageRequest;
 
-public abstract class AbstractRequest  implements 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AbstractRequest implements
         ObjectStorageRequest, ObjectStorageParameter {
-    protected final HashMap<String, Object> request = new HashMap<>();
+    protected final Map<String, Object> request = new HashMap<>();
     protected AbstractAdapter adapter;
     protected String container;
     protected String item;
-       
+
     @Override
     public ObjectStorageRequest setContainer(String container) {
         this.container = container;
@@ -27,19 +29,19 @@ public abstract class AbstractRequest  implements
     public String getContainer() {
         return container;
     }
-    
+
     @Override
     public ObjectStorageRequest setItem(String item) {
         this.item = item;
         return this;
     }
-    
+
     @Override
     public String getItem() {
         return item;
     }
 
-     @Override
+    @Override
     public ObjectStorageRequest addStringParameter(String key, String value) {
         request.put(key, value);
         return this;
@@ -80,9 +82,15 @@ public abstract class AbstractRequest  implements
         request.put(USER_PARAMETER, user);
         return this;
     }
-    
+
     @Override
     public String getUser() {
         return (String) request.get(USER_PARAMETER);
+    }
+
+    public String toString() {
+        return "[Adapter=" + adapter +"] " +
+                "[Container=" + container + "] " +
+                request.toString();
     }
 }

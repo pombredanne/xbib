@@ -31,6 +31,12 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.Action;
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.action.sql.SQLService;
+import org.xbib.objectstorage.adapter.AbstractAdapter;
+
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,12 +44,6 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.objectstorage.action.sql.SQLService;
-import org.xbib.objectstorage.adapter.AbstractAdapter;
 
 public abstract class AbstractQueryAction extends AbstractAction {
 
@@ -52,12 +52,13 @@ public abstract class AbstractQueryAction extends AbstractAction {
     public AbstractQueryAction(String sql) {
         this.sql = sql;
     }
+
     protected abstract String[] createBindKeys();
 
     protected abstract Map<String, Object> createParams(ObjectStorageRequest request) throws IOException;
 
-    protected abstract int buildResponse(ResultSet result, 
-            ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException;
+    protected abstract int buildResponse(ResultSet result,
+                                         ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException;
 
     @Override
     public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
@@ -66,11 +67,11 @@ public abstract class AbstractQueryAction extends AbstractAction {
             int rows = -1;
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
             SQLService service = SQLService.getInstance(a);
-            try (PreparedStatement p = service.getConnection().prepareStatement(sql); 
-                    ResultSet result = service.executeQuery(service.bind(p, createBindKeys(), createParams(request)))) {
+            try (PreparedStatement p = service.getConnection().prepareStatement(sql);
+                ResultSet result = service.executeQuery(service.bind(p, createBindKeys(), createParams(request)))) {
                 SQLWarning warning = result.getWarnings();
                 while (warning != null) {
-                    logger.warn("{0} {1}", new Object[]{warning.getMessage(), warning.getSQLState()});
+                    logger.warn("{} {}", warning.getMessage(), warning.getSQLState());
                     warning = warning.getNextWarning();
                 }
                 response.builder().status(200);
@@ -81,14 +82,14 @@ public abstract class AbstractQueryAction extends AbstractAction {
             } finally {
                 long t1 = System.currentTimeMillis();
                 response.builder().header("X-query-millis", t1 - t0);
-                logger.debug("{0}, {1} rows, query took {2} ms", new Object[]{rows > 0 ? "success" : "nothing found", rows, t1 - t0});
+                logger.debug("{}, {} rows, query took {}ms", rows > 0 ? "success" : "nothing found", rows, t1 - t0);
             }
         }
     }
-    
+
     @Override
     public Action waitFor(long l, TimeUnit tu) throws IOException {
         return this;
     }
-    
+
 }

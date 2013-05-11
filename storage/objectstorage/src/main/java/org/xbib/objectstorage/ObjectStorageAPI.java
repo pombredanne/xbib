@@ -34,9 +34,15 @@ package org.xbib.objectstorage;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.multipart.FormDataParam;
-import java.io.InputStream;
-import java.security.Principal;
-import java.util.concurrent.TimeUnit;
+import com.sun.jersey.spi.container.ContainerRequest;
+import org.xbib.date.DateUtil;
+import org.xbib.jersey.filter.PasswordSecurityContext;
+import org.xbib.jersey.filter.PasswordSecurityFilter;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.objectstorage.adapter.container.rows.ItemInfoRow;
+import org.xbib.util.ExceptionFormatter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -56,18 +62,24 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
-import org.xbib.date.DateUtil;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-import org.xbib.util.ExceptionFormatter;
+import java.io.InputStream;
+import java.security.Principal;
+import java.util.concurrent.TimeUnit;
 
 @Path("/v1")
 public class ObjectStorageAPI implements ObjectStorageParameter {
 
     private final static Logger logger = LoggerFactory.getLogger(ObjectStorageAPI.class.getName());
-    // @todo injection of adapter
-    private final static ObjectStorageAdapter adapter = ObjectStorageAdapterService.getInstance().getDefaultAdapter();
+
     public final static String VERSION = "v1";
+
+    private final static ObjectStorageAdapter adapter =
+            ObjectStorageAdapterService.getInstance().getDefaultAdapter();
+
+    @Context HttpServletRequest servletRequest;
+    @Context HttpServletResponse servletResponse;
+    @Context SecurityContext securityContext;
+    @Context UriInfo uriInfo;
 
     /**
      * Create root
@@ -76,13 +88,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      * @throws Exception
      */
     @PUT
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response putRoot(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container) throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
@@ -98,13 +104,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      * @throws Exception
      */
     @POST
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
-    public Response postRoot(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo) throws Exception {
+    public Response postRoot() throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
@@ -115,30 +115,18 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      * @throws Exception
      */
     @GET
-    /*
-     * @RolesAllowed({"UploadGroup","DownloadGroup"})
-     */
-    public Response getRoot(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo) throws Exception {
+    public Response getRoot() throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
     /**
-     * Get root
+     * Delete root
      *
      * @return
      * @throws Exception
      */
     @DELETE
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
-    public Response deleteRoot(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo) throws Exception {
+    public Response deleteRoot() throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
@@ -150,14 +138,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      */
     @PUT
     @Path("/{container}")
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
-    public Response putContainer(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
-            @PathParam(CONTAINER_PARAMETER) String container) throws Exception {
+    public Response putContainer(@PathParam(CONTAINER_PARAMETER) String container) throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
@@ -169,13 +150,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      */
     @POST
     @Path("/{container}")
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response postContainer(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container) throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
@@ -189,42 +164,53 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
     @GET
     @Path("/{container}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    /*
-     * @RolesAllowed({"UploadGroup","DownloadGroup"})
-     */
     public Response getContainer(
-            @Context final HttpServletRequest servletRequest,
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @QueryParam(STATE_PARAMETER) String status,
             @QueryParam(FROM_DATE_PARAMETER) String fromDate,
             @QueryParam(TO_DATE_PARAMETER) String toDate,
             @QueryParam(FROM_PARAMETER) Long from,
             @QueryParam(SIZE_PARAMETER) Long size) {
-        if (servletRequest.getMethod().equalsIgnoreCase("head")) {
+        if ("head".equalsIgnoreCase(servletRequest.getMethod())) {
             return headContainer(servletResponse, securityContext, uriInfo, container);
+        }
+        logger.debug("getContainer(): {} 1={} 2={}", uriInfo.getAbsolutePath(), securityContext);
+        // I hate jersey
+        if (securityContext instanceof ContainerRequest) {
+            ContainerRequest cr = (ContainerRequest)securityContext;
+            SecurityContext sc = cr.getSecurityContext();
+            logger.debug("securitycontext = {}", sc);
+            if (sc instanceof PasswordSecurityContext) {
+                String pw = ((PasswordSecurityContext)sc).getPassword();
+                logger.debug("detected password {}", pw);
+            }
         }
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
             adapter.connect(uriInfo.getAbsolutePath());
             Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest().setUser(principal.getName())
+            ObjectStorageRequest request = adapter.newRequest()
+                    .setUser(principal.getName())
                     .addStringParameter(CONTAINER_PARAMETER, container)
                     .addStringParameter(STATE_PARAMETER, status)
-                    .addDateParameter(FROM_DATE_PARAMETER, DateUtil.parseDateISO(fromDate))
-                    .addDateParameter(TO_DATE_PARAMETER, DateUtil.parseDateISO(toDate)).addLongParameter(FROM_PARAMETER, from).addLongParameter(SIZE_PARAMETER, size);
-            Action action = fromDate != null
-                    ? adapter.getContainerGetByDateAction(container)
-                    : adapter.getContainerGetAction(container);
+                    .addDateParameter(FROM_DATE_PARAMETER, DateUtil.parseDateISO(fromDate, DateUtil.min()))
+                    .addDateParameter(TO_DATE_PARAMETER, DateUtil.parseDateISO(toDate, DateUtil.now()))
+                    .addLongParameter(FROM_PARAMETER, from)
+                    .addLongParameter(SIZE_PARAMETER, size);
+            logger.debug("getContainer(): principal={} request={}",
+                    principal.getName(),
+                    request.toString());
+            Action action = adapter.getContainerGetAction(container);
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
             adapter.disconnect();
             return response.getResponse();
         } catch (Exception e) {
-            return Response.serverError().entity(ExceptionFormatter.format(e)).build();
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_XML)
+                    .entity(ExceptionFormatter.toXML(e))
+                    .build();
         }
     }
 
@@ -233,20 +219,28 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             final SecurityContext securityContext,
             final UriInfo uriInfo,
             final String container) {
-        logger.info("headContainer");
+        logger.debug("headContainer() " + uriInfo.getAbsolutePath());
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
             adapter.connect(uriInfo.getAbsolutePath());
             Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest().setUser(principal.getName()).addStringParameter(CONTAINER_PARAMETER, container);
+            ObjectStorageRequest request = adapter.newRequest()
+                    .setUser(principal.getName())
+                    .addStringParameter(CONTAINER_PARAMETER, container);
+            logger.debug("headContainer(): principal={} request={}",
+                    principal.getName(),
+                    request.toString());
             Action action = adapter.getContainerHeadAction(container);
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
             adapter.disconnect();
             return response.getResponse(); // headers, no body
         } catch (Exception e) {
-            return Response.serverError().entity(ExceptionFormatter.format(e)).build();
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_XML)
+                    .entity(ExceptionFormatter.toXML(e))
+                    .build();
         }
     }
 
@@ -258,13 +252,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      */
     @DELETE
     @Path("/{container}")
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response deleteContainer(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container) throws Exception {
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
@@ -272,35 +260,20 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
     @GET
     @Path("/{container}/{item}/{state}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    /*
-     * @RolesAllowed({"UploadGroup", "DownloadGroup"})
-     */
     public Response getItem(
-            @Context final HttpServletRequest servletRequest,
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String state) throws Exception {
-        return getItem(servletRequest, servletResponse, securityContext,
-                uriInfo, container, item);
+        return getItem(container, item);
     }
 
     @GET
     @Path("/{container}/{item}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    /*
-     * @RolesAllowed({"UploadGroup", "DownloadGroup"})
-     */
     public Response getItem(
-            @Context final HttpServletRequest servletRequest,
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item) {
-        logger.info("getItem " + uriInfo.getAbsolutePath());
+        logger.debug("getItem() {}", uriInfo.getAbsolutePath());
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
@@ -309,7 +282,13 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             } else {
                 adapter.connect(uriInfo.getAbsolutePath());
                 Principal principal = adapter.getPrincipal(securityContext);
-                ObjectStorageRequest request = adapter.newRequest().setUser(principal.getName()).setContainer(container).setItem(item);
+                ObjectStorageRequest request = adapter.newRequest()
+                        .setUser(principal.getName())
+                        .setContainer(container)
+                        .setItem(item);
+                logger.debug("getItem(): principal={} request={}",
+                        principal.getName(),
+                        request.toString());
                 Action action = adapter.getItemGetAction(container);
                 action.execute(request, response);
                 action.waitFor(0, TimeUnit.SECONDS); // no-op
@@ -317,7 +296,10 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
                 return response.getResponse(); // headers, no body
             }
         } catch (Exception e) {
-            return Response.serverError().entity(ExceptionFormatter.format(e)).build();
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_XML)
+                    .entity(ExceptionFormatter.toXML(e))
+                    .build();
         }
     }
 
@@ -327,73 +309,71 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             final UriInfo uriInfo,
             String container,
             String item) {
-        logger.info("headItem " + uriInfo.getAbsolutePath());
+        logger.debug("headItem() {}", uriInfo.getAbsolutePath());
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
             adapter.connect(uriInfo.getBaseUri());
             Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest().setUser(principal.getName()).setContainer(container).setItem(item);
+            ObjectStorageRequest request = adapter.newRequest()
+                    .setUser(principal.getName())
+                    .setContainer(container)
+                    .setItem(item);
+            logger.debug("headItem(): principal={} request={}",
+                    principal.getName(),
+                    request.toString());
             Action action = adapter.getItemHeadAction(container);
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); //no-op
-                adapter.disconnect();
-                return response.getResponse(); // headers, no body
+            adapter.disconnect();
+            return response.getResponse(); // headers, no body
         } catch (Exception e) {
-            return Response.serverError().entity(ExceptionFormatter.format(e)).build();
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_XML)
+                    .entity(ExceptionFormatter.toXML(e))
+                    .build();
         }
     }
 
     @PUT
     @Path("/{container}/{item}/{state}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Consumes({"application/pdf"})
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response putItem(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
             InputStream in) {
-        logger.info("putItem " + uriInfo.getAbsolutePath());
+        logger.debug("putItem(): {}", uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
         if (!adapter.canUploadTo(mimeType, container)) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         } else {
-            return processUpload(servletResponse, securityContext, uriInfo, container, item, state, mimeType, in);
+            return processUpload(container, item, state, mimeType, in);
         }
     }
 
     @PUT
     @Path("/{container}/{item}/{state}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Consumes({"text/plain"})
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response putItemState(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
             InputStream in) {
-        logger.info("putItemStatus " + uriInfo.getAbsolutePath());
+        logger.debug("putItemStatus() {}", uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
         if (!adapter.canUploadTo(mimeType, container)) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         } else {
-
-            return processUpload(servletResponse, securityContext, uriInfo, container, item, state, mimeType, in);
+            return processUpload(container, item, state, mimeType, in);
         }
     }
 
@@ -402,21 +382,18 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response postItem(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String status,
-            @FormDataParam("files[]") InputStream in,
-            @FormDataParam("files[]") FormDataContentDisposition disp) {
-        logger.info("postItem " + uriInfo.getAbsolutePath());
+            @FormDataParam("file") InputStream in,
+            @FormDataParam("file") FormDataContentDisposition disp) {
+        logger.debug("postItem {}", uriInfo.getAbsolutePath());
         if (disp == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
         String mimeType = disp.getType();
         item = disp.getFileName();
-        return processUpload(servletResponse, securityContext, uriInfo, container, item, status, mimeType, in);
+        return processUpload(container, item, status, mimeType, in);
     }
 
     @DELETE
@@ -425,20 +402,13 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
      * @RolesAllowed("UploadGroup")
      */
     public Response deleteItem(
-            @Context final HttpServletResponse servletResponse,
-            @Context final SecurityContext securityContext,
-            @Context final UriInfo uriInfo,
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item) {
-        logger.info("deleteItem " + uriInfo.getAbsolutePath());
+        logger.debug("deleteItem {}", uriInfo.getAbsolutePath());
         return Response.serverError().status(Status.BAD_REQUEST).build();
     }
 
-    private Response processUpload(
-            final HttpServletResponse servletResponse,
-            final SecurityContext securityContext,
-            final UriInfo uriInfo,
-            String container,
+    private Response processUpload(String container,
             String item,
             String status,
             String mimeType,
@@ -454,7 +424,12 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             }
             itemInfo.writeToFile(adapter);
             Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest().setUser(principal.getName()).setContainer(container).setItem(item).addStringParameter(STATE_PARAMETER, status);
+
+            ObjectStorageRequest request = adapter.newRequest()
+                    .setUser(principal.getName())
+                    .setContainer(container)
+                    .setItem(item)
+                    .addStringParameter(STATE_PARAMETER, status);
             Action action = adapter.getItemUpdateAction(container);
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
@@ -462,15 +437,21 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
             long t1 = System.currentTimeMillis();
-            StringBuilder sb = new StringBuilder();
-            sb.append("[{\"name\":\"").append(item).append("\"").append(",\"type\":\"").append(itemInfo.getMimeType()).append("\"").append(",\"size\":\"").append(itemInfo.getOctets()).append("\"").append(",\"url\":\"").append(itemInfo.getURL()).append("\"").append(",\"delete_url\":\"").append(itemInfo.getDeleteURL()).append("\"").append(",\"delete_type\":\"DELETE\",\"checksum\":\"").append(itemInfo.getChecksum()).append("\"}]");
-
-            logger.info(sb.toString());
             adapter.disconnect();
-            return builder.status(Status.OK).entity(sb.toString()).header("X-checksum-sha1", itemInfo.getChecksum()).header("X-octets", itemInfo.getOctets()).header("X-mime-type", itemInfo.getMimeType()).header("X-millis", t1 - t0).build();
+            Response r = builder.status(Status.OK)
+                    .entity(itemInfo.entity())
+                    .header("X-checksum-sha1", itemInfo.getChecksum())
+                    .header("X-octets", itemInfo.getOctets())
+                    .header("X-mime-type", itemInfo.getMimeType())
+                    .header("X-millis", t1 - t0).build();
+            logger.debug("response = {}", r.toString());
+            return r;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return Response.serverError().entity(ExceptionFormatter.format(e)).build();
+            return Response.serverError()
+                    .type(MediaType.APPLICATION_XML)
+                    .entity(ExceptionFormatter.toXML(e))
+                    .build();
         }
     }
 }

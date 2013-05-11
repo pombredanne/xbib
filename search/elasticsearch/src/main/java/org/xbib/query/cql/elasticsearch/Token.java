@@ -31,21 +31,15 @@
  */
 package org.xbib.query.cql.elasticsearch;
 
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 import org.xbib.date.DateUtil;
 import org.xbib.query.Filter;
 import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.UnterminatedQuotedStringException;
-import org.xbib.query.cql.SyntaxException;
 
 /**
  * Elasticsearch query tokens

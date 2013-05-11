@@ -31,6 +31,11 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.adapter.container.rows.ItemRow;
+import org.xbib.util.ILL;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,11 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.objectstorage.adapter.container.rows.ItemRow;
-import org.xbib.util.ILL;
 
 public class ItemGetAction extends AbstractQueryAction {
 
@@ -50,13 +50,13 @@ public class ItemGetAction extends AbstractQueryAction {
         super(sql);
     }
 
-   @Override
-    protected String[] createBindKeys() {
-       return new String[]{ITEM_PARAMETER, ITEM_PARAMETER, NAME_PARAMETER};
-   }
-   
     @Override
-    protected Map<String,Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected String[] createBindKeys() {
+        return new String[]{ITEM_PARAMETER, ITEM_PARAMETER, NAME_PARAMETER};
+    }
+
+    @Override
+    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
@@ -65,18 +65,18 @@ public class ItemGetAction extends AbstractQueryAction {
         long id = ill.getNumber();
         params.put(ITEM_PARAMETER, id);
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
-        logger.debug("item get action = {0} params={1} id={2}", new Object[]{sql, params, id});
+        logger.debug("item get action = {} params={} id={}", sql, params, id);
         return params;
     }
-    
+
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) 
+    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
             throws SQLException {
         List<ItemRow> rows = new ArrayList<>();
         while (result.next()) {
             final ItemRow row = new ItemRow();
-            row.setDateRequested(result.getString(1)); 
-            row.setDateOfLastTransition(result.getString(2)); 
+            row.setDateRequested(result.getString(1));
+            row.setDateOfLastTransition(result.getString(2));
             row.setMostRecentService(result.getString(3));
             row.setDateOfMostRecentService(result.getString(4));
             row.setMostRecentServiceNote(result.getString(5));

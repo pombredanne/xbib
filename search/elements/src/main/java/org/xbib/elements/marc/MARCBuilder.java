@@ -66,7 +66,7 @@ public class MARCBuilder
         return this;
     }
 
-    @Override
+   /* @Override
     public void build(MARCElement element, FieldCollection fields, String value) {
         // by default, we just assign an ID to the resource
         if (context().resource().id() == null) {
@@ -77,6 +77,6 @@ public class MARCBuilder
                     .build();
             context().resource().id(id);
         }
-    }
+    }*/
     
 }

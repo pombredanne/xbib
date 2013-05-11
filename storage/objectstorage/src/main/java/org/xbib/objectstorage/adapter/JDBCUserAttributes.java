@@ -31,6 +31,10 @@
  */
 package org.xbib.objectstorage.adapter;
 
+import org.xbib.io.jdbc.NotclosedSQLResultSetListener;
+import org.xbib.io.jdbc.SQLSession;
+import org.xbib.io.jdbc.operator.Query;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,9 +44,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.xbib.io.jdbc.operator.Query;
-import org.xbib.io.jdbc.NotclosedSQLResultSetListener;
-import org.xbib.io.jdbc.SQLSession;
 
 public class JDBCUserAttributes implements UserAttributes {
 
@@ -51,7 +52,7 @@ public class JDBCUserAttributes implements UserAttributes {
     private final Map<String, Object> params = new HashMap<>();
     private final SQLSession session;
     private final String user;
-    private Map<String,String> attributes;
+    private Map<String, String> attributes;
 
     public JDBCUserAttributes(SQLSession session, String user) throws SQLException, IOException {
         this.session = session;
@@ -77,7 +78,7 @@ public class JDBCUserAttributes implements UserAttributes {
             }
             if (result != null && result.next()) {
                 for (int i = 0; i < result.getMetaData().getColumnCount(); i++) {
-                    attributes.put(keys[i], result.getString(i+1));
+                    attributes.put(keys[i], result.getString(i + 1));
                 }
             }
         } catch (SQLException e) {
@@ -88,15 +89,15 @@ public class JDBCUserAttributes implements UserAttributes {
             p.close();
         }
     }
-    
+
     @Override
     public String getName() {
         return attributes.get("name");
     }
-    
+
     @Override
-    public Map<String,String> getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
     }
-    
+
 }

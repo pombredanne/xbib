@@ -31,13 +31,14 @@
  */
 package org.xbib.objectstorage.adapter.container;
 
-import java.util.ResourceBundle;
 import org.xbib.objectstorage.Action;
 import org.xbib.objectstorage.ItemInfo;
 import org.xbib.objectstorage.action.Actions;
 import org.xbib.objectstorage.action.ResponseCodeHeadAction;
 import org.xbib.objectstorage.action.StateHeadAction;
 import org.xbib.objectstorage.action.UploadItemJournalAction;
+
+import java.util.ResourceBundle;
 
 public class DefaultContainer extends AbstractContainer {
 

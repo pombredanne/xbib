@@ -37,43 +37,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ContainerRow {
 
     private String position;
-    
+
     private String dateRequested;
-    
+
     private String dateOfLastTransition;
 
     private String item;
-    
+
     public void setPosition(String position) {
         this.position = position;
     }
-    
+
     public String getPosition() {
         return position;
     }
-   
+
     public void setDateRequested(String dateRequested) {
         this.dateRequested = dateRequested;
     }
-    
+
     public String getDateRequested() {
         return dateRequested;
     }
-    
+
     public void setDateOfLastTransition(String dateOfLastTransition) {
         this.dateOfLastTransition = dateOfLastTransition;
     }
-    
+
     public String getDateOfLastTransition() {
         return dateOfLastTransition;
     }
-    
+
     public void setItem(String item) {
         this.item = item;
     }
-    
+
     public String getItem() {
         return item;
     }
-    
+
 }

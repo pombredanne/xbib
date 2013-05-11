@@ -37,9 +37,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ItemRow {
 
     private String dateRequested;
-    
+
     private String dateOfLastTransition;
-    
+
     private String mostRecentService;
 
     private String dateOfMostRecentService;
@@ -47,53 +47,53 @@ public class ItemRow {
     private String mostRecentServiceNote;
 
     private String serviceType;
-    
+
     private String state;
-    
+
     private String requestType;
 
     private String supplier;
-    
+
     private String supplierName;
 
     private String itemTitle;
-    
+
     private String itemReferenceSource;
-    
+
     private String itemReferenceCode;
-    
+
     private String requester;
 
     private String requesterName;
-    
+
     public void setDateRequested(String dateRequested) {
         this.dateRequested = dateRequested;
     }
-    
+
     public String getDateRequested() {
         return dateRequested;
     }
-    
+
     public void setDateOfLastTransition(String dateOfLastTransition) {
         this.dateOfLastTransition = dateOfLastTransition;
     }
-    
+
     public String getDateOfLastTransition() {
         return dateOfLastTransition;
     }
-    
+
     public void setMostRecentService(String mostRecentService) {
         this.mostRecentService = mostRecentService;
     }
-    
+
     public String getMostRecentService() {
         return mostRecentService;
     }
-    
+
     public void setDateOfMostRecentService(String dateOfMostRecentService) {
         this.dateOfMostRecentService = dateOfMostRecentService;
     }
-    
+
     public String getDateOfMostRecentService() {
         return dateOfMostRecentService;
     }
@@ -101,39 +101,39 @@ public class ItemRow {
     public void setMostRecentServiceNote(String mostRecentServiceNote) {
         this.mostRecentServiceNote = mostRecentServiceNote;
     }
-    
+
     public String getMostRecentServiceNote() {
         return mostRecentServiceNote;
     }
-    
+
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-    
+
     public String getServiceType() {
         return serviceType;
     }
-    
+
     public void setState(String state) {
         this.state = state;
     }
-    
+
     public String getState() {
         return state;
     }
-    
+
     public void setRequestType(String requestType) {
         this.requestType = requestType;
     }
-    
+
     public String getRequestType() {
         return requestType;
     }
-   
+
     public void setSupplier(String supplier) {
         this.supplier = supplier;
     }
-    
+
     public String getSupplier() {
         return supplier;
     }
@@ -141,23 +141,23 @@ public class ItemRow {
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
     }
-    
+
     public String getSupplierName() {
         return supplierName;
     }
-    
+
     public void setItemTitle(String itemTitle) {
         this.itemTitle = itemTitle;
     }
-    
+
     public String getItemTitle() {
         return itemTitle;
     }
-    
+
     public void setItemReferenceSource(String itemReferenceSource) {
         this.itemReferenceSource = itemReferenceSource;
     }
-    
+
     public String getItemReferenceSource() {
         return itemReferenceSource;
     }
@@ -165,7 +165,7 @@ public class ItemRow {
     public void setItemReferenceCode(String itemReferenceCode) {
         this.itemReferenceCode = itemReferenceCode;
     }
-    
+
     public String getItemReferenceCode() {
         return itemReferenceCode;
     }
@@ -173,7 +173,7 @@ public class ItemRow {
     public void setRequester(String requester) {
         this.requester = requester;
     }
-    
+
     public String getRequester() {
         return requester;
     }
@@ -181,9 +181,9 @@ public class ItemRow {
     public void setRequesterName(String requesterName) {
         this.requesterName = requesterName;
     }
-    
+
     public String getRequesterName() {
         return requesterName;
     }
-    
+
 }

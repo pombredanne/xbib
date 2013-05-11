@@ -1,11 +1,12 @@
 package org.xbib.objectstorage.adapter;
 
-import java.io.IOException;
-import java.net.URI;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
 import org.xbib.objectstorage.ObjectStorageRequest;
 import org.xbib.objectstorage.adapter.container.DefaultContainer;
+
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import java.io.IOException;
+import java.net.URI;
 
 public class DefaultAdapter extends AbstractAdapter {
 
@@ -13,7 +14,7 @@ public class DefaultAdapter extends AbstractAdapter {
         init();
         addContainer(new DefaultContainer(getDefaultContainerName(), "Default container", null));
     }
-    
+
     @Override
     public String getRoot() {
         return "/tmp";
@@ -33,12 +34,13 @@ public class DefaultAdapter extends AbstractAdapter {
     public String getUser() {
         return null; // no connection
     }
+
     @Override
     public String getPassword() {
         return null; // no connection
     }
-    
-    
+
+
     @Override
     public String getStatementBundleName() {
         return null;

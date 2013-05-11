@@ -31,12 +31,13 @@
  */
 package org.xbib.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.xbib.standardnumber.ISIL;
 import org.xbib.standardnumber.InvalidStandardNumberException;
 import org.xbib.standardnumber.StandardNumber;
 import org.xbib.standardnumber.VerhoeffAlgorithm;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ILL implements StandardNumber {
 

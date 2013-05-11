@@ -27,7 +27,7 @@ public class ContentTypeNegotiatorTest extends Assert {
     @Test
     public void testAddVariant() {
         ContentTypeNegotiator instance = new ContentTypeNegotiator();
-        MediaRangeSpec mrs=instance.getBestMatch("*/*");
+        MediaRangeSpec mrs= instance.getBestMatch("*/*");
         instance.addVariant("text/html;q=0.9")
 				.addAliasMediaType("application/xhtml+xml");
         instance.addVariant("text/xml;q=0.95");

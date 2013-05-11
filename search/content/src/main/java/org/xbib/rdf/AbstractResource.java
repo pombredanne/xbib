@@ -87,11 +87,11 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
 
     @Override
     public Resource<S, P, O> add(Triple<S,P,O> triple) {
-        if (triple.subject().id().equals(id())) {
-            attributes.put(triple.predicate(), triple.object());
-            if (triple.object() instanceof Resource) {
-                context().asMap().put(((Resource) triple.object()).id(), triple.object());
-            }
+        if (triple == null) {
+            return this;
+        }
+        if (triple.subject().id() == null || triple.subject().id().equals(id())) {
+            add(triple.predicate(), triple.object());
         } else {
             Resource<S, P, O> r = findResource(context(), triple);
             if (r == null) {
@@ -116,6 +116,15 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
             }
         }
         return null;
+    }
+
+    @Override
+    public Resource<S, P, O> add(P predicate, O object) {
+        attributes.put(predicate, object);
+        if (object instanceof IdentifiableNode) {
+            context().asMap().put(((IdentifiableNode) object).id(), object);
+        }
+        return this;
     }
 
     @Override

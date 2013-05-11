@@ -33,17 +33,11 @@ package org.xbib.marc.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.Normalizer;
 
 import org.testng.annotations.Test;
-import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
-import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
-import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
-import org.xbib.marc.FieldCollection;
-import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.MarcXchangeListener;
 import org.xml.sax.InputSource;
 
@@ -51,6 +45,7 @@ public class DNBPICAXmlReaderTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DNBPICAXmlReaderTest.class.getName());
 
+    @Test
     public void testZDBBIB() throws Exception {
         InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
         InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));

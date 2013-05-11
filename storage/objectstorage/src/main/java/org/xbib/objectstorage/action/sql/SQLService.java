@@ -1,5 +1,44 @@
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
 package org.xbib.objectstorage.action.sql;
 
+import org.xbib.date.DateUtil;
+import org.xbib.objectstorage.adapter.AbstractAdapter;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -25,13 +64,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import org.xbib.objectstorage.adapter.AbstractAdapter;
-import org.xbib.util.DateUtil;
 
 /**
  * The SQL service class manages the SQL access to the JDBC connection.
@@ -47,14 +79,16 @@ public class SQLService {
     private SQLService() {
     }
 
-    public static SQLService getInstance(AbstractAdapter adapter) {
+    public static SQLService getInstance(AbstractAdapter adapter) throws IOException {
         if (!instances.containsKey(adapter)) {
             SQLService service = new SQLService();
             try {
-                service.setConnection(
-                        service.getConnection(adapter.getDriverClassName(), adapter.getConnectionSpec(), adapter.getUser(), adapter.getPassword()));
-            } catch (UnknownHostException | ClassNotFoundException | SQLException ex) {
+                Connection connection = service.getConnection(adapter.getDriverClassName(),
+                        adapter.getConnectionSpec(), adapter.getUser(), adapter.getPassword());
+                service.setConnection(connection);
+            } catch (Exception ex) {
                 logger.log(Level.SEVERE, null, ex);
+                throw new IOException(ex);
             }
             instances.put(adapter, service);
         }
@@ -81,28 +115,24 @@ public class SQLService {
         return connection;
     }
 
-    private Connection getConnection(final String user, final String pass) throws SQLException, UnknownHostException {
+    private Connection getConnection(final String user, final String pass)
+            throws SQLException, UnknownHostException, NameNotFoundException, NamingException {
         String name = "jdbc/" + InetAddress.getLocalHost().getHostName();
-        try {
-            Context context = new InitialContext();
-            Object o = context.lookup(name);
-            if (o instanceof DataSource) {
-                DataSource ds = (DataSource) o;
-                return ds.getConnection(user, pass);
-            }
-        } catch (NameNotFoundException e) {
-            logger.log(Level.WARNING, "{0} {1}", new Object[]{e.getMessage(), name});
-        } catch (NamingException e) {
-            logger.log(Level.WARNING, "{0} {1}", new Object[]{e.getMessage(), name});
+        Context context = new InitialContext();
+        Object o = context.lookup(name);
+        if (o instanceof DataSource) {
+            DataSource ds = (DataSource) o;
+            return ds.getConnection(user, pass);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
      * Get JDBC connection
      *
      * @param driverClassName
-     * @param jdbc
+     * @param url
      * @param user
      * @param password
      * @return the connection
@@ -110,8 +140,9 @@ public class SQLService {
      * @throws SQLException
      */
     private Connection getConnection(final String driverClassName,
-            final String url, final String user, final String password)
-            throws ClassNotFoundException, SQLException, UnknownHostException {
+                                     final String url, final String user, final String password)
+            throws ClassNotFoundException, SQLException, UnknownHostException,
+            NameNotFoundException, NamingException {
         Connection c = getConnection(user, password);
         if (c != null) {
             return c;
@@ -154,7 +185,6 @@ public class SQLService {
      * Execute prepared qquery statement
      *
      * @param statement
-     * @param fetchSize
      * @return the result set
      * @throws SQLException
      */
@@ -169,16 +199,34 @@ public class SQLService {
      * @return the result set
      * @throws SQLException
      */
-    public int execute(PreparedStatement statement) throws SQLException {
-        return statement.executeUpdate();
+    public int executeUpdate(PreparedStatement statement) throws SQLException {
+        int n = statement.executeUpdate();
+        if (!connection.getAutoCommit()) {
+            connection.commit();
+        }
+        return n;
+    }
+
+    /**
+     * Execute statement
+     *
+     * @param statement
+     * @return the result set
+     * @throws SQLException
+     */
+    public boolean execute(PreparedStatement statement) throws SQLException {
+        boolean b =  statement.execute();
+        if (!connection.getAutoCommit()) {
+            connection.commit();
+        }
+        return b;
     }
 
     /**
      * Get next row and prepare the values for processing. The labels of each
      * columns are used for the RowListener as paths for JSON object merging.
      *
-     * @param result the result set
-     * @param listener the listener
+     * @param result   the result set
      * @return true if row exists and was processed, false otherwise
      * @throws SQLException
      * @throws IOException
@@ -400,7 +448,7 @@ public class SQLService {
                 case Types.DATE: {
                     try {
                         Date d = result.getDate(i);
-                        values.add(d != null ? DateUtil.formatDateISO(d.getTime()) : null);
+                        values.add(d != null ? DateUtil.formatDateISO(d) : null);
                     } catch (SQLException e) {
                         values.add(null);
                     }
@@ -409,7 +457,7 @@ public class SQLService {
                 case Types.TIME: {
                     try {
                         Time t = result.getTime(i);
-                        values.add(t != null ? DateUtil.formatDateISO(t.getTime()) : null);
+                        values.add(t != null ? DateUtil.formatDateISO(t) : null);
                     } catch (SQLException e) {
                         values.add(null);
                     }
@@ -418,7 +466,7 @@ public class SQLService {
                 case Types.TIMESTAMP: {
                     try {
                         Timestamp t = result.getTimestamp(i);
-                        values.add(t != null ? DateUtil.formatDateISO(t.getTime()) : null);
+                        values.add(t != null ? DateUtil.formatDateISO(t) : null);
                     } catch (SQLException e) {
                         // java.sql.SQLException: Cannot convert value '0000-00-00 00:00:00' from column ... to TIMESTAMP.
                         values.add(null);

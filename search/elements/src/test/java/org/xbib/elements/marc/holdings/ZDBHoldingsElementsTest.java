@@ -49,6 +49,7 @@ import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
@@ -56,6 +57,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.Iterator;
@@ -78,7 +80,7 @@ public class ZDBHoldingsElementsTest extends Assert {
             InputSource source = new InputSource(br);
             MARCBuilderFactory factory = new MARCBuilderFactory() {
                 public MARCBuilder newBuilder() {
-                    MARCBuilder builder = new OurMARCBuilder().addOutput(out);
+                    MARCBuilder builder = new MARCBuilder().addOutput(out);
                     return builder;
                 }
             };
@@ -118,18 +120,10 @@ public class ZDBHoldingsElementsTest extends Assert {
         assertEquals(out.getCounter(), 293);
     }
 
-    class OurMARCBuilder extends MARCBuilder {
-
-        @Override
-        public void build(MARCElement element, FieldCollection fields, String value) {
-            if (context().resource().id() == null) {
-                IRI id = IRI.builder().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
-                context().resource().id(id);
-            }
-        }
-    }
-
     class OurElementOutput implements ElementOutput {
+
+        final AtomicLong counter = new AtomicLong();
+
         @Override
         public boolean enabled() {
             return true;
@@ -143,13 +137,15 @@ public class ZDBHoldingsElementsTest extends Assert {
         public void output(ResourceContext context) throws IOException {
             if (!context.resource().isEmpty()) {
                 Resource r = context.resource();
-                r.id(IRI.builder().host("myindex").query("mytype").fragment(r.id().getFragment()).build());
-                StringBuilder sb = new StringBuilder();
-                Iterator<Triple> it = r.iterator();
-                while (it.hasNext()) {
-                    sb.append(it.next().toString()).append("\n");
-                }
-                logger.debug("out={}", sb.toString());
+                r.id(IRI.builder()
+                        .scheme("http")
+                        .host("zdb")
+                        .query("holdings")
+                        .fragment(counter.toString()).build());
+                StringWriter sw = new StringWriter();
+                TurtleWriter tw = new TurtleWriter().output(sw);
+                tw.write(r);
+                logger.debug("out={}", sw.toString());
                 counter.incrementAndGet();
             }
         }
@@ -160,6 +156,5 @@ public class ZDBHoldingsElementsTest extends Assert {
         }
     }
 
-    final AtomicLong counter = new AtomicLong();
 
 }

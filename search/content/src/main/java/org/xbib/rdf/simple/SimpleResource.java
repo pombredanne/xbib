@@ -81,6 +81,24 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     }
 
     @Override
+    public Resource<S, P, O> add(P predicate, String value) {
+        return add(predicate, factory.asLiteral(value));
+    }
+
+    @Override
+    public Resource<S, P, O> add(P predicate, Integer value) {
+        return add(predicate, factory.asLiteral(value));
+    }
+
+    @Override
+    public Resource<S, P, O> add(P predicate, Collection literals) {
+        for (Object object : literals) {
+            add(predicate, factory.asLiteral(object));
+        }
+        return this;
+    }
+
+    @Override
     public Resource<S, P, O> add(String predicate, String value) {
         return add(factory.asPredicate(predicate), value);
     }
@@ -106,24 +124,6 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     }
 
     @Override
-    public Resource<S, P, O> add(P predicate, String value) {
-        return add(predicate, factory.asLiteral(value));
-    }
-
-    @Override
-    public Resource<S, P, O> add(P predicate, Integer value) {
-        return add(predicate, factory.asLiteral(value));
-    }
-
-    @Override
-    public Resource<S, P, O> add(P predicate, Collection literals) {
-        for (Object object : literals) {
-            add(predicate, factory.asLiteral(object));
-        }
-        return this;
-    }
-
-    @Override
     public Resource<S, P, O> newResource(IRI predicate) {
         return newResource(factory.asPredicate(predicate));
     }
@@ -132,8 +132,7 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     public Resource<S, P, O> newResource(String predicate) {
         return newResource(factory.asPredicate(predicate));
     }
-    
-    
+
     @Override
     public Resource<S, P, O> add(String predicate, Resource<S, P, O> resource) {
         return add(factory.asPredicate(predicate), resource);

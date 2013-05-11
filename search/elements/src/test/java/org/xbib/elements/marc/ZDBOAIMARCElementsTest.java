@@ -35,6 +35,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.testng.annotations.Test;
@@ -46,7 +47,9 @@ import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
+import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
 public class ZDBOAIMARCElementsTest {
@@ -55,8 +58,9 @@ public class ZDBOAIMARCElementsTest {
 
     @Test
     public void testOAIElements() throws Exception {
-        logger.info("testOAIElements");
+
         final AtomicLong counter = new AtomicLong();
+
         final ElementOutput output = new ElementOutput<ResourceContext>() {
             @Override
             public boolean enabled() {
@@ -69,8 +73,13 @@ public class ZDBOAIMARCElementsTest {
 
             @Override
             public void output(ResourceContext context) throws IOException {
-                if (context != null) {
-                    logger.info("resource = {}", context.resource());
+                if (!context.resource().isEmpty()) {
+                    Resource r = context.resource();
+                    r.id(IRI.builder().host("myindex").query("mytype").fragment(counter.toString()).build());
+                    StringWriter sw = new StringWriter();
+                    TurtleWriter tw = new TurtleWriter().output(sw);
+                    tw.write(r);
+                    logger.debug("out={}", sw.toString());
                     counter.incrementAndGet();
                 }
             }
@@ -83,7 +92,7 @@ public class ZDBOAIMARCElementsTest {
 
         MARCBuilderFactory factory = new MARCBuilderFactory() {
             public MARCBuilder newBuilder() {
-                MARCBuilder builder = new OurMARCBuilder().addOutput(output);
+                MARCBuilder builder = new MARCBuilder().addOutput(output);
                 return builder;
             }
         };
@@ -97,20 +106,7 @@ public class ZDBOAIMARCElementsTest {
         br.close();
         mapper.close();
         logger.info("counter = {}", output.getCounter());
+        // assertEquals ...
     }
 
-
-    class OurMARCBuilder extends MARCBuilder {
-
-        @Override
-        public void build(MARCElement element, FieldCollection fields, String value) {
-            if (context().resource().id() == null) {
-                IRI id = IRI.builder().scheme("http").host("xbib.org").fragment(Long.toString(context().increment())).build();
-                context().resource().id(id);
-            }
-            for (Field field : fields) {
-                logger.debug("element={} field={}", element, field);
-            }
-        }
-    }
 }

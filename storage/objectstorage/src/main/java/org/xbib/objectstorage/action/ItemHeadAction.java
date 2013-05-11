@@ -31,42 +31,44 @@
  */
 package org.xbib.objectstorage.action;
 
+import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.util.ILL;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.util.ILL;
 
 public class ItemHeadAction extends AbstractQueryAction {
 
     public ItemHeadAction(String sql) {
-       super(sql);
+        super(sql);
     }
 
-   @Override
-    protected String[] createBindKeys() {
-       return new String[]{"id","isil"};
-   }
-   
     @Override
-    protected Map<String,Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected String[] createBindKeys() {
+        return new String[]{"id", "isil"};
+    }
+
+    @Override
+    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");
         }
         long id = ill.getNumber();
-        final Map<String, Object> params = new HashMap<>();
+        final Map<String, Object> params = new HashMap();
         params.put("id", id);
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
+        logger.debug("item head action = {} params = {}", sql, params);
         return params;
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) 
+    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
             throws SQLException {
         ResultSetMetaData m = result.getMetaData();
         for (int i = 1; i <= m.getColumnCount(); i++) {

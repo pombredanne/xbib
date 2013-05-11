@@ -19,8 +19,10 @@
  */
 package org.xbib.query.cql;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.xbib.date.DateUtil;
+import java.util.TimeZone;
 
 /**
  * A CQL Term 
@@ -28,6 +30,10 @@ import org.xbib.date.DateUtil;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a> 
  */
 public class Term extends AbstractNode {
+
+    private static final TimeZone tz = TimeZone.getTimeZone("GMT");
+    private static final String ISO_FORMAT_SECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String ISO_FORMAT_DAYS = "yyyy-MM-dd";
 
     private String value;
     private Long longvalue;
@@ -40,7 +46,7 @@ public class Term extends AbstractNode {
         this.value = value;
         try {
             // check for hidden dates. CQL does not support ISO dates.
-            this.datevalue = DateUtil.parseDateISO(value);
+            this.datevalue = parseDateISO(value);
             this.value = null;
         } catch (Exception e) {
             
@@ -116,11 +122,42 @@ public class Term extends AbstractNode {
         visitor.visit(this);
     }
 
+    private Date parseDateISO(String value) {
+        if (value == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(ISO_FORMAT_SECONDS);
+        sdf.setTimeZone(tz);
+        sdf.setLenient(true);
+        try {
+            return sdf.parse(value);
+        } catch (ParseException pe) {
+            // skip
+        }
+        sdf.applyPattern(ISO_FORMAT_DAYS);
+        try {
+            return sdf.parse(value);
+        } catch (ParseException pe) {
+            return null;
+        }
+    }
+
+    private String formatDateISO(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(ISO_FORMAT_SECONDS);
+        sdf.setTimeZone(tz);
+        return sdf.format(date);
+    }
+
     @Override
     public String toString() {
         return longvalue != null ? Long.toString(longvalue)
                 : doublevalue != null ? Double.toString(doublevalue)
-                : datevalue != null ? DateUtil.formatDateISO(datevalue)
+                : datevalue != null ? formatDateISO(datevalue)
                 : value != null ? value.startsWith("\"") && value.endsWith("\"") ? value
                     : "\"" + value.replaceAll("\"", "\\\\\"") + "\""
                 : identifier != null ? identifier.toString()

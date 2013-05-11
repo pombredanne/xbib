@@ -31,22 +31,23 @@
  */
 package org.xbib.objectstorage.adapter;
 
-import java.io.IOException;
-import javax.naming.NamingException;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.ObjectStorageParameter;
 import org.xbib.objectstorage.ObjectStorageRequest;
 
-public class DefaultRequest extends AbstractRequest 
-    implements ObjectStorageRequest, ObjectStorageParameter {
+import javax.naming.NamingException;
+import java.io.IOException;
+
+public class DefaultRequest extends AbstractRequest
+        implements ObjectStorageRequest, ObjectStorageParameter {
 
     private final static Logger logger = LoggerFactory.getLogger(DefaultRequest.class.getName());
     private LDAPUserAttributes userAttr;
 
     public DefaultRequest(AbstractAdapter adapter) {
         this.adapter = adapter;
-        this.addStringParameter(AUTHORITY_PARAMETER, adapter.getAdapterURI().getUserInfo() );
+        this.addStringParameter(AUTHORITY_PARAMETER, adapter.getAdapterURI().getUserInfo());
     }
 
     @Override

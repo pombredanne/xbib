@@ -31,6 +31,10 @@
  */
 package org.xbib.objectstorage;
 
+import org.xbib.objectstorage.adapter.container.rows.ItemInfoRow;
+
+import javax.activation.MimetypesFileTypeMap;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,31 +53,30 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import javax.activation.MimetypesFileTypeMap;
 
 public class ItemInfo {
 
     private final static int BUFFER_SIZE = 8192;
     private Container container;
     private ItemKey key;
+    private InputStream in;
+    private ItemMessage message;
     private String mimeType;
     private long octets;
     private String checksum;
-    private InputStream in;
     private Date creationDate;
     private Date modificationDate;
-    private ItemMessage message;
     private boolean written;
     private URL url;
 
     private ItemInfo() {
     }
-    
+
     public static ItemInfo newInfo(ObjectStorageAdapter adapter, Container container, String item) throws IOException {
         ItemInfo info = new ItemInfo();
         info.container = container;
         info.key = new ItemKey(item);
-        info.url = URI.create(adapter.getBaseURI() + "/" + container.getName() + "/" + URLEncoder.encode(item, "UTF-8")).toURL();        
+        info.url = URI.create(adapter.getBaseURI() + "/" + container.getName() + "/" + URLEncoder.encode(item, "UTF-8")).toURL();
         return info;
     }
 
@@ -169,21 +172,22 @@ public class ItemInfo {
     public ItemMessage getMessage() {
         return message;
     }
-    
+
     public URL getURL() {
-        return url;    
+        return url;
     }
-    
+
     public URL getDeleteURL() {
-        return url;        
+        return url;
     }
-    
+
     public synchronized boolean writeToFile(ObjectStorageAdapter adapter) throws IOException, NoSuchAlgorithmException {
         if (in == null) {
             return false;
         }
         written = false;
-        File file = new File(container.createPath(adapter, key.getName()));
+        String s = container.createPath(adapter, key.getName());
+        File file = new File(s);
         boolean exists = file.exists();
         if (!exists) {
             file.getParentFile().mkdirs();
@@ -191,6 +195,7 @@ public class ItemInfo {
         MessageDigest md = adapter.getMessageDigest();
         md.reset();
         long total;
+        // write File to file system
         try (FileOutputStream out = new FileOutputStream(file)) {
             final byte[] buf = new byte[BUFFER_SIZE];
             total = 0L;
@@ -219,9 +224,26 @@ public class ItemInfo {
             UserDefinedFileAttributeView view =
                     Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
             view.write("user.checksum", Charset.defaultCharset().encode(getChecksum()));
-        } catch (Exception e) {           
+        } catch (Exception e) {
         }
         written = true;
         return exists;
+    }
+
+    public ItemInfoRow entity() {
+        ItemInfoRow row = new ItemInfoRow();
+        if (key != null) {
+            row.setName(key.getName());
+        }
+        row.setChecksum(checksum);
+        row.setCreationDate(creationDate);
+        if (message != null) {
+            row.setMessage(message.getMessage());
+        }
+        row.setMimeType(mimeType);
+        row.setModificationDate(modificationDate);
+        row.setOctets(octets);
+        row.setURL(url);
+        return row;
     }
 }

@@ -34,17 +34,17 @@ package org.xbib.objectstorage;
 import java.util.Date;
 
 public interface Item {
-    
+
     String getName();
-    
+
     Date getLastModified();
 
     String getType();
-    
+
     byte[] getData();
-    
+
     Action getLastAction();
-    
+
     void action(Action action);
-    
+
 }
