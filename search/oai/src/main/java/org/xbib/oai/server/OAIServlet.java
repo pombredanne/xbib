@@ -155,7 +155,7 @@ public class OAIServlet extends HttpServlet implements OAI {
             }
         }
         if (adapter == null) {
-            throw new ServletException("can't get adapter from adapterName = " + adapterName
+            throw new ServletException("can't get service from adapterName = " + adapterName
                     + " or request URI = " + request.getRequestURI());
         }
         return adapter;

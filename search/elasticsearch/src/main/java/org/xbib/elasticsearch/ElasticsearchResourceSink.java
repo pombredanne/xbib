@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.elasticsearch.client.support.ingest.ClientIngest;
+import org.xbib.elasticsearch.support.ingest.ClientIngest;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;

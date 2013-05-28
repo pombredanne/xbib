@@ -5,17 +5,9 @@
 -->
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	        xmlns:xlink="http://www.w3.org/1999/xlink"
-                xmlns:atom="http://www.w3.org/2005/Atom" 
-                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-                xmlns:xalan="http://xml.apache.org/xslt"
+                xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
                 xmlns:dcterms="http://purl.org/dc/terms/"
-                xmlns:dcam="http://purl.org/dc/dcam/" 
-                xmlns:dcmitype="http://purl.org/dc/dcmitype/" 
-                xmlns:mods="http://www.loc.gov/mods/v3"
-                xmlns:marcrel="http://www.loc.gov/loc.terms/relators/"
                 xmlns:bib="info:srw/cql-context-set/1/bib-v1/"
                 xmlns:xbib="http://xbib.org/elements/"
                 xmlns:es="http://elasticsearch.org/"
@@ -312,7 +304,7 @@
         </mods:physicalDescription>
     </xsl:template>
     <xsl:template match="dc:description/xbib:creatorDescription">
-        <mods:note type="triple of responsibility">
+        <mods:note type="statement of responsibility">
             <xsl:apply-templates/>
         </mods:note>
     </xsl:template>
@@ -336,7 +328,7 @@
                 </mods:relatedItem>
             </xsl:when>            
             <xsl:when test="not(local-name()='identifierAuthorityISIL')">            
-                <xsl:element name="identifier" namespace="http://www.loc.gov/mods/v3">
+                <xsl:element name="mods:identifier">
                     <xsl:attribute name="type">
                         <xsl:value-of select="translate(substring-after(local-name(),'identifierAuthority'),$ucletters,$lcletters)"/>
                     </xsl:attribute>

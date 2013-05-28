@@ -78,7 +78,7 @@ public class Iso2709Reader implements XMLReader {
      */
     public static String SCHEMA = "schema";
     /**
-     * The SaX adapter
+     * The SaX service
      */
     private MarcXchangeSaxAdapter adapter;
     /**
@@ -179,9 +179,9 @@ public class Iso2709Reader implements XMLReader {
     }
     
     /**
-     * Get the MarcXchange Sax adapter. Useful for inserting MarcXchange data
+     * Get the MarcXchange Sax service. Useful for inserting MarcXchange data
      * to the MarcXchange listener.
-     * @return the MarcXchange Sax adapter
+     * @return the MarcXchange Sax service
      */
     public MarcXchangeSaxAdapter getAdapter() {
         return adapter;

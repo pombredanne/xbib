@@ -33,8 +33,8 @@ package org.xbib.objectstorage.adapter;
 
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.adapter.container.DefaultContainer;
+import org.xbib.objectstorage.Adapter;
+import org.xbib.objectstorage.action.sql.SQLService;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -43,11 +43,11 @@ import javax.naming.directory.InitialDirContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.sql.Connection;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
-public class PropertiesAdapter extends AbstractAdapter {
+public abstract class PropertiesAdapter implements Adapter {
 
     private final static Logger logger = LoggerFactory.getLogger(PropertiesAdapter.class.getName());
     private final Properties properties = new Properties();
@@ -57,100 +57,54 @@ public class PropertiesAdapter extends AbstractAdapter {
     }
 
     public PropertiesAdapter(String name) {
-        super();
-        InputStream in = PropertiesAdapter.class.getResourceAsStream("/org/xbib/objectstorage/adapter/" + name + ".properties");
+        InputStream in = PropertiesAdapter.class.getResourceAsStream("/org/xbib/objectstorage/service/" + name + ".properties");
         if (in != null) {
             try {
                 properties.load(in);
-                // create default container
-                addContainer(new DefaultContainer(getDefaultContainerName(), "Default Container",
-                        ResourceBundle.getBundle(properties.getProperty("container_bundle"))));
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
         } else {
-            throw new IllegalArgumentException("adapter " + name + " not found");
+            throw new IllegalArgumentException("service " + name + " not found");
         }
-    }
-
-    @Override
-    public DirContext getDirContext() throws NamingException {
-        Hashtable<Object, Object> env = new Hashtable();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, getLDAPInitialContextFactory());
-        env.put(Context.PROVIDER_URL, getLDAPProviderURL());
-        env.put(Context.SECURITY_AUTHENTICATION, getLDAPSecurityAuthentication());
-        env.put(Context.SECURITY_PRINCIPAL, getLDAPSecurityPrincipal());
-        env.put(Context.SECURITY_CREDENTIALS, getLDAPSecurityCredentials());
-        env.put("ldap_basedn", getLDAPBaseDN());
-        return new InitialDirContext(env);
-    }
-
-    @Override
-    public ObjectStorageRequest newRequest() throws IOException {
-        return new DefaultRequest(this);
-    }
-
-    @Override
-    public String getDriverClassName() {
-        return properties.getProperty("driverClassName");
-    }
-
-    @Override
-    public String getConnectionSpec() {
-        return properties.getProperty("jdbc");
-    }
-
-    @Override
-    public String getUser() {
-        return properties.getProperty("user");
-    }
-
-    @Override
-    public String getPassword() {
-        return properties.getProperty("password");
-    }
-
-    @Override
-    public String getStatementBundleName() {
-        return properties.getProperty("statement_bundle");
-    }
-
-    @Override
-    public String getRoot() {
-        return properties.getProperty("root");
-    }
-
-    @Override
-    public String getDefaultContainerName() {
-        return properties.getProperty("container_name");
-    }
-
-    public String getLDAPInitialContextFactory() {
-        return properties.getProperty("ldap_initialcontextfactory");
-    }
-
-    public String getLDAPProviderURL() {
-        return properties.getProperty("ldap_providerurl");
-    }
-
-    public String getLDAPSecurityAuthentication() {
-        return properties.getProperty("ldap_securityauthentication");
-    }
-
-    public String getLDAPSecurityPrincipal() {
-        return properties.getProperty("ldap_securityprincipal");
-    }
-
-    public String getLDAPSecurityCredentials() {
-        return properties.getProperty("ldap_securitycredentials");
-    }
-
-    public String getLDAPBaseDN() {
-        return properties.getProperty("ldap_basedn");
     }
 
     @Override
     public URI getAdapterURI() {
         return URI.create(properties.getProperty("uri"));
     }
+
+    @Override
+    public DirContext getDirContext() throws NamingException {
+        Hashtable<Object, Object> env = new Hashtable();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty("ldap_initialcontextfactory"));
+        env.put(Context.PROVIDER_URL,  properties.getProperty("ldap_providerurl"));
+        env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty("ldap_securityauthentication"));
+        env.put(Context.SECURITY_PRINCIPAL, properties.getProperty("ldap_securityprincipal"));
+        env.put(Context.SECURITY_CREDENTIALS, properties.getProperty("ldap_securitycredentials"));
+        env.put("ldap_basedn",  properties.getProperty("ldap_basedn"));
+        return new InitialDirContext(env);
+    }
+
+    @Override
+    public SQLService getSQLService() throws IOException {
+        SQLService service = new SQLService();
+        try {
+            Connection connection = service.getConnection(
+                    properties.getProperty("driverClassName"),
+                    properties.getProperty("jdbc"),
+                    properties.getProperty("user"),
+                    properties.getProperty("password"));
+            service.setConnection(connection);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            throw new IOException(ex);
+        }
+        return service;
+    }
+
+    public String getBundleName() {
+        return properties.getProperty("statement_bundle");
+    }
 }
+

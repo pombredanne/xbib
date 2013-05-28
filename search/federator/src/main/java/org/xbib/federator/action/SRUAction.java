@@ -39,10 +39,11 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SRUAdapter;
-import org.xbib.sru.SRUResponseAdapter;
-import org.xbib.sru.SearchRetrieve;
-import org.xbib.sru.adapter.SRUAdapterFactory;
+import org.xbib.sru.PropertiesSRUServiceFactory;
+import org.xbib.sru.SRUService;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
+import org.xbib.sru.PropertiesSRUServiceFactory;
 
 public class SRUAction extends AbstractAction {
 
@@ -63,8 +64,8 @@ public class SRUAction extends AbstractAction {
         final String name = get(params, "name", "default");
         final int from = get(params, "from", 1);
         final int size = get(params, "size", 10);
-        final SRUAdapter adapter = SRUAdapterFactory.getAdapter(name);
-        SearchRetrieve request = new SearchRetrieve();
+        final SRUService adapter = PropertiesSRUServiceFactory.getAdapter(name);
+        SearchRetrieveRequest request = new SearchRetrieveRequest();
         try {
             adapter.connect();
             adapter.setStylesheetTransformer(transformer);
@@ -73,7 +74,7 @@ public class SRUAction extends AbstractAction {
                     .setVersion(adapter.getVersion())
                     .setRecordPacking(adapter.getRecordPacking())
                     .setRecordSchema(adapter.getRecordSchema());
-            response.setOrigin(adapter.getURI()).setListener(new SRUResponseAdapter() {
+            response.setOrigin(adapter.getURI()).setListener(new SearchRetrieveResponseAdapter() {
                 int position = from;
                 
                 @Override

@@ -32,7 +32,7 @@
 package org.xbib.federator.action;
 
 import java.util.concurrent.Callable;
-import org.xbib.sru.SearchRetrieveResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public interface Action extends Callable<Action> {

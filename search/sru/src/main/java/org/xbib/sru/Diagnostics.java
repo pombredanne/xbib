@@ -38,10 +38,14 @@ import java.util.ResourceBundle;
 public class Diagnostics extends IOException {
 
     private static final URI diagnosticBaseURI = URI.create("info:srw/diagnostic/1/");
+
     private static final ResourceBundle bundle =
             ResourceBundle.getBundle("org.xbib.sru.diagnostics");
+
     private int diagCode;
+
     private String message;
+
     private String details;
 
     public Diagnostics(int diagCode) {

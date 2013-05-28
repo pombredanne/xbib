@@ -139,10 +139,10 @@ public class ColorHighlighter extends AbstractHighlighter {
     
     /**
     * Applies a suitable background for the renderer component within the
-    * specified adapter. <p>
+    * specified service. <p>
     * 
     * This implementation applies its background or selectedBackground color
-    * (depending on the adapter's selected state) if != null. 
+    * (depending on the service's selected state) if != null.
     * Otherwise it does nothing.
     *
     * @param renderer the cell renderer component that is to be decorated
@@ -156,10 +156,10 @@ public class ColorHighlighter extends AbstractHighlighter {
     
     /**
     * Applies a suitable foreground for the renderer component within the
-    * specified adapter. <p>
+    * specified service. <p>
     * 
     * This implementation applies its foreground or selectedfForeground color
-    * (depending on the adapter's selected state) if != null. 
+    * (depending on the service's selected state) if != null.
     * Otherwise it does nothing.
     *
     * @param renderer the cell renderer component that is to be decorated

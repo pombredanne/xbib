@@ -32,7 +32,7 @@
 package org.xbib.federator.action;
 
 import java.util.Map;
-import org.xbib.sru.SearchRetrieveResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public abstract class AbstractAction implements Action {

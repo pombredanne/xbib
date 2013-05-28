@@ -37,18 +37,18 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
-public class SRUServiceFactory {
+public class SRUServiceFactory<S extends SRUService> {
 
-    private final static Map<URI, SRUAdapter> adapters = new WeakHashMap();
+    private final Map<URI, S> services = new WeakHashMap();
     private final static SRUServiceFactory instance = new SRUServiceFactory();
 
     private SRUServiceFactory() {
-        ServiceLoader<SRUAdapter> loader = ServiceLoader.load(SRUAdapter.class);
-        Iterator<SRUAdapter> iterator = loader.iterator();
+        ServiceLoader<SRUService> loader = ServiceLoader.load(SRUService.class);
+        Iterator<SRUService> iterator = loader.iterator();
         while (iterator.hasNext()) {
-            SRUAdapter adapter = iterator.next();
-            if (!adapters.containsKey(adapter.getURI())) {
-                adapters.put(adapter.getURI(), adapter);
+            SRUService service = iterator.next();
+            if (!services.containsKey(service.getURI())) {
+                services.put(service.getURI(), (S)service);
             }
         }
     }
@@ -57,21 +57,24 @@ public class SRUServiceFactory {
         return instance;
     }
 
-    public SRUAdapter getDefaultAdapter() {
-        return adapters.isEmpty() ? null : adapters.entrySet().iterator().next().getValue();
-    }
-
-    public SRUAdapter getAdapter(URI uri) {
-        if (adapters.containsKey(uri)) {
-            return adapters.get(uri);
+    public S getDefaultService() {
+        if (services.isEmpty() ) {
+            throw new IllegalArgumentException("No SRU service found");
         }
-        throw new IllegalArgumentException("SRU adapter " + uri + " not found in " + adapters);
+        return services.entrySet().iterator().next().getValue();
     }
 
-    public SRUAdapter getAdapter(String className) 
+    public S getService(URI uri) {
+        if (services.containsKey(uri)) {
+            return services.get(uri);
+        }
+        throw new IllegalArgumentException("SRU service " + uri + " not found in " + services);
+    }
+
+    public S getService(String className)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Class<?> cls = Class.forName(className);
-        return (SRUAdapter)cls.newInstance();
+        return (S)cls.newInstance();
     }
 
 }

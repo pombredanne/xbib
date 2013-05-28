@@ -43,15 +43,18 @@ public final class CQLGenerator
         implements Visitor, QueryModel, BreadcrumbWriter {
 
     /** helper for managing our CQL query model (facet/filter/option contexts, breadcrumb trails etc.) */
-    private CQLQueryModel model = new CQLQueryModel();
+    private CQLQueryModel model;
+
     /** a replacement string */
     private String replacementString;
+
     /** string to be replaced */
     private String stringToBeReplaced;
 
     public CQLGenerator() {
         this.replacementString = null;
         this.stringToBeReplaced = null;
+        this.model = new CQLQueryModel();
     }
 
     public CQLGenerator model(CQLQueryModel model) {

@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * Pattern based HighlightPredicate for searching. Highlights
- * the current adapter cell if the value matches the pattern. 
+ * the current service cell if the value matches the pattern.
  * The highlight scope can be limited to a certain column and
  * row. <p>
  * 
@@ -74,7 +74,7 @@ public class SearchPredicate implements HighlightPredicate {
      * Note: the coordinates are asymmetric - rows are in view- and
      * column in model-coordinates - due to corresponding methods in
      * ComponentAdapter. Hmm... no need to? This happens on the
-     * current adapter state which is view always, so could use view
+     * current service state which is view always, so could use view
      * only? 
      * 
      * @param pattern the Pattern to test the cell value against
@@ -123,7 +123,7 @@ public class SearchPredicate implements HighlightPredicate {
      * Note: the coordinates are asymmetric - rows are in view- and
      * column in model-coordinates - due to corresponding methods in
      * ComponentAdapter. Hmm... no need to? This happens on the
-     * current adapter state which is view always, so could use view
+     * current service state which is view always, so could use view
      * only? 
      * 
      * @param regex the Pattern to test the cell value against
@@ -183,7 +183,7 @@ public class SearchPredicate implements HighlightPredicate {
      * @return
      */
     private boolean test(Component renderer, ComponentAdapter adapter) {
-        // PENDING JW: why convert here? we are focused on the adapter's cell
+        // PENDING JW: why convert here? we are focused on the service's cell
         // looks like an oversight as of ol' days ;-)
          int  columnToTest = adapter.convertColumnIndexToModel(adapter.column);
          String value = adapter.getString(columnToTest);

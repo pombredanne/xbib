@@ -39,16 +39,21 @@ import java.io.Writer;
 
 public abstract class AbstractResponse implements Response {
 
-    protected OutputStream out;
-    protected Writer writer;
+    private OutputStream out;
+
+    private Writer writer;
+
     private String encoding;
 
-    public AbstractResponse(Writer writer) {
+    protected AbstractResponse() {
+    }
+
+    protected AbstractResponse(Writer writer) {
         this.writer = writer;
         this.encoding = System.getProperty("file.encoding");
     }
 
-    public AbstractResponse(OutputStream out, String encoding) throws UnsupportedEncodingException {
+    protected AbstractResponse(OutputStream out, String encoding) throws UnsupportedEncodingException {
         this.out = out;
         this.encoding = encoding;
         this.writer = new OutputStreamWriter(out, encoding);

@@ -23,7 +23,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 
 /**
- * An Abdera managed collection adapter for ElasticSearch DSL query language.
+ * An Abdera managed collection service for ElasticSearch DSL query language.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */

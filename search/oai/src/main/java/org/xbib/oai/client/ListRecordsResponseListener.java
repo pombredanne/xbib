@@ -100,10 +100,10 @@ public class ListRecordsResponseListener extends AbstractResponseListener {
             if (status >= 200 && status < 300) {
                 XMLFilterReader reader = new ListRecordsFilterReader();
                 InputSource source = new InputSource(new StringReader(result.getBody()));
-                StreamResult target = response.getOutput() != null
+                StreamResult streamResult = response.getOutput() != null
                         ? new StreamResult(response.getOutput())
                         : new StreamResult(response.getWriter());
-                transformer.setSource(reader, source).setTarget(target).apply();
+                transformer.setSource(reader, source).setResult(streamResult).transform();
                 // check for OAI errors
                 if ("noRecordsMatch".equals(response.getError())) {
                     throw new NoRecordsMatchException("metadataPrefix=" + request.getMetadataPrefix()

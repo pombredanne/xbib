@@ -54,12 +54,19 @@ public class ESGenerator implements Visitor {
      */
     private static final ResourceBundle DEFAULT_BUNDLE =
             ResourceBundle.getBundle("org.xbib.query.cql.elasticsearch.default");
+
     private ResourceBundle bundle;
+
     private QueryModel model;
+
     private Stack<Node> stack;
+
     private SourceGenerator sourceGen;
+
     private QueryGenerator queryGen;
+
     private int from;
+
     private int size;
 
     /**
@@ -89,7 +96,10 @@ public class ESGenerator implements Visitor {
             // something weird went wrong
         }
         return this;
+    }
 
+    public QueryModel getModel() {
+        return model;
     }
 
     public ESGenerator setFrom(String from) {
@@ -136,9 +146,7 @@ public class ESGenerator implements Visitor {
         return size;
     }
 
-    public ESGenerator setFacet(String facetName, String facetType) throws IOException {
-        return this;
-    }
+
 
     /**
      * Return only Elasticsearch query string
@@ -170,7 +178,7 @@ public class ESGenerator implements Visitor {
             }
             Node querynode = stack.pop();
             if (querynode instanceof Token) {
-                querynode = new ESExpression(Operator.ALL, new ESName(model.getESIndex("cql.allIndexes")), querynode);
+                querynode = new ESExpression(Operator.ALL, new ESName(model.getFieldOfIndex("cql.allIndexes")), querynode);
             }
             queryGen.visit((ESExpression) querynode);
             // filter must precede sort
@@ -270,7 +278,7 @@ public class ESGenerator implements Visitor {
                 Node esnode = stack.pop();
                 // add default context if node is a literal without a context
                 if (esnode instanceof Token && TokenType.STRING.equals(esnode.getType())) {
-                    esnode = new ESExpression(Operator.ALL, new ESName(model.getESIndex("cql.allIndexes")), esnode);
+                    esnode = new ESExpression(Operator.ALL, new ESName(model.getFieldOfIndex("cql.allIndexes")), esnode);
                 }
                 if (stack.isEmpty()) {
                     // unary expression
@@ -280,7 +288,7 @@ public class ESGenerator implements Visitor {
                     Node esnode2 = stack.pop();
                     // add default context if node is a literal without context
                     if (esnode2 instanceof Token && TokenType.STRING.equals(esnode2.getType())) {
-                        esnode2 = new ESExpression(Operator.ALL, new ESName(model.getESIndex("cql.allIndexes")), esnode2);
+                        esnode2 = new ESExpression(Operator.ALL, new ESName(model.getFieldOfIndex("cql.allIndexes")), esnode2);
                     }
                     esnode = new ESExpression(op, esnode2, esnode);
                 }
@@ -395,7 +403,7 @@ public class ESGenerator implements Visitor {
     @Override
     public void visit(Index node) {
         String context = node.getContext();
-        String name = model.getESIndex(context != null ? context + "." + node.getName() : node.getName());
+        String name = model.getFieldOfIndex(context != null ? context + "." + node.getName() : node.getName());
         ESName esname = new ESName(name, model.getVisibility(context));
         esname.setType(model.getESType(name));
         stack.push(esname);
@@ -403,7 +411,7 @@ public class ESGenerator implements Visitor {
 
     @Override
     public void visit(SimpleName node) {
-        stack.push(new ESName(model.getESIndex(node.getName())));
+        stack.push(new ESName(model.getFieldOfIndex(node.getName())));
     }
 
     private Node termToES(Term node) {

@@ -31,9 +31,9 @@
  */
 package org.xbib.elasticsearch.mock;
 
-import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;

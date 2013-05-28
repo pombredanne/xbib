@@ -122,7 +122,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  * // highlight condition: gold merits
  * HighlightPredicate predicate = new HighlightPredicate() {
  *    public boolean isHighlighted(Component renderer,
- *                     ComponentAdapter adapter) {
+ *                     ComponentAdapter service) {
  *       if (!(value instanceof Contributor)) return false;              
  *       return ((Contributor) value).hasGold();
  *    }
@@ -1029,7 +1029,7 @@ public class JXList extends JList {
 
     /**
      * Convenience to access a configured ComponentAdapter.
-     * Note: the column index of the configured adapter is always 0.
+     * Note: the column index of the configured service is always 0.
      * 
      * @param index the row index in view coordinates, must be valid.
      * @return the configured ComponentAdapter.
@@ -1042,7 +1042,7 @@ public class JXList extends JList {
     }
     
     /**
-     * A component adapter targeted at a JXList.
+     * A component service targeted at a JXList.
      */
     protected static class ListAdapter extends ComponentAdapter {
         private final JXList list;

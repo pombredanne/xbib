@@ -55,15 +55,17 @@ public final class QueryModel {
 
     /** the definition bundle for this query model */
     private final ResourceBundle bundle;
+
     private final Map<String, String> options;
+
     private final Map<String, ESExpression> conjunctivefilters;
+
     private final Map<String, ESExpression> disjunctivefilters;
+
     /** the FQL facets */
     private final List<Facet<String>> facets;
-    private ESExpression sortexpr; 
-    /** result size */
-   // private int from = 0;
-   // private int size = 10;
+
+    private ESExpression sortexpr;
 
     /**
      * Constructor
@@ -83,7 +85,7 @@ public final class QueryModel {
      * @param index the index
      * @return the mapped field from the index
      */
-    public String getESIndex(String index) {
+    public String getFieldOfIndex(String index) {
         try {
             return bundle.getString(index);
         } catch (MissingResourceException e) {
@@ -170,7 +172,8 @@ public final class QueryModel {
 
     /**
      * Add option. An option is mapped to Elasticsearch JSON.
-     * @param option
+     * @param key
+     * @param value
      */
     public void addOption(String key, String value) {
         try {
@@ -180,22 +183,6 @@ public final class QueryModel {
         }
     }    
 
-    /*public void setFrom(int from) {
-        this.from = from;
-    }    
-
-    public int getFrom() {
-        return getIntValue("option.offset", from);
-    }
-    
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public int getSize() {
-        return getIntValue("option.length", size);
-    }*/
-    
     public void addConjunctiveFilter(Filter<Node> filter) {
         addFilter(conjunctivefilters, filter);
     }
@@ -287,7 +274,7 @@ public final class QueryModel {
 
     /**
      * Helper method to add a filter
-     * @param list the filter list
+     * @param filters the filter list
      * @param filter the filter
      */
     private void addFilter(Map<String, ESExpression> filters, Filter<Node> filter) {

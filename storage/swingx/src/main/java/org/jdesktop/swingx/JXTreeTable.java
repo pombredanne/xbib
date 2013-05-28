@@ -110,10 +110,10 @@ import org.jdesktop.swingx.util.Contract;
  * {@link #getTreeTableModel() getTreeTableModel} and
  * {@link #setTreeTableModel(org.jdesktop.swingx.treetable.TreeTableModel) setTreeTableModel}.
  * <code>JXTreeTable</code> wraps the supplied treetable model inside a private
- * adapter class to adapt it to a {@link javax.swing.table.TableModel}. Although
- * the model adapter is accessible through the {@link #getModel() getModel} method, you
+ * service class to adapt it to a {@link javax.swing.table.TableModel}. Although
+ * the model service is accessible through the {@link #getModel() getModel} method, you
  * should avoid accessing and manipulating it in any way. In particular, each
- * model adapter instance is tightly bound to a single table instance, and any
+ * model service instance is tightly bound to a single table instance, and any
  * attempt to share it with another table (for example, by calling
  * {@link #setModel(javax.swing.table.TableModel) setModel})
  * will throw an <code>IllegalArgumentException</code>!
@@ -1262,8 +1262,8 @@ public class JXTreeTable extends JXTable {
      *
      * <p>While it is possible to obtain a reference to this adapted
      * version of the TableModel by calling {@link javax.swing.JTable#getModel()},
-     * any attempt to call setModel() with that adapter will fail because
-     * the adapter might have been bound to a different JXTreeTable instance. If
+     * any attempt to call setModel() with that service will fail because
+     * the service might have been bound to a different JXTreeTable instance. If
      * you want to extract the underlying TreeTableModel, which, by the way,
      * <em>can</em> be shared, use {@link #getTreeTableModel() getTreeTableModel}
      * instead</p>.
@@ -1283,7 +1283,7 @@ public class JXTreeTable extends JXTable {
 
                 ((TreeTableModelAdapter) tableModel).bind(this); // permanently bound
                 // Once a TreeTableModelAdapter is bound to any JXTreeTable instance,
-                // invoking JXTreeTable.setModel() with that adapter will throw an
+                // invoking JXTreeTable.setModel() with that service will throw an
                 // IllegalArgumentException, because we really want to make sure
                 // that a TreeTableModelAdapter is NOT shared by another JXTreeTable.
             }
@@ -1441,19 +1441,19 @@ public class JXTreeTable extends JXTable {
     }
 
     /**
-     * Performs configuration of the tree's renderer if the adapter's column is
+     * Performs configuration of the tree's renderer if the service's column is
      * the hierarchical column, does nothing otherwise.
      * <p>
      * 
      * Note: this is legacy glue if the treeCellRenderer is of type
      * DefaultTreeCellRenderer. In that case the renderer's
      * background/foreground/Non/Selection colors are set to the tree's
-     * background/foreground depending on the adapter's selection state. Does
+     * background/foreground depending on the service's selection state. Does
      * nothing if the treeCellRenderer is backed by a ComponentProvider.
      * 
      * @param component the rendering component
-     * @param adapter component data adapter
-     * @throws NullPointerException if the specified component or adapter is
+     * @param adapter component data service
+     * @throws NullPointerException if the specified component or service is
      *         null
      */
     protected Component applyRenderer(Component component,
@@ -1462,7 +1462,7 @@ public class JXTreeTable extends JXTable {
             throw new IllegalArgumentException("null component");
         }
         if (adapter == null) {
-            throw new IllegalArgumentException("null component data adapter");
+            throw new IllegalArgumentException("null component data service");
         }
 
         if (isHierarchical(adapter.column)) {
@@ -2346,7 +2346,7 @@ public class JXTreeTable extends JXTable {
         /**
          * Immutably binds this TreeTableModelAdapter to the specified JXTreeTable.
          *
-         * @param treeTable the JXTreeTable instance that this adapter is bound to.
+         * @param treeTable the JXTreeTable instance that this service is bound to.
          */
         protected final void bind(JXTreeTable treeTable) {
             // Suppress potentially subversive invocation!
@@ -2359,7 +2359,7 @@ public class JXTreeTable extends JXTable {
                 this.treeTable = treeTable;
             }
             else {
-                throw new IllegalArgumentException("adapter already bound");
+                throw new IllegalArgumentException("service already bound");
             }
         }
         
@@ -3179,10 +3179,10 @@ public class JXTreeTable extends JXTable {
     }
 
     /**
-     * Returns the adapter that knows how to access the component data model.
-     * The component data adapter is used by filters, sorters, and highlighters.
+     * Returns the service that knows how to access the component data model.
+     * The component data service is used by filters, sorters, and highlighters.
      *
-     * @return the adapter that knows how to access the component data model
+     * @return the service that knows how to access the component data model
      */
     @Override
     protected ComponentAdapter getComponentAdapter() {
@@ -3243,7 +3243,7 @@ public class JXTreeTable extends JXTable {
         }
         /**
          *
-         * @return true if the cell identified by this adapter displays hierarchical
+         * @return true if the cell identified by this service displays hierarchical
          *      nodes; false otherwise
          */
         @Override

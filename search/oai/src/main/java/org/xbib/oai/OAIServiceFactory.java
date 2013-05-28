@@ -66,7 +66,7 @@ public class OAIServiceFactory {
         if (adapters.containsKey(uri)) {
             return adapters.get(uri);
         }
-        throw new IllegalArgumentException("OAI adapter " + uri + " not found in " + adapters);
+        throw new IllegalArgumentException("OAI service " + uri + " not found in " + adapters);
     }
 
     public OAIAdapter getAdapter(String className) 

@@ -59,22 +59,49 @@ public class FTPSession implements Session<StringPacket> {
 
     public String[] list(String path) throws IOException {
         if (client != null) {
-            client.cwd(path);
-            return client.listNames();
+            return client.listNames(path);
         } else {
             return null;
         }
     }
 
-    public void upload(InputStream in, String name) throws IOException {
+    public boolean exists(String path) throws IOException {
         if (client != null) {
-            client.storeFile(name, in);
+            return client.listFiles(path).length > 0;
+        } else {
+            return false;
         }
     }
 
-    public void download(String name, OutputStream out) throws IOException {
+    public void mkdir(String path) throws IOException {
+        if (client == null) {
+            return;
+        } else {
+            String[] s = path.split("/");
+            if (s.length == 1) {
+                if (s[0].length() > 0) {
+                    client.makeDirectory(s[0]);
+                    client.changeWorkingDirectory(s[0]);
+                }
+            } else {
+                if (s[0].length() > 0) {
+                    client.makeDirectory(s[0]);
+                    client.changeWorkingDirectory(s[0]);
+                }
+                mkdir(path.substring(path.indexOf('/')+1));
+            }
+        }
+    }
+
+    public void upload(InputStream in, String fileName) throws IOException {
         if (client != null) {
-            client.retrieveFile(name, out);
+            client.storeFile(fileName, in);
+        }
+    }
+
+    public void download(String fileName, OutputStream out) throws IOException {
+        if (client != null) {
+            client.retrieveFile(fileName, out);
         }
     }
 }

@@ -35,8 +35,19 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.Action;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 public abstract class AbstractAction implements Action {
 
     protected final static Logger logger = LoggerFactory.getLogger(AbstractAction.class.getName());
 
+    public Action waitFor() throws IOException {
+        return waitFor(0L, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public Action waitFor(long l, TimeUnit tu) throws IOException {
+        return this;
+    }
 }

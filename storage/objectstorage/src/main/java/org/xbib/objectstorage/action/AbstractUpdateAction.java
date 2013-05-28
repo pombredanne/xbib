@@ -48,7 +48,7 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
     }
 
     @Override
-    public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
         long t0 = System.currentTimeMillis();
         SQLService service;
         if (request.getAdapter() instanceof AbstractAdapter) {
@@ -72,6 +72,7 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
                 logger.debug("{} rows, update took {} ms", rows, t1 - t0);
             }
         }
+        return this;
     }
 
     @Override

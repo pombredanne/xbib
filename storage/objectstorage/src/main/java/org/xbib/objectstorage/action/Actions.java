@@ -57,4 +57,10 @@ public class Actions implements Action {
     public Action waitFor(long l, TimeUnit tu) throws IOException {
         return this;
     }
+
+    @Override
+    public Action waitFor() throws IOException {
+        return this;
+    }
+
 }

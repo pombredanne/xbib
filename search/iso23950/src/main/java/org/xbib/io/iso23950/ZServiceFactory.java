@@ -31,47 +31,53 @@
  */
 package org.xbib.io.iso23950;
 
+import org.xbib.io.Connection;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
 public class ZServiceFactory {
 
-    private final static Map<URI, ZAdapter> adapters = new WeakHashMap();
     private final static ZServiceFactory instance = new ZServiceFactory();
 
+    //private final static Map<URI, ZService> services = new WeakHashMap();
+
     private ZServiceFactory() {
-        ServiceLoader<ZAdapter> loader = ServiceLoader.load(ZAdapter.class);
-        Iterator<ZAdapter> iterator = loader.iterator();
+    }
+
+    /*static {
+        ServiceLoader<ZService> loader = ServiceLoader.load(ZService.class);
+        Iterator<ZService> iterator = loader.iterator();
         while (iterator.hasNext()) {
-            ZAdapter adapter = iterator.next();
-            if (!adapters.containsKey(adapter.getURI())) {
-                adapters.put(adapter.getURI(), adapter);
+            ZService adapter = iterator.next();
+            if (!services.containsKey(adapter.getURI())) {
+                services.put(adapter.getURI(), adapter);
             }
         }
-    }
+    }*/
 
-    public static ZServiceFactory getInstance() {
-        return instance;
-    }
-
-    public ZAdapter getDefaultAdapter() {
-        return adapters.isEmpty() ? null : adapters.entrySet().iterator().next().getValue();
-    }
-
-    public ZAdapter getAdapter(URI uri) {
-        if (adapters.containsKey(uri)) {
-            return adapters.get(uri);
+    public static PropertiesZClient getService(String name) throws IOException {
+        Properties properties = new Properties();
+        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/io/iso23950/service/" + name + ".properties");
+        if (in != null) {
+            properties.load(in);
+        } else {
+            throw new IllegalArgumentException("service " + name + " not found");
         }
-        throw new IllegalArgumentException("Z adapter " + uri + " not found in " + adapters);
-    }
-
-    public ZAdapter getAdapter(String className) 
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class<?> cls = Class.forName(className);
-        return (ZAdapter)cls.newInstance();
+        URI uri = URI.create(properties.getProperty("uri"));
+        Connection<ZSession> connection = ConnectionService.getInstance()
+                .getConnectionFactory(uri.getScheme())
+                .getConnection(uri);
+        ZSession session = connection.createSession();
+        return session.createClient(properties);
     }
 
 }

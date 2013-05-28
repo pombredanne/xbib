@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 import org.jdesktop.swingx.renderer.StringValues;
 
 /**
- * Abstract base class for all component data adapter classes. A
+ * Abstract base class for all component data service classes. A
  * <code>ComponentAdapter</code> allows the decoration collaborators like f.i.
  * {@link Highlighter} to interact with a {@link #target} component through a
  * common API. <p>
@@ -54,8 +54,8 @@ import org.jdesktop.swingx.renderer.StringValues;
  * HighlightPredicate feverWarning = new HighlightPredicate() {
  *     int temperatureColumn = 10;
  * 
- *     public boolean isHighlighted(Component component, ComponentAdapter adapter) {
- *         return hasFever(adapter.getValue(temperatureColumn));
+ *     public boolean isHighlighted(Component component, ComponentAdapter service) {
+ *         return hasFever(service.getValue(temperatureColumn));
  *     }
  * 
  *     private boolean hasFever(Object value) {
@@ -68,7 +68,7 @@ import org.jdesktop.swingx.renderer.StringValues;
  * Highlighter hl = new ColorHighlighter(feverWarning, Color.RED, null);
  * </code></pre>
  * 
- * The adapter is responsible for mapping column and row coordinates.
+ * The service is responsible for mapping column and row coordinates.
  * 
  * All input column indices are in model coordinates with exactly two
  * exceptions:
@@ -111,16 +111,16 @@ public abstract class ComponentAdapter {
      * Constructs a ComponentAdapter, setting the specified component as the
      * target component.
      *
-     * @param component target component for this adapter
+     * @param component target component for this service
      */
     public ComponentAdapter(JComponent component) {
         target = component;
     }
 
     /**
-     * Returns the component which is this adapter's target.
+     * Returns the component which is this service's target.
      * 
-     * @return the component which is this adapter's target.
+     * @return the component which is this service's target.
      */
     public JComponent getComponent() {
         return target;
@@ -301,8 +301,8 @@ public abstract class ComponentAdapter {
 
     
     /**
-     * Returns the String representation of the value of the cell identified by this adapter. That is,
-     * for the at position (adapter.row, adapter.column) in view coordinates.<p>
+     * Returns the String representation of the value of the cell identified by this service. That is,
+     * for the at position (service.row, service.column) in view coordinates.<p>
      * 
      * NOTE: this implementation assumes that view coordinates == model 
      * coordinates, that is simply calls getValueAt(this.row, this.column). It is
@@ -312,7 +312,7 @@ public abstract class ComponentAdapter {
      * This implementation messages the StringValue.TO_STRING with the getValue,
      * subclasses should re-implement and use the API appropriate for the target component type.
      * 
-     * @return the String representation of value of the cell identified by this adapter
+     * @return the String representation of value of the cell identified by this service
      * @see #getValueAt(int, int)
      * @see #getFilteredValueAt(int, int)
      * @see #getValue(int)
@@ -323,10 +323,10 @@ public abstract class ComponentAdapter {
 
     /**
      * Returns the String representation of the value of the cell identified by the current 
-     * adapter row and the given column index in model coordinates.<p>
+     * service row and the given column index in model coordinates.<p>
      * 
      * @param modelColumnIndex the column index in model coordinates 
-     * @return the String representation of the value of the cell identified by this adapter
+     * @return the String representation of the value of the cell identified by this service
      * 
      * @see #getFilteredStringAt(int, int)
      * @see #getString()
@@ -343,7 +343,7 @@ public abstract class ComponentAdapter {
      * Highlighters are interested in view values but might need to access
      * non-visible columns for testing. While it is possible to access 
      * row coordinates different from the current (that is this.row) it is not
-     * safe to do so for row > this.row because the adapter doesn't allow to
+     * safe to do so for row > this.row because the service doesn't allow to
      * query the count of visible rows.<p>
      * 
      * This implementation messages the StringValue.TO_STRING with the filteredValue,
@@ -378,15 +378,15 @@ public abstract class ComponentAdapter {
     }
     
     /**
-     * Returns the value of the cell identified by this adapter. That is,
-     * for the at position (adapter.row, adapter.column) in view coordinates.<p>
+     * Returns the value of the cell identified by this service. That is,
+     * for the at position (service.row, service.column) in view coordinates.<p>
      * 
      * NOTE: this implementation assumes that view coordinates == model 
      * coordinates, that is simply calls getValueAt(this.row, this.column). It is
      * up to subclasses to override appropriately is they support model/view
      * coordinate transformation.
      * 
-     * @return the value of the cell identified by this adapter
+     * @return the value of the cell identified by this service
      * @see #getValueAt(int, int)
      * @see #getFilteredValueAt(int, int)
      * @see #getValue(int)
@@ -398,10 +398,10 @@ public abstract class ComponentAdapter {
     
     /**
      * Returns the value of the cell identified by the current 
-     * adapter row and the given column index in model coordinates.<p>
+     * service row and the given column index in model coordinates.<p>
      * 
      * @param modelColumnIndex the column index in model coordinates 
-     * @return the value of the cell identified by this adapter
+     * @return the value of the cell identified by this service
      * @see #getValueAt(int, int)
      * @see #getFilteredValueAt(int, int)
      * @see #getValue(int)
@@ -418,7 +418,7 @@ public abstract class ComponentAdapter {
      * Highlighters are interested in view values but might need to access
      * non-visible columns for testing. While it is possible to access 
      * row coordinates different from the current (that is this.row) it is not
-     * safe to do so for row > this.row because the adapter doesn't allow to
+     * safe to do so for row > this.row because the service doesn't allow to
      * query the count of visible rows.
      * 
      * @param row the row of the cell in view coordinates
@@ -433,34 +433,34 @@ public abstract class ComponentAdapter {
     //----------------------- accessing the target's view state
 
     /**
-     * Returns the bounds of the cell identified by this adapter.<p>
+     * Returns the bounds of the cell identified by this service.<p>
      * 
-     * @return the bounds of the cell identified by this adapter
+     * @return the bounds of the cell identified by this service
      */
     public Rectangle getCellBounds() {
         return target.getBounds();
     }
 
     /**
-     * Returns true if the cell identified by this adapter currently has focus.
+     * Returns true if the cell identified by this service currently has focus.
      * Otherwise, it returns false.
      *
-     * @return true if the cell identified by this adapter currently has focus;
+     * @return true if the cell identified by this service currently has focus;
      *  Otherwise, return false
      */
     public abstract boolean hasFocus();
 
     /**
-     * Returns true if the cell identified by this adapter is currently selected.
+     * Returns true if the cell identified by this service is currently selected.
      * Otherwise, it returns false.
      *
-     * @return true if the cell identified by this adapter is currently selected;
+     * @return true if the cell identified by this service is currently selected;
      *  Otherwise, return false
      */
     public abstract boolean isSelected();
 
     /**
-     * Returns {@code true} if the cell identified by this adapter is editable,
+     * Returns {@code true} if the cell identified by this service is editable,
      * {@code false} otherwise.
      * 
      * @return {@code true} if the cell is editable, {@code false} otherwise
@@ -468,12 +468,12 @@ public abstract class ComponentAdapter {
     public abstract boolean isEditable();
     
     /**
-     * Returns true if the cell identified by this adapter is currently expanded.
+     * Returns true if the cell identified by this service is currently expanded.
      * Otherwise, it returns false. For components that do not support
      * hierarchical data, this method always returns true because the cells in
      * such components can never be collapsed.
      *
-     * @return true if the cell identified by this adapter is currently expanded;
+     * @return true if the cell identified by this service is currently expanded;
      *     Otherwise, return false
      */
     public boolean isExpanded() {
@@ -481,12 +481,12 @@ public abstract class ComponentAdapter {
     }
 
     /**
-     * Returns true if the cell identified by this adapter is a leaf node.
+     * Returns true if the cell identified by this service is a leaf node.
      * Otherwise, it returns false. For components that do not support
      * hierarchical data, this method always returns true because the cells in
      * such components can never have children.
      *
-     * @return true if the cell identified by this adapter is a leaf node;
+     * @return true if the cell identified by this service is a leaf node;
      *     Otherwise, return false
      */
     public boolean isLeaf() {
@@ -494,12 +494,12 @@ public abstract class ComponentAdapter {
     }
 
     /**
-     * Returns true if the cell identified by this adapter displays the hierarchical node.
+     * Returns true if the cell identified by this service displays the hierarchical node.
      * Otherwise, it returns false. For components that do not support
      * hierarchical data, this method always returns false because the cells in
      * such components can never have children.
      *
-     * @return true if the cell identified by this adapter displays the hierarchical node;
+     * @return true if the cell identified by this service displays the hierarchical node;
      *  Otherwise, return false
      */
     public boolean isHierarchical() {
@@ -510,7 +510,7 @@ public abstract class ComponentAdapter {
      * Returns the depth of this row in the hierarchy where the root is 0. For
      * components that do not contain hierarchical data, this method returns 1.
      * 
-     * @return the depth for this adapter
+     * @return the depth for this service
      */
     public int getDepth() {
         return 1; // sensible default for JList and JTable

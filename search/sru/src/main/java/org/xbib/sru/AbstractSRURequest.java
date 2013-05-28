@@ -32,14 +32,11 @@
 package org.xbib.sru;
 
 import java.net.URI;
-import org.xbib.io.Request;
 
-public abstract class AbstractSRURequest implements Request {
+public abstract class AbstractSRURequest implements SRURequest {
 
     private URI uri;
-    private String username;
-    private String password;
-    
+
     public AbstractSRURequest setURI(URI uri) {
         this.uri = uri;
         return this;
@@ -48,24 +45,7 @@ public abstract class AbstractSRURequest implements Request {
     public URI getURI() {
         return uri;
     }
-   
-    public AbstractSRURequest setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-    
-    public String getUsername() {
-        return username;
-    }
 
-    public AbstractSRURequest setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-    
-    public String getPassword() {
-        return password;
-    }    
 }
 
 

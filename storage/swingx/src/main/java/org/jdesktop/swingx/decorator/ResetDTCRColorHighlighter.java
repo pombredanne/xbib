@@ -35,7 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * which is different from other types of renderers. The
  * consequence of the internal color handling is that there's
  * a color memory which must be reset somehow. The "old" hack around
- * reset the xxColors of all types of renderers to the adapter's
+ * reset the xxColors of all types of renderers to the service's
  * target XXColors, introducing #178-swingx (Highlighgters must not
  * change any colors except those for which their color properties are
  * explicitly set).<p>

@@ -47,7 +47,7 @@ public class OAIAdapterFactory {
 
     public static OAIAdapter getAdapter(String name) {
         Properties properties = new Properties();
-        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/adapter/" + name + ".properties");
+        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/service/" + name + ".properties");
         if (in != null) {
             try {
                 properties.load(in);
@@ -55,7 +55,7 @@ public class OAIAdapterFactory {
                 logger.error(ex.getMessage(), ex);
             }
         } else {
-            throw new IllegalArgumentException("adapter " + name + " not found");
+            throw new IllegalArgumentException("service " + name + " not found");
         }
         return new OAIPropertiesAdapter(properties);
     }

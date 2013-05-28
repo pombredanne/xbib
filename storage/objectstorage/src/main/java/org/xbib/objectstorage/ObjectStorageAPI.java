@@ -37,10 +37,8 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.spi.container.ContainerRequest;
 import org.xbib.date.DateUtil;
 import org.xbib.jersey.filter.PasswordSecurityContext;
-import org.xbib.jersey.filter.PasswordSecurityFilter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.objectstorage.adapter.container.rows.ItemInfoRow;
 import org.xbib.util.ExceptionFormatter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +60,9 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.security.Principal;
 import java.util.concurrent.TimeUnit;
 
@@ -73,8 +73,9 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
 
     public final static String VERSION = "v1";
 
-    private final static ObjectStorageAdapter adapter =
-            ObjectStorageAdapterService.getInstance().getDefaultAdapter();
+    private final static Adapter adapter =
+            ObjectStorageAdapterService.getInstance()
+                    .getAdapter(URI.create("http://xbib.org/objectstorage/remotefilesystem"));
 
     @Context HttpServletRequest servletRequest;
     @Context HttpServletResponse servletResponse;
@@ -175,22 +176,13 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             return headContainer(servletResponse, securityContext, uriInfo, container);
         }
         logger.debug("getContainer(): {} 1={} 2={}", uriInfo.getAbsolutePath(), securityContext);
-        // I hate jersey
-        if (securityContext instanceof ContainerRequest) {
-            ContainerRequest cr = (ContainerRequest)securityContext;
-            SecurityContext sc = cr.getSecurityContext();
-            logger.debug("securitycontext = {}", sc);
-            if (sc instanceof PasswordSecurityContext) {
-                String pw = ((PasswordSecurityContext)sc).getPassword();
-                logger.debug("detected password {}", pw);
-            }
-        }
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
-            adapter.connect(uriInfo.getAbsolutePath());
-            Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest()
+            Container cnt = adapter.connect(container, getPasswordSecurityContext(securityContext),
+                    uriInfo.getAbsolutePath());
+            Principal principal = cnt.getPrincipal(securityContext);
+            ObjectStorageRequest request = cnt.newRequest()
                     .setUser(principal.getName())
                     .addStringParameter(CONTAINER_PARAMETER, container)
                     .addStringParameter(STATE_PARAMETER, status)
@@ -201,10 +193,10 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             logger.debug("getContainer(): principal={} request={}",
                     principal.getName(),
                     request.toString());
-            Action action = adapter.getContainerGetAction(container);
+            Action action = cnt.getContainerGetAction();
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
-            adapter.disconnect();
+            adapter.disconnect(cnt);
             return response.getResponse();
         } catch (Exception e) {
             return Response.serverError()
@@ -223,18 +215,19 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
-            adapter.connect(uriInfo.getAbsolutePath());
-            Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest()
+            Container cnt = adapter.connect(container,
+                    getPasswordSecurityContext(securityContext), uriInfo.getAbsolutePath());
+            Principal principal = cnt.getPrincipal(securityContext);
+            ObjectStorageRequest request = cnt.newRequest()
                     .setUser(principal.getName())
                     .addStringParameter(CONTAINER_PARAMETER, container);
             logger.debug("headContainer(): principal={} request={}",
                     principal.getName(),
                     request.toString());
-            Action action = adapter.getContainerHeadAction(container);
+            Action action = cnt.getContainerHeadAction();
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
-            adapter.disconnect();
+            adapter.disconnect(cnt);
             return response.getResponse(); // headers, no body
         } catch (Exception e) {
             return Response.serverError()
@@ -280,19 +273,20 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             if (servletRequest.getMethod().equalsIgnoreCase("head")) {
                 return headItem(servletResponse, securityContext, uriInfo, container, item);
             } else {
-                adapter.connect(uriInfo.getAbsolutePath());
-                Principal principal = adapter.getPrincipal(securityContext);
-                ObjectStorageRequest request = adapter.newRequest()
+                Container cnt = adapter.connect(container,
+                        getPasswordSecurityContext(securityContext), uriInfo.getAbsolutePath());
+                Principal principal = cnt.getPrincipal(securityContext);
+                ObjectStorageRequest request = cnt.newRequest()
                         .setUser(principal.getName())
                         .setContainer(container)
                         .setItem(item);
                 logger.debug("getItem(): principal={} request={}",
                         principal.getName(),
                         request.toString());
-                Action action = adapter.getItemGetAction(container);
+                Action action = cnt.getItemGetAction();
                 action.execute(request, response);
                 action.waitFor(0, TimeUnit.SECONDS); // no-op
-                adapter.disconnect();
+                adapter.disconnect(cnt);
                 return response.getResponse(); // headers, no body
             }
         } catch (Exception e) {
@@ -313,19 +307,20 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
-            adapter.connect(uriInfo.getBaseUri());
-            Principal principal = adapter.getPrincipal(securityContext);
-            ObjectStorageRequest request = adapter.newRequest()
+            Container cnt = adapter.connect(container,
+                    getPasswordSecurityContext(securityContext), uriInfo.getAbsolutePath());
+            Principal principal = cnt.getPrincipal(securityContext);
+            ObjectStorageRequest request = cnt.newRequest()
                     .setUser(principal.getName())
                     .setContainer(container)
                     .setItem(item);
             logger.debug("headItem(): principal={} request={}",
                     principal.getName(),
                     request.toString());
-            Action action = adapter.getItemHeadAction(container);
+            Action action = cnt.getItemHeadAction();
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); //no-op
-            adapter.disconnect();
+            adapter.disconnect(cnt);
             return response.getResponse(); // headers, no body
         } catch (Exception e) {
             return Response.serverError()
@@ -344,16 +339,12 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
-            InputStream in) {
+            InputStream in) throws IOException {
         logger.debug("putItem(): {}", uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
-        if (!adapter.canUploadTo(mimeType, container)) {
-            return Response.serverError().status(Status.BAD_REQUEST).build();
-        } else {
-            return processUpload(container, item, state, mimeType, in);
-        }
+        return processUpload(container, item, state, mimeType, in);
     }
 
     @PUT
@@ -365,16 +356,12 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String state,
             @HeaderParam("Content-Type") String mimeType,
-            InputStream in) {
+            InputStream in) throws IOException {
         logger.debug("putItemStatus() {}", uriInfo.getAbsolutePath());
         if (mimeType == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
         }
-        if (!adapter.canUploadTo(mimeType, container)) {
-            return Response.serverError().status(Status.BAD_REQUEST).build();
-        } else {
-            return processUpload(container, item, state, mimeType, in);
-        }
+        return processUpload(container, item, state, mimeType, in);
     }
 
     @POST
@@ -386,7 +373,7 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             @PathParam(ITEM_PARAMETER) String item,
             @PathParam(STATE_PARAMETER) String status,
             @FormDataParam("file") InputStream in,
-            @FormDataParam("file") FormDataContentDisposition disp) {
+            @FormDataParam("file") FormDataContentDisposition disp) throws IOException {
         logger.debug("postItem {}", uriInfo.getAbsolutePath());
         if (disp == null) {
             return Response.serverError().status(Status.BAD_REQUEST).build();
@@ -398,9 +385,6 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
 
     @DELETE
     @Path("/{container}/{item}")
-    /*
-     * @RolesAllowed("UploadGroup")
-     */
     public Response deleteItem(
             @PathParam(CONTAINER_PARAMETER) String container,
             @PathParam(ITEM_PARAMETER) String item) {
@@ -412,32 +396,38 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
             String item,
             String status,
             String mimeType,
-            InputStream in) {
+            InputStream in) throws IOException {
         long t0 = System.currentTimeMillis();
         ResponseBuilder builder = new ResponseBuilderImpl();
         ObjectStorageResponse response = new ObjectStorageResponse(builder);
         try {
-            adapter.connect(uriInfo.getBaseUri());
-            ItemInfo itemInfo = adapter.newItemInfo(container, item).setInputStream(in);
+            Container cnt = adapter.connect(container,
+                    getPasswordSecurityContext(securityContext), uriInfo.getAbsolutePath());
+            if (!cnt.canUpload(mimeType)) {
+                return Response.serverError().status(Status.BAD_REQUEST).build();
+            }
+            ItemInfo itemInfo = new ItemInfo(cnt, item).setInputStream(in);
             if (mimeType != null) {
                 itemInfo.setMimeType(mimeType);
             }
-            itemInfo.writeToFile(adapter);
-            Principal principal = adapter.getPrincipal(securityContext);
 
-            ObjectStorageRequest request = adapter.newRequest()
+            cnt.upload(itemInfo);
+
+            Principal principal = cnt.getPrincipal(securityContext);
+
+            ObjectStorageRequest request = cnt.newRequest()
                     .setUser(principal.getName())
                     .setContainer(container)
                     .setItem(item)
                     .addStringParameter(STATE_PARAMETER, status);
-            Action action = adapter.getItemUpdateAction(container);
+            Action action = cnt.getItemUpdateAction();
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
-            action = adapter.getItemJournalAction(container, itemInfo);
+            action = cnt.getItemJournalAction(itemInfo);
             action.execute(request, response);
             action.waitFor(0, TimeUnit.SECONDS); // no-op
             long t1 = System.currentTimeMillis();
-            adapter.disconnect();
+            adapter.disconnect(cnt);
             Response r = builder.status(Status.OK)
                     .entity(itemInfo.entity())
                     .header("X-checksum-sha1", itemInfo.getChecksum())
@@ -453,5 +443,17 @@ public class ObjectStorageAPI implements ObjectStorageParameter {
                     .entity(ExceptionFormatter.toXML(e))
                     .build();
         }
+    }
+
+    private PasswordSecurityContext getPasswordSecurityContext(SecurityContext securityContext) {
+        // I hate jersey
+        if (securityContext instanceof ContainerRequest) {
+            ContainerRequest cr = (ContainerRequest)securityContext;
+            SecurityContext sc = cr.getSecurityContext();
+            if (sc instanceof PasswordSecurityContext) {
+                return (PasswordSecurityContext)sc;
+            }
+        }
+        return null;
     }
 }

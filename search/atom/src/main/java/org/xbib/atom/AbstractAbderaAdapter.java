@@ -35,7 +35,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 /**
- * An abstract Abdera managed collection adapter
+ * An abstract Abdera managed collection service
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */

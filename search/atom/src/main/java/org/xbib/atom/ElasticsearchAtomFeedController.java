@@ -27,11 +27,10 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
-import org.xbib.elasticsearch.support.CQLRequest;
+import org.xbib.elasticsearch.support.CQLSearchRequest;
 import org.xbib.elasticsearch.support.CQLSearchResponse;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
-import org.xbib.elasticsearch.support.OutputFormat;
-import org.xbib.io.util.URIUtil;
+import org.xbib.io.OutputFormat;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -152,7 +151,7 @@ public class ElasticsearchAtomFeedController implements AtomFeedFactory {
             this.builder = new AbderaFeedBuilder(config, query);
             String mediaType = "application/xml";
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchAtomFeedController.class.getName());
-            CQLRequest request = support.newSearchRequest()
+            CQLSearchRequest request = support.newSearchRequest()
                     .index(index)
                     .type(type);
             CQLSearchResponse response =

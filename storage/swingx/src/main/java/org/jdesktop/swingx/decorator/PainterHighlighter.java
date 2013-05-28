@@ -54,8 +54,8 @@ import org.jdesktop.swingx.renderer.PainterAware;
  * 
  * <pre><code>
  * &#64;Override
- * protected Component doHighlight(Component renderer, ComponentAdapter adapter) {
- *      float end = getEndOfGradient((Number) adapter.getValue());
+ * protected Component doHighlight(Component renderer, ComponentAdapter service) {
+ *      float end = getEndOfGradient((Number) service.getValue());
  *      RelativePainter painter = (RelativePainter) getPainter();
  *      painter.setXFraction(end);
  *      ((PainterAware) renderer).setPainter(painter);
@@ -63,9 +63,9 @@ import org.jdesktop.swingx.renderer.PainterAware;
  * }
  * 
  * &#64;Override
- * protected boolean canHighlight(Component renderer, ComponentAdapter adapter) {
- *     return super.canHighlight(renderer, adapter) &&
- *        (adapter.getValue() instanceof Number);
+ * protected boolean canHighlight(Component renderer, ComponentAdapter service) {
+ *     return super.canHighlight(renderer, service) &&
+ *        (service.getValue() instanceof Number);
  * }
  * </code></pre>
  * 

@@ -32,7 +32,8 @@
 package org.xbib.io.iso23950;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -40,78 +41,106 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.xbib.io.Connection;
+import org.xbib.io.ConnectionService;
+import org.xbib.io.Session;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveResponse;
+import org.xbib.io.iso23950.util.ZContentTypeNegotiator;
+import org.xbib.io.iso23950.util.ZRequestDumper;
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ZServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(ZServlet.class.getName());
+
     private final Map<String, String> mediaTypes = new HashMap<>();
+
     private final ContentTypeNegotiator ctn = new ZContentTypeNegotiator();
-    private final StylesheetTransformer transformer = new StylesheetTransformer("/xsl");
-    private final String responseEncoding = "UTF-8";
-    private ZAdapter adapter;
-    private Logger zLogger;
-    private ZRequestDumper requestDumper;
+
+    private final ZRequestDumper requestDumper = new ZRequestDumper();
+
+    private String address;
+
+    private String database;
+
+    private String resultSetName;
+
+    private String query;
+
+    private String elementSetName;
+
+    private String preferredRecordSyntax;
+
+    private int from = 1;
+
+    private int size = 10;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        String adapterName = config.getInitParameter("name");
-        this.adapter = ZAdapterFactory.getAdapter(adapterName);
-        this.requestDumper = new ZRequestDumper();
+        this.address = config.getInitParameter("address");
+        this.database = config.getInitParameter("database");
+        this.resultSetName = config.getInitParameter("resultSetName");
+        this.query = config.getInitParameter("query");
+        this.elementSetName = config.getInitParameter("elementSetName");
+        this.preferredRecordSyntax = config.getInitParameter("preferredRecordSyntax");
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String mediaType = getMediaType(request);
-        response.setContentType(mediaType);
-        response.setHeader("Server", "Java");
-        response.setHeader("X-Powered-By", getClass().getName());
-        final OutputStream out = response.getOutputStream();
-        if (adapter == null) {
-            adapter = createAdapter(request);
-        }
-        // zLogger is present after adapter creation
-        if (zLogger != null && requestDumper != null) {
-            zLogger.info(requestDumper.toString(request));
-        }
+
+        resultSetName = request.getParameter("resultSetName") != null
+                ? request.getParameter("resultSetName") : "default";
+        query = request.getParameter("query");
+        elementSetName = request.getParameter("elementSetName") != null
+                ? request.getParameter("elementSetName") : "F";
+        from = Integer.parseInt(
+                request.getParameter("from") != null
+                        ? request.getParameter("from") : "1");
+        size = Integer.parseInt(
+                request.getParameter("size") != null
+                        ? request.getParameter("size") : "10");
+
+        URI uri = URI.create(address);
+        Connection<Session> connection = ConnectionService.getInstance()
+                .getConnectionFactory(uri.getScheme())
+                .getConnection(uri);
+        ZSession session = (ZSession) connection.createSession();
+        ZClient client = session.createClient();
         try {
-            adapter.connect();
-            adapter.setStylesheetTransformer(transformer);
-            String resultSetName = request.getParameter("resultSetName") != null
-                    ? request.getParameter("resultSetName") : "default";
-            String query = request.getParameter("query");
-            String elementSetName = request.getParameter("elementSetName") != null
-                    ? request.getParameter("elementSetName") : "F";
-            int from = Integer.parseInt(
-                    request.getParameter("from") != null
-                    ? request.getParameter("from") : "1");
-            int size = Integer.parseInt(
-                    request.getParameter("size") != null
-                    ? request.getParameter("size") : "10");
-            CQLSearchRetrieve op = new CQLSearchRetrieve();
-            op.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
-            adapter.searchRetrieve(op, new SearchRetrieveResponse(response, responseEncoding));
+
+            ZSearchRetrieveRequest searchRetrieve = client.newPQFSearchRetrieveRequest();
+            searchRetrieve.setDatabase(Arrays.asList(database))
+                    .setQuery(query)
+                    .setResultSetName(resultSetName)
+                    .setElementSetName(elementSetName)
+                    .setPreferredRecordSyntax(preferredRecordSyntax)
+                    .setFrom(from)
+                    .setSize(size);
+            ZSearchRetrieveResponse zResponse = searchRetrieve.execute();
+            StylesheetTransformer transformer = new StylesheetTransformer("/xsl");
+            response.setContentType(mediaType);
+            response.setHeader("Server", "Java");
+            response.setHeader("X-Powered-By", getClass().getName());
+            zResponse.setStylesheetTransformer(transformer)
+                    .to(response);
         } finally {
-            out.flush();
-            adapter.disconnect();
+            client.close();
+            session.close();
+            connection.close();
         }
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        adapter.disconnect();
     }
 
     private String getMediaType(HttpServletRequest req) {
@@ -138,25 +167,4 @@ public class ZServlet extends HttpServlet {
         return mediaType;
     }
 
-    private ZAdapter createAdapter(HttpServletRequest request) throws ServletException, IOException {
-        String[] reqPath = request.getRequestURI().split("/");
-        String name = reqPath[reqPath.length - 1];
-        this.adapter = ZAdapterFactory.getAdapter(name);
-        if (adapter == null) {
-            throw new ServletException("can't get adapter from " + request.getRequestURI());
-        }
-        this.zLogger = createLogger(name);
-        return adapter;
-    }
-
-    private Logger createLogger(String name) throws IOException {
-        Logger cLogger = LoggerFactory.getLogger("org.xbib.io.z3950.logger");
-        /*String directory = System.getProperty("org.xbib.io.z3950.logging.directory", "logs");
-        String prefix = System.getProperty("org.xbib.io.z3950.logging.prefix", "z3950-request-" + name + ".");
-        String suffix = System.getProperty("org.xbib.io.z3950.logging.suffix", ".log");
-        CustomFileHandler handler = new CustomFileHandler(directory, prefix, suffix);
-        handler.setFormatter(new CustomFormatter());
-        cLogger.addHandler(handler);*/
-        return cLogger;
-    }
 }

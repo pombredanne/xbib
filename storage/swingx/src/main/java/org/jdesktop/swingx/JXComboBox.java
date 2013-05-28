@@ -566,7 +566,7 @@ public class JXComboBox extends JComboBox {
 
     /**
      * Convenience to access a configured ComponentAdapter.
-     * Note: the column index of the configured adapter is always 0.
+     * Note: the column index of the configured service is always 0.
      * 
      * @param index the row index in view coordinates, must be valid.
      * @return the configured ComponentAdapter.

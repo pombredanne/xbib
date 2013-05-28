@@ -8,7 +8,7 @@ package org.jdesktop.swingx.treetable;
 /**
  * Interface which guarantees access to a TreeTableModel. It is implemented by
  * the internal TreeTableModelAdapter of JXTreeTable to allow direct access to
- * the underlying TreeTableModel from the adapter.
+ * the underlying TreeTableModel from the service.
  * <p>
  * 
  * That's useful f.i. when trying to configure TableColumnExt in a

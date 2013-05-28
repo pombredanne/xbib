@@ -58,7 +58,6 @@ import org.xbib.tools.opt.OptionSet;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 public final class ElasticsearchOAIHarvester {
 

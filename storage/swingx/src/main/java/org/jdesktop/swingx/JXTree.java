@@ -99,8 +99,8 @@ import org.jdesktop.swingx.tree.DefaultXTreeCellRenderer;
  * // highlight condition: file modified after a date     
  * HighlightPredicate predicate = new HighlightPredicate() {
  *    public boolean isHighlighted(Component renderer,
- *                     ComponentAdapter adapter) {
- *       File file = getUserObject(adapter.getValue());
+ *                     ComponentAdapter service) {
+ *       File file = getUserObject(service.getValue());
  *       return file != null ? lastWeek < file.lastModified : false;
  *    }
  * };
@@ -1547,7 +1547,7 @@ public class JXTree extends JTree {
 
     /**
      * Convenience to access a configured ComponentAdapter.
-     * Note: the column index of the configured adapter is always 0.
+     * Note: the column index of the configured service is always 0.
      * 
      * @param index the row index in view coordinates, must be valid.
      * @return the configured ComponentAdapter.

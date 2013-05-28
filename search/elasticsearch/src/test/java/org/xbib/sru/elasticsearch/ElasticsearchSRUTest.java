@@ -31,68 +31,63 @@
  */
 package org.xbib.sru.elasticsearch;
 
-import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
+import org.xbib.io.OutputFormat;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.ExplainResponse;
-import org.xbib.sru.SRUAdapter;
+import org.xbib.sru.SRUService;
 import org.xbib.sru.SRUServiceFactory;
-import org.xbib.sru.SearchRetrieve;
-import org.xbib.sru.SearchRetrieveResponse;
-import org.xbib.sru.explain.Explain;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ElasticsearchSRUTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUTest.class.getName());
 
-    public void testAdapterInit() throws Exception {
-        SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
-        adapter.connect();
-        adapter.disconnect();
+    SRUService<ElasticsearchSRUClient> service = SRUServiceFactory.getInstance().getDefaultService();
+
+    @Test
+    public void testService() throws Exception {
+        if (service != null) {
+            service.newClient();
+        } else {
+            logger.error("service not found");
+        }
     }
 
-    public void testAdapterExplain() throws Exception {
-        SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
-        adapter.connect();
-        Explain op = new Explain();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    @Test
+    public void testElasticsearchSearchRetrieve() throws Exception {
+        OutputFormat format = OutputFormat.MODS;
+        ElasticsearchSRUClient client = service.newClient();
+        ElasticsearchSRURequest request = client.newSearchRetrieveRequest();
+        request.setVersion("2.0")
+            .setQuery("dc.creator = \"John\"")
+            .setFacetLimit("100:dc.language")
+            .setStartRecord(1)
+            .setMaximumRecords(10)
+            .setRecordPacking("xml")
+            .setRecordSchema("mods")
+            .setPath("/sru/hbz/*");
+        FileWriter w = new FileWriter("target/es." + format.suffix());
         try {
-            adapter.explain(op, new ExplainResponse(out, "UTF-8"));
-           logger.info("out = {}", out.toString());
+            ElasticsearchSRUResponse response = client.execute(request);
+            StylesheetTransformer transformer = new StylesheetTransformer(
+                    "src/test/resources",
+                    "src/test/resources/xsl");
+            response.setOutputFormat(format)
+                    .setStylesheetTransformer(transformer)
+                    .setStylesheets("es-searchretrieve-response.xsl")
+                    .to(w);
+            w.close();
         } catch (Diagnostics d) {
-            logger.warn("error, diag = {}", d);
+            logger.warn("There were diagnostics", d);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         } finally {
-            adapter.disconnect();
-        }
-    }    
-    
-    public void testAdapterSearchRetrieve() throws Exception {
-        SRUAdapter adapter = SRUServiceFactory.getInstance().getDefaultAdapter();
-        adapter.connect();
-        StylesheetTransformer transformer = new StylesheetTransformer(
-                "src/test/resources",
-                "src/test/resources/xsl"
-        );
-        adapter.setStylesheetTransformer(transformer);
-        SearchRetrieve op = new SearchRetrieve();
-        op.setVersion("1.2");
-        op.setQuery("dc.creator = \"John\"");
-        op.setStartRecord(1);
-        op.setMaximumRecords(10);
-        op.setRecordPacking("xml");
-        op.setRecordSchema("mods");
-        op.setPath("/sru/hbz/*");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            adapter.searchRetrieve(op, new SearchRetrieveResponse(out, "UTF-8"));
-            logger.info("output", out.toString());
-        } catch (Diagnostics d) {
-            logger.warn("error", d);
-        } finally {
-            adapter.disconnect();
+            client.close();
         }
     }
 }

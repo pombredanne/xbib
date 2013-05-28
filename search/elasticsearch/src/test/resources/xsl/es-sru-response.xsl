@@ -5,19 +5,11 @@
 -->
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                xmlns:atom="http://www.w3.org/2005/Atom" 
-                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-                xmlns:xalan="http://xml.apache.org/xslt"
+                xmlns:srw="http://www.loc.gov/zing/srw/"
+                xmlns:srw_mods="info:srw/schema/1/mods-v3.4"
+                xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
                 xmlns:dcterms="http://purl.org/dc/terms/"
-                xmlns:dcam="http://purl.org/dc/dcam/" 
-                xmlns:dcmitype="http://purl.org/dc/dcmitype/" 
-                xmlns:mods="http://www.loc.gov/mods/v3"
-                xmlns:marcrel="http://www.loc.gov/loc.terms/relators/"
-                xmlns:srw="http://www.loc.gov/zing/srw/"
-                xmlns:srw_mods="info:srw/schema/1/mods-v3.4"                
                 xmlns:bib="info:srw/cql-context-set/1/bib-v1/"
                 xmlns:xbib="http://xbib.org/elements/"
                 xmlns:es="http://elasticsearch.org/"
@@ -71,7 +63,7 @@
     </xsl:template>
     <xsl:template match="/es:result/es:hits/es:total">
         <srw:records>
-            <xsl:for-each select="../es:hits">
+            <xsl:for-each select="../es:hits/es:hits">
                 <srw:record>
                     <srw:recordSchema>info:srw/schema/1/mods-v3.4</srw:recordSchema>
                     <srw:recordPacking>xml</srw:recordPacking>

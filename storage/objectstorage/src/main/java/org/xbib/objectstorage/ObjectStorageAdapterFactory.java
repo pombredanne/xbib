@@ -38,7 +38,7 @@ public class ObjectStorageAdapterFactory {
     private ObjectStorageAdapterFactory() {
     }
 
-    public static ObjectStorageAdapter getAdapter(String name) {
+    public static Adapter getAdapter(String name) {
         return new PropertiesAdapter(name);
     }
 

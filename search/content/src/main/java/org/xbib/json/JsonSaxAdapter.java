@@ -43,8 +43,8 @@ import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
  * <pre>
  *  <code>
  * 	ContentHandler ch = ...;
- * 	JsonSaxAdapter adapter = new JsonSaxAdapter("{\"name\":\"value\"}", ch);
- * 	adapter.parse();
+ * 	JsonSaxAdapter service = new JsonSaxAdapter("{\"name\":\"value\"}", ch);
+ * 	service.parse();
  *  </code>
  *  </pre>
  *
@@ -63,7 +63,7 @@ public class JsonSaxAdapter {
 
     private static final JsonFactory factory = new JsonFactory();
 
-    private JsonXmlValueMode mode = JsonXmlValueMode.SKIP_EMPTY_VALUES;
+    private JsonXmlValueMode mode;
 
     private final JsonParser jsonParser;
 
@@ -73,19 +73,25 @@ public class JsonSaxAdapter {
 
     private XMLNamespaceContext context = XMLNamespaceContext.getInstance();
 
-    public JsonSaxAdapter(final Reader reader, final ContentHandler contentHandler, final QName qname) throws IOException {
-        this(factory.createJsonParser(reader), contentHandler, qname);
+    public JsonSaxAdapter(Reader reader, ContentHandler contentHandler, QName root) throws IOException {
+        this(factory.createJsonParser(reader), contentHandler, root);
     }
 
-    public JsonSaxAdapter(final JsonParser jsonParser, final ContentHandler contentHandler, final QName qname) {
+    public JsonSaxAdapter(JsonParser jsonParser, ContentHandler contentHandler, QName root) {
         this.jsonParser = jsonParser;
         this.contentHandler = contentHandler;
-        this.root = qname;
+        this.root = root;
+        this.mode = JsonXmlValueMode.SKIP_EMPTY_VALUES;
         contentHandler.setDocumentLocator(new DocumentLocator());
     }
 
     public JsonSaxAdapter context(XMLNamespaceContext context) {
         this.context = context;
+        return this;
+    }
+
+    public JsonSaxAdapter mode(JsonXmlValueMode mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -132,12 +138,15 @@ public class JsonSaxAdapter {
     }
 
     private void parseElement(final String elementName) throws SAXException, IOException {
-        startElement(elementName);
         JsonToken currentToken = jsonParser.getCurrentToken();
         if (START_OBJECT.equals(currentToken)) {
+            startElement(elementName);
             parseObject();
+            endElement(elementName);
         } else if (START_ARRAY.equals(currentToken)) {
+            startElement(elementName);
             parseArray(elementName);
+            endElement(elementName);
         } else if (currentToken.isScalarValue()) {
             if (mode != JsonXmlValueMode.SKIP_EMPTY_VALUES || !isEmptyValue()) {
                 startElement(elementName);
@@ -145,12 +154,10 @@ public class JsonSaxAdapter {
                 endElement(elementName);
             }
         }
-        endElement(elementName);
     }
 
     private boolean isEmptyValue() throws IOException {
-        return (jsonParser.getCurrentToken() == VALUE_NULL)
-                || jsonParser.getText().isEmpty();
+        return (jsonParser.getCurrentToken() == VALUE_NULL) || jsonParser.getText().isEmpty();
     }
 
 

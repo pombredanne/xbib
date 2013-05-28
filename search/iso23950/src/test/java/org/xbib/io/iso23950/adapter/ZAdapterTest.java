@@ -38,13 +38,13 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import org.testng.annotations.Test;
-import org.xbib.io.iso23950.CQLSearchRetrieve;
+import org.xbib.io.iso23950.PropertiesZClient;
+import org.xbib.io.iso23950.ZServiceFactory;
 import org.xbib.io.iso23950.Diagnostics;
-import org.xbib.io.iso23950.ZAdapter;
-import org.xbib.io.iso23950.ZAdapterFactory;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveResponse;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ZAdapterTest {
@@ -61,22 +61,27 @@ public class ZAdapterTest {
                 String elementSetName = "F";
                 int from = 1;
                 int size = 10;
-                ZAdapter adapter = ZAdapterFactory.getAdapter(adapterName);
-                File tmp = File.createTempFile(adapter.getURI().getHost(), "xml");
+                PropertiesZClient client = ZServiceFactory.getService(adapterName);
+                File tmp = File.createTempFile(client.getURI().getHost(), "xml");
                 FileOutputStream out = new FileOutputStream(tmp);
                 try (Writer sw = new OutputStreamWriter(out, "UTF-8")) {
-                    StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources");
                     try {
-                        adapter.connect();
-                        adapter.setStylesheetTransformer(transformer);
-                        CQLSearchRetrieve op = new CQLSearchRetrieve();
-                        op.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
-                        adapter.searchRetrieve(op, new SearchRetrieveResponse(sw));
+                        ZSearchRetrieveRequest request = client.newCQLSearchRetrieveRequest()
+                                .setDatabase(client.getDatabases())
+                                .setPreferredRecordSyntax(client.getPreferredRecordSyntax())
+                                .setQuery(query)
+                                .setResultSetName(resultSetName)
+                                .setElementSetName(elementSetName)
+                                .setFrom(from)
+                                .setSize(size);
+                        ZSearchRetrieveResponse response = request.execute();
+                        StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
+                        response.setStylesheetTransformer(transformer)
+                                .to(sw);
                     } finally {
-                        adapter.disconnect();
+                       client.close();
                     }
                 }
-                // TODO validate tmp file here
                 tmp.delete();
             } catch (Diagnostics d) {
                 d.printStackTrace();

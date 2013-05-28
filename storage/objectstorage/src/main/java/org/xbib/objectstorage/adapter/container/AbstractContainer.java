@@ -31,96 +31,139 @@
  */
 package org.xbib.objectstorage.adapter.container;
 
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.objectstorage.Action;
 import org.xbib.objectstorage.Container;
-import org.xbib.objectstorage.ContainerInfo;
-import org.xbib.objectstorage.ObjectStorageAdapter;
+import org.xbib.objectstorage.ItemInfo;
 import org.xbib.objectstorage.action.ContainerGetAction;
 import org.xbib.objectstorage.action.ContainerHeadAction;
 import org.xbib.objectstorage.action.ItemGetAction;
 import org.xbib.objectstorage.action.ItemHeadAction;
 import org.xbib.objectstorage.action.ItemUpdateAction;
 
+import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractContainer implements Container {
 
-    private final static Logger logger = Logger.getLogger(AbstractContainer.class.getName());
-    private final String name;
-    private final String description;
-    private ContainerInfo containerInfo;
-    private final ResourceBundle actionBundle;
+    private final URI baseURI;
+    private final ResourceBundle bundle;
 
-    public AbstractContainer(String name, String description, ResourceBundle bundle) {
-        this.name = name;
-        this.description = description;
-        this.actionBundle = bundle;
+    protected final static Logger logger = LoggerFactory.getLogger(AbstractContainer.class.getName());
+
+    protected long objectCount;
+    protected long totalSize;
+
+
+    public AbstractContainer(URI baseURI, ResourceBundle bundle) {
+        this.baseURI = baseURI;
+        this.bundle = bundle;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public URI getBaseURI() {
+        return baseURI;
     }
 
     public ResourceBundle getBundle() {
-        return actionBundle;
+        return bundle;
+    }
+
+
+    @Override
+    public Principal getPrincipal(SecurityContext context) {
+        Principal p = context.getUserPrincipal();
+        return p != null ? p : new Principal() {
+
+            @Override
+            public String getName() {
+                return "anonymous";
+            }
+        };
+    }
+
+
+
+    public void setObjectCount(long count) {
+        this.objectCount = count;
+    }
+
+    public long getObjectCount() {
+        return objectCount;
+    }
+
+    public void setTotalSize(long length) {
+        this.totalSize = length;
+    }
+
+    public long getTotalSize() {
+        return totalSize;
     }
 
     @Override
-    public String createPath(ObjectStorageAdapter adapter, String fileName) {
-        return adapter.getRoot() + "/" + getName() + "/" + fileName;
-    }
-
-    @Override
-    public ContainerInfo getContainerInfo(ObjectStorageAdapter adapter) {
+    public MessageDigest createMessageDigest()  {
         try {
-            this.containerInfo = new ContainerInfo(adapter, this);
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            return MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
         }
-        return containerInfo;
+    }
+
+    /**
+     * Returns the size as a human readable string, rounding to the nearest
+     * KB/MB/GB
+     *
+     * @return The size of the object as a human readable string.
+     */
+    public String getSizeString() {
+        long kb = 1024;
+        long mb = kb * 1024;
+        long gb = mb * 1024;
+        if (totalSize > gb) {
+            return (totalSize / gb) + " GB";
+        } else if (totalSize > mb) {
+            return (totalSize / mb) + " MB";
+        } else if (totalSize > kb) {
+            return (totalSize / kb) + " KB";
+        } else {
+            return totalSize + " Bytes";
+        }
+    }
+
+    public ItemInfo newItemInfo(URL url, String item) throws IOException {
+        return new ItemInfo(this, url, item);
+        // URI.create(container.getBaseURI() + URLEncoder.encode(item, "UTF-8")).toURL();
     }
 
     @Override
     public Action getContainerHeadAction() {
-        return new ContainerHeadAction(actionBundle != null ? actionBundle.getString(name + "containerhead") : null);
-    }
-
-    @Override
-    public Action getContainerByDateHeadAction() {
-        return new ContainerHeadAction(actionBundle != null ? actionBundle.getString(name + "containerheadbydate") : null);
+        return new ContainerHeadAction(bundle.getString("containerhead"));
     }
 
     @Override
     public Action getContainerGetAction() {
-        return new ContainerGetAction(actionBundle != null ? actionBundle.getString(name + "containerget") : null);
-    }
-
-    @Override
-    public Action getContainerGetByDateAction() {
-        return new ContainerGetAction(actionBundle != null ? actionBundle.getString(name + "containergetbydate") : null);
+        return new ContainerGetAction(bundle.getString("containerget"));
     }
 
     @Override
     public Action getItemHeadAction() {
-        return new ItemHeadAction(actionBundle != null ? actionBundle.getString(name + "itemhead") : null);
+        return new ItemHeadAction(bundle.getString("itemhead"));
     }
 
     @Override
     public Action getItemGetAction() {
-        return new ItemGetAction(actionBundle != null ? actionBundle.getString(name + "itemget") : null);
+        return new ItemGetAction(bundle.getString("itemget"));
     }
 
     @Override
     public Action getItemUpdateAction() {
-        return new ItemUpdateAction(actionBundle != null ? actionBundle.getString(name + "itemupdate") : null);
+        return new ItemUpdateAction(bundle.getString("itemupdate"));
     }
 }

@@ -31,7 +31,7 @@ import org.jdesktop.swingx.decorator.ComponentAdapter;
  * 
  * For now, this effectively disables all notion of row/column coordinates. It's focused
  * on an externally provided date (as Calendar) and CalendarState. Yeah, I know, that's
- * tweaking too much but then, I want to use highlighters which need an adapter...
+ * tweaking too much but then, I want to use highlighters which need an service...
  *
  * 
  * @author Jeanette Winzenburg

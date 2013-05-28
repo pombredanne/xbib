@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 public class JDBCUserAttributes implements UserAttributes {
 
     private final static Logger logger = Logger.getLogger(JDBCUserAttributes.class.getName());
-    private final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.filestorage.adapter.userattributes");
+    private final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.filestorage.service.userattributes");
     private final Map<String, Object> params = new HashMap<>();
     private final SQLSession session;
     private final String user;

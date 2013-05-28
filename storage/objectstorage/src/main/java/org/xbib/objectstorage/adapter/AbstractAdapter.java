@@ -32,97 +32,13 @@
 package org.xbib.objectstorage.adapter;
 
 import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.Container;
+import org.xbib.objectstorage.Adapter;
 import org.xbib.objectstorage.ItemInfo;
-import org.xbib.objectstorage.ObjectStorageAPI;
-import org.xbib.objectstorage.ObjectStorageAdapter;
 
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
-import java.net.URI;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
-public abstract class AbstractAdapter implements ObjectStorageAdapter {
+public abstract class AbstractAdapter implements Adapter {
 
-    private URI baseURI;
-    private ResourceBundle bundle;
-    private Map<String, Container> containers = new HashMap();
-
-    @Override
-    public ObjectStorageAdapter init() {
-        if (getStatementBundleName() != null) {
-            this.bundle = ResourceBundle.getBundle(getStatementBundleName());
-        }
-        this.containers = new HashMap();
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    disconnect();
-                } catch (IOException ex) {
-                }
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public String getDefaultContainerName() {
-        return bundle.getString("container_name");
-    }
-
-    @Override
-    public void connect(URI baseURI) throws IOException {
-        if (baseURI == null) {
-            throw new IOException("base URI is null");
-        }
-        this.baseURI = baseURI.resolve(ObjectStorageAPI.VERSION);
-    }
-
-    @Override
-    public void disconnect() throws IOException {
-    }
-
-    @Override
-    public URI getBaseURI() {
-        return baseURI;
-    }
-
-    @Override
-    public Principal getPrincipal(SecurityContext context) {
-        Principal p = context.getUserPrincipal();
-        return p != null ? p : new Principal() {
-
-            @Override
-            public String getName() {
-                return "anonymous";
-            }
-        };
-    }
-
-    public final void addContainer(Container container) {
-        containers.put(container.getName(), container);
-    }
-
-    @Override
-    public Container getContainer(String container) throws IOException {
-        ensureContainer(container);
-        return containers.get(container);
-    }
-
-    @Override
-    public Action getContainerHeadAction(String container) throws IOException {
-        ensureContainer(container);
-        return getContainer(container).getContainerHeadAction();
-    }
 
     @Override
     public Action getContainerGetAction(String container) throws IOException {
@@ -159,26 +75,8 @@ public abstract class AbstractAdapter implements ObjectStorageAdapter {
         return containers.get(container).canUpload(mimeType);
     }
 
-    private void ensureContainer(String container) throws IOException {
-        if (!containers.containsKey(container)) {
-            throw new IOException("container '" + container + "' does not exist, available containers: " + containers.keySet());
-        }
-    }
 
-    @Override
-    public MessageDigest getMessageDigest() throws NoSuchAlgorithmException {
-        return MessageDigest.getInstance("SHA-256");
-    }
-
-    @Override
-    public ItemInfo newItemInfo(String container, String item) throws IOException {
-        return ItemInfo.newInfo(this, getContainer(container), item);
-    }
-
-    @Override
-    public abstract String getRoot();
-
-    public abstract String getDriverClassName();
+    /*public abstract String getDriverClassName();
 
     public abstract String getUser();
 
@@ -186,7 +84,8 @@ public abstract class AbstractAdapter implements ObjectStorageAdapter {
 
     public abstract String getConnectionSpec();
 
-    public abstract String getStatementBundleName();
+    public abstract String getBundleName();
 
     public abstract DirContext getDirContext() throws NamingException;
+    */
 }

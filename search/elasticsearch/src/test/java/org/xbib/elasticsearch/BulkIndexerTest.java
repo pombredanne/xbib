@@ -1,12 +1,9 @@
 package org.xbib.elasticsearch;
 
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
-import org.xbib.elasticsearch.support.Formatter;
-import org.xbib.elasticsearch.support.OutputFormat;
-import org.xbib.elasticsearch.support.OutputStatus;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -15,10 +12,8 @@ import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.JsonLdContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.transform.StylesheetTransformer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
@@ -52,16 +47,8 @@ public class BulkIndexerTest extends Assert {
                     .from(0)
                     .size(10)
                     .cql("Hello")
-                    .execute(queryLogger)
-                    .context(c)
-                    .format(OutputFormat.formatOf("application/json"))
-                    .styleWith(new StylesheetTransformer("/xsl"), null, output)
-                    .dispatchTo(new Formatter() {
-                @Override
-                public void format(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
-                    output.write(message);
-                }
-            });
+                    .executeSearch(queryLogger)
+                    .write(output);
             logger.info("result = {}", output.toString());
             assertTrue(output.toString().length() > 0);
             //es.deleteIndex();

@@ -31,21 +31,23 @@
  */
 package org.xbib.objectstorage;
 
+import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
+import java.net.URI;
+import java.security.MessageDigest;
+import java.security.Principal;
+
 public interface Container {
 
-    String getName();
+    URI getBaseURI();
 
-    String getDescription();
+    Principal getPrincipal(SecurityContext context);
 
-    ContainerInfo getContainerInfo(ObjectStorageAdapter adapter);
+    ObjectStorageRequest newRequest() throws IOException;
 
     Action getContainerHeadAction();
 
-    Action getContainerByDateHeadAction();
-
     Action getContainerGetAction();
-
-    Action getContainerGetByDateAction();
 
     Action getItemHeadAction();
 
@@ -55,8 +57,10 @@ public interface Container {
 
     Action getItemJournalAction(ItemInfo itemInfo);
 
-    String createPath(ObjectStorageAdapter adapter, String filename);
+    MessageDigest createMessageDigest();
 
     boolean canUpload(String mimeType);
+
+    Container upload(ItemInfo info) throws IOException;
 
 }

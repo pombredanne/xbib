@@ -72,10 +72,10 @@ public abstract class AbstractResponseListener implements HttpResponseListener {
             try {
                 XMLFilterReader reader = new OAIResponseFilterReader();
                 InputSource source = new InputSource(new StringReader(result.getBody()));
-                StreamResult target = response.getOutput() != null
+                StreamResult streamResult = response.getOutput() != null
                         ? new StreamResult(response.getOutput())
                         : new StreamResult(response.getWriter());
-                transformer.setSource(reader, source).setTarget(target).apply();
+                transformer.setSource(reader, source).setResult(streamResult).transform();
             } catch (TransformerException e) {
 
             }

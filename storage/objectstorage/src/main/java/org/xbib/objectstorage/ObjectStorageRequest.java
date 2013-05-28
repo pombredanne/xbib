@@ -38,7 +38,7 @@ import java.util.Date;
 
 public interface ObjectStorageRequest {
 
-    ObjectStorageAdapter getAdapter();
+    Adapter getAdapter();
 
     ObjectStorageRequest setUser(String user);
 

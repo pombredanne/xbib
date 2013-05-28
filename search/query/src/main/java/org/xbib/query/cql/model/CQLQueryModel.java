@@ -80,23 +80,34 @@ public final class CQLQueryModel {
 
     /** virtual namespace contexts 'facet', 'filter', and 'option' */
     public static final String FACET_INDEX_NAME = "facet";
+
     public static final String FILTER_INDEX_NAME = "filter";
+
     public static final String OPTION_INDEX_NAME = "option";
+
     /** the CQL context definitions */
-    private final Map<String, ResourceBundle> contexts = new HashMap<String, ResourceBundle>();
+    private static final Map<String, ResourceBundle> contexts = new HashMap();
+
     private static final String AND_OP = " and ";
+
     private static final String OR_OP = " or ";
+
     /** the namespace context for this CQL generator */
     private final XMLNamespaceContext nsContext = 
             XMLNamespaceContext.newInstance("org.xbib.query.cql.context") ;
+
     /** the CQL query string*/
     private String query;
+
     /** breadcrumb trail for facets*/
     private FacetBreadcrumbTrail facetTrail;
+
     /** breadcrumb trail for conjunctive filters  */
     private FilterBreadcrumbTrail conjunctivefilterTrail;
+
     /** breadcrumb trail for disjunctive filters */
     private FilterBreadcrumbTrail disjunctivefilterTrail;
+
     /** breadcrumb trail for options */
     private OptionBreadcrumbTrail optionTrail;
 
@@ -230,6 +241,20 @@ public final class CQLQueryModel {
      */
     public static boolean isOptionContext(String context) {
         return OPTION_INDEX_NAME.equals(context);
+    }
+
+    /**
+     * Return field for an index name
+     * @param context the context name
+     * @param indexName the index name
+     * @return the field name
+     */
+    public static String getFieldOfIndex(String context, String indexName) {
+        try {
+            return contexts.get(context).getString(indexName);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

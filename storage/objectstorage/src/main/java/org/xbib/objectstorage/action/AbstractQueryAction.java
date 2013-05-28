@@ -43,7 +43,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractQueryAction extends AbstractAction {
 
@@ -61,7 +60,7 @@ public abstract class AbstractQueryAction extends AbstractAction {
                                          ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException;
 
     @Override
-    public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
         if (request.getAdapter() instanceof AbstractAdapter) {
             long t0 = System.currentTimeMillis();
             int rows = -1;
@@ -85,11 +84,6 @@ public abstract class AbstractQueryAction extends AbstractAction {
                 logger.debug("{}, {} rows, query took {}ms", rows > 0 ? "success" : "nothing found", rows, t1 - t0);
             }
         }
-    }
-
-    @Override
-    public Action waitFor(long l, TimeUnit tu) throws IOException {
         return this;
     }
-
 }

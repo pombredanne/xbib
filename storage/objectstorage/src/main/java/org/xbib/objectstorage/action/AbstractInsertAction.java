@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractInsertAction extends AbstractQueryAction {
 
@@ -50,12 +49,7 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
     }
 
     @Override
-    public Action waitFor(long l, TimeUnit tu) throws IOException {
-        return this;
-    }
-
-    @Override
-    public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
         if (request.getAdapter() instanceof AbstractAdapter) {
             long t0 = System.currentTimeMillis();
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
@@ -72,6 +66,7 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
                 logger.debug("insert took {} ms", t1 - t0);
             }
         }
+        return this;
     }
 
     @Override

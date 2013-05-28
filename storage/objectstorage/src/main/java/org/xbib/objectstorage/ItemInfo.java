@@ -56,8 +56,6 @@ import java.util.Date;
 
 public class ItemInfo {
 
-    private final static int BUFFER_SIZE = 8192;
-    private Container container;
     private ItemKey key;
     private InputStream in;
     private ItemMessage message;
@@ -69,18 +67,12 @@ public class ItemInfo {
     private boolean written;
     private URL url;
 
-    private ItemInfo() {
+    public ItemInfo(Container container, String item) throws IOException {
+        this.key = new ItemKey(item);
+        this.url = URI.create(container.getBaseURI() + URLEncoder.encode(item, "UTF-8")).toURL();
     }
 
-    public static ItemInfo newInfo(ObjectStorageAdapter adapter, Container container, String item) throws IOException {
-        ItemInfo info = new ItemInfo();
-        info.container = container;
-        info.key = new ItemKey(item);
-        info.url = URI.create(adapter.getBaseURI() + "/" + container.getName() + "/" + URLEncoder.encode(item, "UTF-8")).toURL();
-        return info;
-    }
-
-    public static ItemInfo getInfo(Path path) throws IOException {
+    /*public static ItemInfo getInfo(Path path) throws IOException {
         ItemInfo info = new ItemInfo();
         info.setKey(new ItemKey(path.getName(path.getNameCount() - 1).toString()));
         info.setModificationDate(new Date(Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS).toMillis()));
@@ -96,7 +88,7 @@ public class ItemInfo {
         } catch (Exception e) {
         }
         return info;
-    }
+    }*/
 
     public ItemInfo setKey(ItemKey key) {
         this.key = key;
@@ -173,26 +165,18 @@ public class ItemInfo {
         return message;
     }
 
-    public URL getURL() {
-        return url;
-    }
-
-    public URL getDeleteURL() {
-        return url;
-    }
-
-    public synchronized boolean writeToFile(ObjectStorageAdapter adapter) throws IOException, NoSuchAlgorithmException {
+    /*public synchronized boolean writeToFile(ObjectStorageAdapter service) throws IOException, NoSuchAlgorithmException {
         if (in == null) {
             return false;
         }
         written = false;
-        String s = container.createPath(adapter, key.getName());
+        String s = container.createPath(service, key.getName());
         File file = new File(s);
         boolean exists = file.exists();
         if (!exists) {
             file.getParentFile().mkdirs();
         }
-        MessageDigest md = adapter.getMessageDigest();
+        MessageDigest md = service.getMessageDigest();
         md.reset();
         long total;
         // write File to file system
@@ -228,7 +212,7 @@ public class ItemInfo {
         }
         written = true;
         return exists;
-    }
+    }*/
 
     public ItemInfoRow entity() {
         ItemInfoRow row = new ItemInfoRow();

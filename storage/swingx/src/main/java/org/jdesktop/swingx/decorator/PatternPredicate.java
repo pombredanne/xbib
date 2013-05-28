@@ -138,7 +138,7 @@ public class PatternPredicate implements HighlightPredicate {
      * @inherited <p>
      * 
      * Implemented to return true if the match of cell content's String representation
-     * against the Pattern if found and the adapter's view column maps to the 
+     * against the Pattern if found and the service's view column maps to the
      * decorateColumn/s. Otherwise returns false.
      * 
      */

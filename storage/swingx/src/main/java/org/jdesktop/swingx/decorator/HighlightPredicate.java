@@ -116,8 +116,8 @@ public interface HighlightPredicate {
         
         /**
          * @inheritDoc
-         * Implemented to return true if the adapter's component is enabled and
-         * the row of its rollover property equals the adapter's row, returns
+         * Implemented to return true if the service's component is enabled and
+         * the row of its rollover property equals the service's row, returns
          * false otherwise.
          * 
          * @see org.jdesktop.swingx.rollover.RolloverProducer
@@ -139,8 +139,8 @@ public interface HighlightPredicate {
         
         /**
          * @inheritDoc
-         * Implemented to return true if the adapter's component is enabled and
-         * the column of its rollover property equals the adapter's columns, returns
+         * Implemented to return true if the service's component is enabled and
+         * the column of its rollover property equals the service's columns, returns
          * false otherwise.
          * 
          * @see org.jdesktop.swingx.rollover.RolloverProducer
@@ -161,8 +161,8 @@ public interface HighlightPredicate {
         
         /**
          * @inheritDoc
-         * Implemented to return true if the adapter's component is enabled and
-         * the column of its rollover property equals the adapter's columns, returns
+         * Implemented to return true if the service's component is enabled and
+         * the column of its rollover property equals the service's columns, returns
          * false otherwise.
          * 
          * @see org.jdesktop.swingx.rollover.RolloverProducer
@@ -184,7 +184,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc} <p>
          * 
-         * Implemented to return true is the given adapter isEditable, false otherwise.
+         * Implemented to return true is the given service isEditable, false otherwise.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -199,7 +199,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc} <p>
          * 
-         * Implemented to return false is the given adapter isEditable, true otherwise.
+         * Implemented to return false is the given service isEditable, true otherwise.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -214,7 +214,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc} <p>
          * 
-         * Implemented to return true if the given adapter isLeaf, false otherwise.
+         * Implemented to return true if the given service isLeaf, false otherwise.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -229,7 +229,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc} <p>
          * 
-         * Implemented to return false if the given adapter isLeaf, true otherwise.
+         * Implemented to return false if the given service isLeaf, true otherwise.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -299,7 +299,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc} <p>
          * 
-         * Implemented to return truw if the given adapter hasFocus, false otherwise.
+         * Implemented to return truw if the given service hasFocus, false otherwise.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -526,12 +526,12 @@ public interface HighlightPredicate {
         
         /**
          * {@inheritDoc}
-         * Implemented to return true if the adapter's row falls into a 
+         * Implemented to return true if the service's row falls into a
          * odd group number.
          */
         @Override
         public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-            // JW: oddness check is okay - adapter.row must be a valid view coordinate
+            // JW: oddness check is okay - service.row must be a valid view coordinate
             return (adapter.row / linesPerGroup) % 2 == 1;
         }
 
@@ -568,7 +568,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc}
          * 
-         * This implementation returns true if the adapter's column
+         * This implementation returns true if the service's column
          * is contained in this predicates list.
          * 
          */
@@ -614,7 +614,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc}
          * 
-         * This implementation returns true if the adapter's column
+         * This implementation returns true if the service's column
          * is contained in this predicates list.
          * 
          */
@@ -638,7 +638,7 @@ public interface HighlightPredicate {
 
     
     /**
-     * A {@code HighlightPredicate} based on adapter depth.
+     * A {@code HighlightPredicate} based on service depth.
      * 
      * @author Karl Schaefer
      */
@@ -661,7 +661,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc}
          * 
-         * This implementation returns true if the adapter's depth is contained
+         * This implementation returns true if the service's depth is contained
          * in this predicates list.
          * 
          */
@@ -703,7 +703,7 @@ public interface HighlightPredicate {
          * Instantiates a predicate with the given compare value.
          * PENDING JW: support array? 
          * @param compareValue the fixed value to compare the 
-         *   adapter against.
+         *   service against.
          */
         public EqualsHighlightPredicate(Object compareValue) {
             this.compareValue = compareValue;
@@ -712,7 +712,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc}
          * 
-         * Implemented to return true if the adapter value equals the 
+         * Implemented to return true if the service value equals the
          * this predicate's compare value.
          */
         @Override
@@ -740,7 +740,7 @@ public interface HighlightPredicate {
         
         /**
          * Instantiates a predicate with Object.clazz. This is essentially the
-         * same as testing the adapter's value against null.
+         * same as testing the service's value against null.
          *
          */
         public TypeHighlightPredicate() {
@@ -753,7 +753,7 @@ public interface HighlightPredicate {
          * PENDING JW: support array? 
          * 
          * @param compareValue the fixed class to compare the 
-         *   adapter value against, must not be null
+         *   service value against, must not be null
          *   
          * @throws NullPointerException if the class is null.
          */
@@ -764,7 +764,7 @@ public interface HighlightPredicate {
         /**
          * {@inheritDoc}
          * 
-         * Implemented to return true if the adapter value is an instance
+         * Implemented to return true if the service value is an instance
          * of this predicate's class type.
          */
         @Override
@@ -806,7 +806,7 @@ public interface HighlightPredicate {
          * Instantitates a predicate with the given compare class.
          * 
          * @param compareValue the fixed class to compare the 
-         *   adapter's column class against, must not be null
+         *   service's column class against, must not be null
          *   
          * @throws NullPointerException if the class is null.
          *   
@@ -818,7 +818,7 @@ public interface HighlightPredicate {
         /**
          * @inheritDoc
          * 
-         * Implemented to return true if the adapter value is an instance
+         * Implemented to return true if the service value is an instance
          * of this predicate's class type.
          */
         @Override

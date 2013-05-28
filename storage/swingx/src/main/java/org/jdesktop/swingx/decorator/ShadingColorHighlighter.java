@@ -52,10 +52,10 @@ public class ShadingColorHighlighter extends ColorHighlighter {
 
     /**
      * Applies a suitable background for the renderer component within the
-     * specified adapter. <p>
+     * specified service. <p>
      * 
      * This implementation applies its a darkened background to an unselected
-     * adapter. Does nothing for selected cells.
+     * service. Does nothing for selected cells.
      *
      * @param renderer the cell renderer component that is to be decorated
      * @param adapter the ComponentAdapter for this decorate operation

@@ -31,8 +31,6 @@
  */
 package org.xbib.objectstorage;
 
-import org.xbib.objectstorage.adapter.DefaultAdapter;
-
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,15 +39,15 @@ import java.util.WeakHashMap;
 
 public class ObjectStorageAdapterService {
 
-    private final static Map<URI, ObjectStorageAdapter> factories = new WeakHashMap<>();
+    private final static Map<URI, Adapter> factories = new WeakHashMap<>();
+
     private final static ObjectStorageAdapterService instance = new ObjectStorageAdapterService();
-    private final static DefaultAdapter defaultAdapter = new DefaultAdapter();
 
     private ObjectStorageAdapterService() {
-        ServiceLoader<ObjectStorageAdapter> loader = ServiceLoader.load(ObjectStorageAdapter.class);
-        Iterator<ObjectStorageAdapter> iterator = loader.iterator();
+        ServiceLoader<Adapter> loader = ServiceLoader.load(Adapter.class);
+        Iterator<Adapter> iterator = loader.iterator();
         while (iterator.hasNext()) {
-            ObjectStorageAdapter adapter = iterator.next();
+            Adapter adapter = iterator.next();
             if (!factories.containsKey(adapter.getAdapterURI())) {
                 factories.put(adapter.getAdapterURI(), adapter);
             }
@@ -60,23 +58,11 @@ public class ObjectStorageAdapterService {
         return instance;
     }
 
-    public ObjectStorageAdapter getDefaultAdapter() {
-        return defaultAdapter;
-    }
-
-    public ObjectStorageAdapter getAdapter(URI uri) {
+    public Adapter getAdapter(URI uri) {
         if (factories.containsKey(uri)) {
             return factories.get(uri).init();
         }
-        throw new IllegalArgumentException("FileStorage adapter " + uri + " not found in " + factories);
-    }
-
-    public ObjectStorageAdapter getAdapter(String className)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class<?> cls = Class.forName(className);
-        ObjectStorageAdapter adapter = (ObjectStorageAdapter) cls.newInstance();
-        adapter.init();
-        return adapter;
+        throw new IllegalArgumentException("ObjectStorage service " + uri + " not found in " + factories);
     }
 
 }

@@ -31,7 +31,7 @@
  */
 package org.xbib.elasticsearch.support;
 
-import org.elasticsearch.client.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
 
 import java.net.URI;
 
@@ -50,15 +50,15 @@ public class CQLSearchSupport extends TransportClientSearchSupport {
     }
 
     @Override
-    public CQLRequest newSearchRequest() {
-        return client != null ? new CQLRequest()
-                .newSearchRequest(client.prepareSearch().setPreference("_primary_first")) : null;
+    public CQLSearchRequest newSearchRequest() {
+        return new CQLSearchRequest()
+                .newSearchRequest(client.prepareSearch().setPreference("_primary_first"));
     }
 
     @Override
-    public CQLRequest newGetRequest() {
-        return client != null ? new CQLRequest()
-                .newGetRequest(client.prepareGet()) : null;
+    public CQLSearchRequest newGetRequest() {
+        return new CQLSearchRequest()
+                .newGetRequest(client.prepareGet());
     }
 
 }

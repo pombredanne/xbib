@@ -35,14 +35,21 @@ import org.testng.annotations.Test;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionService;
 import org.xbib.io.Session;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveResponse;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Arrays;
 
 public class SearchRetrieveTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(SearchRetrieveTest.class.getName());
+
     @Test
-    public void testPQF() throws Exception {
+    public void testSearchRetrieve() {
         String address = "z3950://z3950.copac.ac.uk:210";
         String database = "COPAC";
         String resultSetName = "default";
@@ -51,22 +58,28 @@ public class SearchRetrieveTest {
         String preferredRecordSyntax = "1.2.840.10003.5.109.10"; // "1.2.840.10003.5.10"; // MARC
         int from = 1;
         int length = 10;
-
-        URI uri = URI.create(address);
-        Connection<Session> connection = ConnectionService.getInstance()
-                .getConnectionFactory(uri.getScheme())
-                .getConnection(uri);
-        ZSession session = (ZSession) connection.createSession();
-        PQFSearchRetrieve searchRetrieve = new PQFSearchRetrieve();
-        searchRetrieve.setDatabase(Arrays.asList(database))
-                .setQuery(query)
-                .setResultSetName(resultSetName)
-                .setElementSetName(elementSetName)
-                .setPreferredRecordSyntax(preferredRecordSyntax)
-                .setFrom(from)
-                .setSize(length);
-        searchRetrieve.execute(session, null);
-        session.close();
-        connection.close();
+        try {
+            URI uri = URI.create(address);
+            Connection<Session> connection = ConnectionService.getInstance()
+                    .getConnectionFactory(uri.getScheme())
+                    .getConnection(uri);
+            ZSession session = (ZSession) connection.createSession();
+            ZClient client = session.createClient();
+            ZSearchRetrieveRequest searchRetrieve = client.newPQFSearchRetrieveRequest();
+            searchRetrieve.setDatabase(Arrays.asList(database))
+                    .setQuery(query)
+                    .setResultSetName(resultSetName)
+                    .setElementSetName(elementSetName)
+                    .setPreferredRecordSyntax(preferredRecordSyntax)
+                    .setFrom(from)
+                    .setSize(length);
+            ZSearchRetrieveResponse response = searchRetrieve.execute();
+            StringWriter writer = new StringWriter();
+            response.to(writer);
+            session.close();
+            connection.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 }

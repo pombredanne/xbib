@@ -41,7 +41,7 @@ import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
  * and second, the feed name, which is the base name of the Abdera property file
  * located in the package apache.abdera
  *
- * In this Abdera property file, the Abdera adapter class is specified,
+ * In this Abdera property file, the Abdera service class is specified,
  * beside the configFile property, which points to a resource which
  * is also a property file, but for guiding our AtomFeedController.
  * 

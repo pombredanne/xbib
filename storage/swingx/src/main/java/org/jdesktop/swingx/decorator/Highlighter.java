@@ -61,7 +61,7 @@ public interface Highlighter {
 
     /**
      * Decorates the specified component for the given component
-     * adapter.
+     * service.
      *
      * @param renderer the cell rendering component that is to be decorated
      * @param adapter the ComponentAdapter for this decorate operation

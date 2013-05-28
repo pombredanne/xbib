@@ -52,7 +52,7 @@ import org.jdesktop.swingx.event.WeakEventListenerList;
  * 
  *     &#64;Override
  *     protected Component doHighlight(Component component,
- *             ComponentAdapter adapter) {
+ *             ComponentAdapter service) {
  *         component.setFont(font);
  *         return component;
  *     }
@@ -73,8 +73,8 @@ import org.jdesktop.swingx.event.WeakEventListenerList;
  * 
  * <pre><code>
  * HighlightPredicate predicate = new HighlightPredicate() {
- *     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
- *         Object value = adapter.getFilteredValueAt(adapter.row, adapter.column);
+ *     public boolean isHighlighted(Component renderer, ComponentAdapter service) {
+ *         Object value = service.getFilteredValueAt(service.row, service.column);
  *         return (value instanceof Number) &amp;&amp; ((Number) value).intValue() &lt; 0;
  *     }
  * };
@@ -184,7 +184,7 @@ public abstract class AbstractHighlighter implements Highlighter {
      * 
      * @param component
      * @param adapter
-     * @return a boolean indication if the adapter can be highlighted based
+     * @return a boolean indication if the service can be highlighted based
      *   general state. This implementation returns true always.
      */
     protected boolean canHighlight(Component component, ComponentAdapter adapter) {

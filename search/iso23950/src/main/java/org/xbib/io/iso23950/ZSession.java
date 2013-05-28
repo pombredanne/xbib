@@ -35,9 +35,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.xbib.io.Session;
-import org.xbib.io.StringPacket;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 
 /**
  * Z39.50 Session
@@ -47,24 +44,16 @@ import org.xbib.logging.LoggerFactory;
 public class ZSession implements Session<ZPacket> {
 
     private ZConnection connection;
-    private Properties properties = new Properties();
+
     private boolean isOpen;
+
     private boolean auth;
-    private Logger sessionLogger;
 
     /**
      * Creates a new ZSession object.
      */
     public ZSession(ZConnection connection) throws IOException {
         this.connection = connection;
-        createSessionLog();
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-    public Properties getProperties() {
-        return properties;
     }
 
     @Override
@@ -106,25 +95,16 @@ public class ZSession implements Session<ZPacket> {
         this.auth = auth;
     }
     
-    public boolean authenticated() {
+    public boolean isAuthenticated() {
         return auth;
     }
-    
-    public Logger getSessionLogger() {
-        return sessionLogger;
+
+    public ZClient createClient() {
+        return new DefaultZClient(this);
     }
 
-    private void createSessionLog() throws IOException {
-        if (sessionLogger == null) {
-            sessionLogger = LoggerFactory.getLogger("org.xbib.io.z3950.session.logger");
-            /*String directory = System.getProperty("org.xbib.io.z3950.session.logging.directory", "logs");
-            String prefix = System.getProperty("org.xbib.io.z3950.session.logging.prefix", "z3950-session-" + connection.getURI().getHost() + ".");
-            String suffix = System.getProperty("org.xbib.io.z3950.session.logging.suffix", ".log");
-            
-            CustomFileHandler fileHandler = new CustomFileHandler(directory, prefix, suffix);
-            fileHandler.setFormatter(new CustomFormatter());
-            sessionLogger.addHandler(fileHandler);*/
-        }
+    public PropertiesZClient createClient(Properties properties) {
+        return new PropertiesZClient(this, properties);
     }
 }
 

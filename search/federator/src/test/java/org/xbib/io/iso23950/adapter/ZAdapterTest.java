@@ -4,14 +4,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import org.testng.annotations.Test;
+
 import org.xbib.io.iso23950.Diagnostics;
-import org.xbib.io.iso23950.PQFSearchRetrieve;
-import org.xbib.io.iso23950.ZAdapter;
+import org.xbib.io.iso23950.searchretrieve.PQFSearchRetrieveRequest;
+import org.xbib.io.iso23950.ZService;
 import org.xbib.io.iso23950.ZAdapterFactory;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SearchRetrieveResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ZAdapterTest {
@@ -27,7 +27,7 @@ public class ZAdapterTest {
 
     public void testAdapterSearchRetrieve() throws Diagnostics, IOException {
         for (String adapterName : adapterNames) {
-            ZAdapter adapter = ZAdapterFactory.getAdapter(adapterName);
+            ZService adapter = ZAdapterFactory.getAdapter(adapterName);
             FileOutputStream out = new FileOutputStream("target/" + adapter.getURI().getHost() + ".xml");
             try (Writer sw = new OutputStreamWriter(out, "UTF-8")) {
                 String query = "@attr 1=4 test";
@@ -36,12 +36,12 @@ public class ZAdapterTest {
                 int from = 1;
                 int size = 10;
                 StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources");
-                PQFSearchRetrieve op = new PQFSearchRetrieve();
+                PQFSearchRetrieveRequest request = new PQFSearchRetrieveRequest();
                 try {
                     adapter.connect();
                     adapter.setStylesheetTransformer(transformer);
-                    op.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
-                    adapter.searchRetrieve(op, new SearchRetrieveResponse(sw));
+                    request.setDatabase(adapter.getDatabases()).setQuery(query).setResultSetName(resultSetName).setElementSetName(elementSetName).setPreferredRecordSyntax(adapter.getPreferredRecordSyntax()).setFrom(from).setSize(size);
+                    adapter.searchRetrieve(request, new SearchRetrieveResponse(request));
                 } catch (Exception e) {
                     logger.warn(e.getMessage());
                 } finally {

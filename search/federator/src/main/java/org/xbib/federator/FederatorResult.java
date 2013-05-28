@@ -45,7 +45,7 @@ import javax.xml.stream.events.ProcessingInstruction;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.SRU;
+import org.xbib.sru.SRUConstants;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class FederatorResult {
@@ -75,15 +75,15 @@ public class FederatorResult {
 
     public void toSRUResponse(String version, XMLEventWriter ew) throws XMLStreamException {
         ew.add(eventFactory.createStartDocument());
-        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "searchRetrieveResponse"));
-        ew.add(eventFactory.createNamespace(SRU.NS_PREFIX, SRU.NS_URI));
-        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "version"));
+        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "searchRetrieveResponse"));
+        ew.add(eventFactory.createNamespace(SRUConstants.NS_PREFIX, SRUConstants.NS_URI));
+        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "version"));
         ew.add(eventFactory.createCharacters(version));
-        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "version"));
-        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "numberOfRecords"));
+        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "version"));
+        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "numberOfRecords"));
         ew.add(eventFactory.createCharacters(Long.toString(count)));
-        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "numberOfRecords"));
-        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));
+        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "numberOfRecords"));
+        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "records"));
         int pos = 1;
         boolean inElement = false;
         Iterator<XMLEvent> it = events.iterator();
@@ -97,35 +97,35 @@ public class FederatorResult {
                 switch (prefix) {
                     case "recordSchema":
                         // declare SRU record schema only if registered in SRU class
-                        if (SRU.RECORD_SCHEMAS.containsKey(nsURI)) {
+                        if (SRUConstants.RECORD_SCHEMAS.containsKey(nsURI)) {
                             // add XML namespace
-                            if (SRU.RECORD_SCHEMA_NAMESPACES.containsKey(nsURI)) {
-                                ew.add(eventFactory.createNamespace(nsURI, SRU.RECORD_SCHEMA_NAMESPACES.get(nsURI).toASCIIString()));
+                            if (SRUConstants.RECORD_SCHEMA_NAMESPACES.containsKey(nsURI)) {
+                                ew.add(eventFactory.createNamespace(nsURI, SRUConstants.RECORD_SCHEMA_NAMESPACES.get(nsURI).toASCIIString()));
                             }
-                            ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordSchema"));
-                            ew.add(eventFactory.createCharacters(SRU.RECORD_SCHEMAS.get(nsURI).toASCIIString()));
-                            ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordSchema"));
+                            ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordSchema"));
+                            ew.add(eventFactory.createCharacters(SRUConstants.RECORD_SCHEMAS.get(nsURI).toASCIIString()));
+                            ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordSchema"));
                         }
                         break;
                     case "recordPacking":
                         // SRU record packing (always "xml")
-                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPacking"));
+                        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordPacking"));
                         ew.add(eventFactory.createCharacters(nsURI));
-                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPacking"));
+                        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordPacking"));
                         break;
                     case "recordIdentifier":
                         // SRU record identifier
-                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordIdentifier"));
+                        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordIdentifier"));
                         ew.add(eventFactory.createCharacters(nsURI));
-                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordIdentifier"));
+                        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordIdentifier"));
                         break;
                     case "recordPosition":
                         // SRU record position is the global position (NOT the local record position)
-                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPosition"));
+                        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordPosition"));
                         ew.add(eventFactory.createCharacters(Integer.toString(pos++)));
-                        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordPosition"));
+                        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordPosition"));
                         // now, after recordPosition, start with recordData
-                        ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
+                        ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordData"));
                         break;
                     case "id":
                         // let us identify the origin of the record by an XML ID
@@ -138,10 +138,10 @@ public class FederatorResult {
                 }
 
             } else if (e.isStartDocument()) {
-                ew.add(eventFactory.createStartElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
+                ew.add(eventFactory.createStartElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "record"));
             } else if (e.isEndDocument()) {
-                ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "recordData"));
-                ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "record"));
+                ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "recordData"));
+                ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "record"));
             } else {
                 if (e.isStartElement()) {
                     inElement = true;
@@ -159,7 +159,7 @@ public class FederatorResult {
                 }
             }
         }
-        ew.add(eventFactory.createEndElement(SRU.NS_PREFIX, SRU.NS_URI, "records"));
+        ew.add(eventFactory.createEndElement(SRUConstants.NS_PREFIX, SRUConstants.NS_URI, "records"));
         ew.add(eventFactory.createEndDocument());
     }
     

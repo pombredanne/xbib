@@ -32,6 +32,7 @@
 package org.xbib.oai.elasticsearch;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
@@ -41,9 +42,8 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.date.DateUtil;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
-import org.xbib.elasticsearch.support.Formatter;
-import org.xbib.elasticsearch.support.OutputFormat;
-import org.xbib.elasticsearch.support.OutputStatus;
+import org.xbib.elasticsearch.xml.ES;
+import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.GetRecordRequest;
@@ -62,13 +62,20 @@ import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.xml.transform.StylesheetTransformer;
 
+import javax.xml.namespace.QName;
+
 public class ElasticsearchOAIAdapter implements OAIAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIAdapter.class.getName());
+
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
+
     private static final URI adapterURI = URI.create(bundle.getString("uri"));
+
     private StylesheetTransformer transformer;
+
     private String oaiStyleSheet = "es-oai-response.xsl";
+
     private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     @Override
@@ -111,20 +118,19 @@ public class ElasticsearchOAIAdapter implements OAIAdapter {
         String query = getQuery(request);        
         try {
             Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchOAIAdapter.class.getName());
-            es.newSearchRequest().index(getIndex(request))
+            InputStream in = es.newSearchRequest()
+                    .index(getIndex(request))
                     .type(getType(request))
                     .from(request.getResumptionToken().getPosition())
                     .size(1000)
                     .query(query)
-                    .execute(logger)
-                    .format(OutputFormat.formatOf(mediaType))
-                    .styleWith(transformer, getStylesheet(), response.getOutput())
-                    .dispatchTo(new Formatter() {
-                @Override
-                public void format(OutputStatus status, OutputFormat format, byte[] message) throws IOException {
-                    response.getOutput().write(message);
-                }
-            });
+                    .executeSearch(logger)
+                    .read();
+            JsonStylesheet js = new JsonStylesheet();
+            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            js.setStylesheets(getStylesheet());
+            js.setTransformer(transformer);
+            js.transform(in, response.getOutput());
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + adapterURI + ": unresponsive", e);
             throw new OAIException(e.getMessage());

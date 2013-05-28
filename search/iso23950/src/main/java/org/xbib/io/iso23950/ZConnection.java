@@ -37,16 +37,11 @@ import asn1.BEREncoding;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Properties;
 import org.xbib.io.Connection;
-import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import z3950.v3.Close;
@@ -61,15 +56,23 @@ import z3950.v3.PDU;
 public class ZConnection implements Connection<ZSession> {
 
     private static final Logger logger = LoggerFactory.getLogger(ZConnection.class.getName());
+
     private final long DEFAULT_TIMEOUT_MILLIS = 30000L;
-    private Properties properties;
+
     private URI uri;
+
     private Socket socket;
+
     private int targetVersion = 0;
+
     private BufferedInputStream src;
+
     private BufferedOutputStream dest;
+
     private long timeout;
+
     private long readmillis;
+
     private long writemillis;
 
     public ZConnection() {
@@ -79,11 +82,6 @@ public class ZConnection implements Connection<ZSession> {
     public ZConnection setURI(URI uri) {
         this.uri = uri;
         this.timeout = DEFAULT_TIMEOUT_MILLIS;
-        try {
-            setProperties(URIUtil.getPropertiesFromURI(uri));
-        } catch (UnsupportedEncodingException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
         return this;
     }
 
@@ -114,7 +112,6 @@ public class ZConnection implements Connection<ZSession> {
             throw new IOException("not connected");
         }
         ZSession session = new ZSession(this);
-        session.setProperties(properties);
         return session;
     }
 
@@ -174,22 +171,6 @@ public class ZConnection implements Connection<ZSession> {
         return socket != null ? socket.isConnected() : false;
     }
 
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public long getReadMillis() {
-        return readmillis;
-    }
-
-    public long getWriteMillis() {
-        return writemillis;
-    }
-
     public void writePDU(PDU pdu) throws IOException {
         if (dest == null) {
             throw new IOException("no output stream");
@@ -205,7 +186,7 @@ public class ZConnection implements Connection<ZSession> {
         }
     }
 
-    public PDU readPDU() throws SocketTimeoutException, IOException {
+    public PDU readPDU() throws IOException {
         if (src == null) {
             throw new IOException("no input stream");
         }

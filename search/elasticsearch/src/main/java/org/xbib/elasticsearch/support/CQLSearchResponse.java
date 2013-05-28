@@ -37,53 +37,37 @@ import org.elasticsearch.action.search.ShardSearchFailure;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.xbib.elasticsearch.xml.ES;
-import org.xbib.json.JsonXmlReader;
-import org.xbib.json.JsonXmlStreamer;
-import org.xbib.json.JsonXmlValueMode;
-import org.xbib.rdf.context.ResourceContext;
-import org.xbib.xml.transform.StylesheetTransformer;
-import org.xml.sax.InputSource;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.util.XMLEventConsumer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import java.io.ByteArrayInputStream;
+import org.xbib.io.StreamByteBuffer;
+import org.xbib.search.NotFoundError;
+import org.xbib.search.SearchError;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 public class CQLSearchResponse {
 
     private SearchResponse searchResponse;
-    private GetResponse getResponse;
-    private OutputFormat format;
-    private String stylesheets;
-    private OutputStream target;
-    private StylesheetTransformer transformer;
-    private XMLEventConsumer consumer;
-    private ResourceContext context;
 
-    public CQLSearchResponse searchResponse(SearchResponse response) {
+    private GetResponse getResponse;
+
+    public CQLSearchResponse setSearchResponse(SearchResponse response) {
         this.searchResponse = response;
         return this;
     }
 
-    public CQLSearchResponse getResponse(GetResponse response) {
+    public SearchResponse getSearchResponse() {
+        return searchResponse;
+    }
+
+    public CQLSearchResponse setGetResponse(GetResponse response) {
         this.getResponse = response;
         return this;
     }
 
-    public CQLSearchResponse context(ResourceContext context) {
-        this.context = context;
-        return this;
-    }
-
-    public CQLSearchResponse format(OutputFormat format) {
-        this.format = format;
-        return this;
+    public GetResponse getGetResponse() {
+        return getResponse;
     }
 
     public long tookInMillis() {
@@ -98,45 +82,45 @@ public class CQLSearchResponse {
         return getResponse.isExists();
     }
 
-    public CQLSearchResponse toJson(OutputStream out) throws IOException {
+    public void write(OutputStream out) throws IOException {
         if (out == null) {
-            return this;
+            return;
         }
         if (searchResponse == null) {
-            out.write(jsonErrorMessage("no response yet"));
-            return this;
+            return;
         }
+        checkResponseForError();
         XContentBuilder jsonBuilder = new XContentBuilder(JsonXContent.jsonXContent, out);
         jsonBuilder.startObject();
         searchResponse.toXContent(jsonBuilder, ToXContent.EMPTY_PARAMS);
         jsonBuilder.endObject();
         jsonBuilder.close();
-        return this;
     }
 
-
-    public CQLSearchResponse xmlEventConsumer(XMLEventConsumer consumer) throws IOException {
-        this.consumer = consumer;
-        return this;
-
-    }
-
-    public CQLSearchResponse styleWith(StylesheetTransformer transformer, String stylesheets, OutputStream target) throws IOException {
-        this.transformer = transformer;
-        this.stylesheets = stylesheets;
-        this.target = target;
-        return this;
-    }
-
-    public CQLSearchResponse dispatchTo(Formatter processor) throws IOException {
+    public InputStream read() throws IOException {
         if (searchResponse == null) {
-            if (processor != null) {
-                processor.format(OutputStatus.ERROR, OutputFormat.JSON, jsonErrorMessage("no response yet"));
-            }
-            return this;
+            return null;
         }
-        final boolean error = searchResponse.getFailedShards() > 0 || searchResponse.isTimedOut();
+        checkResponseForError();
+        StreamByteBuffer buffer = new StreamByteBuffer();
+        write(buffer.getOutputStream());
+        buffer.getOutputStream().flush();
+        return buffer.getInputStream();
+    }
 
+    public StreamByteBuffer bytes() throws IOException {
+        if (searchResponse == null) {
+            return null;
+        }
+        checkResponseForError();
+        StreamByteBuffer buffer = new StreamByteBuffer();
+        write(buffer.getOutputStream());
+        buffer.getOutputStream().flush();
+        return buffer;
+    }
+
+    private void checkResponseForError() throws IOException {
+        final boolean error = searchResponse.getFailedShards() > 0 || searchResponse.isTimedOut();
         // error handling
         if (error) {
             StringBuilder sb = new StringBuilder();
@@ -145,111 +129,11 @@ public class CQLSearchResponse {
                     sb.append(Integer.toString(shf.shardId())).append("=").append(shf.reason()).append(" ");
                 }
             }
-            if (processor != null) {
-                processor.format(OutputStatus.ERROR, format, jsonErrorMessage(sb.toString()));
-            }
-            return this;
+            throw new SearchError(sb.toString());
         }
-
-        // fill bi-diectional buffer with JSON
-        StreamByteBuffer buffer = new StreamByteBuffer();
-        toJson(buffer.getOutputStream());
-        buffer.getOutputStream().flush();
-
-        // stylesheet transformation?
-        if (transformer != null && stylesheets != null && target != null) {
-            try {
-                QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX); // TODO configure this element
-                JsonXmlReader reader = new JsonXmlReader(root);
-                SAXSource source = new SAXSource(reader, new InputSource(buffer.getInputStream()));
-                String[] styles = stylesheets.split(",");
-                if (styles.length == 1) {
-                    transformer.setSource(source).setXsl(styles[0]).setTarget(target).apply();
-                } else if (styles.length == 2) {
-                    transformer.setSource(source).setXsl(styles[0]).setXsl2(styles[1]).setTarget(target).apply();
-                } else {
-                    throw new IOException("stylesheet error: " + stylesheets);
-                }
-                return this;
-            } catch (TransformerException ex) {
-                throw new IOException(ex);
-            }
+        final boolean empty = searchResponse.getHits().getTotalHits() == 0L;
+        if (empty) {
+            throw new NotFoundError();
         }
-        // XML without stylesheet?
-        if (format == OutputFormat.XML && stylesheets == null) {
-            try {
-                QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX); // TODO configure this element
-                JsonXmlStreamer jsonXml = context != null ?
-                        new JsonXmlStreamer(context.namespaceContext(), JsonXmlValueMode.SKIP_EMPTY_VALUES)
-                        : new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-                if (consumer != null) {
-                    jsonXml.toXML(buffer.getInputStream(), consumer, root);
-                } else if (target != null) {
-                    XMLEventWriter events = jsonXml.openWriter(target, "UTF-8");
-                    jsonXml.toXML(buffer.getInputStream(), events, root);
-                    events.flush();
-                }
-                return this;
-            } catch (XMLStreamException ex) {
-                throw new IOException(ex);
-            }
-        }
-        // all other formats
-        if (processor != null) {
-            processor.format(OutputStatus.OK, format, buffer.readAsByteArray());
-        }
-        return this;
     }
-
-    public CQLSearchResponse singleDispatchTo(Formatter processor)
-            throws TransformerException, XMLStreamException, IOException {
-        if (!getResponse.isExists() || getResponse.isSourceEmpty()) {
-            if (processor != null) {
-                processor.format(OutputStatus.EMPTY, format, jsonEmptyMessage("not found"));
-            }
-            return this;
-        }
-        // stylesheet transformation?
-        if (transformer != null && stylesheets != null && target != null) {
-            QName root = new QName(ES.NS_URI, "source", ES.NS_PREFIX); // TODO configure this element
-            JsonXmlReader reader = new JsonXmlReader(root);
-            String[] styles = stylesheets.split(",");
-            SAXSource source = new SAXSource(reader, new InputSource(new ByteArrayInputStream(getResponse.getSourceAsBytes())));
-            if (styles.length == 1) {
-                transformer.setSource(source).setXsl(styles[0]).setTarget(target).apply();
-            } else if (styles.length == 2) {
-                transformer.setSource(source).setXsl(styles[0]).setXsl2(styles[1]).setTarget(target).apply();
-            } else {
-                throw new IOException("stylesheet error: " + stylesheets);
-            }
-            return this;
-        }
-        if (format == OutputFormat.XML && stylesheets == null) {
-            QName root = new QName(ES.NS_URI, "source", ES.NS_PREFIX); // TODO configure this element
-            JsonXmlStreamer jsonXml = new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-            if (consumer != null) {
-                jsonXml.toXML(new ByteArrayInputStream(getResponse.getSourceAsBytes()), consumer, root);
-            } else if (target != null) {
-                XMLEventWriter events = jsonXml.openWriter(target, "UTF-8");
-                jsonXml.toXML(new ByteArrayInputStream(getResponse.getSourceAsBytes()), events, root);
-                events.flush();
-            }
-            return this;
-        }
-        // json and other formats
-        if (processor != null) {
-            processor.format(OutputStatus.OK, format, getResponse.getSourceAsBytes());
-        }
-        return this;
-    }
-
-    private static byte[] jsonEmptyMessage(String message) {
-        return ("{\"error\":404,\"message\":\"" + message + "\"}").getBytes();
-    }
-
-
-    private static byte[] jsonErrorMessage(String message) {
-        return ("{\"error\":500,\"message\":\"" + message + "\"}").getBytes();
-    }
-
 }

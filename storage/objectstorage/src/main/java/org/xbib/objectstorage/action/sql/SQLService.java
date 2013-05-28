@@ -32,11 +32,11 @@
 package org.xbib.objectstorage.action.sql;
 
 import org.xbib.date.DateUtil;
-import org.xbib.objectstorage.adapter.AbstractAdapter;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -59,51 +59,24 @@ import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The SQL service class manages the SQL access to the JDBC connection.
  */
 public class SQLService {
 
-    private final static Logger logger = Logger.getLogger(SQLService.class.getName());
-    private final static Map<AbstractAdapter, SQLService> instances = new HashMap();
+    private final static Logger logger = LoggerFactory.getLogger(SQLService.class.getName());
     private Connection connection;
     private int rounding;
     private int scale = -1;
 
-    private SQLService() {
+    public SQLService() {
     }
 
-    public static SQLService getInstance(AbstractAdapter adapter) throws IOException {
-        if (!instances.containsKey(adapter)) {
-            SQLService service = new SQLService();
-            try {
-                Connection connection = service.getConnection(adapter.getDriverClassName(),
-                        adapter.getConnectionSpec(), adapter.getUser(), adapter.getPassword());
-                service.setConnection(connection);
-            } catch (Exception ex) {
-                logger.log(Level.SEVERE, null, ex);
-                throw new IOException(ex);
-            }
-            instances.put(adapter, service);
-        }
-        return instances.get(adapter);
-    }
-
-    public static void shutdown() {
-        for (SQLService service : instances.values()) {
-            try {
-                service.getConnection().close();
-            } catch (SQLException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            }
-        }
-        instances.clear();
+    public void close() throws SQLException {
+        connection.close();
     }
 
     public SQLService setConnection(Connection connection) {
@@ -115,8 +88,8 @@ public class SQLService {
         return connection;
     }
 
-    private Connection getConnection(final String user, final String pass)
-            throws SQLException, UnknownHostException, NameNotFoundException, NamingException {
+    public Connection getConnection(final String user, final String pass)
+            throws SQLException, UnknownHostException, NamingException {
         String name = "jdbc/" + InetAddress.getLocalHost().getHostName();
         Context context = new InitialContext();
         Object o = context.lookup(name);
@@ -139,10 +112,9 @@ public class SQLService {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    private Connection getConnection(final String driverClassName,
+    public Connection getConnection(final String driverClassName,
                                      final String url, final String user, final String password)
-            throws ClassNotFoundException, SQLException, UnknownHostException,
-            NameNotFoundException, NamingException {
+            throws ClassNotFoundException, SQLException, UnknownHostException, NamingException {
         Connection c = getConnection(user, password);
         if (c != null) {
             return c;

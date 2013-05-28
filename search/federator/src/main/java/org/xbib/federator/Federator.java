@@ -50,7 +50,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.federator.action.Action;
 import org.xbib.federator.action.PQFZAction;
 import org.xbib.federator.action.SRUAction;
-import org.xbib.sru.SearchRetrieveResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class Federator {
