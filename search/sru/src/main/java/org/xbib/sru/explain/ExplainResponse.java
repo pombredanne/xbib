@@ -33,25 +33,51 @@ package org.xbib.sru.explain;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import org.xbib.io.AbstractResponse;
+import java.io.Writer;
 
-public class ExplainResponse extends AbstractResponse {
+import org.xbib.io.OutputFormat;
+import org.xbib.sru.DefaultSRUResponse;
+import org.xbib.sru.SRUResponse;
 
-     public ExplainResponse(OutputStream out, String encoding) throws UnsupportedEncodingException {
-         super(out, encoding);
-     }
+import javax.servlet.http.HttpServletResponse;
+
+public class ExplainResponse extends DefaultSRUResponse implements SRUResponse {
+
+    private final ExplainRequest request;
+
+    public ExplainResponse(ExplainRequest request) {
+        this.request = request;
+    }
 
     @Override
+    public ExplainRequest getRequest() {
+        return request;
+    }
+
     public void write() throws IOException {
+    }
+
+    @Override
+    public ExplainResponse setOutputFormat(OutputFormat format) {
+        return this;
+    }
+
+
+    @Override
+    public ExplainResponse to(HttpServletResponse servletResponse) throws IOException {
+        return this;
+    }
+
+    @Override
+    public ExplainResponse to(Writer writer) throws IOException {
         InputStreamReader stream = new InputStreamReader(
                 getClass().getResourceAsStream("/org/xbib/sru/explain.xml"), "UTF-8");
         final char[] chars = new char[4096];
         while (stream.ready()) {
             int n = stream.read(chars);
-            getWriter().write(chars, 0, n);
+            writer.write(chars, 0, n);
         }
-        getWriter().flush();
+        writer.flush();
+        return this;
     }
 }

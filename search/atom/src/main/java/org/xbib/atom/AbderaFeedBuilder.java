@@ -1,21 +1,33 @@
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor 
+ * Licensed to Jörg Prante and xbib under one or more contributor
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
- * 
- * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 3 of the License, or 
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses/
  *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
  */
 package org.xbib.atom;
 
@@ -40,11 +52,11 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
+
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.ExtensibleElement;
 import org.apache.abdera.model.Feed;
-import org.xbib.elasticsearch.xml.ES;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -143,8 +155,8 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
             } else {
                 ExtensibleElement parent = stack.peek();
                 if (qname.getPrefix().isEmpty() && elements.contains(qname.getLocalPart())) {
-                    // some ES elements may have no prefix, add it here
-                    qname = new QName(ES.NS_URI, qname.getLocalPart(), ES.NS_PREFIX);
+                    // some elements may have no prefix, add it here
+                    qname = new QName(ATOM.NS_URI, qname.getLocalPart(), ATOM.NS_PREFIX);
                 }
                 ExtensibleElement child = parent.addExtension(qname);
                 Iterator iterator = element.getAttributes();
@@ -167,7 +179,7 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
                 ExtensibleElement child = stack.pop();
                 String ns = qname.getNamespaceURI();
                 String name = qname.getLocalPart();
-                if (ES.NS_URI.equals(ns)) {
+                if (ATOM.NS_URI.equals(ns)) {
                     if ("index".equals(name)) {
                         index = child.getText();
                     } else if ("type".equals(name)) {
@@ -190,11 +202,7 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
                         }
                         String title = s != null ? s + " / " + child.getText() : child.getText();
                         entry.setTitle(title);
-                    } /*else if ("descriptionISODIS25577".equals(name)) {
-                     injectXML(this, child.getText(),
-                     new QName("http://www.openarchives.org/OAI/2.0/", name, "oai"));
-                     child.setText(""); // replace XML text with XML stream
-                     }*/
+                    }
                 }
             }
             int pos = path.lastIndexOf(qname.getLocalPart());
@@ -249,8 +257,6 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add feed author. The author name is usually configured in a properties
      * file.
-     *
-     * @param feed
      */
     protected void addFeedAuthor() {
         feed.addAuthor(config.getFeedAuthor());
@@ -259,8 +265,6 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
 
     /**
      * Add feed title. Usually a formatted query.
-     *
-     * @param feed
      * @param query
      */
     protected void addFeedTitle(String query) {
@@ -273,8 +277,6 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
 
     /**
      * Add result count and elapsed time. Usually formatted by configuration.
-     *
-     * @param feed
      * @param count
      * @param elapsedTime
      */
@@ -290,25 +292,22 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add some info about the frontend. Might be useful for logging or for
      * tracking errors if several frontends are running.
-     *
-     * @param feed
      */
     protected void addFrontendInfo() {
-        feed.addSimpleExtension(ES.NS_URI, "frontend", ES.NS_PREFIX,
+        feed.addSimpleExtension(ATOM.NS_URI, "frontend", ATOM.NS_PREFIX,
                 ManagementFactory.getRuntimeMXBean().getName());
     }
 
     /**
      * Add some info about the result processing time.
      *
-     * @param feed
      * @param millis
      */
     protected void addProcessTime(double millis) {
         String pattern = config.getTimePattern();
         if (pattern != null) {
             formatter.applyPattern(pattern);
-            feed.addSimpleExtension(ES.NS_URI, "feedconstructiontime", ES.NS_PREFIX,
+            feed.addSimpleExtension(ATOM.NS_URI, "feedconstructiontime", ATOM.NS_PREFIX,
                     formatter.format(new Object[]{millis}));
         }
     }
@@ -316,8 +315,6 @@ public class AbderaFeedBuilder implements XMLEventConsumer {
     /**
      * Add a style sheet processing instruction for XSLT. Usually the style
      * sheet location is given by configuration.
-     *
-     * @param feed
      */
     protected String addStyleSheet() {
         // add stylesheet processing instruction if required, e.g. by a servlet

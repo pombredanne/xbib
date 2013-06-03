@@ -34,11 +34,12 @@ package org.xbib.tools.aggregator.elasticsearch.hbz;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.support.search.transport.TransportClientSearchSupport;
+
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.tools.opt.OptionParser;

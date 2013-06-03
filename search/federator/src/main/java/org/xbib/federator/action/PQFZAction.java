@@ -31,12 +31,17 @@
  */
 package org.xbib.federator.action;
 
+import org.xbib.io.iso23950.client.ZClient;
 import org.xbib.io.iso23950.searchretrieve.PQFSearchRetrieveRequest;
-import org.xbib.io.iso23950.RecordIdentifierSetter;
+import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
+import org.xbib.io.iso23950.service.ZService;
+import org.xbib.io.iso23950.service.ZServiceFactory;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.iso23950.ISO23950SRUService;
-import org.xbib.sru.iso23950.ISO23950SRUServiceFactory;
+import org.xbib.sru.iso23950.service.ZSRUService;
+import org.xbib.sru.iso23950.service.ZSRUServiceFactory;
+
+import java.io.StringWriter;
 
 public class PQFZAction extends AbstractAction {
 
@@ -54,32 +59,36 @@ public class PQFZAction extends AbstractAction {
             return null;
         }
         final String name = get(params, "name", "default");
-        ISO23950SRUService service = ISO23950SRUServiceFactory.getService(name);
-        PQFSearchRetrieveRequest request = new PQFSearchRetrieveRequest();
+        int from = get(params, "from", 1);
+        int size = get(params, "size", 10);
+        ZSRUService service = ZSRUServiceFactory.getService(name);
+        ZClient client = service.newZClient();
         try {
-            int from = get(params, "from", 1);
-            int size = get(params, "size", 10);
-            String resultSetName = get(params, "resultSetName", "default");
-            String elementSetName = get(params, "elementSetName", "F");
+            PQFSearchRetrieveRequest request = client.newPQFSearchRetrieveRequest();
+            //String resultSetName = get(params, "resultSetName", "default");
+            //String elementSetName = get(params, "elementSetName", "F");
             //adapter.connect();
             //adapter.setStylesheetTransformer(transformer);
-            request.setPQF(query)
-                    .setResultSetName(resultSetName)
-                    .setElementSetName(elementSetName)
-                    .setFrom(from).setSize(size);
+            request.setQuery(query)
+                    //.setResultSetName(resultSetName)
+                    //.setElementSetName(elementSetName)
+                    .setFrom(from)
+                    .setSize(size);
             response.setOrigin(service.getURI());
-            service.setRecordIdentifierSetter(new RecordIdentifierSetter() {
+            /*service.setRecordIdentifierSetter(new RecordIdentifierSetter() {
 
                 @Override
                 public String setRecordIdentifier(String identifier) {
                     return base + "/" + name + "#" + identifier.trim(); 
                 }
-            });
-            service.searchRetrieve(request, response, from, size, transformer);
+            });*/
+            //service.searchRetrieve(request, response, from, size, transformer);
+            StringWriter sw = new StringWriter();
+            service.searchRetrieve(request, sw);
         } catch (Exception e) {
-            logger.warn(service.getURI().getHost() + " failure: " + e.getMessage(), e);
+            logger.error(service.getURI().getHost() + " failure: " + e.getMessage(), e);
         }
-        this.count = request.getResultCount();
+        this.count = -1; // request.getResultCount();
         return this;
     }
     

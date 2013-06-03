@@ -41,6 +41,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
+
 import org.xbib.io.Connection;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -206,12 +207,17 @@ public class ZConnection implements Connection<ZSession> {
         }
     }
 
+    /**
+     * Initiate a close request. Reason codes are:
+     *
+     * 0=finished 1=shutdown 2=system problem 3=cost limits
+     * 4=resources 5=security violation 6=protocol error 7=lack of activity
+     * 8=peer abort 9=unspecified
+
+     * @param reason
+     * @throws IOException
+     */
     public void initClose(int reason) throws IOException {
-        /*
-         * Reason: 0=finished 1=shutdown 2=system problem 3=cost limits
-         * 4=resources 5=security violation 6=protocol error 7=lack of activity
-         * 8=peer abort 9=unspecified
-         */
         PDU pdu = new PDU();
         pdu.c_close = new Close();
         pdu.c_close.s_closeReason = new CloseReason();

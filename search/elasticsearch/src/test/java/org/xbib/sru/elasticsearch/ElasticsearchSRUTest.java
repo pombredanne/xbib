@@ -39,8 +39,8 @@ import org.xbib.io.OutputFormat;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.SRUService;
-import org.xbib.sru.SRUServiceFactory;
+import org.xbib.sru.service.SRUService;
+import org.xbib.sru.service.SRUServiceFactory;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class ElasticsearchSRUTest {

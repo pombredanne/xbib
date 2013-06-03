@@ -33,30 +33,26 @@ package org.xbib.federator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javax.xml.stream.events.XMLEvent;
+
 import org.xbib.federator.action.Action;
 import org.xbib.federator.action.PQFZAction;
 import org.xbib.federator.action.SRUAction;
-import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
-import org.xbib.xml.transform.StylesheetTransformer;
 
 public class Federator {
 
     private final static Federator instance = new Federator();
-    private String stylesheetPath;
+    //private String stylesheetPath;
     private ExecutorService executorService;
     private String base;
 
@@ -84,10 +80,10 @@ public class Federator {
         return this;
     }
 
-    public Federator setStylesheetPath(String path) {
+    /*public Federator setStylesheetPath(String path) {
         this.stylesheetPath = path;
         return this;
-    }
+    }*/
 
     public void shutdown(long millisToWait) throws InterruptedException {
         if (executorService != null) {
@@ -104,7 +100,7 @@ public class Federator {
      * @return
      * @throws IOException
      */
-    public Job bibliographic(String json)
+    public FederatorRequest bibliographic(String json)
             throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
         return bibliographic(null, json);
     }
@@ -118,7 +114,7 @@ public class Federator {
      * @return
      * @throws IOException
      */
-    public Job bibliographic(String jobId, String json)
+    public FederatorRequest bibliographic(String jobId, String json)
             throws IOException, InterruptedException, ExecutionException, NoSuchAlgorithmException {
         if (jobId == null) {
             jobId = digest(json);
@@ -129,19 +125,19 @@ public class Federator {
         } catch (Exception e) {
             throw new IOException(e);
         }
-        List<Action> tasks = new ArrayList();
+        List<Action> actions = new ArrayList();
         for (Map<String, Object> params : specs) {
             String type = (String) params.get("type");
             switch (type) {
                 case "z3950":
-                    tasks.add(new PQFZAction().setParams(params).setBase(base));
+                    actions.add(new PQFZAction().setParams(params).setBase(base));
                     break;
                 case "sru":
-                    tasks.add(new SRUAction().setParams(params).setBase(base));
+                    actions.add(new SRUAction().setParams(params).setBase(base));
                     break;
             }
         }
-        return execute(jobId, tasks);
+        return execute(jobId, actions);
     }
 
     /**
@@ -153,7 +149,7 @@ public class Federator {
      * @throws InterruptedException
      * @throws ExecutionException 
      */
-    public Job execute(String jobId, List<Action> actions)
+    public FederatorRequest execute(String jobId, List<Action> actions)
             throws InterruptedException, ExecutionException {
         if (jobId == null) {
             throw new ExecutionException("no job ID set", null);
@@ -161,17 +157,17 @@ public class Federator {
         if (executorService == null) {
             throw new ExecutionException("no executor service", null);
         }
-        Job job = new Job(jobId, executorService);
+        FederatorRequest federatorRequest = new FederatorRequest(jobId, executorService);
         for (Action action : actions) {
-            LinkedList<XMLEvent> events = new LinkedList();
-            SearchRetrieveResponse response = new SearchRetrieveResponse(new StringWriter());
-            response.setEvents(events);
+            //LinkedList<XMLEvent> events = new LinkedList();
+            //SearchRetrieveResponse response = new SearchRetrieveResponse();
+            //response.setEvents(events);
             action.setGroup(jobId);
-            action.setResponse(response);
-            action.setTransformer(new StylesheetTransformer(stylesheetPath)); // stylesheet transformation is not threadsafe
-            job.add(action);
+            //action.setResponse(response);
+            //action.setTransformer(new StylesheetTransformer(stylesheetPath));
+            federatorRequest.add(action);
         }
-        return job;
+        return federatorRequest;
     }
     
     private String digest(String input) 

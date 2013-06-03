@@ -42,6 +42,8 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 
 import org.xbib.io.iso23950.ZSession;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import z3950.v3.DatabaseName;
 import z3950.v3.InternationalString;
 import z3950.v3.OtherInformation1;
@@ -58,6 +60,8 @@ import z3950.v3.SearchResponse;
  */
 public abstract class AbstractSearchOperation {
 
+    private final Logger logger = LoggerFactory.getLogger(AbstractSearchOperation.class.getName());
+
     private long timeout;
 
     private long millis;
@@ -66,17 +70,25 @@ public abstract class AbstractSearchOperation {
 
     private int[] results;
 
-    public List<String> databases;
+    private List<String> databases;
 
-    public String resultSetName;
+    private String resultSetName;
 
     private int count;
 
-    public AbstractSearchOperation(List<String> databases, String resultSetName) {
-        this.databases = databases;
-        this.resultSetName = resultSetName;
+    public AbstractSearchOperation() {
         this.status = false;
         this.count = 0;
+    }
+
+    public AbstractSearchOperation setDatabases(List<String> databases) {
+        this.databases = databases;
+        return this;
+    }
+
+    public AbstractSearchOperation setResultSetName(String resultSetName) {
+        this.resultSetName = resultSetName;
+        return this;
     }
 
     public void query(ZSession session, String query) throws IOException {
@@ -84,6 +96,7 @@ public abstract class AbstractSearchOperation {
         long t1;
         try {
             RPNQuery rpn = getQuery(query);
+            logger.debug("rpn query={} databases={} resultSetName={}", rpn, databases, resultSetName);
             SearchRequest search = new SearchRequest();
             search.s_query = new Query();
             search.s_query.c_type_1 = rpn;

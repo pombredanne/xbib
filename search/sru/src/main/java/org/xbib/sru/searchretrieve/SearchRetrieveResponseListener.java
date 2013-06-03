@@ -33,9 +33,9 @@ package org.xbib.sru.searchretrieve;
 
 import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
-import org.xbib.io.ResponseListener;
+import org.xbib.sru.SRUResponseListener;
 
-public interface SearchRetrieveResponseListener extends ResponseListener {
+public interface SearchRetrieveResponseListener extends SRUResponseListener {
        
     /**
      * Get the SRU version

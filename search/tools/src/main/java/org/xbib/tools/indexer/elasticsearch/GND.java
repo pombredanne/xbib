@@ -31,9 +31,9 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.io.InputService;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;

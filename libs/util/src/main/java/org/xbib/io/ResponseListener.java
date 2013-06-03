@@ -31,14 +31,16 @@
  */
 package org.xbib.io;
 
+import java.io.IOException;
+
 public interface ResponseListener {
     
-    void onConnect(Request request);
+    void onConnect(Request request) throws IOException ;
     
-    void onDisconnect(Request request);
+    void onDisconnect(Request request) throws IOException;
 
-    void onReceive(Request request, int count, byte[] message);
+    void onReceive(Request request, CharSequence message) throws IOException;
     
-    void onError(Request request, int count, byte[] errorMessage);
+    void onError(Request request, CharSequence errorMessage) throws IOException;
 
 }

@@ -35,6 +35,8 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
 import org.xbib.io.Session;
+import org.xbib.io.http.HttpRequest;
+import org.xbib.io.http.HttpResponse;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -44,39 +46,37 @@ public class HttpSessionTest {
     
     @Test
     public void testGet() throws Exception {
-        HttpSession session = new HttpSession();
+        DefaultHttpSession session = new DefaultHttpSession();
         session.open(Session.Mode.READ);
-        HttpRequest request = new HttpRequest("GET")
+        HttpRequest request = session.newRequest()
+                .setMethod("GET")
                 .setURI(URI.create("http://www.google.com/search"))
                 .addParameter("q", "köln");
-        session.add(request);
-        session.addListener(new HttpResponseListener() {
-
+        request.prepare().execute(new DefaultHttpResponseListener() {
             @Override
             public void receivedResponse(HttpResponse result) {
                 logger.info("result = {}", result);
             }
         });
-        session.execute(15, TimeUnit.SECONDS);
         session.close();
     }
     
     @Test
     public void testPost() throws Exception {
-        HttpSession session = new HttpSession();
+        DefaultHttpSession session = new DefaultHttpSession();
         session.open(Session.Mode.READ);
-        HttpRequest request = new HttpRequest("POST").setURI(URI.create("http://www.google.com/search"))
+        HttpRequest request = session.newRequest()
+                .setMethod("POST")
+                .setURI(URI.create("http://www.google.com/search"))
                 .addHeader("Content-Length", "0")
                 .addParameter("q", "köln");        
-        session.add(request);
-            session.addListener(new HttpResponseListener() {
+        request.prepare().execute(new DefaultHttpResponseListener() {
 
-                @Override
-                public void receivedResponse(HttpResponse result) {
-                    logger.info("result = {}",result);
-                }
-            });
-        session.execute(15, TimeUnit.SECONDS);
+            @Override
+            public void receivedResponse(HttpResponse result) {
+                logger.info("result = {}",result);
+            }
+        }).waitFor(15, TimeUnit.SECONDS);
         session.close();
     }     
 }

@@ -23,8 +23,10 @@ import org.xbib.xml.transform.StylesheetTransformer;
 public class FederatorService {
 
     private final static Logger logger = LoggerFactory.getLogger(FederatorService.class.getName());
+
     @Context
     ServletConfig servletConfig;
+
     Federator federator;
 
     @GET
@@ -82,12 +84,14 @@ public class FederatorService {
                     if (federator == null) {
                         federator = Federator.getInstance()
                                 .setBase(base)
-                                .setThreads(threads)
-                                .setStylesheetPath("xsl");
+                                .setThreads(threads);
+                                //.setStylesheetPath("xsl");
                     }
                     // write SRU XML response
-                    StylesheetTransformer transformer = new StylesheetTransformer("xsl");
-                    federator.bibliographic(query).execute().toSRUResponse("1.2", writer, transformer, stylesheet);
+                    //StylesheetTransformer transformer = new StylesheetTransformer("xsl");
+                    federator.bibliographic(query)
+                            .execute()
+                            .toSRUResponse("1.2", writer);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     throw new IOException(e);

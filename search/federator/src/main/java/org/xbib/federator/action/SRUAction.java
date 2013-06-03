@@ -39,15 +39,16 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.PropertiesSRUServiceFactory;
-import org.xbib.sru.SRUService;
+import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.service.PropertiesSRUServiceFactory;
+import org.xbib.sru.service.SRUService;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
-import org.xbib.sru.PropertiesSRUServiceFactory;
 
 public class SRUAction extends AbstractAction {
 
-    private final static Logger logger = LoggerFactory.getLogger(SRUAction.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SRUAction.class.getName());
+
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     @Override
@@ -57,24 +58,18 @@ public class SRUAction extends AbstractAction {
             logger.warn("query not set, not executing: {}", params);
             return null;
         }
-        if (response == null) {
-            logger.warn("response not set, not executing: {}", params);
-            return null;
-        }
         final String name = get(params, "name", "default");
         final int from = get(params, "from", 1);
         final int size = get(params, "size", 10);
-        final SRUService adapter = PropertiesSRUServiceFactory.getAdapter(name);
-        SearchRetrieveRequest request = new SearchRetrieveRequest();
+        final SRUService service = PropertiesSRUServiceFactory.getService(name);
+        SRUClient client = service.newClient();
+        SearchRetrieveRequest request = client.newSearchRetrieveRequest();
         try {
-            adapter.connect();
-            adapter.setStylesheetTransformer(transformer);
-            request.setURI(adapter.getURI())
-                    .setQuery(query).setStartRecord(from).setMaximumRecords(size)
-                    .setVersion(adapter.getVersion())
-                    .setRecordPacking(adapter.getRecordPacking())
-                    .setRecordSchema(adapter.getRecordSchema());
-            response.setOrigin(adapter.getURI()).setListener(new SearchRetrieveResponseAdapter() {
+            request.setQuery(query)
+                    .setStartRecord(from)
+                    .setMaximumRecords(size);
+
+            SearchRetrieveResponseAdapter listener = new SearchRetrieveResponseAdapter() {
                 int position = from;
                 
                 @Override
@@ -86,7 +81,7 @@ public class SRUAction extends AbstractAction {
                 public void beginRecord() {
                     Collection<XMLEvent> events = getResponse().getEvents();
                     events.add(eventFactory.createStartDocument());
-                    events.add(eventFactory.createNamespace("id", position++ + "_" + adapter.getURI().getHost()));
+                    events.add(eventFactory.createNamespace("id", position++ + "_" + service.getURI().getHost()));
                 }
 
                 @Override
@@ -196,12 +191,12 @@ public class SRUAction extends AbstractAction {
                     Collection<XMLEvent> events = getResponse().getEvents();
                     events.add(eventFactory.createEndDocument());
                 }
-            });
-            adapter.searchRetrieve(request, response);
+            };
+            request.addListener(listener);
+            client.execute(request);
+            service.close(client);
         } catch (Exception e) {
-            logger.warn(adapter.getURI().getHost() + " failure: " + e.getMessage(), e);
-        } finally {
-            adapter.disconnect();
+            logger.error(service.getURI().getHost() + " failure: " + e.getMessage(), e);
         }
         return this;
     }

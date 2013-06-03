@@ -41,26 +41,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
 
-import org.xbib.io.OutputFormat;
 import org.xbib.io.Request;
-import org.xbib.io.http.netty.HttpResponse;
-import org.xbib.io.http.netty.HttpResponseListener;
+import org.xbib.io.http.HttpResponse;
+import org.xbib.io.http.HttpResponseListener;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.AbstractSRUResponse;
+import org.xbib.sru.DefaultSRUResponse;
 import org.xbib.sru.SRUResponse;
 import org.xbib.text.Normalizer;
 import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.InputSource;
 
-public class SearchRetrieveResponse extends AbstractSRUResponse
+public class SearchRetrieveResponse extends DefaultSRUResponse
         implements SRUResponse, SearchRetrieveResponseListener, HttpResponseListener {
 
     private final Logger logger = LoggerFactory.getLogger(SearchRetrieveResponse.class.getName());
 
     private final SearchRetrieveRequest request;
-
-    private OutputFormat format;
 
     private URI origin;
 
@@ -68,70 +65,44 @@ public class SearchRetrieveResponse extends AbstractSRUResponse
 
     private HttpResponse httpResponse;
 
-    long t0;
-
-    long t1;
-
     public SearchRetrieveResponse(SearchRetrieveRequest request) {
-        super();
         this.request = request;
-        this.t0 = System.currentTimeMillis();
-    }
-
-    public SearchRetrieveResponse(SearchRetrieveRequest request, Writer writer) {
-        super(writer);
-        this.request = request;
-        this.t0 = System.currentTimeMillis();
     }
 
     public SearchRetrieveRequest getRequest() {
         return request;
     }
 
-    @Override
-    public SearchRetrieveResponse setOutputFormat(OutputFormat format) {
-        this.format = format;
-        return this;
-    }
-
-    public OutputFormat getOutputFormat() {
-        return format;
-    }
-
-    @Override
-    public void write() throws IOException {
-    }
 
     public void receivedResponse(HttpResponse response) {
         this.httpResponse = response;
-        this.t1 = System.currentTimeMillis();
     }
 
     @Override
-    public void onConnect(Request request) {
+    public void onConnect(Request request) throws IOException {
         for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
             listener.onConnect(request);
         }
     }
 
     @Override
-    public void onDisconnect(Request request) {
+    public void onDisconnect(Request request) throws IOException {
         for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
             listener.onDisconnect(request);
         }
     }
 
     @Override
-    public void onError(Request request, int count, byte[] errorMessage) {
+    public void onError(Request request, CharSequence errorMessage) throws IOException {
         for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
-            listener.onError(request, count, errorMessage);
+            listener.onError(request, errorMessage);
         }
     }
 
     @Override
-    public void onReceive(Request request, int count, byte[] message) {
+    public void onReceive(Request request, CharSequence message) throws IOException {
         for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
-            listener.onReceive(request, count, message);
+            listener.onReceive(request, message);
         }
     }
 
@@ -260,8 +231,7 @@ public class SearchRetrieveResponse extends AbstractSRUResponse
         try {
             XMLFilterReader reader = new SearchRetrieveFilterReader(request);
             InputSource source = new InputSource(new StringReader(Normalizer.normalize(httpResponse.getBody(), Normalizer.Form.C)));
-            getTransformer().setSource(reader, source)
-                    .setResult(writer);
+            getTransformer().setSource(reader, source).setResult(writer);
             if (getStylesheets() != null) {
                 getTransformer().transform(Arrays.asList(getStylesheets()));
             } else {
@@ -270,14 +240,13 @@ public class SearchRetrieveResponse extends AbstractSRUResponse
         } catch (TransformerException e) {
             logger.error(e.getMessage(), e);
             throw new IOException(e);
-        } finally {
-            logger.info("[{}ms] [uri={}] [status={}] [contenttype={}] [query={}]",
+        }
+            /*logger.info("[{}ms] [uri={}] [status={}] [contenttype={}] [query={}]",
                     t1-t0,
                     request.getURI().toString(),
                     httpResponse.getStatusCode(),
                     httpResponse.getURI(),
-                    request.getQuery());
-        }
+                    request.getQuery());*/
         return this;
     }
 }

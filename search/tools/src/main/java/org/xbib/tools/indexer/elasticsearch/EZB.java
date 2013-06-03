@@ -40,9 +40,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.namespace.QName;
 
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;

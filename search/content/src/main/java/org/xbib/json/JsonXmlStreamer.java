@@ -59,11 +59,17 @@ import org.xbib.xml.XMLNamespaceContext;
 public class JsonXmlStreamer {
 
     private final static JsonFactory jsonFactory = new JsonFactory();
+
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+
     private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+
     private XMLNamespaceContext context;
+
     private QName root;
+
     private Stack<QName> elements;
+
     private JsonXmlValueMode mode;
 
     public JsonXmlStreamer(JsonXmlValueMode mode) {

@@ -41,11 +41,11 @@ public interface Action extends Callable<Action> {
     
     Action setGroup(String group);
 
-    Action setResponse(SearchRetrieveResponse response);
+    //Action setResponse(SearchRetrieveResponse response);
 
     SearchRetrieveResponse getResponse();
     
-    Action setTransformer(StylesheetTransformer transformer);
+    //Action setTransformer(StylesheetTransformer transformer);
     
     long getCount();
 }

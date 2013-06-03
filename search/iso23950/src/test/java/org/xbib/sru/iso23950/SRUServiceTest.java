@@ -34,7 +34,6 @@ package org.xbib.sru.iso23950;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,28 +44,26 @@ import org.xbib.io.Request;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.SRUClient;
-import org.xbib.sru.SRUResponse;
-import org.xbib.sru.SRUService;
+import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.iso23950.service.ZSRUService;
+import org.xbib.sru.iso23950.service.ZSRUServiceFactory;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseListener;
+import org.xbib.sru.service.SRUService;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SRUServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SRUServiceTest.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SRUServiceTest.class.getName());
 
     @Test
-    public void testSearchRetrieve() {
+    public void testSearchRetrieve() throws Exception {
         for (String name : Arrays.asList("OBVSG")) {
-            try {
-                logger.info("trying " + name);
-                StringWriter sw = new StringWriter();
-                String query = "dc.title = Linux";
-                int from = 1;
-                int size = 10;
-                SRUService service = ISO23950SRUServiceFactory.getService(name);
+            logger.info("trying " + name);
+            ZSRUService service = ZSRUServiceFactory.getService(name);
+            FileOutputStream out = new FileOutputStream("target/sru-" + service.getURI().getHost() + ".xml");
+            try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
                 try {
                     SRUClient client = service.newClient();
                     SearchRetrieveResponseListener listener = new SearchRetrieveResponseAdapter() {
@@ -135,29 +132,23 @@ public class SRUServiceTest {
                             logger.info("disconnect, request = " + request);
                         }
                     };
+                    String query = "dc.title = Linux";
+                    int from = 1;
+                    int size = 10;
                     SearchRetrieveRequest request = client.newSearchRetrieveRequest()
                             .addListener(listener)
                             .setQuery(query)
                             .setStartRecord(from)
                             .setMaximumRecords(size);
                     StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
-                    SRUResponse response = client.execute(request)
+                    client.execute(request)
                             .setStylesheetTransformer(transformer)
-                            .to(sw);
+                            .to(w);
+                } catch (Diagnostics d) {
+                    logger.error(d.getMessage(), d);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }
-
-                if (!sw.toString().isEmpty()) {
-                    FileOutputStream out = new FileOutputStream("target/sru-" + service.getURI().getHost() + ".xml");
-                    try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
-                        w.write(sw.toString());
-                    }
-                }
-            } catch (Diagnostics d) {
-                logger.error(d.getMessage(), d);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
             }
         }
     }

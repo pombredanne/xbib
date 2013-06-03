@@ -32,18 +32,25 @@
 package org.xbib.io.iso23950;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Properties;
 
 import org.xbib.io.Session;
+import org.xbib.io.iso23950.client.DefaultZClient;
+import org.xbib.io.iso23950.client.PropertiesZClient;
+import org.xbib.io.iso23950.client.ZClient;
+import org.xbib.io.iso23950.service.ZService;
 
 /**
- * Z39.50 Session
+ * Z Session
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ZSession implements Session<ZPacket> {
+public class ZSession implements Session<ZPacket>, ZService {
 
-    private ZConnection connection;
+    private final ZConnection connection;
+
+    private Properties properties;
 
     private boolean isOpen;
 
@@ -54,6 +61,11 @@ public class ZSession implements Session<ZPacket> {
      */
     public ZSession(ZConnection connection) throws IOException {
         this.connection = connection;
+    }
+
+    public ZSession setProperties(Properties properties) {
+        this.properties = properties;
+        return this;
     }
 
     @Override
@@ -84,7 +96,25 @@ public class ZSession implements Session<ZPacket> {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
+        connection.close();
+    }
+
+    @Override
+    public ZClient newZClient() {
+        return properties != null ? new PropertiesZClient(this, properties) : new DefaultZClient(this);
+    }
+
+    @Override
+    public void close(ZClient client) throws IOException {
+        if (client != null) {
+            client.close();
+        }
+    }
+
+    @Override
+    public URI getURI() {
+        return connection.getURI();
     }
 
     public ZConnection getConnection() {
@@ -99,11 +129,7 @@ public class ZSession implements Session<ZPacket> {
         return auth;
     }
 
-    public ZClient createClient() {
-        return new DefaultZClient(this);
-    }
-
-    public PropertiesZClient createClient(Properties properties) {
+    public PropertiesZClient newZClient(Properties properties) {
         return new PropertiesZClient(this, properties);
     }
 }

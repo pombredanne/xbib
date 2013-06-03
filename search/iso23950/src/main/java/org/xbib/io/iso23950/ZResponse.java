@@ -33,5 +33,10 @@ package org.xbib.io.iso23950;
 
 import org.xbib.sru.SRUResponse;
 
+/**
+ *  Z response interface
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface ZResponse extends SRUResponse {
 }

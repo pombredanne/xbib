@@ -14,7 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-elasticsearch</artifactId>
+            <artifactId>xbib-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.abdera</groupId>

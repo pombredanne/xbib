@@ -33,113 +33,86 @@ package org.xbib.oai.client;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.testng.annotations.Test;
-import org.xbib.io.NullWriter;
+import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.oai.IdentifyRequest;
-import org.xbib.oai.IdentifyResponse;
-import org.xbib.oai.ListRecordsRequest;
-import org.xbib.oai.ListRecordsResponse;
-import org.xbib.oai.MetadataPrefixService;
-import org.xbib.oai.MetadataReader;
-import org.xbib.oai.ResumptionToken;
-import org.xbib.rdf.Resource;
+import org.xbib.oai.OAISession;
+import org.xbib.oai.identify.IdentifyRequest;
+import org.xbib.oai.identify.IdentifyResponseListener;
+import org.xbib.oai.record.ListRecordsRequest;
+import org.xbib.oai.record.ListRecordsResponseListener;
+import org.xbib.oai.util.MetadataPrefixService;
+import org.xbib.oai.util.MetadataHandler;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.XmlTriplifier;
-import org.xbib.rdf.io.turtle.TurtleWriter;
-import org.xbib.rdf.io.xml.XmlHandler;
-import org.xbib.rdf.simple.SimpleResource;
-import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class ClientTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientTest.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(ClientTest.class.getName());
 
-    private Resource resource;
-
-    public void setResource(Resource resource) {
-        this.resource = resource;
-    }
-
-    public Resource getResource() {
-        return resource;
-    }
-
-    public void testZDBOAIClient() throws Exception {
-        OAIClient client = OAIClientFactory.getClient("ZDB");
-        IdentifyRequest request = new IdentifyRequest(client.getURI());
-        StringWriter sw = new StringWriter();
-        IdentifyResponse response = new IdentifyResponse(sw);
-        StylesheetTransformer transformer = new StylesheetTransformer("xsl");
-        client.setStylesheetTransformer(transformer);
-        client.prepareIdentify(request, response);
+    @Test
+    public void testIdentify() throws Exception {
+        logger.info("trying to connect to ZDB for Identify request");
+        OAIClient client = OAIClientFactory.newClient("ZDB");
+        IdentifyRequest request = client.newIdentifyRequest();
+        request.prepare().execute(new IdentifyResponseListener() {}).waitFor();
     }
 
     @Test
-    public void testDNBOAIClient() throws Exception {
+    public void testListRecords() throws Exception {
         logger.info("trying to connect to DNB");
-        OAIClient client = OAIClientFactory.getClient(
-                 "http://services.dnb.de/oai/repository"
-        );
-        ListRecordsRequest request = new MyListRecordsRequest(client.getURI()); 
-        StylesheetTransformer transformer = new StylesheetTransformer("src/test/resources/xsl");
+        OAIClient client = OAIClientFactory.newClient("http://services.dnb.de/oai/repository");
         boolean failure = false;
-        do {
-            NullWriter sw = new NullWriter();
-            ListRecordsResponse response = new ListRecordsResponse(sw);
-            client.setStylesheetTransformer(transformer);
-            //client.setProxy("localhost", 3128);
-            final XmlTriplifier reader = MetadataPrefixService.getTriplifier(request.getMetadataPrefix());
-            final TripleListener listener = new TripleListener() {
+        ListRecordsRequest request = new MyBibRequest(client);
+        final XmlTriplifier reader = MetadataPrefixService.getTriplifier(request.getMetadataPrefix());
+        final TripleListener triples = new TripleListener() {
 
-                @Override
-                public TripleListener startPrefixMapping(String prefix, String uri) {
-                    return this;
-                }
+            @Override
+            public TripleListener startPrefixMapping(String prefix, String uri) {
+                return this;
+            }
 
-                @Override
-                public TripleListener endPrefixMapping(String prefix) {
-                    return this;
-                }
+            @Override
+            public TripleListener endPrefixMapping(String prefix) {
+                return this;
+            }
 
-                @Override
-                public TripleListener newIdentifier(IRI uri) {
-                    getResource().id(uri);
-                    return this;
-                }
+            @Override
+            public TripleListener newIdentifier(IRI uri) {
+                //getResource().id(uri);
+                return this;
+            }
 
-                @Override
-                public TripleListener triple(Triple statement) {
-                    getResource().add(statement);
-                    return this;
-                }
-            };
-            reader.setTripleListener(listener);
-            final XmlHandler handler = reader.getHandler();
-            MetadataReader metadataReader = new MetadataReader() {
+            @Override
+            public TripleListener triple(Triple statement) {
+                //getResource().add(statement);
+                return this;
+            }
+        };
+        reader.setTripleListener(triples);
+        MetadataHandler metadataHandler = new MetadataHandler() {
 
-                @Override
-                public void startDocument() throws SAXException {
-                    handler.startDocument();
-                    setResource(new SimpleResource());
-                }
+            @Override
+            public void startDocument() throws SAXException {
+                //handler.startDocument();
+                //setResource(new SimpleResource());
+                logger.info("startDocument");
+            }
 
-                @Override
-                public void endDocument() throws SAXException {
-                    handler.endDocument();
-                    if (resource.id() == null) {
-                        resource.id(IRI.builder().host("test").query("test").fragment(getHeader().getIdentifier()).build());
-                    }
-                    StringWriter sw = new StringWriter();
+            @Override
+            public void endDocument() throws SAXException {
+                logger.info("endDocument");
+                //handler.endDocument();
+                //if (resource.id() == null) {
+                //    resource.id(IRI.builder().host("test").query("test").fragment(getHeader().getIdentifier()).build());
+                //}
+                    /*StringWriter sw = new StringWriter();
                     try {
                         TurtleWriter t = new TurtleWriter().output(sw);
                         t.write(getResource());
@@ -147,70 +120,65 @@ public class ClientTest {
                         logger.info(sw.toString());
                     } catch (IOException ex) {
                         logger.error(ex.getMessage(), ex);
-                    }
-                }
+                    }*/
+            }
 
-                @Override
-                public void startPrefixMapping(String prefix, String uri) throws SAXException {
-                    handler.startPrefixMapping(prefix, uri);
-                }
+            @Override
+            public void startPrefixMapping(String prefix, String uri) throws SAXException {
+                //handler.startPrefixMapping(prefix, uri);
+            }
 
-                @Override
-                public void endPrefixMapping(String prefix) throws SAXException {
-                    handler.endPrefixMapping(prefix);
-                }
+            @Override
+            public void endPrefixMapping(String prefix) throws SAXException {
+                //handler.endPrefixMapping(prefix);
+            }
 
-                @Override
-                public void startElement(String ns, String localname, String qname, Attributes atrbts) throws SAXException {
-                    handler.startElement(ns, localname, qname, atrbts);
-                }
+            @Override
+            public void startElement(String ns, String localname, String qname, Attributes atrbts) throws SAXException {
+                //handler.startElement(ns, localname, qname, atrbts);
+            }
 
-                @Override
-                public void endElement(String ns, String localname, String qname) throws SAXException {
-                    handler.endElement(ns, localname, qname);
-                }
+            @Override
+            public void endElement(String ns, String localname, String qname) throws SAXException {
+                //handler.endElement(ns, localname, qname);
+            }
 
-                @Override
-                public void characters(char[] chars, int pos, int len) throws SAXException {
-                    handler.characters(chars, pos, len);
-                }
-            };
-            client.setMetadataReader(metadataReader);
+            @Override
+            public void characters(char[] chars, int pos, int len) throws SAXException {
+                //handler.characters(chars, pos, len);
+            }
+        };
+        do {
+            //FileWriter sw = new FileWriter("target/oai.xml");
+            StringWriter sw = new StringWriter();
+            ListRecordsResponseListener listener = new ListRecordsResponseListener(request, sw);
+            listener.register(metadataHandler);
             try {
-                client.prepareListRecords(request, response);
-                client.execute(30, TimeUnit.SECONDS);
+                request.prepare().execute(listener).waitFor();
+                logger.info("response = {}", sw);
+                failure = listener.isFailure();
+                request = client.resume(request, listener.getResponse());
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
                 failure = true;
             }
-        } while (request.getResumptionToken() != null && !failure);
+        } while (request != null && !failure);
     }
 
-    private class MyListRecordsRequest extends ListRecordsRequest {
-        
-            ResumptionToken token;
+    class MyBibRequest extends ListRecordsRequest {
 
-            public MyListRecordsRequest(URI uri) {
-                super(uri);
-            }
-            @Override
-            public void setFrom(Date from) {
-            }
+        public MyBibRequest(OAISession session) {
+            super(session);
+        }
 
-            @Override
+        @Override
             public Date getFrom() {
-                //return DateUtil.parseDateISO("2012-01-23T11:00:00Z");
-                return null;
-            }
-
-            @Override
-            public void setUntil(Date until) {
+                return DateUtil.parseDateISO("2013-01-01T00:00:00Z");
             }
 
             @Override
             public Date getUntil() {
-                //return DateUtil.parseDateISO("2012-01-23T12:00:00Z");
-                return null;
+                return DateUtil.parseDateISO("2013-02-01T00:00:00Z");
             }
 
             @Override
@@ -221,26 +189,6 @@ public class ClientTest {
             @Override
             public String getMetadataPrefix() {
                 return "PicaPlus-xml";
-            }
-
-            @Override
-            public void setResumptionToken(ResumptionToken token) {
-                this.token = token;
-            }
-
-            @Override
-            public ResumptionToken getResumptionToken() {
-                return token;
-            }
-
-            @Override
-            public String getPath() {
-                return null;
-            }
-
-            @Override
-            public Map<String, String[]> getParameterMap() {
-                return null;
             }
 
     }

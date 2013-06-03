@@ -31,13 +31,14 @@
  */
 package org.xbib.sru.searchretrieve;
 
-import org.xbib.sru.AbstractSRURequest;
+import org.xbib.sru.DefaultSRURequest;
+import org.xbib.sru.SRURequest;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchRetrieveRequest extends AbstractSRURequest {
+public class SearchRetrieveRequest extends DefaultSRURequest implements SRURequest {
 
     private String version;
 

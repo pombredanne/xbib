@@ -84,9 +84,7 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
 
     private final ByteArrayOutputStream errors = new ByteArrayOutputStream();
 
-    private int resultCount;
-
-    protected ZSearchRetrieveRequest(ZSession session) {
+    public ZSearchRetrieveRequest(ZSession session) {
         this.session = session;
     }
 
@@ -97,11 +95,6 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
 
     public ZSearchRetrieveRequest setPassword(String password) {
         this.password = password;
-        return this;
-    }
-
-    public ZSearchRetrieveRequest setDatabase(List<String> databases) {
-        this.databases = databases;
         return this;
     }
 
@@ -117,6 +110,11 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
 
     public ZSearchRetrieveRequest setSize(int length) {
         this.length = length;
+        return this;
+    }
+
+    public ZSearchRetrieveRequest setDatabase(List<String> databases) {
+        this.databases = databases;
         return this;
     }
 
@@ -144,7 +142,6 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
             // Z39.50 bails out when offset = 0
             this.offset = 1;
         }
-        this.resultCount = -1;
         long t0 = System.currentTimeMillis();
         if (!session.isOpen()) {
             session.open(Session.Mode.READ);
@@ -178,7 +175,6 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
                         if (record instanceof ErrorRecord) {
                             errors.write(record.getContent());
                         } else {
-
                             records.write(record.getContent());
                         }
                     } catch (IOException e) {
@@ -190,20 +186,16 @@ public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
             this.presentMillis = present.getMillis();
         }
         long t1 = System.currentTimeMillis();
-        this.resultCount = search.getResultCount();
         logger.info("{} [{}ms] [{}ms] [{}ms] [{}] [{}]",
-                databases, t1 - t0, search.getMillis(), presentMillis, resultCount, query);
+                databases, t1 - t0, search.getMillis(), presentMillis, search.getResultCount(), query);
         if (!search.isSuccess()) {
             throw new IOException("search was not a success");
         }
         return new ZSearchRetrieveResponse(this)
+                .setResultCount(search.getResultCount())
                 .setSession(session)
                 .setRecords(records.toByteArray())
                 .setErrors(errors.toByteArray());
-    }
-
-    public int getResultCount() {
-        return resultCount;
     }
 
     protected abstract AbstractSearchOperation getSearchOperation(List<String> database, String resultSetName);

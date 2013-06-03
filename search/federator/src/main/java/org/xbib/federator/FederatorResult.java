@@ -163,16 +163,17 @@ public class FederatorResult {
         ew.add(eventFactory.createEndDocument());
     }
     
-    public void toSRUResponse(String version, Writer writer, StylesheetTransformer transformer, String stylesheet) throws XMLStreamException {
+    /*public void toSRUResponse(String version, Writer writer, StylesheetTransformer transformer, String stylesheet) throws XMLStreamException {
         StringWriter sw = new StringWriter();
-        toSRUResponse(version, sw);
+        toSRUResponse(version, writer);
         
         // 
-    }
+    }*/
 
     private Characters clean(Characters e) throws XMLStreamException {        
         return eventFactory.createCharacters(INVALID.matcher(e.getData()).replaceAll(""));
     }
     
-    private final static Pattern INVALID = Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\uD800\uDC00-\uDBFF\uDFFF]");
+    private final static Pattern INVALID =
+            Pattern.compile("[^\\u0009\\u000A\\u000D\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF]");
 }

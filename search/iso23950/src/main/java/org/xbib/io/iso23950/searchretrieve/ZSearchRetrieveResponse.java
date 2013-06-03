@@ -32,6 +32,7 @@
 package org.xbib.io.iso23950.searchretrieve;
 
 import org.xbib.io.iso23950.RecordIdentifierSetter;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.util.SRUFilterReader;
 import org.xbib.io.iso23950.ZResponse;
 import org.xbib.io.iso23950.ZSession;
@@ -58,7 +59,7 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
 
     private final Logger logger = LoggerFactory.getLogger(ZSearchRetrieveResponse.class.getName());
 
-    private ZSearchRetrieveRequest request;
+    private SearchRetrieveRequest request;
 
     private ZSession session;
 
@@ -70,7 +71,9 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
 
     private String type;
 
-    public ZSearchRetrieveResponse(ZSearchRetrieveRequest request) {
+    private long resultCount;
+
+    public ZSearchRetrieveResponse(SearchRetrieveRequest request) {
         super(request);
         this.request = request;
     }
@@ -100,6 +103,11 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
         return this;
     }
 
+    public ZSearchRetrieveResponse setResultCount(long count) {
+        this.resultCount = count;
+        return this;
+    }
+
     @Override
     public ZSearchRetrieveResponse to(HttpServletResponse servletResponse) throws IOException {
         return to(servletResponse.getWriter());
@@ -109,22 +117,19 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
     public ZSearchRetrieveResponse to(Writer writer) throws IOException {
         setOrigin(session.getConnection().getURI());
         // get result count for caller and for stylesheet
-        numberOfRecords(request.getResultCount());
-        getTransformer().addParameter("numberOfRecords", request.getResultCount());
+        numberOfRecords(resultCount);
+        getTransformer().addParameter("numberOfRecords", resultCount);
         // push out results
         ByteArrayInputStream in = new ByteArrayInputStream(records);
         // stream encoding, must always be octet!
         InputSource source = new InputSource(new InputStreamReader(in, "ISO-8859-1"));
-        SRUFilterReader reader = new SRUFilterReader(this, getEncoding());
+        SRUFilterReader reader = new SRUFilterReader(this, "UTF-8");
         try {
             reader.setRecordIdentifierSetter(this);
             reader.setProperty(Iso2709Reader.FORMAT, format);
             reader.setProperty(Iso2709Reader.TYPE, type);
-            StreamResult streamResult = getOutput() != null
-                    ? new StreamResult(getOutput())
-                    : new StreamResult(getWriter());
-            getTransformer().setSource(new SAXSource(reader, source))
-                    .setResult(streamResult);
+            StreamResult streamResult = new StreamResult(writer);
+            getTransformer().setSource(new SAXSource(reader, source)).setResult(streamResult);
             if (getStylesheets() != null) {
                 getTransformer().transform(Arrays.asList(getStylesheets()));
             } else {
@@ -138,7 +143,7 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
 
     @Override
     public String setRecordIdentifier(String identifier) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }
 

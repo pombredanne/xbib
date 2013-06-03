@@ -31,6 +31,11 @@
  */
 package org.xbib.json;
 
+/**
+ * JSON to XML modes
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public enum JsonXmlValueMode {
     ALLOW_EMPTY_VALUES, SKIP_EMPTY_VALUES, ERROR_EMPTY_VALUES
 }

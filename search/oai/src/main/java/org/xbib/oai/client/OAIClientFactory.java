@@ -35,18 +35,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
+
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
+/**
+ *  Factory for OAI clients
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class OAIClientFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(OAIClientFactory.class.getName());
+
     private final static OAIClientFactory instance = new OAIClientFactory();
 
     private OAIClientFactory() {
     }
 
-    public static OAIClient getClient(String spec) {
+    public static OAIClient newClient(String spec) {
         Properties properties = new Properties();
         InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/client/" + spec + ".properties");
         if (in != null) {
@@ -55,14 +62,13 @@ public class OAIClientFactory {
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
-            OAIPropertiesClient client = new OAIPropertiesClient(properties);
+            PropertiesOAIClient client = new PropertiesOAIClient(properties);
             client.setURI(URI.create(properties.getProperty("uri")));
             return client;
         } else {
-            OAIPropertiesClient client = new OAIPropertiesClient(properties);
+            PropertiesOAIClient client = new PropertiesOAIClient(properties);
             client.setURI(URI.create(spec));
             return client;
-
         }
     }
 }

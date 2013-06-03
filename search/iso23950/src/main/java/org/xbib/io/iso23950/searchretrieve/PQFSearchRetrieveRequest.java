@@ -43,6 +43,6 @@ public class PQFSearchRetrieveRequest extends ZSearchRetrieveRequest {
 
     @Override
     protected AbstractSearchOperation getSearchOperation(List<String> database, String resultSetName) {
-        return new PQFSearchOperation(database, resultSetName);
+        return new PQFSearchOperation().setDatabases(database).setResultSetName(resultSetName);
     }
 }

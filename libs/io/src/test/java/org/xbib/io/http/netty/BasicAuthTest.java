@@ -59,10 +59,11 @@ import org.jboss.netty.util.CharsetUtil;
 public class BasicAuthTest {
 
     private static final String USERNAME = "user1";
+
     private static final String PASSWORD = "user1";
+
     private static final URI resource = URI.create("http://test.webdav.org:80/auth-basic/");
 
-    
     public void testAuth() throws Exception {
 
         ClientBootstrap client = new ClientBootstrap(

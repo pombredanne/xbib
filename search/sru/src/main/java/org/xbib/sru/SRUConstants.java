@@ -358,14 +358,18 @@ public interface SRUConstants {
     }};
 
 
-    String RECORDSCHEMA = "recordSchema";
+    String RECORDSCHEMA_PROPERTY = "recordschema";
 
-    String RECORDPACKING = "recordPacking";
+    String RECORDPACKING_PROPERTY = "recordpacking";
 
-    String ENCODING = "encoding";
+    String ENCODING_PROPERTY = "encoding";
 
-    String ADAPTER_URI = "uri";
+    String ADDRESS_PROPERTY = "uri";
 
-    String VERSION = "version";
+    String VERSION_PROPERTY = "version";
+
+    String FORMAT_PROPERTY = "format";
+
+    String TYPE_PROPERTY = "type";
 
 }

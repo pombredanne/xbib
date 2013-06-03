@@ -43,6 +43,6 @@ public class CQLSearchRetrieveRequest extends ZSearchRetrieveRequest {
 
     @Override
     protected AbstractSearchOperation getSearchOperation(List<String> database, String resultSetName) {
-        return new CQLSearchOperation(database, resultSetName);
+        return new CQLSearchOperation().setDatabases(database).setResultSetName(resultSetName);
     }
 }

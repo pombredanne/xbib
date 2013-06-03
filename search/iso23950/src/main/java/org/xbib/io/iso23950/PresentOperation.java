@@ -36,9 +36,12 @@ import asn1.ASN1External;
 import asn1.ASN1GeneralString;
 import asn1.ASN1Integer;
 import asn1.ASN1ObjectIdentifier;
-import asn1.BEREncoding;
 import java.io.IOException;
-import java.util.LinkedList;
+
+import org.xbib.io.iso23950.exceptions.MessageSizeTooSmallException;
+import org.xbib.io.iso23950.exceptions.NoRecordsReturnedException;
+import org.xbib.io.iso23950.exceptions.RequestTerminatedException;
+import org.xbib.io.iso23950.exceptions.ZException;
 import z3950.v3.ElementSetNames;
 import z3950.v3.InternationalString;
 import z3950.v3.NamePlusRecord;
@@ -57,14 +60,20 @@ import z3950.v3.ResultSetId;
 public class PresentOperation {
 
     private long millis;
-    private int nReturned;
-    private int status;
-    private String resultSetName;
-    private String elementSetName;
-    public int offset;
-    public int length;
-    public String preferredRecordSyntax;
 
+    private int nReturned;
+
+    private int status;
+
+    private String resultSetName;
+
+    private String elementSetName;
+
+    private int offset;
+
+    private int length;
+
+    private String preferredRecordSyntax;
 
     public PresentOperation(String resultSetName, String elementSetName,
             String preferredRecordSyntax, int offset, int length) {
@@ -93,6 +102,7 @@ public class PresentOperation {
         session.getConnection().writePDU(pdu);
         pdu = session.getConnection().readPDU();
         this.millis = System.currentTimeMillis() - millis;
+
         PresentResponse response = pdu.c_presentResponse;
         this.nReturned = response.s_numberOfRecordsReturned != null
                 ? response.s_numberOfRecordsReturned.get() : 0;
@@ -120,7 +130,7 @@ public class PresentOperation {
                 }
             }
         } else {
-            throw createIOExceptionFrom(status, nReturned, response);
+            throw createZExceptionFrom(status, nReturned, response);
         }
     }
 
@@ -145,39 +155,24 @@ public class PresentOperation {
         return a;
     }
 
-    private IOException createIOExceptionFrom(int status, int nReturned, PresentResponse response) {
-        String message = null;
-        IOException ex;
+    private ZException createZExceptionFrom(int status, int nReturned, PresentResponse response) {
+        String message;
         switch (status) {
             case 1:
                 message = "Some records were not returned (request was terminated by access control)";
-                break;
+                return new NoRecordsReturnedException(message).setStatus(status);
             case 2:
                 message = "Some records were not returned (message size is too small)";
-                break;
+                return new MessageSizeTooSmallException(message).setStatus(status).setNumber(nReturned);
             case 3:
                 message = "Some records were not returned (request was terminated by resource control, at origin request)";
-                break;
+                return new RequestTerminatedException(message).setStatus(status).setNumber(nReturned);
             case 4:
                 message = "Some records were not returned (request was terminated by resource control, by the target)";
-                break;
+                return new RequestTerminatedException(message).setStatus(status).setNumber(nReturned);
             case 5:
-                message = "no records were returned (one or more non-surrogate diagnostics were returned)";
-                break;
+                return new NoRecordsReturnedException(response.toString()).setStatus(status);
         }
-        LinkedList<BEREncoding> diag = new LinkedList();
-        try {
-            if (response.s_records.c_multipleNonSurDiagnostics != null) {
-                for (int i = 0; i < response.s_records.c_multipleNonSurDiagnostics.length; i++) {
-                    diag.add(response.s_records.c_multipleNonSurDiagnostics[i].c_defaultFormat.ber_encode());
-                }
-            } else if (response.s_records.c_nonSurrogateDiagnostic != null) {
-                diag.add(response.s_records.c_nonSurrogateDiagnostic.ber_encode()  );
-            }
-            ex = new IOException("Status = " + status + " nReturned = " + nReturned + " message = " + message + " diag = " + diag);
-        } catch (ASN1Exception e) {
-            ex = new IOException("Status = " + status + " nReturned = " + nReturned + " message = " + message + " diag = not available");
-        }
-        return ex;
+        return new ZException(response.toString()).setStatus(status).setNumber(nReturned);
     }
 }

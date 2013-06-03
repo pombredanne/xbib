@@ -15,6 +15,7 @@
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <elasticsearch.version>0.19.11</elasticsearch.version>
     </properties>
 
     <scm>
@@ -34,6 +35,7 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <!--
     <repositories>
         <repository>
             <id>github-release-repo</id>
@@ -44,6 +46,7 @@
             <url>https://github.com/xbib/maven-repo/raw/master/snapshots</url>
         </repository>
     </repositories>
+    -->
 
     <build>
 
@@ -185,6 +188,11 @@
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
+                <artifactId>xbib-atom</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
                 <artifactId>xbib-elasticsearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -246,7 +254,7 @@
             <dependency>
                 <groupId>org.xbib.elasticsearch</groupId>
                 <artifactId>elasticsearch-transport-support</artifactId>
-                <version>1.1.0</version>
+                <version>${elasticsearch.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -293,7 +301,7 @@
             <dependency>
                 <groupId>com.ning</groupId>
                 <artifactId>async-http-client</artifactId>
-                <version>1.7.7</version>
+                <version>1.7.17</version>
             </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>

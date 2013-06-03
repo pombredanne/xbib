@@ -41,12 +41,10 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.elasticsearch.client.support.ingest.ClientIngest;
-import org.elasticsearch.client.support.ingest.transport.MockTransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.marc.extensions.pica.PicaBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
 import org.xbib.elements.marc.extensions.pica.PicaElementMapper;

@@ -31,9 +31,9 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.ClientIngest;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -105,7 +105,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
             logger.info("input = {},  threads = {}", input, threads);
 
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final TransportClientIngest es = new TransportClientIngestSupport()
+            final ClientIngest es = new TransportClientIngestSupport()
                     .newClient(uri)
                     .setIndex(options.valueOf("index").toString())
                     .setType(options.valueOf("type").toString())
@@ -123,7 +123,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
                         }
                     }).execute().shutdown();
             logger.info("files indexed = {}, resources indexed = {}", fileCounter, sink.getCounter());
-            es.shutdown();
+
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);

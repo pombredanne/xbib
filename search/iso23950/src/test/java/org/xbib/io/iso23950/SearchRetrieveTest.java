@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionService;
 import org.xbib.io.Session;
+import org.xbib.io.iso23950.client.ZClient;
 import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
 import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveResponse;
 import org.xbib.logging.Logger;
@@ -46,7 +47,7 @@ import java.util.Arrays;
 
 public class SearchRetrieveTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRetrieveTest.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SearchRetrieveTest.class.getName());
 
     @Test
     public void testSearchRetrieve() {
@@ -64,7 +65,7 @@ public class SearchRetrieveTest {
                     .getConnectionFactory(uri.getScheme())
                     .getConnection(uri);
             ZSession session = (ZSession) connection.createSession();
-            ZClient client = session.createClient();
+            ZClient client = session.newZClient();
             ZSearchRetrieveRequest searchRetrieve = client.newPQFSearchRetrieveRequest();
             searchRetrieve.setDatabase(Arrays.asList(database))
                     .setQuery(query)
@@ -76,6 +77,7 @@ public class SearchRetrieveTest {
             ZSearchRetrieveResponse response = searchRetrieve.execute();
             StringWriter writer = new StringWriter();
             response.to(writer);
+            client.close();
             session.close();
             connection.close();
         } catch (Exception e) {

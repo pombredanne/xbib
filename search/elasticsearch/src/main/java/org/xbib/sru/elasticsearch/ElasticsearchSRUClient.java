@@ -40,7 +40,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.SRUClient;
+import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
@@ -55,20 +55,9 @@ public class ElasticsearchSRUClient implements
 
     private ElasticsearchSRUService service;
 
-    private URI uri;
 
     public ElasticsearchSRUClient(ElasticsearchSRUService service) {
         this.service = service;
-    }
-
-    public ElasticsearchSRUClient setURI(URI uri) {
-        this.uri = uri;
-        return this;
-    }
-
-    @Override
-    public URI getURI() {
-        return uri == null ? service.getURI() : uri;
     }
 
     @Override
@@ -103,17 +92,12 @@ public class ElasticsearchSRUClient implements
     }
 
     @Override
-    public ElasticsearchSRUResponse newSearchRetrieveResponse(ElasticsearchSRURequest request) {
-        return new ElasticsearchSRUResponse(request);
-    }
-
-    @Override
     public ElasticsearchSRUResponse execute(ElasticsearchSRURequest request)
             throws IOException {
         if (request == null) {
             throw new IOException("request not set");
         }
-        ElasticsearchSRUResponse response = newSearchRetrieveResponse(request);
+        ElasticsearchSRUResponse response = new ElasticsearchSRUResponse(request);
         if (request.getRecordSchema() != null && !service.getRecordSchema().equals(request.getRecordSchema())) {
             throw new Diagnostics(66, request.getRecordSchema());
         }
@@ -170,19 +154,19 @@ public class ElasticsearchSRUClient implements
             response.setFacets(cqlResponse.getSearchResponse().getFacets());
 
         } catch (SyntaxException e) {
-            logger.error("SRU " + getURI() + ": database does not exist", e);
+            logger.error("SRU " + service.getURI() + ": database does not exist", e);
             throw new Diagnostics(10, e.getMessage());
         } catch (NoNodeAvailableException e) {
-            logger.error("SRU " + getURI() + ": unresponsive", e);
+            logger.error("SRU " + service.getURI() + ": unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (IndexMissingException e) {
-            logger.error("SRU " + getURI() + ": database does not exist", e);
+            logger.error("SRU " + service.getURI() + ": database does not exist", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (IOException e) {
-            logger.error("SRU " + getURI() + ": database is unresponsive", e);
+            logger.error("SRU " + service.getURI() + ": database is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
         } catch (Exception e) {
-            logger.error("SRU " + getURI() + ": unknown error", e);
+            logger.error("SRU " + service.getURI() + ": unknown error", e);
             throw new Diagnostics(1, e.getMessage());
         } finally {
             logger.info("SRU completed: query = {}", request.getQuery());

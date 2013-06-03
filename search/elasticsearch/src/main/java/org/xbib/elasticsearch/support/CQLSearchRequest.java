@@ -48,6 +48,9 @@ import org.xbib.query.cql.elasticsearch.ESGenerator;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
+/**
+ *
+ */
 public class CQLSearchRequest extends BasicRequest {
 
     private static final Logger logger = LoggerFactory.getLogger(CQLSearchRequest.class.getName());

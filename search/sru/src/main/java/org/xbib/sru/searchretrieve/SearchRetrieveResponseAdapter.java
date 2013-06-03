@@ -34,6 +34,7 @@ package org.xbib.sru.searchretrieve;
 import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.Request;
+import org.xbib.io.http.HttpResponse;
 
 public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseListener {
 
@@ -46,11 +47,11 @@ public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseList
     }
 
     @Override
-    public void onReceive(Request request, int count, byte[] message) {
+    public void onReceive(Request request, CharSequence message) {
     }
 
     @Override
-    public void onError(Request request, int count, byte[] errorMessage) {
+    public void onError(Request request, CharSequence errorMessage) {
     }
 
     @Override
@@ -95,5 +96,8 @@ public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseList
     @Override
     public void endRecord() {
     }
-    
+
+    @Override
+    public void receivedResponse(HttpResponse response) {
+    }
 }

@@ -31,8 +31,6 @@
  */
 package org.xbib.json.transform;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import org.xbib.json.JsonXmlReader;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.JsonXmlValueMode;
@@ -53,6 +51,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
+/**
+ *  Transform JSON with stylesheets
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class JsonStylesheet {
 
     private QName root;

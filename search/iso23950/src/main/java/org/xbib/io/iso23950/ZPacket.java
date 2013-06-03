@@ -33,6 +33,9 @@ package org.xbib.io.iso23950;
 
 import org.xbib.io.Packet;
 
+/**
+ *
+ */
 public class ZPacket implements Packet {
 
     @Override

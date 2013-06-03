@@ -34,20 +34,25 @@ package org.xbib.sru.elasticsearch;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ResourceBundle;
-import org.xbib.sru.SRUClient;
-import org.xbib.sru.SRUService;
+import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.service.SRUService;
 
+/**
+ * Elasticseach SRU service
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ElasticsearchSRUService implements SRUService {
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
 
-    private final String recordPacking = bundle.getString("recordPacking");//"xml";
+    private final String recordPacking = bundle.getString("recordPacking");
 
-    private final String recordSchema = bundle.getString("recordSchema"); //"mods";
+    private final String recordSchema = bundle.getString("recordSchema");
 
-    private final String version = bundle.getString("version"); // 1.2
+    private final String version = bundle.getString("version");
 
-    private final String mediaType = bundle.getString("mediaType"); //"application/x-mods+xml";
+    private final String mediaType = bundle.getString("mediaType");
 
     @Override
     public URI getURI() {

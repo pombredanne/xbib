@@ -43,8 +43,11 @@ public class Diagnostics extends IOException {
 
     private static final ResourceBundle bundle =
             ResourceBundle.getBundle("org.xbib.io.iso23950.diagnostics");
+
     private int diagCode;
+
     private String message;
+
     private String details;
 
     public Diagnostics(int diagCode) {

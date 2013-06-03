@@ -33,18 +33,20 @@ package org.xbib.tools.oai;
 
 import static org.xbib.tools.opt.util.DateConverter.*;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Date;
-import java.util.Map;
 
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngest;
-import org.elasticsearch.client.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.io.NullWriter;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.iri.IRI;
-import org.xbib.oai.ListRecordsRequest;
-import org.xbib.oai.ListRecordsResponse;
-import org.xbib.oai.MetadataReader;
-import org.xbib.oai.ResumptionToken;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.oai.OAISession;
+import org.xbib.oai.record.ListRecordsRequest;
+import org.xbib.oai.record.ListRecordsResponseListener;
+import org.xbib.oai.util.MetadataHandler;
+import org.xbib.oai.util.ResumptionToken;
 import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.client.OAIClientFactory;
 import org.xbib.rdf.Resource;
@@ -55,11 +57,12 @@ import org.xbib.rdf.io.xml.XmlHandler;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public final class ElasticsearchOAIHarvester {
+
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIHarvester.class.getName());
 
     private Resource resource;
 
@@ -94,13 +97,14 @@ public final class ElasticsearchOAIHarvester {
                 .newClient()
                 .setIndex(options.valueOf("index").toString())
                 .setType(options.valueOf("type").toString());
-        final OAIClient client = OAIClientFactory.getClient(options.valueOf("server").toString());
-        final ListRecordsRequest request = new OAIListRecordsRequest(client.getURI(), options);
-        StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
+        final OAIClient client = OAIClientFactory.newClient(options.valueOf("server").toString());
+        ListRecordsRequest request = new OAIListRecordsRequest(client, options);
+        boolean failure = false;
+        //StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
         do {
-            NullWriter w = new NullWriter();
-            ListRecordsResponse response = new ListRecordsResponse(w);
-            client.setStylesheetTransformer(transformer);
+            //NullWriter w = new NullWriter();
+            //ListRecordsResponse response = new ListRecordsResponse(w);
+            //client.setStylesheetTransformer(transformer);
             //client.setProxy("localhost", 3128);
             RdfXmlReader reader = new RdfXmlReader();
             final TripleListener stmt = new TripleListener() {
@@ -129,7 +133,7 @@ public final class ElasticsearchOAIHarvester {
             };
             reader.setTripleListener(stmt);
             final XmlHandler handler = reader.getHandler();
-            MetadataReader metadataReader = new MetadataReader() {
+            MetadataHandler metadataHandler = new MetadataHandler() {
 
                 @Override
                 public void startDocument() throws SAXException {
@@ -168,9 +172,22 @@ public final class ElasticsearchOAIHarvester {
                     handler.characters(chars, i, i1);
                 }
             };
-            client.setMetadataReader(metadataReader);
-            client.prepareListRecords(request, response).execute();
-        } while (request.getResumptionToken() != null);
+            //client.setMetadataHandler(metadataHandler);
+            //client.prepareListRecords(request, response).execute();
+            StringWriter sw = new StringWriter();
+            ListRecordsResponseListener listener = new ListRecordsResponseListener(request, sw);
+            listener.register(metadataHandler);
+            try {
+                request.prepare().execute(listener).waitFor();
+                logger.info("response = {}", sw);
+                failure = listener.isFailure();
+                request = client.resume(request, listener.getResponse());
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                failure = true;
+            }
+
+        } while (request.getResumptionToken() != null && !failure);
         es.shutdown();
     }
 
@@ -181,13 +198,14 @@ public final class ElasticsearchOAIHarvester {
         Date from;
         Date until;
 
-        OAIListRecordsRequest(URI uri, OptionSet options) {
-            super(uri);
+        OAIListRecordsRequest(OAISession session, OptionSet options) {
+            super(session);
             this.options = options;
         }
 
-        public void setFrom(Date from) {
+        public OAIListRecordsRequest setFrom(Date from) {
             this.from = from;
+            return this;
         }
 
         @Override
@@ -195,8 +213,9 @@ public final class ElasticsearchOAIHarvester {
             return (Date) options.valueOf("from");
         }
 
-        public void setUntil(Date until) {
+        public OAIListRecordsRequest setUntil(Date until) {
             this.until = until;
+            return this;
         }
 
         @Override
@@ -215,23 +234,14 @@ public final class ElasticsearchOAIHarvester {
         }
 
         @Override
-        public void setResumptionToken(ResumptionToken token) {
+        public OAIListRecordsRequest setResumptionToken(ResumptionToken token) {
             this.token = token;
+            return this;
         }
 
         @Override
         public ResumptionToken getResumptionToken() {
             return token;
-        }
-
-        @Override
-        public String getPath() {
-            return null;
-        }
-
-        @Override
-        public Map<String, String[]> getParameterMap() {
-            return null;
         }
     }
 }

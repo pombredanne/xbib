@@ -38,10 +38,15 @@ import org.xbib.xml.transform.StylesheetTransformer;
 public abstract class AbstractAction implements Action {
 
     private String group;
+
     protected Map<String, Object> params;
+
     protected SearchRetrieveResponse response;
+
     protected StylesheetTransformer transformer;
+
     protected long count = 0L;
+
     protected String base;
 
     @Override
@@ -73,7 +78,6 @@ public abstract class AbstractAction implements Action {
         return params;
     }
 
-    @Override
     public Action setResponse(SearchRetrieveResponse response) {
         this.response = response;
         return this;
@@ -84,7 +88,6 @@ public abstract class AbstractAction implements Action {
         return response;
     }
 
-    @Override
     public Action setTransformer(StylesheetTransformer transformer) {
         this.transformer = transformer;
         return this;

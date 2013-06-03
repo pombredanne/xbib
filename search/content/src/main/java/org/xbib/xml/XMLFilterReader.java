@@ -43,10 +43,13 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 public class XMLFilterReader extends XMLFilterImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(XMLFilterReader.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(XMLFilterReader.class.getName());
+
     private static final SAXParserFactory parserFactory =
             SAXParserFactory.newInstance("org.apache.xerces.jaxp.SAXParserFactoryImpl", null);
+
     private SAXParser parser;
+
     private XMLFilterBridge bridge;
 
     public XMLFilterReader() {

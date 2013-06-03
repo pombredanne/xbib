@@ -38,9 +38,9 @@ public class FederatorTest {
 
     Federator federator = Federator.getInstance()
             .setBase("tag:xbib.org,2012-08-01:federator")
-            .setThreads(5)
-            .setStylesheetPath("src/main/resources/xsl");
+            .setThreads(5);
 
+    @Test
     public void test() throws Exception {
         String query = "["
                // + "{\"type\":\"z3950\", \"name\":\"OBVSG\", \"query\":\"@attr 1=4 test\"},"
@@ -54,7 +54,10 @@ public class FederatorTest {
                 + "]";
 
         try (FileWriter writer = new FileWriter("target/federator-result.xml")) {
-            federator.bibliographic(query).execute().toSRUResponse("1.2", writer);
+            federator
+                    .bibliographic(query)
+                    .execute()
+                    .toSRUResponse("1.2", writer);
         }
     }
 }

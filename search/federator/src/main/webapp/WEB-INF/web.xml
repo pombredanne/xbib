@@ -94,7 +94,7 @@
     <servlet>
         <description>Elasticsearch SRU</description>
         <servlet-name>SRUServlet</servlet-name>
-        <servlet-class>org.xbib.sru.SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.service.SRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>org.xbib.sru.elasticsearch.ElasticsearchSRUAdapter</param-value>
@@ -103,7 +103,7 @@
     <servlet>
         <description>BVB ISO 23950 Server</description>
         <servlet-name>BVBZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>BVB</param-value>
@@ -112,7 +112,7 @@
     <servlet>
         <description>GBV ISO 23950 Server</description>
         <servlet-name>GBVZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>GBV</param-value>
@@ -121,7 +121,7 @@
     <servlet>
         <description>HBZ ISO 23950 Server</description>
         <servlet-name>HBZZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>HBZ</param-value>
@@ -130,7 +130,7 @@
     <servlet>
         <description>HEBIS ISO 23950 Server</description>
         <servlet-name>HEBISZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>HEBIS</param-value>
@@ -139,7 +139,7 @@
     <servlet>
         <description>KOBV ISO 23950 Server</description>
         <servlet-name>KOBVZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>KOBV</param-value>
@@ -148,7 +148,7 @@
     <servlet>
         <description>SWB ISO 23950 Server</description>
         <servlet-name>SWBZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>SWB</param-value>
@@ -157,7 +157,7 @@
     <servlet>
         <description>ZDB ISO 23950 Server</description>
         <servlet-name>ZDBZServlet</servlet-name>
-        <servlet-class>org.xbib.io.iso23950.ZServlet</servlet-class>
+        <servlet-class>org.xbib.io.iso23950.service.ZServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>ZDB</param-value>
@@ -166,7 +166,7 @@
     <servlet>
         <description>BVB SRU / ISO 23950 Server</description>
         <servlet-name>BVBSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>BVB</param-value>
@@ -175,7 +175,7 @@
     <servlet>
         <description>GBV SRU / ISO 23950 Server</description>
         <servlet-name>GBVSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>GBV</param-value>
@@ -184,7 +184,7 @@
     <servlet>
         <description>HBZ SRU / ISO 23950 Server</description>
         <servlet-name>HBZSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>HBZ</param-value>
@@ -193,7 +193,7 @@
     <servlet>
         <description>HEBIS SRU / ISO 23950 Server</description>
         <servlet-name>HEBISSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>HEBIS</param-value>
@@ -202,7 +202,7 @@
     <servlet>
         <description>KOBV SRU / ISO 23950 Server</description>
         <servlet-name>KOBVSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>KOBV</param-value>
@@ -211,7 +211,7 @@
     <servlet>
         <description>SWB SRU / ISO 23950 Server</description>
         <servlet-name>SWBSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>SWB</param-value>
@@ -220,7 +220,7 @@
     <servlet>
         <description>ZDB SRU / ISO 23950 Server</description>
         <servlet-name>ZDBSRUZServlet</servlet-name>
-        <servlet-class>org.xbib.sru.iso23950.ISO23950SRUServlet</servlet-class>
+        <servlet-class>org.xbib.sru.iso23950.service.ZSRUServlet</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value>ZDB</param-value>

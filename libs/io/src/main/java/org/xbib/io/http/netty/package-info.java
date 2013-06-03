@@ -1,4 +1,4 @@
 /**
- * HTTP client base on Netty
+ * HTTP client based on Netty
  */
 package org.xbib.io.http.netty;

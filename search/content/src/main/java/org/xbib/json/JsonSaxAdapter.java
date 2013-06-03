@@ -56,6 +56,8 @@ import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
  * 	transformer.transform(new SAXSource(new JsonXmlReader(),source), result);
  *  </code>
  *  </pre>
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class JsonSaxAdapter {
 

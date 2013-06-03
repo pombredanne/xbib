@@ -43,7 +43,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
@@ -57,6 +56,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
 
+/**
+ * Style sheet transformer
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class StylesheetTransformer {
 
     /**
@@ -66,10 +70,15 @@ public class StylesheetTransformer {
      * Do not use static SAXTransformerFactory. It is not thread safe.
      */
     private final SAXTransformerFactory transformerFactory;
+
     private final TransformerURIResolver resolver;
+
     private final static StylesheetPool pool = new StylesheetPool();
+
     private final Map<String, Object> parameters = new HashMap();
+
     private Source source;
+
     private Result result;
 
     public StylesheetTransformer() {
@@ -95,8 +104,8 @@ public class StylesheetTransformer {
         return parameters;
     }
 
-    public StylesheetTransformer setSource(Reader xmlReader) {
-        this.source = new StreamSource(xmlReader);
+    public StylesheetTransformer setSource(Reader reader) {
+        this.source = new StreamSource(reader);
         return this;
     }
 
@@ -150,6 +159,12 @@ public class StylesheetTransformer {
         transformer.transform(source, result);
     }
 
+    /**
+     * Transform through a sequence of XSL style sheets
+     *
+     * @param xsl
+     * @throws TransformerException
+     */
     public void transform(Iterable<String> xsl) throws TransformerException {
         if (source == null) {
             return;
@@ -183,33 +198,5 @@ public class StylesheetTransformer {
             resolver.close();
         }
     }
-    /*public void apply() throws TransformerException {
-        Transformer transformer = transformerFactory.newTransformer();
-        try {
-            addParameters(transformer);
-            if (xslSource == null) {
-                transformer.transform(source, target);
-                return;
-            }
-            if (xslSource2 == null) {
-                Templates templates = pool.newTemplates(transformerFactory, xslSource);
-                TransformerHandler thandler = pool.newTransformerHandler(transformerFactory, templates);
-                thandler.setResult(target);
-                addParameters(thandler.getTransformer());
-                transformer.transform(source, new SAXResult(thandler));
-                return;
-            }
-            Templates templates1 = pool.newTemplates(transformerFactory, xslSource);
-            Templates templates2 = pool.newTemplates(transformerFactory, xslSource2);
-            TransformerHandler handler1 = pool.newTransformerHandler(transformerFactory, templates1);
-            TransformerHandler handler2 = pool.newTransformerHandler(transformerFactory, templates2);
-            handler1.setResult(new SAXResult(handler2));
-            handler2.setResult(target);
-            addParameters(handler1.getTransformer());
-            addParameters(handler2.getTransformer());
-            transformer.transform(source, new SAXResult(handler1));
-        } finally {
-            resolver.close();
-        }
-    }*/
+
 }

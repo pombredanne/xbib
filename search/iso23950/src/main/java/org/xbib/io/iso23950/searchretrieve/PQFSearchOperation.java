@@ -41,10 +41,6 @@ import z3950.v3.RPNQuery;
 
 public class PQFSearchOperation extends AbstractSearchOperation {
 
-    public PQFSearchOperation(List<String> databases, String resultSetName) {
-        super(databases, resultSetName);
-    }
-
     @Override
     public RPNQuery getQuery(String query) throws IOException {
         RPNGenerator generator = new RPNGenerator();

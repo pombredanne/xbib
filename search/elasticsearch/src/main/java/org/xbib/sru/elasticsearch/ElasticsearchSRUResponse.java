@@ -83,6 +83,8 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
         responseFacets.parse(facets);
         String xmlFacets = responseFacets.toXML();
 
+        //getTransformer().addParameter("facets", new StreamSource(new StringReader(xmlFacets)));
+
         // build DOM an pass to XSL as parameter
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {

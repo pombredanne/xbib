@@ -31,10 +31,10 @@
  */
 package org.xbib.sru.explain;
 
-import org.xbib.sru.AbstractSRURequest;
+import org.xbib.sru.DefaultSRURequest;
+import org.xbib.sru.SRURequest;
 
-
-public class ExplainRequest extends AbstractSRURequest {
+public class ExplainRequest extends DefaultSRURequest implements SRURequest {
 
     private String version;
     
@@ -64,12 +64,4 @@ public class ExplainRequest extends AbstractSRURequest {
         return serverInfo;
     }
 
-    public ExplainRequest setQuery(String query) {
-        return this;
-    }
-
-    public String getQuery() {
-        return null;
-    }
-    
 }

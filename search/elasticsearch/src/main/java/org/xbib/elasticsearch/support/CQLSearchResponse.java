@@ -38,14 +38,25 @@ import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 
+import org.xbib.elasticsearch.xml.ES;
 import org.xbib.io.StreamByteBuffer;
+import org.xbib.json.JsonXmlStreamer;
+import org.xbib.json.JsonXmlValueMode;
 import org.xbib.search.NotFoundError;
 import org.xbib.search.SearchError;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.util.XMLEventConsumer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Response for a CQL search
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class CQLSearchResponse {
 
     private SearchResponse searchResponse;
@@ -82,7 +93,7 @@ public class CQLSearchResponse {
         return getResponse.isExists();
     }
 
-    public void write(OutputStream out) throws IOException {
+    public void to(OutputStream out) throws IOException {
         if (out == null) {
             return;
         }
@@ -97,13 +108,19 @@ public class CQLSearchResponse {
         jsonBuilder.close();
     }
 
+    public void to(XMLEventConsumer consumer) throws IOException, XMLStreamException {
+        QName root = new QName(ES.NS_URI, "root", ES.NS_PREFIX);
+        JsonXmlStreamer streamer = new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
+        streamer.toXML(read(), consumer, root);
+    }
+
     public InputStream read() throws IOException {
         if (searchResponse == null) {
             return null;
         }
         checkResponseForError();
         StreamByteBuffer buffer = new StreamByteBuffer();
-        write(buffer.getOutputStream());
+        to(buffer.getOutputStream());
         buffer.getOutputStream().flush();
         return buffer.getInputStream();
     }
@@ -114,7 +131,7 @@ public class CQLSearchResponse {
         }
         checkResponseForError();
         StreamByteBuffer buffer = new StreamByteBuffer();
-        write(buffer.getOutputStream());
+        to(buffer.getOutputStream());
         buffer.getOutputStream().flush();
         return buffer;
     }

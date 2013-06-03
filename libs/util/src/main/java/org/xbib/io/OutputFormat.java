@@ -38,9 +38,10 @@ public enum OutputFormat {
 
     JSON("application/json", "json"),
     XML("application/xml", "xml"),
+    XHTML("application/xhtml+xml", "xhtml"),
     MODS("application/mods+xml", "mods"), // http://tools.ietf.org/html/rfc6207
-    XHTML("application/xhtml+xml", "xhtml");
-    
+    SRU("application/sru+xml", "sru");
+
     private String mime;
     private String suffix;
     private static Map<String, OutputFormat> map;

@@ -32,7 +32,6 @@
 package org.xbib.sru;
 
 import org.xbib.io.OutputFormat;
-import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +40,7 @@ import java.io.Writer;
 
 public interface SRUResponse {
 
-    SearchRetrieveRequest getRequest();
+    SRURequest getRequest();
 
     SRUResponse setOutputFormat(OutputFormat format);
 

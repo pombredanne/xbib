@@ -33,6 +33,11 @@ package org.xbib.io.iso23950;
 
 import org.xbib.io.Request;
 
+/**
+ * Z request interface
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface ZRequest extends Request {
 
     ZRequest setQuery(String query);

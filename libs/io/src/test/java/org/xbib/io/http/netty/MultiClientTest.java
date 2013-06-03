@@ -54,7 +54,6 @@ public class MultiClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MultiClientTest.class.getName());
 
-
     @Test
     public void testSimpleClient() throws Exception {
         URI[] uris = new URI[]{

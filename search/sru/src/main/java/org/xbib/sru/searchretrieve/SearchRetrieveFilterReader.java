@@ -82,13 +82,11 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
     @Override
     public void startDocument() throws SAXException {
         echo = false;
-        //listener.onConnect(request);
         super.startDocument();
     }
 
     @Override
     public void endDocument() throws SAXException {
-        //listener.onDisconnect(request);
         super.endDocument();
     }
 

@@ -12,8 +12,13 @@
     <artifactId>xbib-elasticsearch</artifactId>
     <name>xbib-elasticsearch</name>
     <description>xbib - Elasticsearch</description>
-
     <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <elasticsearch.version>0.19.11</elasticsearch.version>
+        <xbib.version>1.0-SNAPSHOT</xbib.version>
+    </properties>
 
     <build>
         <plugins>
@@ -42,36 +47,63 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.xbib.elasticsearch</groupId>
+            <artifactId>elasticsearch-transport-support</artifactId>
+            <version>0.19.11</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-util</artifactId>
+            <version>${xbib.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-io</artifactId>
+            <version>${xbib.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-content</artifactId>
+            <version>${xbib.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-elements</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-logging</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-query</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-sru</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-oai</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.xbib.elasticsearch</groupId>
-            <artifactId>elasticsearch-transport-support</artifactId>
-            <!-- 0.90 <version>1.2.0</version> -->
-            <!-- 0.19.11  -->
-            <version>0.19.11</version>
+            <groupId>org.xbib</groupId>
+            <artifactId>xbib-atom</artifactId>
+            <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
