@@ -42,6 +42,14 @@ import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.xcontent.Builder;
 
+/**
+ * Index RDF resources into Elasticsearch
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <C>
+ * @param <R>
+ */
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C> {
 
@@ -89,6 +97,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
 
     @Override
     public void output(C context) throws IOException {
+        // we have either a single resource or a context of resources
         Builder<C, R> builder = new Builder();
         Map<IRI,R> map = context.asMap();
         if (map.isEmpty()) {
@@ -120,7 +129,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     /**
-     * The IRI host is the Elasticsearch index
+     * The IRI host is interpreted as the Elasticsearch index
      *
      * @param resource
      * @return
@@ -130,7 +139,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     /**
-     * The IRI query is the Elasticsearch index type
+     * The IRI query is interpreted as the Elasticsearch index type
      *
      * @param resource
      * @return
@@ -140,7 +149,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     /**
-     * The IRI fragment is the Elasticsearch document ID
+     * The IRI fragment is  interpreted as the Elasticsearch document ID
      *
      * @param resource
      * @return

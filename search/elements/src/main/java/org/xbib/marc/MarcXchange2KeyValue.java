@@ -34,8 +34,6 @@ package org.xbib.marc;
 import java.util.ArrayList;
 import java.util.List;
 import org.xbib.keyvalue.KeyValueStreamListener;
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 
 /**
  * Convert a MarcXchange stream to a key/value stream. With optional value
@@ -46,8 +44,6 @@ import org.xbib.logging.LoggerFactory;
 public class MarcXchange2KeyValue implements
         MarcXchangeListener,
         KeyValueStreamListener<FieldCollection, String> {
-    
-    private static final Logger logger = LoggerFactory.getLogger(MarcXchange2KeyValue.class.getName());
 
     public interface FieldDataTransformer {
 
@@ -135,7 +131,6 @@ public class MarcXchange2KeyValue implements
             data = transformer.transform(data);
         }
         keyValue(fields, data);
-        //fields.clear();
     }
 
     @Override
@@ -157,7 +152,6 @@ public class MarcXchange2KeyValue implements
         }
         // emit fields as key/value
         keyValue(fields, data);
-        //fields.clear();
     }
 
     @Override

@@ -31,7 +31,6 @@ import org.xbib.rfc4646.Subtag.Type;
  */
 public final class Lang extends SubtagSet {
 
-    private static final long serialVersionUID = -7095560018906537331L;
     private final Locale locale;
 
     /**

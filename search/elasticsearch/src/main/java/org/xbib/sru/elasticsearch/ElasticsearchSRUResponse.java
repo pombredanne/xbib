@@ -46,7 +46,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -83,9 +82,10 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
         responseFacets.parse(facets);
         String xmlFacets = responseFacets.toXML();
 
+        // this does not work, but would be sooo nice
         //getTransformer().addParameter("facets", new StreamSource(new StringReader(xmlFacets)));
 
-        // build DOM an pass to XSL as parameter
+        // build DOM, pass it to XSL as parameter
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();

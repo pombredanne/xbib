@@ -39,12 +39,19 @@ package org.xbib.marc;
 public class Field implements Comparable {
 
     public final static String ERROR_TAG = "___";
+
     public final static String NULL_TAG = "000";
+
     private String tag;
+
     private String indicator;
+
     private final int position;
+
     private final int length;
+
     private String subfieldId;
+
     private String data;
 
     public Field() {

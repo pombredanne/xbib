@@ -7,7 +7,7 @@ import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.addons.MABDisketteReader;
+import org.xbib.marc.extensions.MABDisketteReader;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Transformer;

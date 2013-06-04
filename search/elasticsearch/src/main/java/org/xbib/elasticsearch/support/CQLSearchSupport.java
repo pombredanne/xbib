@@ -35,6 +35,11 @@ import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupp
 
 import java.net.URI;
 
+/**
+ * Some support stubs for Common Query Language with Elasticsearch
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class CQLSearchSupport extends TransportClientSearchSupport {
 
     @Override

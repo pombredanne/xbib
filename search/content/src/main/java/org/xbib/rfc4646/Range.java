@@ -30,7 +30,6 @@ import org.xbib.rfc4646.Subtag.Type;
  */
 public class Range extends SubtagSet {
 
-    private static final long serialVersionUID = -6397227794306856431L;
     private final boolean extended;
 
     /**

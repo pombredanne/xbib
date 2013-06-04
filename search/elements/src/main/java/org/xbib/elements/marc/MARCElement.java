@@ -43,7 +43,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
-import org.xbib.marc.MarcXchange;
+import org.xbib.marc.MarcXchangeConstants;
 import org.xbib.rdf.Resource;
 
 /**
@@ -58,7 +58,7 @@ public abstract class MARCElement
         DublinCoreTermsProperties,
         BibliographicProperties,
         ExtraBibliographicProperties,
-        MarcXchange {
+        MarcXchangeConstants {
 
     protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
     protected Map params;

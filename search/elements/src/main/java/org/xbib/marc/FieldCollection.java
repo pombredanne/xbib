@@ -31,17 +31,22 @@
  */
 package org.xbib.marc;
 
-//import org.xbib.collect.TreeDeque;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * A linked list of ISO 2709 fields
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class FieldCollection extends LinkedList<Field> {
 
     public final static FieldCollection FORMAT_KEY = new FieldCollection("FORMAT");
+
     public final static FieldCollection TYPE_KEY = new FieldCollection("TYPE");
+
     public final static FieldCollection LEADER_KEY = new FieldCollection("LEADER");
 
 
@@ -52,17 +57,6 @@ public class FieldCollection extends LinkedList<Field> {
     private FieldCollection(String tag) {
         this();
         super.add(new Field(tag));
-    }
-
-    public String getDesignators() {
-        StringBuilder sb = new StringBuilder();
-        for (Field field : this) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-            sb.append(field.getDesignator());
-        }
-        return sb.toString();
     }
 
     public void format() {
@@ -76,7 +70,6 @@ public class FieldCollection extends LinkedList<Field> {
             sb.append(tags[i]);
         }
     }
-
 
     /**
      * Build a pattern of this field collection for matching
@@ -182,15 +175,6 @@ public class FieldCollection extends LinkedList<Field> {
 
     @Override
     public String toString() {
-        /*StringBuilder sb = new StringBuilder();
-        for (Field field : this) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-            sb.append(field.toString());
-        }
-        return sb.toString();
-        */
         Map<String,String[]> m = new TreeMap();
         makePattern(m);
         StringBuilder sb = new StringBuilder();
@@ -201,7 +185,7 @@ public class FieldCollection extends LinkedList<Field> {
                 for (String v : values) {
                     sb.append('$');
                     if (v != null) {
-                        // TODO sort characters is slow
+                        // sort characters is slow
                         char[] ch = v.toCharArray();
                         Arrays.sort(ch);
                         sb.append(ch);
@@ -211,6 +195,5 @@ public class FieldCollection extends LinkedList<Field> {
         }
         return sb.toString();
     }
-
 
 }

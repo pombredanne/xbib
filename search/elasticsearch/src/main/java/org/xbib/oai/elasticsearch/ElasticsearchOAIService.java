@@ -198,9 +198,6 @@ public class ElasticsearchOAIService implements OAIService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setStylesheet() {
-    }
-
     private String getIndex(ServerOAIRequest request) {
         String index = null;
         String path = request.getPath();

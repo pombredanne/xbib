@@ -49,7 +49,9 @@ import org.xbib.query.cql.elasticsearch.ESGenerator;
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
+ * Common Query Language request for Elasticsearch
  *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CQLSearchRequest extends BasicRequest {
 
@@ -144,6 +146,13 @@ public class CQLSearchRequest extends BasicRequest {
         return this;
     }
 
+    /**
+     * Translate SearchRetrieve facets to
+     * @param limit
+     * @param sort
+     * @param facetTypes
+     * @return
+     */
     public CQLSearchRequest facet(final String limit,
                                   final String sort,
                             final Map<String,String> facetTypes) {

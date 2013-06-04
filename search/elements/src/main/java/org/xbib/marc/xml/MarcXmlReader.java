@@ -37,7 +37,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
-import org.xbib.marc.MarcXchange;
+import org.xbib.marc.MarcXchangeConstants;
 import org.xbib.marc.MarcXchangeListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -47,13 +47,18 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class MarcXmlReader
-        extends DefaultHandler implements MarcXchange, MarcXchangeListener {
+        extends DefaultHandler implements MarcXchangeConstants, MarcXchangeListener {
 
     private static final SAXParserFactory factory = SAXParserFactory.newInstance();
+
     private ContentHandler contentHandler;
+
     private MarcXchangeListener listener;
+
     private InputSource source;
+
     private FieldCollection fields = new FieldCollection();
+
     private StringBuilder content = new StringBuilder();
 
     public MarcXmlReader(final InputSource source) {
@@ -148,7 +153,7 @@ public class MarcXmlReader
 
     @Override
     public void setDocumentLocator(Locator locator) {
-        // not needed
+        // not used yet
     }
 
     @Override

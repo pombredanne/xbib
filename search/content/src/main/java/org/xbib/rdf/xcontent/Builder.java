@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
@@ -47,6 +48,14 @@ import org.xbib.rdf.context.JsonLdContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.xml.CompactingNamespaceContext;
 
+/**
+ * A Builder for building XContent from a resource
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <C>
+ * @param <R>
+ */
 public class Builder<C extends ResourceContext, R extends Resource> {
     
     public <S extends Identifier, P extends Property, O extends Node> String build(C context, R resource)

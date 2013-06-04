@@ -31,8 +31,6 @@ import org.xbib.rfc4646.enums.Variant;
  */
 public final class Subtag implements Serializable, Cloneable, Comparable<Subtag> {
 
-    private static final long serialVersionUID = -4496128268514329138L;
-
     public enum Type {
         /** Primary language subtag **/
         PRIMARY,

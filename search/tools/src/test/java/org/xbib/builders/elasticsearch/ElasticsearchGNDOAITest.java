@@ -187,7 +187,7 @@ public class ElasticsearchGNDOAITest {
                 failure = true;
             }
 
-        } while (request.getResumptionToken() != null && !failure);
+        } while (!failure && request != null && request.getResumptionToken() != null);
         es.shutdown();
     }
 

@@ -45,7 +45,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.iso23950.RecordIdentifierSetter;
 import org.xbib.marc.Field;
 import org.xbib.marc.Iso2709Reader;
-import org.xbib.marc.MarcXchange;
+import org.xbib.marc.MarcXchangeConstants;
 import org.xbib.marc.MarcXchangeListener;
 import org.xbib.marc.MarcXchangeSaxAdapter;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
@@ -55,8 +55,8 @@ import org.xml.sax.SAXException;
 public class SRUFilterReader extends Iso2709Reader implements MarcXchangeListener {
 
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    private final String nsURI = MarcXchange.NS_URI;
-    private final String recordSchema = MarcXchange.NS_PREFIX;
+    private final String nsURI = MarcXchangeConstants.NS_URI;
+    private final String recordSchema = MarcXchangeConstants.NS_PREFIX;
     private final String recordPacking = "xml";
     private final SearchRetrieveResponse response;
     private final String encoding;

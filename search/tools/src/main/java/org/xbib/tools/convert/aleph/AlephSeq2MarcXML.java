@@ -65,7 +65,7 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchangeAdapter;
-import org.xbib.marc.addons.AlephSequentialReader;
+import org.xbib.marc.extensions.AlephSequentialReader;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xml.sax.InputSource;

@@ -34,6 +34,8 @@ package org.xbib.sru.elasticsearch;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ResourceBundle;
+
+import org.xbib.sru.SRUConstants;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.service.SRUService;
 
@@ -46,13 +48,11 @@ public class ElasticsearchSRUService implements SRUService {
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
 
-    private final String recordPacking = bundle.getString("recordPacking");
+    private final String recordPacking = bundle.getString(SRUConstants.RECORDPACKING_PROPERTY);
 
-    private final String recordSchema = bundle.getString("recordSchema");
+    private final String recordSchema = bundle.getString(SRUConstants.RECORDSCHEMA_PROPERTY);
 
-    private final String version = bundle.getString("version");
-
-    private final String mediaType = bundle.getString("mediaType");
+    private final String version = bundle.getString(SRUConstants.VERSION_PROPERTY);
 
     @Override
     public URI getURI() {
@@ -82,10 +82,6 @@ public class ElasticsearchSRUService implements SRUService {
     @Override
     public String getEncoding() {
         return "UTF-8"; // always UTF-8
-    }
-
-    public String getMediaType() {
-        return mediaType;
     }
 
     public SRUClient newClient() {

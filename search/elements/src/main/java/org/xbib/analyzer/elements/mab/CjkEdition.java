@@ -16,10 +16,4 @@ public class CjkEdition extends MABElement {
         return element;
     }
 
-    @Override
-    public CjkEdition build(MABBuilder b, FieldCollection key, String value) {
-        // b.context().getResource(b.context().resource(), ...).add( ... , value);
-        return this;
-    }
-
 }

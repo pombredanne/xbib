@@ -39,18 +39,24 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 
 import org.xbib.elasticsearch.xml.ES;
+import org.xbib.io.OutputFormat;
 import org.xbib.io.StreamByteBuffer;
+import org.xbib.io.Streams;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.JsonXmlValueMode;
+import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.search.NotFoundError;
 import org.xbib.search.SearchError;
+import org.xbib.xml.transform.StylesheetTransformer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Response for a CQL search
@@ -62,6 +68,39 @@ public class CQLSearchResponse {
     private SearchResponse searchResponse;
 
     private GetResponse getResponse;
+
+    private StylesheetTransformer transformer;
+
+    private String[] stylesheets;
+
+    private OutputFormat format;
+
+    public CQLSearchResponse setOutputFormat(OutputFormat format) {
+        this.format = format;
+        return this;
+    }
+
+    public OutputFormat getOutputFormat() {
+        return format;
+    }
+
+    public CQLSearchResponse setStylesheetTransformer(StylesheetTransformer transformer) {
+        this.transformer = transformer;
+        return this;
+    }
+
+    public CQLSearchResponse setStylesheets(String... stylesheets) {
+        this.stylesheets = stylesheets;
+        return this;
+    }
+
+    protected StylesheetTransformer getTransformer() {
+        return transformer;
+    }
+
+    protected String[] getStylesheets() {
+        return stylesheets;
+    }
 
     public CQLSearchResponse setSearchResponse(SearchResponse response) {
         this.searchResponse = response;
@@ -93,7 +132,7 @@ public class CQLSearchResponse {
         return getResponse.isExists();
     }
 
-    public void to(OutputStream out) throws IOException {
+    public void toJSON(OutputStream out) throws IOException {
         if (out == null) {
             return;
         }
@@ -120,7 +159,7 @@ public class CQLSearchResponse {
         }
         checkResponseForError();
         StreamByteBuffer buffer = new StreamByteBuffer();
-        to(buffer.getOutputStream());
+        toJSON(buffer.getOutputStream());
         buffer.getOutputStream().flush();
         return buffer.getInputStream();
     }
@@ -131,9 +170,27 @@ public class CQLSearchResponse {
         }
         checkResponseForError();
         StreamByteBuffer buffer = new StreamByteBuffer();
-        to(buffer.getOutputStream());
+        toJSON(buffer.getOutputStream());
         buffer.getOutputStream().flush();
         return buffer;
+    }
+
+    public void to(Writer writer) throws IOException, XMLStreamException {
+        InputStream in = read();
+        if (format == null || format.equals(OutputFormat.JSON)) {
+            Streams.copy(new InputStreamReader(in, "UTF-8"), writer);
+        } else if (format.equals(OutputFormat.XML)) {
+            JsonStylesheet js = new JsonStylesheet();
+            js.toXML(in, writer);
+        } else {
+            // application/x-xhtml+xml
+            // application/x-mods+xml
+            JsonStylesheet js = new JsonStylesheet();
+            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            js.setTransformer(getTransformer());
+            js.setStylesheets(getStylesheets());
+            js.transform(in, writer);
+        }
     }
 
     private void checkResponseForError() throws IOException {

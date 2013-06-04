@@ -44,17 +44,20 @@ import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
-import java.net.URI;
 
+/**
+ * SearchRetrieve by URL for Elasticseach
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ElasticsearchSRUClient implements
         SRUClient<ElasticsearchSRURequest,ElasticsearchSRUResponse> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUService.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUService.class.getName());
 
     private final CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     private ElasticsearchSRUService service;
-
 
     public ElasticsearchSRUClient(ElasticsearchSRUService service) {
         this.service = service;
@@ -82,13 +85,12 @@ public class ElasticsearchSRUClient implements
 
     @Override
     public void close() throws IOException {
-        // nothing
+        // nothing to do
     }
 
     @Override
     public ElasticsearchSRURequest newSearchRetrieveRequest() {
         return new ElasticsearchSRURequest();
-
     }
 
     @Override
@@ -135,11 +137,15 @@ public class ElasticsearchSRUClient implements
             throw new Diagnostics(7, "no query parameter given");
         }
         try {
+            int from = request.getStartRecord() - 1;
+            if (from < 0) from = 0;
+            int size = request.getMaximumRecords();
+            if (size < 0) size = 0;
             CQLSearchRequest cqlRequest  = es.newSearchRequest()
                     .index(getIndex(request))
                     .type(getType(request))
-                    .from(request.getStartRecord() - 1)
-                    .size(request.getMaximumRecords())
+                    .from(from)
+                    .size(size)
                     .cql(getQuery(request))
                     .facet(request.getFacetLimit(), request.getFacetSort(), null);
 

@@ -182,7 +182,9 @@ public class StylesheetTransformer {
                 Templates t = pool.newTemplates(transformerFactory, resolver.resolve(s, null));
                 TransformerHandler h = pool.newTransformerHandler(transformerFactory, t);
                 for (Map.Entry<String, Object> me : parameters.entrySet()) {
-                    h.getTransformer().setParameter(me.getKey(), me.getValue());
+                    if (me.getValue() != null) {
+                        h.getTransformer().setParameter(me.getKey(), me.getValue());
+                    }
                 }
                 handlers.add(h);
             }

@@ -31,17 +31,12 @@
  */
 package org.xbib.marc;
 
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
-
 import java.util.TreeMap;
 
 public class FieldDirectory extends TreeMap<Integer, Field> {
 
-    private static final Logger logger = LoggerFactory.getLogger(FieldDirectory.class.getName());
-
     public FieldDirectory(RecordLabel label, String buffer)
-            throws FieldDirectoryException {
+            throws InvalidFieldDirectoryException {
         super();
         int directoryLength = label.getBaseAddressOfData() - (RecordLabel.LENGTH + 1);
         // assume that negative values means prohibiting directory access
@@ -59,7 +54,7 @@ public class FieldDirectory extends TreeMap<Integer, Field> {
                     + label.getStartingCharacterPositionLength()
                     + label.getSegmentIdentifierLength();
             if (directoryLength % entrysize != 0) {
-                throw new FieldDirectoryException("invalid ISO 2709 directory length: "
+                throw new InvalidFieldDirectoryException("invalid ISO 2709 directory length: "
                         + directoryLength + ", definitions in record label: "
                         + " data field length = " + label.getDataFieldLength()
                         + " starting character position length = " + label.getStartingCharacterPositionLength()
@@ -75,7 +70,7 @@ public class FieldDirectory extends TreeMap<Integer, Field> {
                     Field field = new Field(label, key, position, length);
                     put(position, field);
                 } catch (NumberFormatException e) {
-                    throw new FieldDirectoryException("directory corrupt? key = " + key + " length = " + directoryLength);
+                    throw new InvalidFieldDirectoryException("directory corrupt? key = " + key + " length = " + directoryLength);
                 }
             }
         }

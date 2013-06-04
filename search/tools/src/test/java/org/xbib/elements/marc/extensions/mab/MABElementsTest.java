@@ -54,7 +54,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.addons.MABTarReader;
+import org.xbib.marc.extensions.MABTarReader;
 import org.xml.sax.InputSource;
 
 public class MABElementsTest {

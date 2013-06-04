@@ -34,13 +34,12 @@ package org.xbib.marc;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import org.xbib.io.sequential.CharStream;
-import org.xbib.io.sequential.CharStreamFactory;
-import org.xbib.io.sequential.CharStreamListener;
-import org.xbib.io.sequential.Separable;
+import org.xbib.sequential.CharStream;
+import org.xbib.sequential.CharStreamFactory;
+import org.xbib.sequential.CharStreamListener;
+import org.xbib.sequential.Separable;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.xml.XMLNS;
@@ -51,30 +50,58 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
+/**
+ *
+ * A Sax adapter for MarcXchange
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public class MarcXchangeSaxAdapter implements MarcXchangeConstants, MarcXchangeListener {
 
     private static final Logger logger = LoggerFactory.getLogger(MarcXchangeSaxAdapter.class.getName());
+
     private static final AttributesImpl EMPTY_ATTRIBUTES = new AttributesImpl();
+
     private static final CharStreamFactory factory = CharStreamFactory.getInstance();
+
     private final CharStreamListener streamListener = new Iso2709StreamListener();
+
     private CharStream stream;
+
     private char mark = '\u0000';
+
     private int position = 0;
+
     private FieldDirectory directory;
+
     private Field designator;
+
     private RecordLabel label;
+
     private boolean datafieldOpen;
+
     private boolean subfieldOpen;
+
     private boolean recordOpen;
+
     private String schema;
+
     private String format;
+
     private String type;
+
     private String id;
+
     private String nsUri;
+
     private ContentHandler contentHandler;
+
     private MarcXchangeListener listener;
+
     private boolean fatalerrors = false;
+
     private boolean silenterrors = false;
+
     private int buffersize = 8192;
 
     public MarcXchangeSaxAdapter() {
@@ -531,7 +558,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                         } else if (directory.containsKey(position)) {
                             designator = new Field(label, directory.get(position), fieldContent, false);
                         } else {
-                            throw new FieldDirectoryException("byte position not found in directory: "
+                            throw new InvalidFieldDirectoryException("byte position not found in directory: "
                                     + position + " - is this stream reading using an 8-bit wide encoding?");
                         }
                         if (designator != null) {
@@ -550,7 +577,7 @@ public class MarcXchangeSaxAdapter implements MarcXchange, MarcXchangeListener {
                         endSubField(designator);
                         break;
                 }
-            } catch (FieldDirectoryException ex) {
+            } catch (InvalidFieldDirectoryException ex) {
                 logger.warn(ex.getMessage());
             } finally {
                 position += data.length();

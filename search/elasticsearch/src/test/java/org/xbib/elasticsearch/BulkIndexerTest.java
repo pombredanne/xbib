@@ -48,7 +48,7 @@ public class BulkIndexerTest extends Assert {
                     .size(10)
                     .cql("Hello")
                     .executeSearch(queryLogger)
-                    .to(output);
+                    .toJSON(output);
             logger.info("result = {}", output.toString());
             assertTrue(output.toString().length() > 0);
             //es.deleteIndex();
