@@ -1,5 +1,4 @@
-Extensible bibliographic information building platform
-======================================================
+Extensible bibliographic information platform
+=============================================
 
-Indexing, searching, and migrating bibliographic data to large-scale search engines and the semantic web
-
+Massive indexing, searching, and processing bibliographic data for large-scale search engines and the Semantic Web
