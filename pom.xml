@@ -430,25 +430,27 @@
     </dependencies>
 
     <modules>
-        <module>libs/logging</module>
-        <module>libs/charset</module>
-        <module>libs/compress</module>
-        <module>libs/util</module>
-        <module>libs/jacc</module>
-        <module>libs/io</module>
-
+        <module>common/logging</module>
+        <module>common/charset</module>
+        <module>common/compress</module>
+        <module>common/util</module>
+        <module>common/jacc</module>
+        <module>common/io</module>
+        
+        <module>search/grouping</module>
         <module>search/content</module>
         <module>search/elements</module>
-        <module>search/elasticsearch</module>
         <module>search/query</module>
         <module>search/sru</module>
         <module>search/oai</module>
         <module>search/iso23950</module>
         <module>search/atom</module>
+        <module>search/elasticsearch</module>
         <module>search/federator</module>
         <module>search/tools</module>
 
 <!--
+   storage - slowly evolving
         <module>storage/berkeleydb</module>
         <module>storage/objectstorage</module>
         <module>storage/sessionstorage</module>
@@ -456,7 +458,7 @@
         <module>storage/printclient</module>
 -->
 <!-- 
-   not ready for building        
+   not ready for build
         <module>textmining/crf</module>
         <module>textmining/citparse</module>
         <module>textmining/pdf2xml</module>        

@@ -32,14 +32,15 @@
 package org.xbib.sru.service;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.WeakHashMap;
 
 public class SRUServiceFactory<S extends SRUService> {
 
-    private final Map<URI, S> services = new WeakHashMap();
+    private final Map<URI, S> services = new HashMap();
+
     private final static SRUServiceFactory instance = new SRUServiceFactory();
 
     private SRUServiceFactory() {
@@ -58,10 +59,15 @@ public class SRUServiceFactory<S extends SRUService> {
     }
 
     public S getDefaultService() {
-        if (services.isEmpty() ) {
-            throw new IllegalArgumentException("No SRU service found");
+        if (services.isEmpty()) {
+            throw new IllegalArgumentException("No default SRU service found");
         }
-        return services.entrySet().iterator().next().getValue();
+        Iterator<S> it = services.values().iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new IllegalArgumentException("No default SRU service found");
+        }
     }
 
     public S getService(URI uri) {

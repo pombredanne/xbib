@@ -40,6 +40,7 @@ import java.util.Iterator;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
@@ -47,6 +48,7 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
+import org.xbib.rdf.io.RDFSerializer;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.SimpleResource;
 
@@ -56,7 +58,7 @@ import org.xbib.rdf.simple.SimpleResource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class NTripleWriter<S extends Identifier, P extends Property, O extends Node>
-    implements TripleListener<S,P,O> {
+    implements RDFSerializer<S,P,O>, TripleListener<S,P,O> {
 
     private final Logger logger = LoggerFactory.getLogger(NTripleWriter.class.getName());
 
@@ -158,7 +160,8 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
         }
     }
 
-    public void write(Resource<S, P, O> resource) throws IOException {
+    @Override
+    public NTripleWriter<S,P,O> write(Resource<S, P, O> resource) throws IOException {
         StringBuilder sb = new StringBuilder();
         Iterator<Triple<S,P,O>> it = resource.iterator();
         while (it.hasNext()) {
@@ -166,6 +169,7 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
         }
         byteCounter += sb.length();
         writer.write(sb.toString());
+        return this;
     }
 
     public String writeStatement(Triple<S, P, O> stmt) throws IOException {
@@ -214,6 +218,11 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
                 return s + "^^<" + escape(type.toString()) + ">";
             }
             return s;
+        } else if (object instanceof IdentifiableNode) {
+            IdentifiableNode node = (IdentifiableNode)object;
+            return Identifier.GENID.equals(node.id().getScheme()) ?
+                    node.toString() :
+                    "<" + escape(node.toString()) + ">" ;
         }
         return "<???>";
     }

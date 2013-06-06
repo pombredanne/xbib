@@ -39,8 +39,9 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Visitor;
+import org.xbib.xml.XSD;
 
-public final class Factory<S,P,O> {
+public final class Factory<S,P,O> implements XSD {
 
     private final static transient Factory instance = new Factory();
 
@@ -84,19 +85,19 @@ public final class Factory<S,P,O> {
     public Literal newLiteral(Object value) {
         Literal l = new SimpleLiteral();
         if (value instanceof Double) {
-            return l.type(Literal.XSD_DOUBLE).object(value);
+            return l.type(DOUBLE).object(value);
         }
         if (value instanceof Float) {
-            return l.type(Literal.XSD_FLOAT).object(value);
+            return l.type(FLOAT).object(value);
         }
         if (value instanceof Long) {
-            return l.type(Literal.XSD_LONG).object(value);
+            return l.type(LONG).object(value);
         }
         if (value instanceof Integer) {
-            return l.type(Literal.XSD_INT).object(value);
+            return l.type(INT).object(value);
         }
         if (value instanceof Boolean) {
-            return l.type(Literal.XSD_BOOLEAN).object(value);
+            return l.type(BOOLEAN).object(value);
         }
         // auto derive
         return l.object(value);        

@@ -41,6 +41,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
@@ -60,9 +61,9 @@ import org.xbib.xml.transform.StylesheetTransformer;
  */
 public class SRUServlet extends HttpServlet implements SRUConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(SRUServlet.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SRUServlet.class.getName());
 
-    private static final String responseEncoding = "UTF-8";
+    private final String responseEncoding = "UTF-8";
 
     private ServletConfig config;
 
@@ -121,12 +122,13 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
 
                 client.execute(sruRequest)
                         .setStylesheetTransformer(new StylesheetTransformer("/xsl"))
+                        //  .setStylesheets("")  TODO stylesheets
                         .to(response);
 
             }
         } catch (Diagnostics diag) {
             logger.warn(diag.getMessage(), diag);
-            //response.setStatus(500); SRU does not conform to 500 HTTP errors
+            //response.setStatus(500); SRU does not use 500 HTTP errors :(
             response.setStatus(200);
             out.write(diag.getXML().getBytes(responseEncoding));
         } catch (Exception e) {
@@ -183,13 +185,6 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         }
         if (service == null) {
             try {
-                service = PropertiesSRUServiceFactory.getService(serviceName);
-            } catch (IllegalArgumentException e) {
-                // skip
-            }
-        }
-        if (service == null) {
-            try {
                 // class name in web.xml?
                 service = SRUServiceFactory.getInstance().getService(serviceName);
             } catch (ClassNotFoundException ex) {
@@ -201,7 +196,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
             }
         }
         if (service == null) {
-            throw new ServletException("can't get service from adapterName = " + serviceName
+            throw new ServletException("can't create SRUService from name = " + serviceName
                     + " or request URI = " + request.getRequestURI());
         }
         return service;

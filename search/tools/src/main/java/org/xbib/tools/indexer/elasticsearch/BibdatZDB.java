@@ -70,19 +70,133 @@ import org.xml.sax.InputSource;
 public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final static AtomicLong outputCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private ElementOutput output;
+
     private static OptionSet options;
+
     private boolean done = false;
+
     private static String index;
+
     private static String type;
+
     private static int pipelines;
-    private static int buffersize;
+
     private static boolean mock;
-    private static boolean detect;
+
+    public static void main(String[] args) {
+        try {
+            OptionParser parser = new OptionParser() {
+                {
+                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
+                    accepts("index").withRequiredArg().ofType(String.class).required();
+                    accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+                    accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                    accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
+                }
+            };
+            options = parser.parse(args);
+            if (options.hasArgument("help")) {
+                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
+                        + " --threads <n>          the number of threads (optional, default: 1)"
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
+                );
+                System.exit(1);
+            }
+
+            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            final Integer threads = (Integer) options.valueOf("threads");
+
+            logger.info("input = {}, threads = {}", input, threads);
+
+            URI esURI = URI.create(options.valueOf("elasticsearch").toString());
+            index = options.valueOf("index").toString();
+            type = options.valueOf("type").toString();
+            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
+            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
+            pipelines = (Integer)options.valueOf("pipelines");
+            mock = (Boolean)options.valueOf("mock");
+
+            final TransportClientIngestSupport es = mock ?
+                    new MockTransportClientIngest() :
+                    new TransportClientIngestSupport();
+
+            es.maxBulkActions(maxbulkactions)
+                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
+                    .newClient(esURI)
+                    .waitForHealthyCluster();
+
+            logger.info("creating new index ...");
+            es.setIndex(index)
+                    .setType(type)
+                    .dateDetection(false)
+                    .newIndex(false);
+            logger.info("... new index created");
+
+            logger.info("creating new type ...");
+            es.newType();
+            logger.info("... new type done");
+
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
+                    new ElasticsearchResourceSink(es);
+
+            long t0 = System.currentTimeMillis();
+            ImportService service = new ImportService().threads(threads).factory(
+                    new ImporterFactory() {
+                        @Override
+                        public Importer newImporter() {
+                            return new BibdatZDB(sink);
+                        }
+                    }).execute();
+
+            long t1 = System.currentTimeMillis();
+            long docs = outputCounter.get();
+            long bytes = es.getVolumeInBytes();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1.0); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            service.shutdown();
+            es.shutdown();
+
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.exit(0);
+    }
 
     public BibdatZDB(ElementOutput output) {
         this.output = output;
@@ -200,116 +314,5 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             return outputCounter.get();
         }
     }
-
-    public static void main(String[] args) {
-        try {
-            OptionParser parser = new OptionParser() {
-                {
-                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
-                    accepts("index").withRequiredArg().ofType(String.class).required();
-                    accepts("type").withRequiredArg().ofType(String.class).required();
-                    accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
-                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
-                    accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("buffersize").withRequiredArg().ofType(Integer.class).defaultsTo(8192);
-                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                }
-            };
-            options = parser.parse(args);
-            if (options.hasArgument("help")) {
-                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
-                        + " --help                 print this help message" + lf
-                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
-                        + " --index <index>        Elasticsearch index name" + lf
-                        + " --type <type>          Elasticsearch type name" + lf
-                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
-                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
-                );
-                System.exit(1);
-            }
-
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
-            final Integer threads = (Integer) options.valueOf("threads");
-
-            logger.info("input = {}, threads = {}", input, threads);
-
-            URI esURI = URI.create(options.valueOf("elasticsearch").toString());
-            index = options.valueOf("index").toString();
-            type = options.valueOf("type").toString();
-            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
-            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
-
-            mock = (Boolean)options.valueOf("mock");
-            pipelines = (Integer)options.valueOf("pipelines");
-            buffersize = (Integer)options.valueOf("buffersize");
-            detect = (Boolean)options.valueOf("detect");
-
-            final TransportClientIngestSupport es = mock ?
-                    new MockTransportClientIngest() :
-                    new TransportClientIngestSupport();
-
-            es.maxBulkActions(maxbulkactions)
-                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
-                    .newClient(esURI)
-                    .waitForHealthyCluster();
-
-            logger.info("creating new index ...");
-            es.setIndex(index)
-                    .setType(type)
-                    .dateDetection(false)
-                    .newIndex(false);
-            logger.info("... new index created");
-
-            logger.info("creating new type ...");
-            es.newType();
-            logger.info("... new type done");
-
-            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
-                    new ElasticsearchResourceSink(es);
-
-            long t0 = System.currentTimeMillis();
-            ImportService service = new ImportService().threads(threads).factory(
-                    new ImporterFactory() {
-                        @Override
-                        public Importer newImporter() {
-                            return new BibdatZDB(sink);
-                        }
-                    }).execute();
-
-            long t1 = System.currentTimeMillis();
-            long docs = outputCounter.get();
-            long bytes = es.getVolumeInBytes();
-            double dps = docs * 1000.0 / (double)(t1 - t0);
-            double avg = bytes / (docs + 1.0); // avoid div by zero
-            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = TimeValue.timeValueMillis(t1 - t0).format();
-            String byteSize = FormatUtil.convertFileSize(bytes);
-            String avgSize = FormatUtil.convertFileSize(avg);
-            NumberFormat formatter = NumberFormat.getNumberInstance();
-            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
-                    avgSize,
-                    formatter.format(avg),
-                    formatter.format(dps),
-                    formatter.format(mbps));
-
-            service.shutdown();
-            es.shutdown();
-
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.exit(0);
-    }
-
 
 }

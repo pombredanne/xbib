@@ -56,7 +56,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
     @Test
     public void testIntegerLiteral() throws Exception {
         Resource<S, P, O> r = new SimpleResource().id(IRI.create("urn:root"));
-        SimpleLiteral<O> literal = new SimpleLiteral(123).type(Literal.XSD_INT);
+        SimpleLiteral<O> literal = new SimpleLiteral(123).type(Literal.INT);
         r.add("urn:property", literal);
         assertEquals(r.isEmpty(), false);
         assertEquals(r.iterator().next().object().toString(), "123");

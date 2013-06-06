@@ -18,7 +18,7 @@
                 <include>org.xbib:xbib-compress</include>
                 <include>org.xbib:xbib-elements</include>
                 <include>org.xbib:xbib-elasticsearch</include>
-                <include>org.xbib:xbib-search-tools</include>
+                <include>org.xbib:xbib-tools</include>
                 <include>org.xbib.elasticsearch:elasticsearch-transport-support</include>
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.apache.lucene:lucene-core</include>

@@ -50,21 +50,21 @@ public final class XMLUtil {
      * @return The escaped string.
      */
     public static CharSequence escape(CharSequence string) {
-         StringBuilder sb = new StringBuilder();
-         escape(sb, string);
-         return sb;
+        StringBuilder sb = new StringBuilder();
+        escape(sb, string);
+        return sb;
     }
-    
+
     public static CharSequence escape(char[] chars, int start, int len) {
-         StringBuilder sb = new StringBuilder();
-         escape(sb, chars, start, len);
-         return sb;
+        StringBuilder sb = new StringBuilder();
+        escape(sb, chars, start, len);
+        return sb;
     }
-    
+
     public static void escape(StringBuilder sb, String string) {
         escape(sb, string.toCharArray(), 0, string.length());
     }
-    
+
     public static void escape(StringBuilder sb, CharSequence string) {
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
@@ -87,7 +87,7 @@ public final class XMLUtil {
         }
     }
 
-    public static void escape(StringBuilder sb, char[] chars, int start, int len) {        
+    public static void escape(StringBuilder sb, char[] chars, int start, int len) {
         for (int i = start; i < len; i++) {
             char c = chars[i];
             switch (c) {
@@ -109,11 +109,168 @@ public final class XMLUtil {
         }
     }
 
+    public static String unescape(String str) {
+        int idxS = str.indexOf("&");
+        if (idxS < 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        int idxE, idx, size;
+        char c;
+        int prev = 0;
+        while (idxS != -1) {
+            if (prev < idxS) {
+                sb.append(str.substring(prev, idxS));
+                prev = idxS;
+            }
+            idxE = str.indexOf(";", idxS);
+            if (idxE < 0) {
+                break;
+            }
+            idx = idxS + 1;
+            size = idxE - idxS - 1;
+            if (size < 2) {
+                sb.append(str.substring(idxS, idxE + 1));
+            } else {
+                c = str.charAt(idx);
+                switch (c) {
+                    case 'l':
+                        if (!xmlDecodeLT(str, idx, sb, size)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    case 'g':
+                        if (!xmlDecodeGT(str, idx, sb, size)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    case 'q':
+                        if (!xmlDecodeQUOT(str, idx, sb, size)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    case 'a':
+                        if (!xmlDecodeAMPAPOS(str, idx, sb, size)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    case 'n':
+                        if (!xmlDecodeNBSP(str, idx, sb, size)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    case '#':
+                        if (!xmlDecodeNumber(str, idx, sb, idxE)) {
+                            sb.append("&");
+                            idxE = idxS;
+                        }
+                        break;
+
+                    default:
+                        sb.append("&");
+                        idxE = idxS;
+                }
+            }
+            prev = idxE + 1;
+            idxS = str.indexOf("&", prev);
+        }
+        if (prev < str.length()) {
+            sb.append(str.substring(prev));
+        }
+        return sb.toString();
+    }
+
+
+    private static boolean xmlDecodeLT(String str, int idx, StringBuilder sb, int size) {
+        boolean isRecognized = true;
+        char c_1 = str.charAt(idx + 1);
+        if ((size != 2) || (c_1 != 't')) {
+            isRecognized = false;
+        } else {
+            // lt
+            sb.append('<');
+        }
+        return isRecognized;
+    }
+
+    private static boolean xmlDecodeGT(String str, int idx, StringBuilder sb, int size) {
+        boolean isRecognized = true;
+        char c_1 = str.charAt(idx + 1);
+        if ((size != 2) || (c_1 != 't')) {
+            isRecognized = false;
+        } else {
+            sb.append('>');
+        }
+        return isRecognized;
+    }
+
+    private static boolean xmlDecodeQUOT(String str, int idx, StringBuilder sb, int size) {
+        boolean isRecognized = true;
+        char c_1 = str.charAt(idx + 1);
+        if ((size != 4) || (c_1 != 'u' || str.charAt(idx + 2) != 'o' || str.charAt(idx + 3) != 't')) {
+            isRecognized = false;
+        } else {
+            sb.append('"');
+        }
+        return isRecognized;
+    }
+
+    private static boolean xmlDecodeAMPAPOS(String str, int idx, StringBuilder sb, int size) {
+        boolean isRecognized = true;
+        char c_1 = str.charAt(idx + 1);
+        if ((size == 3) && (c_1 == 'm') && (str.charAt(idx + 2) == 'p')) {
+            sb.append('&');
+        } else if ((size == 4) && (c_1 == 'p') && (str.charAt(idx + 2) == 'o') && (str.charAt(idx + 3) == 's')) {
+            sb.append('\'');
+        } else {
+            isRecognized = false;
+        }
+        return isRecognized;
+    }
+
+    private static boolean xmlDecodeNBSP(String str, int idx, StringBuilder sb, int size) {
+        boolean isRecognized = true;
+        char c_1 = str.charAt(idx + 1);
+        if ((size != 4) || (c_1 != 'b' || str.charAt(idx + 2) != 's' || str.charAt(idx + 3) != 'p')) {
+            isRecognized = false;
+        } else {
+            sb.append(' ');
+        }
+        return isRecognized;
+    }
+
+    private static boolean xmlDecodeNumber(String str, int idx, StringBuilder sb, int idxE) {
+        boolean isRecognized = true;
+        try {
+            char c = 0;
+            char c_1 = str.charAt(idx + 1);
+            if (c_1 == 'x') {
+                c = (char) Integer.parseInt(str.substring(idx + 2, idxE), 16);
+            } else {
+                c = (char) Integer.parseInt(str.substring(idx + 1, idxE));
+            }
+            sb.append(c);
+        } catch (NumberFormatException ex) {
+            isRecognized = false;
+        }
+        return isRecognized;
+    }
+
     /**
      * Clean strings from illegal XML characters.
-     *
+     * <p/>
      * See <http://www.w3.org/TR/2006/REC-xml-20060816/#charsets>
-     * 
+     *
      * @param string string to clean
      * @return the cleaned string
      */
@@ -136,6 +293,7 @@ public final class XMLUtil {
      *
      * Licensed under the Aduna BSD-style license.
      */
+
     /**
      * Checks whether the supplied String is an NCName (Namespace Classified
      * Name) as specified at <a

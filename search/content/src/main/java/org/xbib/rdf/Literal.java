@@ -31,8 +31,8 @@
  */
 package org.xbib.rdf;
 
-
 import org.xbib.iri.IRI;
+import org.xbib.xml.XSD;
 
 import java.io.Serializable;
 
@@ -41,15 +41,8 @@ import java.io.Serializable;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface Literal<O> extends Serializable, Node {
+public interface Literal<O> extends Serializable, Node, XSD {
 
-    IRI XSD_BOOLEAN = IRI.create("xsd:boolean");
-    IRI XSD_LONG = IRI.create("xsd:long");
-    IRI XSD_INT = IRI.create("xsd:int");
-    IRI XSD_DOUBLE = IRI.create("xsd:double");
-    IRI XSD_FLOAT = IRI.create("xsd:float");
-    IRI XSD_STRING = IRI.create("xsd:string");
-    
     /**
      * Set the value for the literal
      * @param value 

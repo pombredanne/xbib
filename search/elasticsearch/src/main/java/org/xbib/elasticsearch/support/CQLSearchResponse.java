@@ -191,6 +191,7 @@ public class CQLSearchResponse {
             js.setStylesheets(getStylesheets());
             js.transform(in, writer);
         }
+        writer.flush();
     }
 
     private void checkResponseForError() throws IOException {

@@ -72,20 +72,100 @@ import java.util.zip.GZIPOutputStream;
 public class VIAF extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(VIAF.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final static AtomicLong docCounter = new AtomicLong(0L);
+
     private final static AtomicLong charCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
 
     private String output;
+
     private boolean done = false;
 
     private BlockingQueue<String> pump;
+
     private int numPumps;
+
     private ExecutorService pumpService;
 
+    public static void main(String[] args) {
+        try {
+            OptionParser parser = new OptionParser() {
+                {
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("pumps").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
+                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                    accepts("format").withOptionalArg().ofType(String.class).defaultsTo("turtle");
+                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("output.ttl");
+                    accepts("translatePicaSortMarker").withOptionalArg().ofType(String.class).defaultsTo("x-viaf");
+                }
+            };
+            options = parser.parse(args);
+            if (options.hasArgument("help")) {
+                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
+                        + " --threads <n>          the number of threads (optional, default: 1)"
+                        + " --pumps <n>            the number of pumps (optional, default: 1)"
+                        + " --format 'turtle'|'ntriples'             the output format (default: turtle)"
+                        + " --output <name>                          the output filename (default: output.ttl)"
+                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'de-DE-x-rak')"
+                );
+                System.exit(1);
+            }
+
+            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            final Integer threads = (Integer) options.valueOf("threads");
+
+            long t0 = System.currentTimeMillis();
+            ImportService service = new ImportService().threads(threads).factory(
+                    new ImporterFactory() {
+                        @Override
+                        public Importer newImporter() {
+                            return new VIAF();
+                        }
+                    }).execute();
+
+            long t1 = System.currentTimeMillis();
+            long docs = docCounter.get();
+            long bytes = charCounter.get();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = FormatUtil.formatMillis(t1 - t0);
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Converting complete. {} files, {} docs, {} = {} ms, {} = {} chars, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter,
+                    docs,
+                    t,
+                    (t1-t0),
+                    bytes,
+                    byteSize,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            service.shutdown();
+
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.exit(0);
+    }
     VIAF() {
         this.output = (String)options.valueOf("output");
         this.numPumps = (Integer)options.valueOf("pumps");
@@ -199,78 +279,6 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
             }
             return true;
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            OptionParser parser = new OptionParser() {
-                {
-                    accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("pumps").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("format").withOptionalArg().ofType(String.class).defaultsTo("turtle");
-                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("output.ttl");
-                    accepts("translatePicaSortMarker").withOptionalArg().ofType(String.class).defaultsTo("x-viaf");
-                }
-            };
-            options = parser.parse(args);
-            if (options.hasArgument("help")) {
-                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
-                        + " --help                 print this help message" + lf
-                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --pumps <n>            the number of pumps (optional, default: 1)"
-                        + " --format 'turtle'|'ntriples'             the output format (default: turtle)"
-                        + " --output <name>                          the output filename (default: output.ttl)"
-                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'de-DE-x-rak')"
-                );
-                System.exit(1);
-            }
-
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
-            final Integer threads = (Integer) options.valueOf("threads");
-
-            long t0 = System.currentTimeMillis();
-            ImportService service = new ImportService().threads(threads).factory(
-                    new ImporterFactory() {
-                        @Override
-                        public Importer newImporter() {
-                            return new VIAF();
-                        }
-                    }).execute();
-
-            long t1 = System.currentTimeMillis();
-            long docs = docCounter.get();
-            long bytes = charCounter.get();
-            double dps = docs * 1000.0 / (double)(t1 - t0);
-            double avg = bytes / (docs + 1); // avoid div by zero
-            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = FormatUtil.formatMillis(t1 - t0);
-            String byteSize = FormatUtil.convertFileSize(bytes);
-            String avgSize = FormatUtil.convertFileSize(avg);
-            NumberFormat formatter = NumberFormat.getNumberInstance();
-            logger.info("Converting complete. {} files, {} docs, {} = {} ms, {} = {} chars, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter,
-                    docs,
-                    t,
-                    (t1-t0),
-                    bytes,
-                    byteSize,
-                    avgSize,
-                    formatter.format(avg),
-                    formatter.format(dps),
-                    formatter.format(mbps));
-
-            service.shutdown();
-
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.exit(0);
     }
 
 }

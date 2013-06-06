@@ -35,6 +35,7 @@ import com.google.common.base.Objects;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Visitor;
+import org.xbib.xml.XSD;
 
 /**
  * A simple Literal is a value of object type
@@ -172,32 +173,32 @@ public class SimpleLiteral<O extends Object>
         String s = value.toString();
         try {
             Integer.parseInt(s);
-            type(XSD_INT);
+            type(INT);
             return;
         } catch (Exception e) {
         }
         try {
             Long.parseLong(s);
-            type(XSD_LONG);
+            type(LONG);
             return;
         } catch (Exception e) {
         }
         try {
             Float.parseFloat(s);
-            type(XSD_FLOAT);
+            type(FLOAT);
             return;
         } catch (Exception e) {
         }
         try {
             Double.parseDouble(s);
-            type(XSD_DOUBLE);
+            type(DOUBLE);
             return;
         } catch (Exception e) {
         }
         try {
             if ("true".equals(s) || "false".equals(s)) {
                 Boolean.parseBoolean(s);
-                type(XSD_BOOLEAN);
+                type(BOOLEAN);
                 return;
             }
         } catch (Exception e) {

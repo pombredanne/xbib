@@ -351,9 +351,11 @@ public class CQLSearchRequest extends BasicRequest {
         return indexes.append("/").append(types).toString();
     }
 
+    private int defaultFacetlength = 10;
+
     private Map<String,Integer> parseFacet(String s) {
         Map<String,Integer> m = new HashMap();
-        m.put("*", 10);
+        m.put("*", defaultFacetlength);
         if (s == null || s.length() == 0) {
             return m;
         }
@@ -362,14 +364,22 @@ public class CQLSearchRequest extends BasicRequest {
             int pos = param.indexOf(':');
             if (pos > 0) {
                 // dc.subject -> 10
-                int n =  Integer.parseInt(param.substring(0, pos));
+                int n = parseInt(param.substring(0, pos), defaultFacetlength);
                 m.put(param.substring(pos+1), n);
             } else if (param.length() > 0) {
-                int n =  Integer.parseInt(param);
+                int n =  parseInt(param, defaultFacetlength);
                 m.put("*", n );
             }
         }
         return m;
+    }
+
+    private int parseInt(String s, int defaultValue) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     public String toString() {

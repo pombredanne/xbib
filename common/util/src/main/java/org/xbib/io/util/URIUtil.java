@@ -379,23 +379,46 @@ public final class URIUtil {
      */
     public static Map<String,String> parseQueryString(URI uri, String encoding)
             throws UnsupportedEncodingException {
-        Map<String,String> m = new HashMap<String,String>();
+        return parseQueryString(uri, encoding, null);
+    }
+
+    /**
+     * This method parses a query string and returns a map of decoded
+     * request parameters. We do not rely on java.net.URI because it does not
+     * decode plus characters. A listener can process the parameters in order.
+     *
+     * @param uri the URI to examine for request parameters
+     * @param encoding the encoding
+     * @param listener a listner for processing the URI parameters in order, or null
+     * @return a Map of parameters
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String,String> parseQueryString(URI uri, String encoding, ParameterListener listener)
+        throws UnsupportedEncodingException {
+        Map<String,String> m = new HashMap();
         if (uri == null) {
             throw new IllegalArgumentException();
         }
         if (uri.getRawQuery() == null) {
             return m;
         }
-        // use getRawQuery because we do our decoding by ourselves
+        // we use getRawQuery because we do our decoding by ourselves
         StringTokenizer st = new StringTokenizer(uri.getRawQuery(), "&");
         while (st.hasMoreTokens()) {
             String pair = st.nextToken();
+            String k;
+            String v;
             int pos = pair.indexOf('=');
             if (pos < 0) {
-                m.put(pair, null);
+                k = pair;
+                v = null;
             } else {
-                m.put(pair.substring(0, pos),
-                        decode(pair.substring(pos + 1, pair.length()), encoding));
+                k = pair.substring(0, pos);
+                v = decode(pair.substring(pos + 1, pair.length()), encoding);
+            }
+            m.put(k,v);
+            if (listener != null) {
+                listener.received(k,v);
             }
         }
         return m;
@@ -458,5 +481,9 @@ public final class URIUtil {
             }
         }
         return out.toString();
+    }
+
+    public interface ParameterListener {
+        public void received(String k, String v);
     }
 }

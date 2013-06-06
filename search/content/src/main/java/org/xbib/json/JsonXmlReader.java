@@ -29,6 +29,8 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 /**
+ * Read JSON like SaX.
+ *
  * Helper class that can be used for JSON to XML transformation.
  * <pre>
  *	Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -36,7 +38,6 @@ import org.xml.sax.XMLReader;
  *	Result result = ...;
  *	transformer.transform(new SAXSource(new JsonXmlReader(namespace),source), result);
  * </pre>
- *
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */

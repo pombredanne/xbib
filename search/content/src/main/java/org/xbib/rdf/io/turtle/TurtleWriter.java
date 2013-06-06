@@ -38,10 +38,10 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import java.util.StringTokenizer;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
@@ -50,6 +50,7 @@ import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
+import org.xbib.rdf.io.RDFSerializer;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.SimpleResource;
 
@@ -64,7 +65,7 @@ import org.xbib.rdf.simple.SimpleResource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TurtleWriter<S extends Identifier, P extends Property, O extends Node>
-    implements TripleListener<S,P,O> {
+    implements RDFSerializer<S,P,O>, TripleListener<S,P,O> {
 
     private final Logger logger = LoggerFactory.getLogger(TurtleWriter.class.getName());
 
@@ -85,6 +86,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private boolean writingStarted;
 
     private boolean sameSubject;
+
     private boolean samePredicate;
     /**
      * for indenting
@@ -199,6 +201,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         return this;
     }
 
+    @Override
     public TurtleWriter write(Resource<S, P, O> resource) throws IOException {
         if (resource != null) {
             start();
@@ -309,6 +312,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         S subject = stmt.subject();
         P predicate = stmt.predicate();
         O object = stmt.object();
+        if (subject == null || predicate == null) {
+            return;
+        }
         if (subject.equals(lastSubject)) {
             if (predicate.equals(lastPredicate)) {
                 sb.append(", ");
@@ -379,6 +385,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             }
         } else if (object instanceof Literal) {
             writeLiteral((Literal<?>) object);
+        } else if (object instanceof IdentifiableNode) {
+            writeURI(((IdentifiableNode)object).id());
         } else {
             throw new IllegalArgumentException("unknown value class: " + (object != null ? object.getClass() : "<null>"));
         }

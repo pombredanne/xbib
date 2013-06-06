@@ -67,7 +67,7 @@ public enum OutputFormat {
         return suffix;
     }
 
-    public static OutputFormat formatOf(String mime) {
+    public static OutputFormat fromMediaType(String mime) {
         return map.get(mime);
     }
 }

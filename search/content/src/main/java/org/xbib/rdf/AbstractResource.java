@@ -129,7 +129,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
 
     @Override
     public Resource<S, P, O> add(P predicate, IRI iri) {
-        return add(predicate, newResource(iri));
+        return add(predicate, (O)new IdentifiableNode().id(iri));
     }
 
     @Override
