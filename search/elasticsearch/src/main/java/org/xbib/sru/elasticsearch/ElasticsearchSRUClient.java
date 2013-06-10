@@ -44,6 +44,9 @@ import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * SearchRetrieve by URL for Elasticseach
@@ -55,12 +58,15 @@ public class ElasticsearchSRUClient implements
 
     private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUService.class.getName());
 
-    private final CQLSearchSupport es = new CQLSearchSupport().newClient();
+    private final static Map<URI,CQLSearchSupport> support = new HashMap();
 
-    private ElasticsearchSRUService service;
+    private final ElasticsearchSRUService service;
 
     public ElasticsearchSRUClient(ElasticsearchSRUService service) {
         this.service = service;
+        if (!support.containsKey(service.getURI())) {
+            support.put(service.getURI(), new CQLSearchSupport().newClient());
+        }
     }
 
     @Override
@@ -85,7 +91,7 @@ public class ElasticsearchSRUClient implements
 
     @Override
     public void close() throws IOException {
-        // nothing to do
+        // nothing to do for closing client after a request
     }
 
     @Override
@@ -120,9 +126,18 @@ public class ElasticsearchSRUClient implements
 
     protected void searchRetrieve(final ElasticsearchSRURequest request,
                                   final ElasticsearchSRUResponse response) throws IOException {
-        // allow only our version
-        if (request.getVersion() != null && !request.getVersion().equals(getVersion())) {
-            throw new Diagnostics(5, request.getVersion() + " not supported. Supported version is " + getVersion());
+        // allow only our versions
+        boolean versionfound = false;
+        String[] versions = getVersion().split(",");
+        if (request.getVersion() != null) {
+            for (int i = 0; i < versions.length; i++) {
+                if (request.getVersion().equals(versions[i])) {
+                    versionfound = true;
+                }
+            }
+        }
+        if (!versionfound) {
+            throw new Diagnostics(5, request.getVersion() + " not supported. Supported versions are " + getVersion());
         }
         // allow only 'mods'
         if (request.getRecordSchema() != null && !service.getRecordSchema().equals(request.getRecordSchema())) {
@@ -138,10 +153,14 @@ public class ElasticsearchSRUClient implements
         }
         try {
             int from = request.getStartRecord() - 1;
-            if (from < 0) from = 0;
+            if (from < 0) {
+                from = 0;
+            }
             int size = request.getMaximumRecords();
-            if (size < 0) size = 0;
-            CQLSearchRequest cqlRequest  = es.newSearchRequest()
+            if (size < 0) {
+                size = 0;
+            }
+            CQLSearchRequest cqlRequest  = support.get(service.getURI()).newSearchRequest()
                     .index(getIndex(request))
                     .type(getType(request))
                     .from(from)
@@ -181,32 +200,50 @@ public class ElasticsearchSRUClient implements
 
     private String getIndex(SearchRetrieveRequest request) {
         String index = null;
-        String path = request.getPath();
-        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
-        if (path != null) {
-            String[] spec = path.split("/");
+        String[] spec = extractPathInfo(request.getPath());
+        if (spec != null) {
             if (spec.length > 1) {
+                // both index and type are there
                 index = spec[spec.length - 2];
             } else if (spec.length == 1) {
                 index = spec[spec.length - 1];
             }
         }
+        logger.debug("path = {} got index = {}", request.getPath(), index);
         return index;
     }
 
     private String getType(SearchRetrieveRequest request) {
         String type = null;
-        String path = request.getPath();
-        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
-        if (path != null) {
-            String[] spec = path.split("/");
+        String[] spec = extractPathInfo(request.getPath());
+        if (spec != null) {
             if (spec.length > 1) {
+                // both index and type are there
                 type = spec[spec.length - 1];
             } else if (spec.length == 1) {
                 type = null;
             }
         }
+        logger.debug("path = {} got type = {}", request.getPath(), type);
         return type;
+    }
+
+    private String[] extractPathInfo(String path) {
+        if (path == null) {
+            return null;
+        }
+        // delete leading and trailing slash
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        // swallow "sru"
+        if (path.startsWith("sru/")) {
+            path = path.substring(4);
+        }
+        return path.split("/");
     }
 
     private String getQuery(SearchRetrieveRequest request) {

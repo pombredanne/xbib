@@ -69,76 +69,20 @@ import static org.xbib.tools.util.FormatUtil.formatMillis;
 public class GND extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(GND.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final static AtomicLong docCounter = new AtomicLong(0L);
+
     private final static AtomicLong charCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
 
     private boolean done = false;
-
-    @Override
-    public void close() throws IOException {
-        input.clear();
-    }
-
-    @Override
-    public boolean hasNext() {
-        return !done && !input.isEmpty();
-    }
-
-    @Override
-    public AtomicLong next() {
-        URI uri = input.poll();
-        done = uri == null;
-        if (done) {
-            return fileCounter;
-        }
-        try {
-            InputStream in = InputService.getInputStream(uri);
-            String outName = options.valueOf("output") + ".gz";
-            if (fileCounter.get() > 0) {
-                outName += "." + fileCounter.get();
-            }
-            OutputStream out = new FileOutputStream(outName);
-            out = new GZIPOutputStream(out){
-                {
-                    def.setLevel(Deflater.BEST_COMPRESSION);
-                }
-            };
-            String marker = (String)options.valueOf("translatePicaSortMarker");
-            if ("turtle".equals(options.valueOf("format").toString())) {
-                TurtleWriter turtle = new TurtleWriter()
-                    .translatePicaSortMarker(marker)
-                    .output(out);
-                RdfXmlReader reader = new RdfXmlReader();
-                reader.setTripleListener(turtle);
-                reader.parse(new InputSource(in));
-                turtle.close();
-                in.close();
-                out.close();
-                docCounter.getAndAdd(turtle.getIdentifierCounter());
-                charCounter.getAndAdd(turtle.getByteCounter());
-            }
-            else if ("ntriples".equals(options.valueOf("format").toString())) {
-                NTripleWriter ntriples = new NTripleWriter()
-                    .translatePicaSortMarker(marker)
-                    .output(out);
-                RdfXmlReader reader = new RdfXmlReader();
-                reader.setTripleListener(ntriples);
-                reader.parse(new InputSource(in));
-                ntriples.close();
-                in.close();
-                out.close();
-                charCounter.getAndAdd(ntriples.getByteCounter());
-            }
-            fileCounter.incrementAndGet();
-        } catch (Exception ex) {
-            logger.error("error while getting next document: " + ex.getMessage(), ex);
-        }
-        return fileCounter;
-    }
 
     public static void main(String[] args) {
         try {
@@ -202,6 +146,68 @@ public class GND extends AbstractImporter<Long, AtomicLong> {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    @Override
+    public void close() throws IOException {
+        input.clear();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !done && !input.isEmpty();
+    }
+
+    @Override
+    public AtomicLong next() {
+        URI uri = input.poll();
+        done = uri == null;
+        if (done) {
+            return fileCounter;
+        }
+        try {
+            InputStream in = InputService.getInputStream(uri);
+            String outName = options.valueOf("output") + ".gz";
+            if (fileCounter.get() > 0) {
+                outName += "." + fileCounter.get();
+            }
+            OutputStream out = new FileOutputStream(outName);
+            out = new GZIPOutputStream(out){
+                {
+                    def.setLevel(Deflater.BEST_COMPRESSION);
+                }
+            };
+            String marker = (String)options.valueOf("translatePicaSortMarker");
+            if ("turtle".equals(options.valueOf("format").toString())) {
+                TurtleWriter turtle = new TurtleWriter()
+                    .translatePicaSortMarker(marker)
+                    .output(out);
+                RdfXmlReader reader = new RdfXmlReader();
+                reader.setTripleListener(turtle);
+                reader.parse(new InputSource(in));
+                turtle.close();
+                in.close();
+                out.close();
+                docCounter.getAndAdd(turtle.getIdentifierCounter());
+                charCounter.getAndAdd(turtle.getByteCounter());
+            }
+            else if ("ntriples".equals(options.valueOf("format").toString())) {
+                NTripleWriter ntriples = new NTripleWriter()
+                    .translatePicaSortMarker(marker)
+                    .output(out);
+                RdfXmlReader reader = new RdfXmlReader();
+                reader.setTripleListener(ntriples);
+                reader.parse(new InputSource(in));
+                ntriples.close();
+                in.close();
+                out.close();
+                charCounter.getAndAdd(ntriples.getByteCounter());
+            }
+            fileCounter.incrementAndGet();
+        } catch (Exception ex) {
+            logger.error("error while getting next document: " + ex.getMessage(), ex);
+        }
+        return fileCounter;
     }
 
 

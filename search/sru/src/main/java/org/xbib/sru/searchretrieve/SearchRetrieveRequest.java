@@ -40,7 +40,7 @@ import java.util.List;
 
 public class SearchRetrieveRequest extends DefaultSRURequest implements SRURequest {
 
-    private String version;
+    private String version = "1.2";
 
     private String recordPacking;
 

@@ -29,72 +29,45 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.io;
+package org.xbib.io.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * A packet is data with a given name and some package information
+ * Utilities for message digests
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class MessageDigestPacket extends ObjectPacket {
+public class MessageDigestUtil {
 
-    private Object object;
     private final MessageDigest md;
 
-    public MessageDigestPacket() {
-        this(null);
-    }
-
-    public MessageDigestPacket(Object object) {
-        setObject(object);
+    public MessageDigestUtil(String algo) {
         MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("MD5");
+            digest = MessageDigest.getInstance(algo);
         } catch (NoSuchAlgorithmException ex) {
             digest = null;
         }
         this.md = digest;
     }
 
-
-    public final void setObject(Object object) {
-        this.object = object;
-    }
-
-    public MessageDigest createDigest() throws UnsupportedEncodingException {
-        return createDigest(null);
-    }
-
-    public MessageDigest createDigest(MessageDigest old) throws UnsupportedEncodingException {
-        md.reset();
-        if (old != null) {
-            md.update(old.digest());
+    public MessageDigestUtil add(String s) {
+        if (s != null) {
+            md.update(s.getBytes(Charset.forName("UTF-8")));
         }
-        if (name() != null) {
-            md.update(name().getBytes("UTF-8"));
-        }
-        md.update(Long.toString(number()).getBytes("UTF-8"));
-        if (object != null) {
-            md.update(object.toString().getBytes("UTF-8"));
-        }
-        return md;
+        return this;
     }
 
-    public MessageDigest getDigest() {
-        return md;
-    }
-
-    public String getDigestString() {
-        return bytesToHex(md.digest());
+    public String base64() {
+        return Base64.encodeString(toString());
     }
 
     @Override
     public String toString() {
-        return object.toString();
+        return bytesToHex(md.digest());
     }
     private char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};

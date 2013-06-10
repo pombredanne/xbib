@@ -15,7 +15,6 @@
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <elasticsearch.version>0.19.11</elasticsearch.version>
     </properties>
 
     <scm>
@@ -35,7 +34,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <!--
     <repositories>
         <repository>
             <id>github-release-repo</id>
@@ -46,7 +44,6 @@
             <url>https://github.com/xbib/maven-repo/raw/master/snapshots</url>
         </repository>
     </repositories>
-    -->
 
     <build>
 
@@ -252,9 +249,9 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.xbib.elasticsearch</groupId>
-                <artifactId>elasticsearch-transport-support</artifactId>
-                <version>${elasticsearch.version}</version>
+                <groupId>org.xbib</groupId>
+                <artifactId>xbib-grouping</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

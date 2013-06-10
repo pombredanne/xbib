@@ -34,13 +34,16 @@ package org.xbib.sru.scan;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import javax.servlet.http.HttpServletResponse;
 
 import org.xbib.io.OutputFormat;
 import org.xbib.sru.DefaultSRUResponse;
 
+/**
+ * Scan response (not yet implemented)
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ScanResponse extends DefaultSRUResponse {
-
 
     private final ScanRequest request;
 
@@ -49,23 +52,13 @@ public class ScanResponse extends DefaultSRUResponse {
     }
 
     @Override
-    public ScanRequest getRequest() {
-        return request;
-    }
-
-    @Override
     public ScanResponse setOutputFormat(OutputFormat format) {
-        return this;
-    }
-
-
-    @Override
-    public ScanResponse to(HttpServletResponse servletResponse) throws IOException {
         return this;
     }
 
     @Override
     public ScanResponse to(Writer writer) throws IOException {
+        // TODO XMLEvents
         InputStreamReader stream = new InputStreamReader(
                 getClass().getResourceAsStream("/org/xbib/sru/explain.xml"), "UTF-8");
         final char[] chars = new char[4096];

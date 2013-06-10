@@ -29,11 +29,28 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.tools.convert;
+package org.xbib.tools.indexer.elasticsearch;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
+import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
+import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
+import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -45,36 +62,33 @@ import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Literal;
-import org.xbib.rdf.Node;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.rdf.io.RDFSerializer;
-import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.InvalidCharacterException;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+import org.xbib.tools.util.FormatUtil;
 import org.xbib.xml.XMLUtil;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
+import java.text.NumberFormat;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.Deflater;
-import java.util.zip.GZIPOutputStream;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 
 /**
- * Convert article DB export
+ * Index article DB export into Elasticsearch
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -84,40 +98,44 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static String lf = System.getProperty("line.separator");
 
-    private static Queue<URI> input;
+    private final static AtomicLong fileCounter = new AtomicLong(0L);
+
+    private final static AtomicLong resourceCounter = new AtomicLong(0L);
+
+    private final static AtomicLong errorCounter = new AtomicLong(0L);
 
     private final static JsonFactory jsonFactory = new JsonFactory();
 
-    private final static SimpleResourceContext resourceContext = new SimpleResourceContext();
-
-    private final RDFSerializer serializer;
-
-    private final RDFSerializer missingSerializer;
-
-    private final RDFSerializer errorSerializer;
-
     private final static TextFileConnectionFactory factory = new TextFileConnectionFactory();
+
+    private static Queue<URI> input;
+
+    private static String index;
+
+    private static String type;
+
+    private ElementOutput output;
 
     private boolean done = false;
 
-    private static String outputFilename;
+    private Client client;
 
-    private static SerialsDB serialsdb;
 
-    private static Map<String,Resource> serials;
-
-    private static FileWriter missingserials;
 
     public static void main(String[] args) {
         int exitcode = 0;
         try {
             OptionParser parser = new OptionParser() {
                 {
+                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
+                    accepts("index").withRequiredArg().ofType(String.class).required();
+                    accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.json");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("output").withRequiredArg().ofType(String.class).required().defaultsTo("articles");
-                    accepts("serials").withRequiredArg().ofType(String.class).required().defaultsTo("titleFile.csv");
                     accepts("help");
                 }
             };
@@ -125,108 +143,87 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             if (options.hasArgument("help")) {
                 System.err.println("Help for " + ArticleDB.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.json)" + lf
                         + " --threads <n>          the number of threads (optional, default: <num-of=cpus)"
-                        + " --output <path>        a file path from where the output is written (default: articles)" + lf
-                        + " --serials <path>        a file path from where the serials are located (default: titleFile.csv)" + lf
                 );
                 System.exit(1);
-            }
-            input = new Finder(options.valueOf("serials").toString()).find(options.valueOf("path").toString()).getURIs();
-
-            logger.info("parsing initial set of serials...");
-
-            for (URI uri : input) {
-                InputStream in = factory.getInputStream(uri);
-                serialsdb = new SerialsDB(new InputStreamReader(in, "UTF-8"), "serials" );
-                serials = serialsdb.getMap();
-                logger.info("serials done, {}", serials.size());
             }
 
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
 
-            final Integer threads = (Integer) options.valueOf("threads");
-
             logger.info("found {} input files", input);
 
-            IRINamespaceContext context = IRINamespaceContext.newInstance();
-            context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
-            context.addNamespace("dcterms", "http://purl.org/dc/terms/");
-            context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");
-            context.addNamespace("frbr", "http://purl.org/vocab/frbr/core#");
-            context.addNamespace("fabio", "http://purl.org/spar/fabio/");
-            context.addNamespace("prism", "http://prismstandard.org/namespaces/basic/2.1/");
-            resourceContext.newNamespaceContext(context);
+            URI esURI = URI.create(options.valueOf("elasticsearch").toString());
+            index = (String)options.valueOf("index");
+            type = (String)options.valueOf("type");
+            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
+            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
+            boolean mock = (Boolean)options.valueOf("mock");
 
-            outputFilename = (String)options.valueOf("output");
+            final TransportClientBulk es = mock ?
+                    new MockTransportClientBulk() :
+                    new TransportClientBulkSupport();
 
-            // for proper resources
+            es.maxBulkActions(maxbulkactions)
+                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
+                    .newClient(esURI)
+                    .waitForHealthyCluster(ClusterHealthStatus.YELLOW, TimeValue.timeValueSeconds(30));
 
-            FileOutputStream fout = new FileOutputStream(outputFilename + ".ttl.gz");
-            GZIPOutputStream gzout = new GZIPOutputStream(fout){
-                {
-                    def.setLevel(Deflater.BEST_COMPRESSION);
-                }
-            };
-            final TurtleWriter writer = new TurtleWriter()
-                    .setContext(context)
-                    .output(gzout);
-            writer.writeNamespaces();
+            final TransportClientSearchSupport search = new TransportClientSearchSupport()
+                    .newClient(esURI);
 
-            // for erraneous resources (broken encodings)
+            logger.info("creating new index ...");
+            es.setIndex(index)
+                    .setType(type)
+                    .dateDetection(false)
+                    .newIndex(true); // true = ignore IndexAlreadyExistsException
+            logger.info("... new index created");
 
-            FileOutputStream errorfout = new FileOutputStream(outputFilename + "-errors.ttl.gz");
-            GZIPOutputStream errorgzout = new GZIPOutputStream(errorfout){
-                {
-                    def.setLevel(Deflater.BEST_COMPRESSION);
-                }
-            };
-            final TurtleWriter errorWriter = new TurtleWriter()
-                    .setContext(context)
-                    .output(errorgzout);
-            errorWriter.writeNamespaces();
+            logger.info("creating new type ...");
+            es.newType();
+            logger.info("... new type done");
 
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
+                    new ElasticsearchResourceSink(es);
 
-            // for missing serials resources
-
-            FileOutputStream noserialfout = new FileOutputStream(outputFilename + "-without-serial.ttl.gz");
-            GZIPOutputStream noserialgzout = new GZIPOutputStream(noserialfout){
-                {
-                    def.setLevel(Deflater.BEST_COMPRESSION);
-                }
-            };
-            final TurtleWriter noserialWriter = new TurtleWriter()
-                    .setContext(context)
-                    .output(noserialgzout);
-            noserialWriter.writeNamespaces();
-
-
-            // extra text file for missing serials
-
-            missingserials = new FileWriter("missingserials.txt");
-
+            long t0 = System.currentTimeMillis();
             ImportService service = new ImportService()
-                    .threads(threads)
+                    .threads( (Integer) options.valueOf("threads") )
                     .factory(
                             new ImporterFactory() {
                                 @Override
                                 public Importer newImporter() {
-                                    return new ArticleDB(writer, noserialWriter, errorWriter);
+                                    return new ArticleDB(sink, search);
                                 }
                             }).execute().shutdown();
 
-            logger.info("articles finished");
+            long t1 = System.currentTimeMillis();
+            long docs = resourceCounter.get();
+            long bytes = es.getVolumeInBytes();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1.0); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            logger.info("Errors: {}", errorCounter);
 
             service.shutdown();
-
-            gzout.close();
-            noserialgzout.close();
-            errorgzout.close();
-
-            logger.info("writing serials...");
-            serialsdb.writeSerials(new FileWriter("articleserials.txt"));
-            logger.info("serials written");
+            es.shutdown();
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             logger.error(e.getMessage(), e);
@@ -235,10 +232,9 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         System.exit(exitcode);
     }
 
-    public ArticleDB(RDFSerializer serializer, RDFSerializer missingSerializer, RDFSerializer errorSerializer) {
-        this.serializer = serializer;
-        this.missingSerializer = missingSerializer;
-        this.errorSerializer = errorSerializer;
+    public ArticleDB(ElementOutput output, TransportClientSearchSupport searchSupport) {
+        this.output = output;
+        this.client = searchSupport.client();
     }
 
     @Override
@@ -251,30 +247,32 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         if (input.isEmpty()) {
             done = true;
         }
-        return !done && !input.isEmpty();
+        return !done;
     }
 
     @Override
     public AtomicLong next() {
         if (done) {
-            return new AtomicLong(1L);
+            return fileCounter;
         }
         try {
-            URI uri = input.poll();
-            if (uri != null) {
-                logger.info("starting process of {}, {} files left", uri, input.size());
-                process(uri);
-            } else {
-                done = true;
+            while (!done) {
+                URI uri = input.poll();
+                if (uri != null) {
+                    push(uri);
+                } else {
+                    done = true;
+                }
+                fileCounter.incrementAndGet();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             done = true;
         }
-        return new AtomicLong(1L);
+        return fileCounter;
     }
 
-    private void process(URI uri) throws Exception {
+    private void push(URI uri) throws Exception {
         if (uri == null) {
             return;
         }
@@ -282,13 +280,24 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         if (in == null) {
             throw new IOException("unable to open " + uri);
         }
+
+        final SimpleResourceContext resourceContext = new SimpleResourceContext();
+        IRINamespaceContext context = IRINamespaceContext.newInstance();
+        context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
+        context.addNamespace("dcterms", "http://purl.org/dc/terms/");
+        context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");
+        context.addNamespace("frbr", "http://purl.org/vocab/frbr/core#");
+        context.addNamespace("fabio", "http://purl.org/spar/fabio/");
+        context.addNamespace("prism", "http://prismstandard.org/namespaces/basic/2.1/");
+        context.addNamespace("bf", "http://bibframe.org/vocab/");
+        resourceContext.newNamespaceContext(context);
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
             JsonParser parser = jsonFactory.createJsonParser(reader);
             JsonToken token = parser.nextToken();
             Resource resource = null;
             String key = null;
-            String value;
-            Result result = Result.OK;
+            String value = null;
             while (token != null) {
                 switch (token) {
                     case START_OBJECT: {
@@ -296,31 +305,23 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case END_OBJECT: {
-                        switch (result) {
-                            case OK:
-                                synchronized (serializer) {
-                                    serializer.write(resource);
-                                }
-                                break;
-                            case MISSINGSERIAL:
-                                synchronized (missingSerializer) {
-                                    missingSerializer.write(resource);
-                                }
-                                break;
-                            case ERROR:
-                                synchronized (errorSerializer) {
-                                    errorSerializer.write(resource);
-                                }
-                                break;
-
-                        }
+                        resourceContext.resource().id(IRI.builder()
+                                .scheme("http")
+                                .host(index)
+                                .query(type)
+                                .fragment(resourceContext.resource().id().getFragment())
+                                .build());
+                        output.output(resourceContext);
+                        resourceCounter.incrementAndGet();
                         resource = null;
                         break;
                     }
                     case START_ARRAY: {
+                        logger.info("start of file {}", uri);
                         break;
                     }
                     case END_ARRAY: {
+                        logger.info("end of file {}", uri);
                         break;
                     }
                     case FIELD_NAME: {
@@ -335,7 +336,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     case VALUE_FALSE: {
                         value = parser.getText();
                         if ("coins".equals(key)) {
-                            result = parseCoinsInto(resource, value);
+                            parseCoinsInto(resource, value);
                         }
                         break;
                     }
@@ -349,30 +350,17 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     interface URIListener extends URIUtil.ParameterListener {
         void close();
-        boolean hasErrors();
-        boolean missingSerial();
     }
 
-    private IRI FABIO_ARTICLE = IRI.create("fabio:Article");
-    private IRI FABIO_JOURNAL = IRI.create("fabio:Journal");
-    private IRI FABIO_PERIODICAL_VOLUME = IRI.create("fabio:PeriodicalVolume");
-    private IRI FABIO_PERIODICAL_ISSUE = IRI.create("fabio:PeriodicalIssue");
-    private IRI FABIO_PRINT_OBJECT = IRI.create("fabio:PrintObject");
+    private void parseCoinsInto(Resource resource, String value) {
 
-    enum Result {
-        OK, ERROR, MISSINGSERIAL
-    }
-
-    private Result parseCoinsInto(Resource resource, String value) {
-        IRI coins = IRI.builder()
-                .scheme("http")
-                .host("localhost")
-                .query(XMLUtil.unescape(value)).build();
-        resource.add("rdf:type", FABIO_ARTICLE );
+        IRI coins = IRI.create("http://localhost/?"
+                +  XMLUtil.unescape(value));
+        resource
+                .add("rdf:type", IRI.create("fabio:Article"))
+                .add("rdf:type", IRI.create("frbr:Expression"));
         final Resource r = resource;
         URIListener listener = new URIListener() {
-            boolean error = false;
-            boolean missingserial = false;
 
             String aufirst = null;
             String aulast = null;
@@ -389,8 +377,8 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                 if (v.isEmpty()) {
                     return;
                 }
-                if (v.indexOf('\uFFFD') >= 0) { // Unicode replacement character
-                    error = true;
+                if (v.indexOf('\uFFFD') >= 0) {
+                    errorCounter.incrementAndGet();
                 }
                 switch (k) {
                     case "rft_id" : {
@@ -398,53 +386,29 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                             v = v.substring(9);
                         }
                         try {
-                            String doiPart = URIUtil.encode(v, "UTF-8");
-                            IRI id = IRI.builder().scheme("http").host("xbib.info")
-                                    .path("/works").fragment(doiPart).build();
-                            r.id(id);
-                            // info URI RFC wants slash as unencoded character
-                            IRI doi = IRI.builder().curi("info",
-                                    "doi/" + doiPart.replaceAll("%2F","/")).build();
-                            r.add("dcterms:identifier", doi)
-                                    .add("prism:doi", v);
-                        } catch (Exception e) {
-                            logger.warn("can't build IRI from DOI " + v, e);
+                            r.id(IRI.create("http://xbib.info/works#"
+                                    + URIUtil.encode(v, "UTF-8")));
+                        } catch (UnsupportedEncodingException e) {
+                            // not happening
                         }
+                        r.add("dcterms:identifier", v)
+                                .add("prism:doi", v);
                         break;
                     }
                     case "rft.atitle" : {
-                        r.add("dcterms:title", v);
+                        r.add("dc:title", v);
                         break;
                     }
                     case "rft.jtitle" : {
-                        Resource j = r.newResource("frbr:partOf")
-                                .add("rdf:type", FABIO_JOURNAL)
-                                .add("prism:publicationName", v);
-                        if (serials.containsKey(v)) {
-                                Resource serial = serials.get(v);
-                                Node issn = serial.literal("prism:issn");
-                                if (issn != null) {
-                                    j.add("prism:issn", issn.toString());
-                                }
-                                Node publisher = serial.literal("dc:publisher");
-                                if (publisher != null) {
-                                    j.add("dc:publisher", publisher.toString() );
-                                }
-                        } else {
-                            missingserial = true;
-                            synchronized (missingserials) {
-                                try {
-                                    missingserials.write(v);
-                                    missingserials.write("\n");
-                                } catch (IOException e) {
-                                    logger.error("can't write missing serial info", e);
-                                }
-                            }
-                        }
+                        r.add("prism:publicationName", v);
+                        break;
+                    }
+                    case "rft.genre" : {
+                        r.add("dc:type", v);
                         break;
                     }
                     case "rft.aulast" : {
-                        if (aulast != null) {
+                        if (aufirst != null) {
                             r.newResource("foaf:maker")
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst);
@@ -456,7 +420,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.aufirst" : {
-                        if (aufirst != null) {
+                        if (aulast != null) {
                             r.newResource("foaf:maker")
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst );
@@ -478,20 +442,20 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     }
                     case "rft.volume" : {
                         r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_VOLUME)
+                                .add("rdf:type", IRI.create("fabio:PeriodicalVolume"))
                                 .add("prism:volume", v);
                         break;
                     }
                     case "rft.issue" : {
                         r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_ISSUE )
+                                .add("rdf:type", IRI.create("fabio:PeriodicalIssue"))
                                 .add("prism:issueIdentifier", v);
                         break;
                     }
                     case "rft.spage" : {
                         if (spage != null) {
                             r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                                    .add("rdf:type", IRI.create("fabio:PrintObject"))
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -504,7 +468,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     case "rft.epage" : {
                         if (epage != null) {
                             r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                                    .add("rdf:type", IRI.create("fabio:PrintObject"))
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -515,7 +479,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft_val_fmt":
-                    case "rft.genre" :
                     case "ctx_ver":
                     case "rfr_id":
                         break;
@@ -530,32 +493,55 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                 // pending fields...
                 if (aufirst != null || aulast != null) {
                     r.newResource("foaf:maker")
+                            .add("rdf:type", IRI.create("foaf:Agent"))
                             .add("foaf:familyName", aulast)
                             .add("foaf:givenName", aufirst);
                 }
                 if (spage != null || epage != null) {
                     r.newResource("frbr:embodiment")
-                            .add("rdf:type", FABIO_PRINT_OBJECT)
+                            .add("rdf:type", IRI.create("fabio:PrintObject"))
                             .add("prism:startingPage", spage)
                             .add("prism:endingPage", epage);
                 }
             }
-
-            public boolean hasErrors() {
-                return error;
-            }
-
-            public boolean missingSerial() {
-                return missingserial;
-            }
         };
         try {
             URIUtil.parseQueryString(coins.toURI(), "UTF-8", listener);
-        } catch (InvalidCharacterException | UnsupportedEncodingException | URISyntaxException e) {
+        } catch (InvalidCharacterException | UnsupportedEncodingException | URISyntaxException  e) {
             logger.warn("can't parse query string: " + coins, e);
         }
         listener.close();
-        return listener.hasErrors() ? Result.ERROR : listener.missingSerial() ? Result.MISSINGSERIAL : Result.OK;
+    }
+
+    private void searchPublication(String title) {
+        long millis = 1000;
+        QueryBuilder queryBuilder =
+                matchPhraseQuery("titleMain", title);
+        SearchRequestBuilder searchRequest = client.prepareSearch()
+                .setQuery(queryBuilder)
+                .setSize(10) // size is per shard!
+                .setSearchType(SearchType.SCAN)
+                .setScroll(TimeValue.timeValueMillis(millis));
+        searchRequest.setIndices("mix");
+        searchRequest.setTypes("works");
+        SearchResponse searchResponse = searchRequest.execute().actionGet();
+        searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
+                .setScroll(TimeValue.timeValueMillis(millis))
+                .execute().actionGet();
+        long totalHits = searchResponse.getHits().getTotalHits();
+        logger.info("searching for {} --> {} hits", title, totalHits);
+        while (true) {
+            searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
+                    .setScroll(TimeValue.timeValueMillis(millis))
+                    .execute().actionGet();
+            SearchHits hits = searchResponse.getHits();
+            if (hits.getHits().length == 0) {
+                break;
+            }
+            for (SearchHit hit : hits) {
+                logger.info("field keys = {}", hit.getSource().keySet());
+            }
+        }
     }
 
 }

@@ -58,7 +58,9 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     private final Logger logger = LoggerFactory.getLogger(AbstractResource.class.getName());
 
     protected Multimap<P, Node> attributes = LinkedHashMultimap.create();
+
     private S subject;
+
     private boolean deleted;
 
     @Override

@@ -36,6 +36,11 @@ import org.xbib.xml.XMLUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Faceted result for SerachRetrieve
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class FacetedResult {
 
     private List<Facet> facets = new ArrayList();

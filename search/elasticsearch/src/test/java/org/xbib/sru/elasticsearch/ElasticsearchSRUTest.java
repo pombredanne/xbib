@@ -39,6 +39,7 @@ import org.xbib.io.OutputFormat;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.service.SRUService;
 import org.xbib.sru.service.SRUServiceFactory;
 import org.xbib.xml.transform.StylesheetTransformer;
@@ -79,7 +80,7 @@ public class ElasticsearchSRUTest {
                     "src/test/resources/xsl");
             response.setOutputFormat(format)
                     .setStylesheetTransformer(transformer)
-                    .setStylesheets("es-searchretrieve-response.xsl")
+                    .setStylesheets(SRUVersion.VERSION_2_0, "es-searchretrieve-response.xsl")
                     .to(w);
             w.close();
         } catch (Diagnostics d) {

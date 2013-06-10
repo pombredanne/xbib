@@ -53,13 +53,13 @@ public class SRUServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(SRUServiceTest.class.getName());
 
     @Test
-    public void testAdapterSearchRetrieve() throws IOException {
+    public void testServiceSearchRetrieve() throws IOException {
         for (String adapterName : Arrays.asList("Gent", "Lund", "Bielefeld")) {
             String query = "title = linux";
             int from = 1;
             int size = 10;
-            final SRUService adapter = PropertiesSRUServiceFactory.getService(adapterName);
-            FileOutputStream out = new FileOutputStream("target/sru-service-" + adapter.getURI().getHost() + ".xml");
+            final SRUService service = PropertiesSRUServiceFactory.getInstance().getService(adapterName);
+            FileOutputStream out = new FileOutputStream("target/sru-service-" + service.getURI().getHost() + ".xml");
             try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
                 SearchRetrieveResponseListener listener = new SearchRetrieveResponseAdapter() {
 
@@ -121,7 +121,7 @@ public class SRUServiceTest {
                     }
                 };
                 try {
-                    SRUClient client = adapter.newClient();
+                    SRUClient client = service.newClient();
                     SearchRetrieveRequest request = client.newSearchRetrieveRequest()
                             .addListener(listener)
                             .setQuery(query)

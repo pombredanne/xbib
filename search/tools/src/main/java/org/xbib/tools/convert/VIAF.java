@@ -111,7 +111,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
+                System.err.println("Help for " + VIAF.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
@@ -119,7 +119,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
                         + " --pumps <n>            the number of pumps (optional, default: 1)"
                         + " --format 'turtle'|'ntriples'             the output format (default: turtle)"
                         + " --output <name>                          the output filename (default: output.ttl)"
-                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'de-DE-x-rak')"
+                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'x-viaf')"
                 );
                 System.exit(1);
             }
@@ -166,6 +166,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
         }
         System.exit(0);
     }
+
     VIAF() {
         this.output = (String)options.valueOf("output");
         this.numPumps = (Integer)options.valueOf("pumps");

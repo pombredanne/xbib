@@ -32,7 +32,6 @@
 package org.xbib.sru.service;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,14 +41,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.xbib.io.OutputFormat;
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.SRUConstants;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.sru.util.SRUContentTypeNegotiator;
 import org.xbib.sru.util.SRURequestDumper;
 import org.xbib.xml.transform.StylesheetTransformer;
@@ -64,6 +66,8 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
     private final Logger logger = LoggerFactory.getLogger(SRUServlet.class.getName());
 
     private final String responseEncoding = "UTF-8";
+
+    private final SRURequestDumper requestDumper = new SRURequestDumper();
 
     private ServletConfig config;
 
@@ -80,17 +84,18 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         response.setContentType(mediaType);
         response.setHeader("Server", "Java");
         response.setHeader("X-Powered-By", getClass().getName());
-        final OutputStream out = response.getOutputStream();
+        if (logger.isDebugEnabled()) {
+            // a better method is adding a filter for HTTP request dumping
+            logger.info(requestDumper.toString(request));
+        }
         SRUService service = createService(request);
-        final SRURequestDumper requestDumper = new SRURequestDumper();
-        logger.info(requestDumper.toString(request));
+        SRUClient client = service.newClient();
         try {
-            SRUClient client = service.newClient();
             String operation = request.getParameter(OPERATION_PARAMETER);
             if (SEARCH_RETRIEVE_COMMAND.equals(operation)) {
                 SearchRetrieveRequest sruRequest = client.newSearchRetrieveRequest()
                     .setURI(getBaseURI(request))
-                    .setPath(getPath(request))
+                    .setPath(request.getPathInfo())
                     .setVersion(request.getParameter(VERSION_PARAMETER))
                     .setQuery(request.getParameter(QUERY_PARAMETER));
                 int startRecord = Integer.parseInt(
@@ -120,22 +125,43 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
 
                 sruRequest.setExtraRequestData(request.getParameter(EXTRA_REQUEST_DATA_PARAMETER));
 
-                client.execute(sruRequest)
-                        .setStylesheetTransformer(new StylesheetTransformer("/xsl"))
-                        //  .setStylesheets("")  TODO stylesheets
-                        .to(response);
+                SRUVersion version = SRUVersion.fromString(sruRequest.getVersion());
 
+                SearchRetrieveResponse sruResponse = client.execute(sruRequest);
+
+                String contentType = version.equals(SRUVersion.VERSION_2_0) ?
+                        OutputFormat.SRU.mimeType() : OutputFormat.XML.mimeType();
+
+                response.setStatus(200);
+                response.setContentType(contentType);
+                response.setCharacterEncoding("UTF-8");
+                response.addHeader("X-SRU-origin",
+                        sruRequest.getURI() != null ? sruRequest.getURI().toASCIIString() : "undefined");
+
+                String s = config.getInitParameter(version.name().toLowerCase());
+                String[] stylesheets = s != null ? s.split(",") : null;
+
+                sruResponse.setOutputFormat(OutputFormat.SRU)
+                        .setStylesheetTransformer(new StylesheetTransformer("/xsl"))
+                        .setStylesheets(version, stylesheets)
+                        .to(response.getWriter());
+                logger.debug("SRU servlet response sent");
+
+            } else {
+                throw new Diagnostics(1, "operation " + operation + " currently not supported :(");
             }
         } catch (Diagnostics diag) {
             logger.warn(diag.getMessage(), diag);
             //response.setStatus(500); SRU does not use 500 HTTP errors :(
             response.setStatus(200);
-            out.write(diag.getXML().getBytes(responseEncoding));
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType(OutputFormat.SRU.mimeType());
+            response.getOutputStream().write(diag.getXML().getBytes(responseEncoding));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             response.setStatus(500);
         } finally {
-            out.flush();
+            service.close(client);
         }
     }
 
@@ -172,31 +198,43 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         return mediaType;
     }
 
-    private SRUService createService(HttpServletRequest request)
+    private final static Map<String, SRUService> services = new HashMap();
+
+    private synchronized SRUService createService(HttpServletRequest request)
             throws ServletException, IOException {
         SRUService service = null;
-        String serviceName = config.getInitParameter("name");
         String[] reqPath = request.getRequestURI().split("/");
+        // last part of URI component is the name of the service
         String name = reqPath[reqPath.length - 1];
         try {
-            service = PropertiesSRUServiceFactory.getService(name);
+            if (!services.containsKey(name)) {
+                service = PropertiesSRUServiceFactory.getInstance().getService(name);
+                services.put(name, service);
+                logger.debug("new SRU service {}", name);
+            } else {
+                service = services.get(name);
+            }
         } catch (IllegalArgumentException e) {
             // skip
         }
         if (service == null) {
             try {
                 // class name in web.xml?
-                service = SRUServiceFactory.getInstance().getService(serviceName);
-            } catch (ClassNotFoundException ex) {
-                // skip
-            } catch (InstantiationException ex) {
-                // skip
-            } catch (IllegalAccessException ex) {
+                name = config.getInitParameter("name");
+                if (!services.containsKey(name)) {
+                    service = SRUServiceFactory.getInstance().getService(name);
+                    services.put(name, service);
+                    logger.debug("new SRU service {}", name);
+                } else {
+                    service = services.get(name);
+                }
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
                 // skip
             }
         }
         if (service == null) {
-            throw new ServletException("can't create SRUService from name = " + serviceName
+            throw new ServletException("can't create SRUService from service name = "
+                    + config.getInitParameter("name")
                     + " or request URI = " + request.getRequestURI());
         }
         return service;
@@ -211,7 +249,4 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         return URI.create(uri);
     }
 
-    private String getPath(HttpServletRequest request) {
-         return request.getPathInfo();
-    }
 }

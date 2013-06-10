@@ -35,6 +35,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Constants for SRU
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface SRUConstants {
     
     String NS_URI = "http://www.loc.gov/zing/srw/";
@@ -101,7 +106,8 @@ public interface SRUConstants {
     String RECORD_PACKING_PARAMETER = "recordPacking";
 
     /**
-     * For those responses where records are transferred in XML,
+     * For those responses where records are transferred in XML.
+     *
      * In order that records which are not well formed do not break
      * the entire message, it is possible to request that they be transferred
      * as a single string with the ‘<’, ‘>’ and ‘&’ characters escaped to
@@ -114,7 +120,7 @@ public interface SRUConstants {
      *  This distinction is made via the request parameter recordXMLEscaping.
      *  This parameter is defined for requests only in cases when the
      *  response records are to be transferred in XML.  Its value is
-     *  'string' or 'xml' (default is 'xml' if omitted).   If the
+     *  'string' or 'xml' (default is 'xml' if omitted). If the
      *  value of the parameter is 'string', then the server should
      *  perform the conversion (escape the relevant characters) before
      *  transferring records. If the value is 'xml', then it should embed the
@@ -250,12 +256,13 @@ public interface SRUConstants {
 
     String HTTP_ACCEPT_PARAMETER = "httpAccept";
 
-
     /**
      * The maximum number of counts that should be reported per facet field.
      *
      * The facetLimit parameter can specify a limit on a per field basis,
      * and/or a global limit applying to all fields.
+     *
+     * @since SRU 2.0
      *
      */
     String FACET_LIMIT_PARAMETER = "facetLimit";
@@ -264,6 +271,8 @@ public interface SRUConstants {
      * An offset into the list of counts, to allow paging.  It is 1-based and the default
      * value is 1 (meaning start with the first count). This parameter can be
      * specified on a per field basis.
+     *
+     * @since SRU 2.0
      */
 
     String FACET_START_PARAMETER = "facetStart";
@@ -280,6 +289,8 @@ public interface SRUConstants {
      * caseSensitivity: Optional, and meaningful only for ‘alphanumeric’.  One of:
      *    ‘caseSensitive’
      *    ‘caseInsensitive’ (default)
+     *
+     * @since SRU 2.0
      */
 
     String FACET_SORT_PARAMETER = "facetSort";
@@ -289,6 +300,8 @@ public interface SRUConstants {
      * instead of the matching facet values.
      * The parameter may be repeated, but should not be used in conjunction
      * with any other facet parameter.
+     *
+     * @since SRU 2.0
      */
 
     String FACET_COUNT_PARAMETER = "facetCount";
@@ -357,7 +370,9 @@ public interface SRUConstants {
         put("marcxml",URI.create("http://www.loc.gov/MARC21/slim"));
     }};
 
-
+    /**
+     * Property keys for SRU configuration
+     */
     String RECORDSCHEMA_PROPERTY = "recordschema";
 
     String RECORDPACKING_PROPERTY = "recordpacking";

@@ -67,6 +67,12 @@ import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
 import org.xml.sax.InputSource;
 
+/**
+ *
+ * Index bib addresses into Elasticsearch
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getName());
@@ -85,13 +91,13 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 
     private boolean done = false;
 
-    private static String index;
-
-    private static String type;
-
     private static int pipelines;
 
     private static boolean mock;
+
+    private static String index;
+
+    private static String type;
 
     public static void main(String[] args) {
         try {
@@ -100,14 +106,14 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
-                    accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
                 }
             };
             options = parser.parse(args);
@@ -117,11 +123,11 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
                         + " --type <type>          Elasticsearch type name" + lf
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
                         + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
-                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
                 );
                 System.exit(1);
             }
@@ -132,8 +138,8 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             logger.info("input = {}, threads = {}", input, threads);
 
             URI esURI = URI.create(options.valueOf("elasticsearch").toString());
-            index = options.valueOf("index").toString();
-            type = options.valueOf("type").toString();
+            index = (String)options.valueOf("index");
+            type = (String)options.valueOf("type");
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             pipelines = (Integer)options.valueOf("pipelines");

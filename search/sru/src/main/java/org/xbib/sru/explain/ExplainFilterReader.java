@@ -37,6 +37,11 @@ import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * A filter reader for Explain
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ExplainFilterReader extends XMLFilterReader {
 
     private ExplainRequest explain;

@@ -38,6 +38,7 @@ import org.xbib.io.OutputFormat;
 import org.xbib.io.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.transform.JsonStylesheet;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -50,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.util.Arrays;
 
 public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
 
@@ -111,13 +113,16 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
             JsonStylesheet js = new JsonStylesheet();
             js.toXML(buffer.getInputStream(), writer);
         } else {
+            // application/sru+xml
             // application/x-xhtml+xml
             // application/x-mods+xml
+            SRUVersion version = SRUVersion.fromString(request.getVersion());
+            String[] stylesheets = getStylesheets(version);
             JsonStylesheet js = new JsonStylesheet();
-            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-            js.setTransformer(getTransformer());
-            js.setStylesheets(getStylesheets());
-            js.transform(buffer.getInputStream(), writer);
+            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX))
+                .setTransformer(getTransformer())
+                .setStylesheets(stylesheets)
+                .transform(buffer.getInputStream(), writer);
         }
         return this;
     }

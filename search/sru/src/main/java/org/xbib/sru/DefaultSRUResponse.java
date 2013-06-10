@@ -34,22 +34,28 @@ package org.xbib.sru;
 import org.xbib.io.OutputFormat;
 import org.xbib.xml.transform.StylesheetTransformer;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Default SRU response
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class DefaultSRUResponse implements SRUResponse {
 
     private StylesheetTransformer transformer;
 
-    private String[] stylesheets;
+    private Map<SRUVersion, String[]> stylesheets;
 
     private OutputFormat format;
 
     private SRURequest request;
 
     public DefaultSRUResponse() {
-        this.transformer = new StylesheetTransformer("/xsl");
+        this.stylesheets = new HashMap();
     }
 
     @Override
@@ -58,22 +64,18 @@ public class DefaultSRUResponse implements SRUResponse {
         return this;
     }
 
-    @Override
-    public DefaultSRUResponse setStylesheets(String... stylesheets) {
-        this.stylesheets = stylesheets;
-        return this;
-    }
-
     protected StylesheetTransformer getTransformer() {
         return transformer;
     }
 
-    protected String[] getStylesheets() {
-        return stylesheets;
+    @Override
+    public DefaultSRUResponse setStylesheets(SRUVersion version, String... stylesheets) {
+        this.stylesheets.put(version, stylesheets);
+        return this;
     }
 
-    public SRURequest getRequest() {
-        return request;
+    protected String[] getStylesheets(SRUVersion version) {
+        return this.stylesheets.get(version);
     }
 
     @Override
@@ -84,11 +86,6 @@ public class DefaultSRUResponse implements SRUResponse {
 
     public OutputFormat getOutputFormat() {
         return format;
-    }
-
-    @Override
-    public DefaultSRUResponse to(HttpServletResponse servletResponse) throws IOException {
-        return this;
     }
 
     @Override

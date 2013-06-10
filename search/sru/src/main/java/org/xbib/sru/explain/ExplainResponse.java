@@ -39,8 +39,11 @@ import org.xbib.io.OutputFormat;
 import org.xbib.sru.DefaultSRUResponse;
 import org.xbib.sru.SRUResponse;
 
-import javax.servlet.http.HttpServletResponse;
-
+/**
+ * SRU response for Explain
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ExplainResponse extends DefaultSRUResponse implements SRUResponse {
 
     private final ExplainRequest request;
@@ -49,22 +52,11 @@ public class ExplainResponse extends DefaultSRUResponse implements SRUResponse {
         this.request = request;
     }
 
-    @Override
-    public ExplainRequest getRequest() {
-        return request;
-    }
-
     public void write() throws IOException {
     }
 
     @Override
     public ExplainResponse setOutputFormat(OutputFormat format) {
-        return this;
-    }
-
-
-    @Override
-    public ExplainResponse to(HttpServletResponse servletResponse) throws IOException {
         return this;
     }
 

@@ -61,7 +61,7 @@ public class SRUAction extends AbstractAction {
         final String name = get(params, "name", "default");
         final int from = get(params, "from", 1);
         final int size = get(params, "size", 10);
-        final SRUService service = PropertiesSRUServiceFactory.getService(name);
+        final SRUService service = PropertiesSRUServiceFactory.getInstance().getService(name);
         SRUClient client = service.newClient();
         SearchRetrieveRequest request = client.newSearchRetrieveRequest();
         try {

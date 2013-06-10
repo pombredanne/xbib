@@ -46,6 +46,7 @@ import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.SRUConstants;
 import org.xbib.sru.service.SRUService;
@@ -71,9 +72,12 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
 
     private SRUService service;
 
+    private ServletConfig config;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        this.config = config;
         String adapterName = config.getInitParameter("name");
         this.service = ZSRUServiceFactory.getService(adapterName);
         if (service == null) {
@@ -85,10 +89,6 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info(requestDumper.toString(request));
         String mediaType = getMediaType(request);
-        response.setContentType(mediaType);
-        response.setHeader("Server", "Java");
-        response.setHeader("X-Powered-By", getClass().getName());
-        final OutputStream out = response.getOutputStream();
         SRUService service = createService(request);
         try {
             String operation = request.getParameter(OPERATION_PARAMETER);
@@ -118,9 +118,19 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
                 searchRetrieveRequest.setSortKeys(request.getParameter(SORT_KEYS_PARAMETER));
                 searchRetrieveRequest.setExtraRequestData(request.getParameter(EXTRA_REQUEST_DATA_PARAMETER));
 
+                SRUVersion version = SRUVersion.fromString(searchRetrieveRequest.getVersion());
+
+                String s = config.getInitParameter(version.name().toLowerCase());
+                String[] stylesheets = s != null ? s.split(",") : null;
+
+                response.setContentType(mediaType);
+                response.setHeader("Server", "Java");
+                response.setHeader("X-Powered-By", getClass().getName());
+
                 client.execute(searchRetrieveRequest)
                     .setStylesheetTransformer(new StylesheetTransformer("/xsl"))
-                    .to(response);
+                    .setStylesheets(version, stylesheets)
+                    .to(response.getWriter());
 
                 client.close();
 
@@ -129,9 +139,7 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
         } catch (Diagnostics diag) {
             logger.warn(diag.getMessage(), diag);
             response.setStatus(500);
-            out.write(diag.getXML().getBytes(responseEncoding));
-        } finally {
-            out.flush();
+            response.getOutputStream().write(diag.getXML().getBytes(responseEncoding));
         }
     }
 

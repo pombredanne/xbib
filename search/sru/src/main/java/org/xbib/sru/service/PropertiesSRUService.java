@@ -37,6 +37,11 @@ import org.xbib.sru.client.SRUClient;
 import java.net.URI;
 import java.util.Properties;
 
+/**
+ *  A properties-based SRU service
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class PropertiesSRUService extends DefaultSRUService {
 
     private Properties properties;

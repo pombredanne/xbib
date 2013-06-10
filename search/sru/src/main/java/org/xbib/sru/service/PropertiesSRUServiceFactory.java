@@ -35,6 +35,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * A factory for properties-based SRU services
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class PropertiesSRUServiceFactory {
 
     private final static PropertiesSRUServiceFactory instance = new PropertiesSRUServiceFactory();
@@ -42,7 +47,11 @@ public class PropertiesSRUServiceFactory {
     private PropertiesSRUServiceFactory() {
     }
 
-    public static SRUService getService(String name) {
+    public static PropertiesSRUServiceFactory getInstance() {
+        return instance;
+    }
+
+    public SRUService getService(String name) {
         Properties properties = new Properties();
         InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/service/" + name + ".properties");
         try {

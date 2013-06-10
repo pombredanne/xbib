@@ -37,6 +37,11 @@ import org.xbib.sru.client.SRUClient;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * A default SRU service
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class DefaultSRUService implements SRUService {
 
     @Override

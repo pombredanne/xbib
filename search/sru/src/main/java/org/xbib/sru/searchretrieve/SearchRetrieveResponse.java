@@ -37,7 +37,6 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
 
@@ -48,10 +47,17 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.DefaultSRUResponse;
 import org.xbib.sru.SRUResponse;
+import org.xbib.sru.SRUVersion;
 import org.xbib.text.Normalizer;
 import org.xbib.xml.XMLFilterReader;
+import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
+/**
+ * SearchRetrieve response
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class SearchRetrieveResponse extends DefaultSRUResponse
         implements SRUResponse, SearchRetrieveResponseListener, HttpResponseListener {
 
@@ -72,7 +78,6 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
     public SearchRetrieveRequest getRequest() {
         return request;
     }
-
 
     public void receivedResponse(HttpResponse response) {
         this.httpResponse = response;
@@ -105,7 +110,6 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
             listener.onReceive(request, message);
         }
     }
-
 
     @Override
     public void version(String version) {
@@ -201,23 +205,12 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
     }
 
     @Override
-    public SearchRetrieveResponse to(HttpServletResponse servletResponse) throws IOException {
-        servletResponse.addHeader("X-SRU-version",
-                request.getVersion());
-        servletResponse.addHeader("X-SRU-recordSchema",
-                request.getRecordSchema());
-        servletResponse.addHeader("X-SRU-recordPacking",
-                request.getRecordPacking());
-        servletResponse.addHeader("X-SRU-origin",
-                request.getURI() != null ? request.getURI().toASCIIString() : "undefined");
-        servletResponse.setStatus(200);
-        return to(servletResponse.getWriter());
-    }
-
-    @Override
     public SearchRetrieveResponse to(Writer writer) throws IOException {
         if (httpResponse == null) {
             return this;
+        }
+        if (getTransformer() == null) {
+            setStylesheetTransformer(new StylesheetTransformer("xsl"));
         }
         // transport parameters into XSL transformer style sheets
         getTransformer().addParameter("version", request.getVersion());
@@ -232,21 +225,19 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
             XMLFilterReader reader = new SearchRetrieveFilterReader(request);
             InputSource source = new InputSource(new StringReader(Normalizer.normalize(httpResponse.getBody(), Normalizer.Form.C)));
             getTransformer().setSource(reader, source).setResult(writer);
-            if (getStylesheets() != null) {
-                getTransformer().transform(Arrays.asList(getStylesheets()));
+            SRUVersion version = SRUVersion.fromString(request.getVersion());
+            String[] stylesheets = getStylesheets(version);
+            if (stylesheets != null) {
+                getTransformer().transform(Arrays.asList(stylesheets));
             } else {
                 getTransformer().transform();
             }
         } catch (TransformerException e) {
             logger.error(e.getMessage(), e);
             throw new IOException(e);
+        } finally {
+            writer.flush();
         }
-            /*logger.info("[{}ms] [uri={}] [status={}] [contenttype={}] [query={}]",
-                    t1-t0,
-                    request.getURI().toString(),
-                    httpResponse.getStatusCode(),
-                    httpResponse.getURI(),
-                    request.getQuery());*/
         return this;
     }
 }

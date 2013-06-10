@@ -69,7 +69,9 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * Format-Dokumenation
+ *
+ *
+ * Format-Dokumentation
  * http://www.zeitschriftendatenbank.de/fileadmin/user_upload/ZDB/pdf/services/Datenlieferdienst_ZDB_EZB_Lizenzdatenformat.pdf
  */
 

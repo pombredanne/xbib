@@ -34,21 +34,16 @@ package org.xbib.sru;
 import org.xbib.io.OutputFormat;
 import org.xbib.xml.transform.StylesheetTransformer;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
 public interface SRUResponse {
 
-    SRURequest getRequest();
-
     SRUResponse setOutputFormat(OutputFormat format);
 
     SRUResponse setStylesheetTransformer(StylesheetTransformer transformer);
 
-    SRUResponse setStylesheets(String... stylesheets);
-
-    SRUResponse to(HttpServletResponse servletResponse) throws IOException;
+    SRUResponse setStylesheets(SRUVersion version, String... stylesheets);
 
     SRUResponse to(Writer writer) throws IOException;
 }

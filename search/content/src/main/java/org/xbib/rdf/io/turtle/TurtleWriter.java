@@ -111,7 +111,6 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
 
     private long idCounter;
 
-
     public TurtleWriter() {
         this.context = IRINamespaceContext.newInstance();
         this.nsWritten = false;
@@ -192,6 +191,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     }
 
     public TurtleWriter output(OutputStream out) throws IOException {
+        if (out == null) {
+            return this;
+        }
         this.writer = new OutputStreamWriter(out, "UTF-8");
         return this;
     }
@@ -210,7 +212,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
                 writeTriple(it.next());
             }
             end();
-            writer.write(sb.toString());
+            if (writer != null) {
+                writer.write(sb.toString());
+            }
             byteCounter += sb.length();
             sb.setLength(0);
         }

@@ -34,6 +34,11 @@ package org.xbib.sru.scan;
 import org.xbib.sru.DefaultSRURequest;
 import org.xbib.sru.SRURequest;
 
+/**
+ * Scan request (not yet implemented)
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ScanRequest extends DefaultSRURequest implements SRURequest {
 
 }

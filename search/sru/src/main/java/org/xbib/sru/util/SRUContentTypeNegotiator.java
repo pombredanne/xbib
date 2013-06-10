@@ -34,11 +34,18 @@ package org.xbib.sru.util;
 import java.util.regex.Pattern;
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 
+/**
+ * Content negiotiator. If agents want XML, serve XML (especially browsers).
+ * Consider also application/sru+xml
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class SRUContentTypeNegotiator extends ContentTypeNegotiator {
 
     public SRUContentTypeNegotiator() {
         super();
-        //setDefaultAccept("application/sru+xml"); yaz does not recognize application/sru+xml 
+        // We like yaz, but yaz is dumb. yaz does not recognize application/sru+xml
+        //setDefaultAccept("application/sru+xml");
         setDefaultAccept("text/xml");
         /*
          * Send XML to clients that indicate they accept everything.

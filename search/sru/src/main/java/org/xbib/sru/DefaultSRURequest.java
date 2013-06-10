@@ -33,6 +33,11 @@ package org.xbib.sru;
 
 import java.net.URI;
 
+/**
+ * Default SRU request
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class DefaultSRURequest implements SRURequest {
 
     private URI uri;

@@ -32,6 +32,7 @@
 package org.xbib.io.iso23950.searchretrieve;
 
 import org.xbib.io.iso23950.RecordIdentifierSetter;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.util.SRUFilterReader;
 import org.xbib.io.iso23950.ZResponse;
@@ -44,7 +45,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
@@ -109,11 +109,6 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
     }
 
     @Override
-    public ZSearchRetrieveResponse to(HttpServletResponse servletResponse) throws IOException {
-        return to(servletResponse.getWriter());
-    }
-
-    @Override
     public ZSearchRetrieveResponse to(Writer writer) throws IOException {
         setOrigin(session.getConnection().getURI());
         // get result count for caller and for stylesheet
@@ -130,13 +125,16 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
             reader.setProperty(Iso2709Reader.TYPE, type);
             StreamResult streamResult = new StreamResult(writer);
             getTransformer().setSource(new SAXSource(reader, source)).setResult(streamResult);
-            if (getStylesheets() != null) {
-                getTransformer().transform(Arrays.asList(getStylesheets()));
+            SRUVersion version = SRUVersion.fromString(request.getVersion());
+            if (getStylesheets(version) != null) {
+                getTransformer().transform(Arrays.asList(getStylesheets(version)));
             } else {
                 getTransformer().transform();
             }
         } catch (SAXNotRecognizedException | SAXNotSupportedException | TransformerException e) {
             throw new IOException(e);
+        } finally {
+            writer.flush();
         }
         return this;
     }

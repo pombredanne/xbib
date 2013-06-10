@@ -29,15 +29,29 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.sru.explain;
+package org.xbib.sru;
 
-/**
- * ZEEREX namespace
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
-public interface ZEEREX {
+public enum SRUVersion {
 
-    String NS_URI = "http://explain.z3950.org/dtd/2.1/";
-    String NS_PREFIX = "zr";
+    VERSION_1_1,
+
+    VERSION_1_2,
+
+    VERSION_2_0;
+
+    public static SRUVersion fromString(String version) {
+        if (version == null) {
+            return VERSION_1_2;
+        }
+        switch (version) {
+            case "1.1" :
+                return VERSION_1_1;
+            case "1.2" :
+                return VERSION_1_2;
+            case "2.0" :
+                return VERSION_2_0;
+            default:
+                return VERSION_1_2;
+        }
+    }
 }

@@ -36,6 +36,11 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.io.Request;
 import org.xbib.io.http.HttpResponse;
 
+/**
+ *  An adapter class for SearchRetrieve responses
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseListener {
 
     @Override
@@ -90,6 +95,7 @@ public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseList
     public void extraRecordData(Collection<XMLEvent> extra) {
     }
 
+    @Override
     public void facetedResults(Collection<XMLEvent> facets) {
     }
 

@@ -50,7 +50,6 @@ import org.xbib.io.iso23950.client.ZClient;
 import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveRequest;
 import org.xbib.io.iso23950.searchretrieve.ZSearchRetrieveResponse;
 import org.xbib.io.iso23950.util.ZContentTypeNegotiator;
-import org.xbib.io.iso23950.util.ZRequestDumper;
 import org.xbib.io.negotiate.ContentTypeNegotiator;
 import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
@@ -64,8 +63,6 @@ public class ZServlet extends HttpServlet {
     private final Map<String, String> mediaTypes = new HashMap<>();
 
     private final ContentTypeNegotiator ctn = new ZContentTypeNegotiator();
-
-    //private final ZRequestDumper requestDumper = new ZRequestDumper();
 
     private String address;
 
@@ -131,7 +128,7 @@ public class ZServlet extends HttpServlet {
             response.setHeader("Server", "Java");
             response.setHeader("X-Powered-By", getClass().getName());
             zResponse.setStylesheetTransformer(transformer)
-                    .to(response);
+                    .to(response.getWriter());
         } finally {
             client.close();
             session.close();

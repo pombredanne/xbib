@@ -47,6 +47,7 @@ import org.xbib.io.iso23950.service.ZService;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUConstants;
+import org.xbib.sru.SRUVersion;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.iso23950.client.ZSRUClientFactory;
 import org.xbib.sru.service.PropertiesSRUService;
@@ -113,8 +114,8 @@ public class ZSRUService extends PropertiesSRUService implements ZService, ZCons
         return properties.getProperty(SRUConstants.ENCODING_PROPERTY, "UTF-8");
     }
 
-    public String getStylesheet() {
-        return properties.getProperty("stylesheet");
+    public String getStylesheet(SRUVersion version) {
+        return properties.getProperty("stylesheet." + version.name().toLowerCase(), null);
     }
 
     /**
@@ -153,8 +154,9 @@ public class ZSRUService extends PropertiesSRUService implements ZService, ZCons
             transformer.addParameter("version", getVersion());
             transformer.addParameter("format", getVersion());
             transformer.addParameter("type", getType());
+            SRUVersion version = SRUVersion.fromString(request.getVersion());
             zResponse.setStylesheetTransformer(transformer)
-                    .setStylesheets(getStylesheet())
+                    .setStylesheets(version, getStylesheet(version))
                     .to(writer);
         } catch (org.xbib.io.iso23950.Diagnostics d) {
             throw new Diagnostics(1, d.getPlainText());
@@ -202,8 +204,9 @@ public class ZSRUService extends PropertiesSRUService implements ZService, ZCons
             transformer.addParameter("version", getVersion());
             transformer.addParameter("format", getFormat());
             transformer.addParameter("type", getType());
+            SRUVersion version = SRUVersion.fromString(request.getVersion());
             zResponse.setStylesheetTransformer(transformer)
-                    .setStylesheets(getStylesheet())
+                    .setStylesheets(version, getStylesheet(version))
                     .to(writer);
 
         } catch (org.xbib.io.iso23950.Diagnostics d) {

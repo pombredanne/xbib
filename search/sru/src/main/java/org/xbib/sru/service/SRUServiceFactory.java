@@ -37,6 +37,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * Factory for SRU service
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ * @param <S>
+ */
 public class SRUServiceFactory<S extends SRUService> {
 
     private final Map<URI, S> services = new HashMap();

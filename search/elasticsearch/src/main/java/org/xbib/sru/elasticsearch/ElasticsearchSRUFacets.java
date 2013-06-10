@@ -40,14 +40,20 @@ import java.util.Iterator;
 public class ElasticsearchSRUFacets extends FacetedResult {
 
     public void parse(Facets facets) {
+        if (facets == null) {
+            return;
+        }
+        if (facets.facets() == null) {
+            return;
+        }
         Iterator<org.elasticsearch.search.facet.Facet> it = facets.facets().iterator();
         while (it.hasNext()) {
             org.elasticsearch.search.facet.Facet f = it.next();
             if (f instanceof TermsFacet) {
                 TermsFacet tf = (TermsFacet)f;
                 Facet facet = new Facet("", "", f.getName(), "="); // String displayLabel, String description, String index, String relation
-                for (TermsFacet.Entry e : tf.entries()) {
-                    Term term = new Term(e.getTerm(), e.getCount(), null, null);
+                for (TermsFacet.Entry e : tf.getEntries()) {
+                    Term term = new Term(e.getTerm().string(), e.getCount(), null, null);
                     facet.add(term);
                 }
                 add(facet);

@@ -47,6 +47,11 @@ import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * SearchRetrieve filter reader
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class SearchRetrieveFilterReader extends XMLFilterReader {
 
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();

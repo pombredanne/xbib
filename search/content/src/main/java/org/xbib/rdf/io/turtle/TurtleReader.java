@@ -73,9 +73,9 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
 
     private final Factory<S,P,O> factory = Factory.getInstance();
     /**
-     * The base URI
+     * The base IRI
      */
-    private IRI baseURI;
+    private IRI baseIRI;
     /**
      * The push back reader for reading input streams of turtle statements.
      */
@@ -123,12 +123,12 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     private TripleListener<S, P, O> listener;
     private boolean strict = false;
 
-    public TurtleReader(IRI uri) {
-        this(uri, XMLNamespaceContext.getInstance());
+    public TurtleReader(IRI baseIRI) {
+        this(baseIRI, XMLNamespaceContext.getInstance());
     }
 
-    public TurtleReader(IRI uri, XMLNamespaceContext context) {
-        this.baseURI = uri;
+    public TurtleReader(IRI baseIRI, XMLNamespaceContext context) {
+        this.baseIRI = baseIRI;
         this.context = context;
     }
 
@@ -233,12 +233,12 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             skipWhitespace();
             IRI nsURI = parseURI();
             if ("".equals(prefix)) {
-                this.baseURI = nsURI;
+                this.baseIRI = nsURI;
             }
         } else if ("@base".equalsIgnoreCase(directive)) {
-            this.baseURI = parseURI();
+            this.baseIRI = parseURI();
         } else {
-            throw new IOException(baseURI + ": unknown directive: " + directive);
+            throw new IOException(baseIRI + ": unknown directive: " + directive);
         }
         skipWhitespace();
         validate(reader.read(), '.');
@@ -295,7 +295,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             if (value instanceof Resource) {
                 subject = (S) value;
             } else {
-                throw new IOException(baseURI + ": illegal subject value: '" + value + "' (" + value.getClass() + ")");
+                throw new IOException(baseIRI + ": illegal subject value: '" + value + "' (" + value.getClass() + ")");
             }
         }
     }
@@ -314,7 +314,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         if (obj instanceof Resource) {
             return factory.asPredicate(obj.toString());
         } else {
-            throw new IOException(baseURI + ": illegal predicate value: " + obj);
+            throw new IOException(baseIRI + ": illegal predicate value: " + obj);
         }
     }
 
@@ -381,7 +381,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         } else if ((int) ch == 65535) {
             throw new EOFException();
         } else {
-            throw new IOException(baseURI
+            throw new IOException(baseIRI
                     + ": unable to parse value, unknown character: code = " + (int) ch
                     + " character = '" + ch + "'");
         }
@@ -417,7 +417,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         } while (!ended);
         String decoded = decode(sb.toString(), "UTF-8");
         IRI u = IRI.create(decoded);
-        u = baseURI.resolve(u);
+        u = baseIRI.resolve(u);
         return u;
     }
 
@@ -430,7 +430,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     private O parseQNameOrBoolean() throws IOException {
         char ch = read();
         if (ch != ':' && !isPrefixStartChar(ch)) {
-            throw new IOException(baseURI + ": expected colon or letter, not: '" + ch + "'");
+            throw new IOException(baseIRI + ": expected colon or letter, not: '" + ch + "'");
         }
         sb.setLength(0);
         String ns;
@@ -452,7 +452,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             validate(ch, ':');
             ns = context.getNamespaceURI(sb.toString());
             if (ns == null) {
-                throw new IOException(baseURI + ": namespace not found: " + sb.toString());
+                throw new IOException(baseIRI + ": namespace not found: " + sb.toString());
             }
         }
         sb.setLength(0);
@@ -497,7 +497,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             }
             return bnode;
         } else {
-            throw new IOException(baseURI + ":expected character: '[' or '_'");
+            throw new IOException(baseIRI + ":expected character: '[' or '_'");
         }
     }
 
@@ -591,7 +591,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             sb.setLength(0);
             ch = read();
             if (!Character.isLowerCase(ch)) {
-                throw new IOException(baseURI + ": lower case character expected: " + ch);
+                throw new IOException(baseIRI + ": lower case character expected: " + ch);
             }
             sb.append(ch);
             ch = read();

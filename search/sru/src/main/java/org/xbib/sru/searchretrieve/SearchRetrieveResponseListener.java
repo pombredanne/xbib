@@ -35,6 +35,11 @@ import java.util.Collection;
 import javax.xml.stream.events.XMLEvent;
 import org.xbib.sru.SRUResponseListener;
 
+/**
+ * Listener for SearchRetrieve responses
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface SearchRetrieveResponseListener extends SRUResponseListener {
        
     /**
