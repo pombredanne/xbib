@@ -43,7 +43,7 @@ import org.xbib.io.http.PreparedHttpRequest;
 import java.io.IOException;
 
 /**
- * HTTP Session
+ * Default HTTP Session
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -101,8 +101,8 @@ public class DefaultHttpSession implements HttpSession {
     public void close() throws IOException {
         if (isOpen()) {
             this.isOpen = false;
-            client.close();
-        }
+            client.closeAsynchronously();
+         }
     }
 
     @Override

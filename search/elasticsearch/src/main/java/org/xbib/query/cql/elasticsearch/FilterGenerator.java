@@ -33,8 +33,8 @@ package org.xbib.query.cql.elasticsearch;
 
 import java.io.IOException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.cql.SyntaxException;
+import org.xbib.strings.encode.QuotedStringTokenizer;
 
 /**
  * Build query in JSON syntax from abstract syntax tree

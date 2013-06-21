@@ -31,11 +31,8 @@
  */
 package org.xbib.io;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /**
+ * A packet for transporting data chunks in sessions
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */

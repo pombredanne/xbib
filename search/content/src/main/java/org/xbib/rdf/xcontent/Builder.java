@@ -140,7 +140,10 @@ public class Builder<C extends ResourceContext, R extends Resource> {
         Collection<O> nodes = new ArrayList();
         for (O object : objects) {
             if (object instanceof Identifier) {
-                continue;
+                Identifier id = (Identifier)object;
+                if (Identifier.GENID.equals(id.id().getScheme())) {
+                    continue;
+                }
             }
             nodes.add(object);
         }

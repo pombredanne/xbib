@@ -99,30 +99,35 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
             Writer writer = new OutputStreamWriter(response.getOutputStream(), responseEncoding);
             if (IDENTIFY.equals(verb)) {
                 ServerIdentifyRequest oaiRequest = new ServerIdentifyRequest(session, request);
-                IdentifyResponse oaiResponse = new IdentifyResponse(oaiRequest, writer);
-                oaiRequest.setURI(service.getBaseURL().toURI());
+                IdentifyResponse oaiResponse = new IdentifyResponse(oaiRequest);
+                oaiRequest.setURL(service.getBaseURL().toURI());
                 service.identify(oaiRequest, oaiResponse);
+                oaiResponse.to(writer);
             }
             if (LIST_METADATA_FORMATS.equals(verb)) {
                 ServerListMetadataFormatsRequest oaiRequest = new ServerListMetadataFormatsRequest(session, request);
-                ListMetadataFormatsResponse oaiResponse = new ListMetadataFormatsResponse(oaiRequest, writer);
-                oaiRequest.setURI(service.getBaseURL().toURI());
+                ListMetadataFormatsResponse oaiResponse = new ListMetadataFormatsResponse(oaiRequest);
+                oaiRequest.setURL(service.getBaseURL().toURI());
                 service.listMetadataFormats(oaiRequest, oaiResponse);
+                oaiResponse.to(writer);
             } else if (LIST_SETS.equals(verb)) {
                 ServerListSetsRequest oaiRequest = new ServerListSetsRequest(session, request);
-                ListSetsResponse oaiResponse = new ListSetsResponse(oaiRequest, writer);
-                oaiRequest.setURI(service.getBaseURL().toURI());
+                ListSetsResponse oaiResponse = new ListSetsResponse(oaiRequest);
+                oaiRequest.setURL(service.getBaseURL().toURI());
                 service.listSets(oaiRequest, oaiResponse);
+                oaiResponse.to(writer);
             } else if (LIST_IDENTIFIERS.equals(verb)) {
                 ServerListIdentifiersRequest oaiRequest = new ServerListIdentifiersRequest(session, request);
-                ListIdentifiersResponse oaiResponse = new ListIdentifiersResponse(oaiRequest, writer);
-                oaiRequest.setURI(service.getBaseURL().toURI());
+                ListIdentifiersResponse oaiResponse = new ListIdentifiersResponse(oaiRequest);
+                oaiRequest.setURL(service.getBaseURL().toURI());
                 service.listIdentifiers(oaiRequest, oaiResponse);
+                oaiResponse.to(writer);
             } else if (LIST_RECORDS.equals(verb)) {
                 ServerListRecordsRequest oaiRequest = new ServerListRecordsRequest(session, request);
-                ListRecordsResponse oaiResponse = new ListRecordsResponse(oaiRequest, writer);
-                oaiRequest.setURI(service.getBaseURL().toURI());
+                ListRecordsResponse oaiResponse = new ListRecordsResponse(oaiRequest);
+                oaiRequest.setURL(service.getBaseURL().toURI());
                 service.listRecords(oaiRequest, oaiResponse);
+                oaiResponse.to(writer);
             }
         } catch (OAIException | URISyntaxException e) {
             logger.warn(e.getMessage(), e);

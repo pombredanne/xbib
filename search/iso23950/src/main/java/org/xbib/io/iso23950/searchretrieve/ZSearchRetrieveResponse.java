@@ -113,6 +113,9 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
         setOrigin(session.getConnection().getURI());
         // get result count for caller and for stylesheet
         numberOfRecords(resultCount);
+        if (getTransformer() == null) {
+            return this;
+        }
         getTransformer().addParameter("numberOfRecords", resultCount);
         // push out results
         ByteArrayInputStream in = new ByteArrayInputStream(records);
@@ -129,7 +132,9 @@ public class ZSearchRetrieveResponse extends SearchRetrieveResponse
             if (getStylesheets(version) != null) {
                 getTransformer().transform(Arrays.asList(getStylesheets(version)));
             } else {
-                getTransformer().transform();
+                // NPE in Saxon
+                // t net.sf.saxon.event.ReceivingContentHandler.getNodeName(ReceivingContentHandler.java:391)
+                //getTransformer().transform();
             }
         } catch (SAXNotRecognizedException | SAXNotSupportedException | TransformerException e) {
             throw new IOException(e);

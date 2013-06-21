@@ -20,10 +20,12 @@
 package org.xbib.common.xcontent;
 
 import com.fasterxml.jackson.dataformat.smile.SmileConstants;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.xbib.common.bytes.BytesArray;
 import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.xcontent.json.JsonXContent;
 import org.xbib.common.xcontent.smile.SmileXContent;
+import org.xbib.common.xcontent.xml.XmlXContent;
 import org.xbib.common.xcontent.yaml.YamlXContent;
 
 import java.io.IOException;
@@ -74,6 +76,20 @@ public class XContentFactory {
     }
 
     /**
+     * Constructs a new xml builder using XML.
+     */
+    public static XContentBuilder xmlBuilder() throws IOException {
+        return contentBuilder(XContentType.XML).wrapInto("root");
+    }
+
+    /**
+     * Constructs a new xml builder that will output the result into the provided output stream.
+     */
+    public static XContentBuilder xmlBuilder(OutputStream os) throws IOException {
+        return new XContentBuilder(XmlXContent.xmlXContent, os);
+    }
+
+    /**
      * Constructs a xcontent builder that will output the result into the provided output stream.
      */
     public static XContentBuilder contentBuilder(XContentType type, OutputStream outputStream) throws IOException {
@@ -83,6 +99,8 @@ public class XContentFactory {
             return smileBuilder(outputStream);
         } else if (type == XContentType.YAML) {
             return yamlBuilder(outputStream);
+        } else if (type == XContentType.XML) {
+            return xmlBuilder(outputStream);
         }
         throw new IllegalArgumentException("No matching content type for " + type);
     }
@@ -97,6 +115,8 @@ public class XContentFactory {
             return SmileXContent.contentBuilder();
         } else if (type == XContentType.YAML) {
             return YamlXContent.contentBuilder();
+        } else if (type == XContentType.XML) {
+            return XmlXContent.contentBuilder();
         }
         throw new IllegalArgumentException("No matching content type for " + type);
     }
@@ -185,6 +205,12 @@ public class XContentFactory {
                 return XContentType.YAML;
             }
         }
+        if (first == '<' && second == '?') {
+            int third = si.read();
+            if (third == 'x') {
+                return XContentType.XML;
+            }
+        }
         for (int i = 2; i < GUESS_HEADER_LENGTH; i++) {
             int val = si.read();
             if (val == -1) {
@@ -229,6 +255,9 @@ public class XContentFactory {
         }
         if (length > 2 && first == '-' && bytes.get(1) == '-' && bytes.get(2) == '-') {
             return XContentType.YAML;
+        }
+        if (length > 2 && first == '<' && bytes.get(1) == '?' && bytes.get(2) == 'x') {
+            return XContentType.XML;
         }
         for (int i = 0; i < length; i++) {
             if (bytes.get(i) == '{') {

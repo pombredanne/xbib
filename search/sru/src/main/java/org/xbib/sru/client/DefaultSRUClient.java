@@ -36,6 +36,7 @@ import org.xbib.io.http.netty.DefaultHttpResponseListener;
 import org.xbib.io.http.netty.DefaultHttpSession;
 import org.xbib.io.http.HttpRequest;
 import org.xbib.io.http.HttpResponse;
+import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
@@ -46,6 +47,7 @@ import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.sru.service.SRUService;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -90,24 +92,6 @@ public class DefaultSRUClient implements SRUClient {
     @Override
     public String getVersion() {
         return "2.0";
-    }
-
-    public DefaultSRUClient setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public DefaultSRUClient setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -157,12 +141,12 @@ public class DefaultSRUClient implements SRUClient {
         session.open(Session.Mode.READ);
         HttpRequest req = session.newRequest()
                 .setMethod("GET")
-                .setURI(request.getURI())
+                .setURL(request.getURI())
                 .setUser(username)
                 .setPassword(password)
                 .addParameter(SRUConstants.OPERATION_PARAMETER, "searchRetrieve")
                 .addParameter(SRUConstants.VERSION_PARAMETER, request.getVersion())
-                .addParameter(SRUConstants.QUERY_PARAMETER, request.getQuery())
+                .addParameter(SRUConstants.QUERY_PARAMETER, URIUtil.encode(request.getQuery(), Charset.forName("UTF-8")))
                 .addParameter(SRUConstants.START_RECORD_PARAMETER, Integer.toString(request.getStartRecord()))
                 .addParameter(SRUConstants.MAXIMUM_RECORDS_PARAMETER, Integer.toString(request.getMaximumRecords()));
         if (request.getRecordPacking() != null && !request.getRecordPacking().isEmpty()) {

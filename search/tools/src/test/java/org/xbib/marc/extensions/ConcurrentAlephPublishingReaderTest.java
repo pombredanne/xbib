@@ -36,8 +36,10 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
@@ -53,16 +55,30 @@ import org.xbib.marc.MarcXchange2KeyValue;
 public class ConcurrentAlephPublishingReaderTest {
 
     private final static Logger logger = LoggerFactory.getLogger(AlephPublishingReader.class.getName());
-    private final URI uri = URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver");
+
     private final Iterator<Integer> iterator = new AtomicIntegerIterator(1, 100);
+
     private final int threads = 4;
+
     private final AtomicLong count = new AtomicLong(0L);
+
+    private String library;
+
+    private String setName;
 
     public void testAlephPublishing() throws InterruptedException, ExecutionException {
         System.setProperty("java.naming.factory.initial", "org.xbib.naming.SimpleContextFactory");
+
+        ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.marc.extensions.alephtest");
+        library  = bundle.getString("library");
+        setName = bundle.getString("setname");
+        String uriStr = bundle.getString("uri");
+
+
         Queue<URI> uris = new LinkedList();
+
         for (int i = 0; i < threads; i++) {
-            uris.add(uri);
+            uris.add(URI.create(uriStr));
         }
         ImportService service = new ImportService().threads(threads).factory(
                 new ImporterFactory() {
@@ -101,6 +117,7 @@ public class ConcurrentAlephPublishingReaderTest {
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new AlephPublishingReader().setListener(kv).setIterator(iterator)
-                .setLibrary("hbz50").setSetName("ALEPHSEMAB");
+                .setLibrary(library)
+                .setSetName(setName);
     }
 }

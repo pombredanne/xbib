@@ -39,9 +39,13 @@ public interface OAIConstants {
     
     String NS_PREFIX = "oai";
 
-    String DC_NS_URI = "http://www.openarchives.org/OAI/2.0/oai_dc";
+    String OAIDC_NS_URI = "http://www.openarchives.org/OAI/2.0/oai_dc/";
     
-    String DC_NS_PREFIX = "oai_dc";
+    String OAIDC_NS_PREFIX = "oai_dc";
+
+    String DC_NS_URI = "http://www.purl.org/dc/elements/1.1/";
+
+    String DC_PREFIX = "dc";
     
     String VERB_PARAMETER = "verb";
 

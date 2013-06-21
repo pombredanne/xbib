@@ -59,7 +59,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
         SimpleLiteral<O> literal = new SimpleLiteral(123).type(Literal.INT);
         r.add("urn:property", literal);
         assertEquals(r.isEmpty(), false);
-        assertEquals(r.iterator().next().object().toString(), "123");
+        assertEquals(r.iterator().next().object().toString(), "123^^xsd:int");
     }
 
     @Test

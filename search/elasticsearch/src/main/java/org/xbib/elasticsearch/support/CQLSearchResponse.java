@@ -180,13 +180,12 @@ public class CQLSearchResponse {
         if (format == null || format.equals(OutputFormat.JSON)) {
             Streams.copy(new InputStreamReader(in, "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
-            JsonStylesheet js = new JsonStylesheet();
+            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
             js.toXML(in, writer);
         } else {
-            // application/x-xhtml+xml
-            // application/x-mods+xml
-            JsonStylesheet js = new JsonStylesheet();
-            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            // application/xhtml+xml
+            // application/mods+xml
+            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
             js.setTransformer(getTransformer());
             js.setStylesheets(getStylesheets());
             js.transform(in, writer);

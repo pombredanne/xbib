@@ -48,13 +48,25 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * An XML reader for parsing XML into triples
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ * @param <S>
+ * @param <P>
+ * @param <O>
+ */
 public class XmlReader<S extends Identifier, P extends Property, O extends Node>
         implements Closeable, XmlTriplifier<S, P, O> {
 
     private InputSource source;
+
     private TripleListener listener;
+
     private XmlHandler handler;
+
     private boolean namespaces = true;
+
     private boolean validate = false;
 
     /**
@@ -68,7 +80,8 @@ public class XmlReader<S extends Identifier, P extends Property, O extends Node>
         return this;
     }
 
-    public XmlTriplifier setHandler(XmlHandler handler) {
+    @Override
+    public XmlReader setHandler(XmlHandler handler) {
         this.handler = handler;
         return this;
     }

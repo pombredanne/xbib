@@ -87,7 +87,7 @@ public final class IRINamespaceContext extends XMLNamespaceContext {
                 ? new IRI(uri.getScheme(), uri.getSchemeSpecificPart(), null).toString() : uri.toString();
         // TODO better prefix search... we assume we have a rather short set of name spaces (~ 10-20)
         // otherwise, a binary search in an ordered key set would be more efficient, or a suffix tree
-        for (final String ns : prefixes.keySet()) {
+        for (final String ns : getPrefixes().keySet()) {
             if (s.startsWith(ns)) {
                 return new StringBuilder().append(getPrefix(ns)).append(delimiter).append(s.substring(ns.length())).toString();
             }
@@ -100,11 +100,11 @@ public final class IRINamespaceContext extends XMLNamespaceContext {
             return null;
         }
         String scheme = uri.getScheme();
-        if (scheme != null && namespaces.containsKey(scheme)) {
-            return new String[]{scheme, namespaces.get(scheme)};
+        if (scheme != null && getNamespaces().containsKey(scheme)) {
+            return new String[]{scheme, getNamespaces().get(scheme)};
         }
         final String s = uri.toString();
-        for (final String ns : prefixes.keySet()) {
+        for (final String ns : getPrefixes().keySet()) {
             if (s.startsWith(ns)) {
                 return new String[]{getPrefix(ns), ns};
             }

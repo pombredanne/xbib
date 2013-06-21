@@ -33,17 +33,6 @@ package org.xbib.oai.identify;
 
 import org.xbib.oai.DefaultOAIResponseListener;
 
-import java.io.Writer;
-
 public class IdentifyResponseListener extends DefaultOAIResponseListener {
 
-    IdentifyRequest request;
-
-    public IdentifyResponseListener() {
-    }
-
-    public IdentifyResponseListener(IdentifyRequest request, Writer writer) {
-        super(request, writer);
-        this.request = request;
-    }
 }

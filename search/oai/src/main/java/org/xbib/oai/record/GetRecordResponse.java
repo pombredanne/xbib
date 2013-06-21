@@ -33,24 +33,10 @@ package org.xbib.oai.record;
 
 import org.xbib.oai.DefaultOAIResponse;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
+public class GetRecordResponse extends DefaultOAIResponse<GetRecordResponse> {
 
-public class GetRecordResponse extends DefaultOAIResponse {
-
-    public GetRecordResponse(GetRecordRequest request, Writer writer) {
-        super(request, writer);
-    }
-
-    @Override
-    public GetRecordResponse to(HttpServletResponse response) throws IOException {
-        return this;
-    }
-
-    @Override
-    public GetRecordResponse to(Writer writer) throws IOException {
-        return this;
+    public GetRecordResponse(GetRecordRequest request) {
+        super(request);
     }
 
 }

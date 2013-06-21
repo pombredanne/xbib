@@ -33,7 +33,6 @@ package org.xbib.oai.identify;
 
 import org.xbib.oai.DefaultOAIResponse;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class IdentifyResponse extends DefaultOAIResponse {
+public class IdentifyResponse extends DefaultOAIResponse<IdentifyResponse> {
 
     private IdentifyRequest request;
 
@@ -65,18 +64,9 @@ public class IdentifyResponse extends DefaultOAIResponse {
         super(request);
     }
 
-    public IdentifyResponse(IdentifyRequest request, Writer writer) {
-        super(request, writer);
-    }
-
     @Override
     public IdentifyRequest getRequest() {
         return request;
-    }
-
-    @Override
-    public IdentifyResponse to(HttpServletResponse response) throws IOException {
-        return this;
     }
 
     @Override

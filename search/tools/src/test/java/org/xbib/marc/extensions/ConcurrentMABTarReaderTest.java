@@ -63,7 +63,7 @@ public class ConcurrentMABTarReaderTest {
         MABBuilder builder = new MABBuilder().addOutput(output);
         mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        return new MABTarReader()
+        return new MarcXmlTarReader()
                 .setURI(URI.create("tarbz2://"+System.getProperty("user.home")+"/Daten/hbz/aleph/clobs.hbz.metadata.mab.alephxml-clob-dump0"))
                 .setListener(kv);
     }

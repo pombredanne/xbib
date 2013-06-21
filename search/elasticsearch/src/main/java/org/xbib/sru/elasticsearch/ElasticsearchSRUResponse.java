@@ -31,28 +31,37 @@
  */
 package org.xbib.sru.elasticsearch;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.Writer;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.elasticsearch.search.facet.Facets;
 import org.w3c.dom.Document;
+
 import org.xbib.elasticsearch.xml.ES;
+import org.xbib.elasticsearch.support.facet.FacetSupport;
+import org.xbib.facet.Facet;
+import org.xbib.facet.FacetListener;
 import org.xbib.io.OutputFormat;
 import org.xbib.io.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.sru.SRUVersion;
+import org.xbib.sru.facet.FacetedResult;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.Arrays;
-
+/**
+ * Elasticsearch SRU response.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
 
     private ElasticsearchSRURequest request;
@@ -79,47 +88,60 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
     @Override
     public ElasticsearchSRUResponse to(Writer writer) throws IOException {
 
-        // parse facets to XML string
-        ElasticsearchSRUFacets responseFacets = new ElasticsearchSRUFacets();
-        responseFacets.parse(facets);
-        String xmlFacets = responseFacets.toXML();
+        if (facets != null) {
+            final FacetedResult facetedResult = new FacetedResult();
+            // parse facets to XML string
+            FacetListener listener = new FacetListener() {
+                @Override
+                public void receive(Facet facet) {
+                    facetedResult.add(facet);
+                }
+            };
+            FacetSupport responseFacets = new FacetSupport(listener);
+            responseFacets.parse(facets);
+            String xmlFacets = facetedResult.toXML();
 
-        // this does not work, but would be sooo nice
-        //getTransformer().addParameter("facets", new StreamSource(new StringReader(xmlFacets)));
+            // this does not work, but would be sooo nice
+            //getTransformer().addParameter("facets", new StreamSource(new StringReader(xmlFacets)));
 
-        // build DOM, pass it to XSL as parameter
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(xmlFacets)));
-            getTransformer().addParameter("facets", doc.getDocumentElement());
-        } catch (SAXException | ParserConfigurationException e) {
-            throw new IOException(e);
+            // build DOM, pass it to XSL as parameter
+            if (xmlFacets != null && xmlFacets.length() > 0) {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                try {
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document doc = builder.parse(new InputSource(new StringReader(xmlFacets)));
+                    getTransformer().addParameter("facets", doc.getDocumentElement());
+                } catch (SAXException | ParserConfigurationException e) {
+                    throw new IOException(e);
+                }
+            }
         }
 
         // transport parameters into XSL transformer for style sheets
-        getTransformer().addParameter("operation", "searchRetrieve");
-        getTransformer().addParameter("version", request.getVersion());
-        getTransformer().addParameter("query", request.getQuery());
-        getTransformer().addParameter("startRecord", request.getStartRecord());
-        getTransformer().addParameter("maximumRecords", request.getMaximumRecords());
-        getTransformer().addParameter("recordPacking", request.getRecordPacking());
-        getTransformer().addParameter("recordSchema", request.getRecordSchema());
+        if (request != null) {
+            getTransformer().addParameter("operation", "searchRetrieve");
+            getTransformer().addParameter("version", request.getVersion());
+            getTransformer().addParameter("query", request.getQuery());
+            getTransformer().addParameter("startRecord", request.getStartRecord());
+            getTransformer().addParameter("maximumRecords", request.getMaximumRecords());
+            getTransformer().addParameter("recordPacking", request.getRecordPacking());
+            getTransformer().addParameter("recordSchema", request.getRecordSchema());
+        }
 
         OutputFormat format = getOutputFormat();
         if (format == null || format.equals(OutputFormat.JSON)) {
             Streams.copy(new InputStreamReader(buffer.getInputStream(), "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
-            JsonStylesheet js = new JsonStylesheet();
+            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
             js.toXML(buffer.getInputStream(), writer);
         } else {
             // application/sru+xml
             // application/x-xhtml+xml
             // application/x-mods+xml
-            SRUVersion version = SRUVersion.fromString(request.getVersion());
+            SRUVersion version = request != null ?
+                    SRUVersion.fromString(request.getVersion()) : SRUVersion.VERSION_2_0;
             String[] stylesheets = getStylesheets(version);
-            JsonStylesheet js = new JsonStylesheet();
-            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX))
+            new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX))
                 .setTransformer(getTransformer())
                 .setStylesheets(stylesheets)
                 .transform(buffer.getInputStream(), writer);

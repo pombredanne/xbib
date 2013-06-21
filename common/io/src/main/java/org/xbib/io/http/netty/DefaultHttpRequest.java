@@ -46,6 +46,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
+ *  A default HTTP request
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -69,8 +70,9 @@ public class DefaultHttpRequest extends HttpPacket implements HttpRequest {
         this.session = session;
         this.realmBuilder = new Realm.RealmBuilder();
     }
-    
-    public DefaultHttpRequest setURI(URI uri) {
+
+    @Override
+    public DefaultHttpRequest setURL(URI uri) {
         if (uri.getUserInfo() != null) {
             String[] userInfo = uri.getUserInfo().split(":");
             realmBuilder = realmBuilder.setPrincipal(userInfo[0]).setPassword(userInfo[1]).setUsePreemptiveAuth(true).setScheme(AuthScheme.BASIC);
@@ -85,6 +87,11 @@ public class DefaultHttpRequest extends HttpPacket implements HttpRequest {
     }
 
     @Override
+    public URI getURL() {
+        return uri;
+    }
+
+    @Override
     public DefaultHttpRequest setMethod(String method) {
         this.method = method;
         this.builder = new RequestBuilder(method);
@@ -93,11 +100,6 @@ public class DefaultHttpRequest extends HttpPacket implements HttpRequest {
     
     public String getMethod() {
         return method;
-    }
-
-    @Override
-    public URI getURI() {
-        return uri;
     }
 
     @Override
@@ -139,17 +141,28 @@ public class DefaultHttpRequest extends HttpPacket implements HttpRequest {
             throw new IOException("no URL set");
         }
         if (request == null) {
-            this.request = builder.setUrl(uri.toASCIIString())
+            this.request = builder
+                .setUrl(uri.toASCIIString())
                 .setRealm(realmBuilder.build())
                 .build();
-            logger.debug("prepared method=[{}] uri=[{}] parameter=[{}]",
-                getMethod(), uri, request.getQueryParams());
+            logger.debug("prepared " + toString());
         }
         return session.prepare(this);
     }
 
     protected Request getRequest() {
         return request;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[method=").append(method).append("]")
+                .append("[uri=").append(uri).append("]")
+                .append("[parameter=").append( builder
+                .setUrl(uri.toASCIIString())
+                .setRealm(realmBuilder.build())
+                .build()).append("]");
+        return sb.toString();
     }
 
 }

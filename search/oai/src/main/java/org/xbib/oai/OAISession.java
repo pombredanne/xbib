@@ -35,19 +35,15 @@ import org.xbib.io.http.netty.DefaultHttpSession;
 import org.xbib.io.http.HttpSession;
 
 import java.io.IOException;
-import java.net.URI;
 
+/**
+ *  OAI session
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface OAISession extends HttpSession {
 
     DefaultHttpSession getSession();
-
-    OAISession setURI(URI uri);
-
-    URI getURI();
-
-    OAISession setUsername(String username);
-
-    OAISession setPassword(String password);
 
     OAISession setProxy(String host, int port);
 

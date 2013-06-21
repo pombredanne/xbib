@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 import org.testng.annotations.Test;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.strings.encode.Filter;
+import org.xbib.strings.encode.QuotedStringTokenizer;
+import org.xbib.strings.encode.UnterminatedQuotedStringException;
 
 public class WordSplitTest {
     

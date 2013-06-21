@@ -37,11 +37,15 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.xml.XMLFilterReader;
 import org.xbib.xml.transform.StylesheetTransformer;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Date;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -49,21 +53,15 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.Date;
 
 /**
+ * Default OAI response
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class DefaultOAIResponse
+public class DefaultOAIResponse<R extends DefaultOAIResponse>
         extends DefaultHttpResponse
-        implements OAIResponse, XMLEventConsumer {
+        implements OAIResponse<R>, XMLEventConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultOAIResponse.class.getName());
 
@@ -81,8 +79,6 @@ public class DefaultOAIResponse
 
     private long expire;
 
-    private Writer writer;
-
     private StylesheetTransformer transformer;
 
     private String[] stylesheets;
@@ -94,40 +90,36 @@ public class DefaultOAIResponse
         this.transformer = new StylesheetTransformer("/xsl");
     }
 
-    public DefaultOAIResponse(OAIRequest request, Writer writer) {
+    /*public DefaultOAIResponse(OAIRequest request) {
         this(request);
-        this.writer = writer;
+        /*
         try {
             eventWriter = outputFactory.createXMLEventWriter(writer);
         } catch (XMLStreamException ex) {
             logger.error(ex.getMessage(), ex);
         }
-    }
-
-    public DefaultOAIResponse(OAIRequest request, OutputStream out, String encoding)
-            throws UnsupportedEncodingException {
-        this(request, new OutputStreamWriter(out, encoding));
-    }
+    }*/
 
     public OAIRequest getRequest() {
         return request;
     }
 
-    public DefaultOAIResponse setReader(Reader reader) {
+    @Override
+    public R setReader(Reader reader) {
         this.reader = reader;
-        return this;
+        return (R)this;
     }
 
     @Override
-    public DefaultOAIResponse setStylesheetTransformer(StylesheetTransformer transformer) {
+    public R setStylesheetTransformer(StylesheetTransformer transformer) {
         this.transformer = transformer;
-        return this;
+        return (R)this;
     }
 
     @Override
-    public DefaultOAIResponse setStylesheets(String... stylesheets) {
+    public R setStylesheets(String... stylesheets) {
         this.stylesheets = stylesheets;
-        return this;
+        return (R)this;
     }
 
     public StylesheetTransformer getTransformer() {
@@ -139,23 +131,16 @@ public class DefaultOAIResponse
     }
 
     @Override
-    public DefaultOAIResponse setOutputFormat(OutputFormat format) {
+    public R setOutputFormat(OutputFormat format) {
         this.format = format;
-        return this;
+        return (R)this;
     }
 
     public OutputFormat getOutputFormat() {
         return format;
     }
 
-    public Writer getWriter() {
-        return writer;
-    }
-
     public void flush() throws IOException {
-        if (writer != null) {
-            writer.flush();
-        }
         try {
             if (eventWriter != null) {
                 eventWriter.flush();
@@ -197,12 +182,7 @@ public class DefaultOAIResponse
     }
 
     @Override
-    public DefaultOAIResponse to(HttpServletResponse response) throws IOException {
-        return this;
-    }
-
-    @Override
-    public DefaultOAIResponse to(Writer writer) throws IOException {
+    public R to(Writer writer) throws IOException {
         try {
             XMLFilterReader filter = new OAIResponseFilterReader();
             InputSource source = new InputSource(reader);
@@ -211,10 +191,14 @@ public class DefaultOAIResponse
         } catch (TransformerException e) {
             throw new IOException(e.getMessage(), e);
         }
-        return this;
+        return (R)this;
     }
 
     class OAIResponseFilterReader extends XMLFilterReader {
+
+        OAIResponseFilterReader() {
+            super();
+        }
 
         @Override
         public void startDocument() throws SAXException {

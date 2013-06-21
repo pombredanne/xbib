@@ -42,6 +42,8 @@ public interface HttpResponse {
 
     int getStatusCode();
 
+    String getContentType();
+
     Map<String,List<String>> getHeaders();
 
     String getBody();

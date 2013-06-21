@@ -41,7 +41,7 @@ public class TarSessionTest {
         session.open(Session.Mode.READ);
         ObjectPacket message = session.read();
         logger.info("name = {} number = {} object = {}",
-                message.getName(), message.getNumber(), message.getPacket());
+                message.name(), message.number(), message.packet());
         session.close();
         c.close();
     }

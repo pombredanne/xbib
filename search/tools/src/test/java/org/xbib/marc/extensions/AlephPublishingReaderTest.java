@@ -35,10 +35,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ResourceBundle;
 
+import org.testng.annotations.Test;
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.keyvalue.KeyValueStreamAdapter;
+import org.xbib.marc.Field;
+import org.xbib.marc.FieldCollection;
 import org.xbib.tools.util.AtomicIntegerIterator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -46,20 +50,7 @@ import org.xbib.marc.MarcXchange2KeyValue;
 
 public class AlephPublishingReaderTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(AlephPublishingReaderTest.class.getName());
-
-    public void testSimpleAleph() throws IOException {
-        System.setProperty("java.naming.factory.initial", "org.xbib.naming.SimpleContextFactory");
-
-        AlephPublishingReader reader = new AlephPublishingReader().setIterator(new AtomicIntegerIterator(1, 10)).setLibrary("hbz50").setSetName("ALEPHSEMAB").setURI(URI.create("jdbc://alephse:alephse@localhost:1241/aleph0?jdbcScheme=jdbc:oracle:thin:@&driverClassName=oracle.jdbc.OracleDriver"));
-        try {
-            while (reader.hasNext()) {
-                logger.info(reader.next().toString());
-            }
-        } finally {
-            reader.close();
-        }
-    }
+    private final Logger logger = LoggerFactory.getLogger(AlephPublishingReaderTest.class.getName());
 
     public void testAleph2MarcXChange() throws IOException {
         System.setProperty("java.naming.factory.initial", "org.xbib.naming.SimpleContextFactory");
@@ -69,7 +60,6 @@ public class AlephPublishingReaderTest {
 
             @Override
             public void enabled(boolean enabled) {
-                
             }
             
             @Override
@@ -79,7 +69,7 @@ public class AlephPublishingReaderTest {
 
             @Override
             public void output(MABContext context) throws IOException{
-                logger.info("resource = {}", context.resource());
+                logger.info("MAB context resource = {}", context.resource());
                 counter++;
             }
 
@@ -90,19 +80,37 @@ public class AlephPublishingReaderTest {
         };        
         MABBuilder builder = new MABBuilder().addOutput(output);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
+                .addListener(mapper)
+                .addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
+                    @Override
+                    public void keyValue(FieldCollection key, String value) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("begin");
+                            for (Field f : key) {
+                                logger.debug("tag={} ind={} subf={} data={}",
+                                        f.tag(), f.indicator(), f.subfieldId(), f.data());
+                            }
+                            logger.debug("end");
+                        }
+                    }
 
-        ResourceBundle bundle = ResourceBundle.getBundle("alephtest");
+                });
+
+        ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.marc.extensions.alephtest");
         String library = bundle.getString("library");
         String setName = bundle.getString("setname");
         String uriStr = bundle.getString("uri");
 
+        Integer from = Integer.parseInt(bundle.getString("from"));
+        Integer to = Integer.parseInt(bundle.getString("to"));
+
         AlephPublishingReader reader = new AlephPublishingReader()
                 .setListener(kv)
-                .setIterator(new AtomicIntegerIterator(1, 10))
+                .setIterator(new AtomicIntegerIterator(from, to))
                 .setLibrary(library)
-                .setSetName(setName).
-                setURI(URI.create(uriStr));
+                .setSetName(setName)
+                .setURI(URI.create(uriStr));
         try {
             while (reader.hasNext()) {
                 logger.info(reader.next().toString());

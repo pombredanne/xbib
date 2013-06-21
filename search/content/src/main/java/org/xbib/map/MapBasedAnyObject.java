@@ -31,17 +31,10 @@ public class MapBasedAnyObject implements AnyObject {
 
     private final Map map;
 
-    private final String separator;
-
     private final ObjectMapper mapper = new ObjectMapper();
 
     public MapBasedAnyObject(Map map) {
-        this(map, "\\.");
-    }
-
-    public MapBasedAnyObject(Map map, String separator) {
         this.map = new LinkedHashMap(map);
-        this.separator = separator;
     }
 
     public Map map() {
@@ -97,14 +90,10 @@ public class MapBasedAnyObject implements AnyObject {
         if (o == null) {
             return null;
         }
-        if (o instanceof String) {
-            return new ArrayList<T>() {{ add((T)o); }};
+        if (o instanceof Iterable) {
+            return  (Iterable<T>)o;
         }
-        if (!(o instanceof Iterable)) {
-            return new ArrayList<T>() {{ add((T)o); }};
-        }
-        Iterable<T> iterable = (Iterable<T>)o;
-        return (iterable == null) ? null : new AnyIterable(iterable);
+        return new ArrayList<T>() {{ add((T)o); }};
     }
 
     @Override
@@ -114,28 +103,28 @@ public class MapBasedAnyObject implements AnyObject {
 
     @Override
     public Long getLong(String key) {
-        return (Long) get(key);
+        return get(key);
     }
 
     @Override
     public Integer getInteger(String key) {
-        return (Integer) get(key);
+        return get(key);
     }
 
     public String getString(String key) {
-        return (String) get(key);
+        return get(key);
     }
 
     public Double getDouble(String key) {
-        return (Double) get(key);
+        return get(key);
     }
 
     public Float getFloat(String key) {
-        return (Float) get(key);
+        return get(key);
     }
 
     public Boolean getBoolean(String key) {
-        return (Boolean) get(key);
+        return get(key);
     }
 
     private Object get(String key, Object defValue) {
@@ -168,22 +157,16 @@ public class MapBasedAnyObject implements AnyObject {
     }
 
     public byte[] toJsonAsBytes() throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             mapper.writeValue(out, map);
             return out.toByteArray();
-        } finally {
-            out.close();
         }
     }
 
     public String toJson() throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             mapper.writeValue(out, map);
             return out.toString();
-        } finally {
-            out.close();
         }
     }
 

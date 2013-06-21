@@ -63,9 +63,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -398,13 +398,13 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                             v = v.substring(9);
                         }
                         try {
-                            String doiPart = URIUtil.encode(v, "UTF-8");
-                            IRI id = IRI.builder().scheme("http").host("xbib.info")
-                                    .path("/works").fragment(doiPart).build();
-                            r.id(id);
                             // info URI RFC wants slash as unencoded character
-                            IRI doi = IRI.builder().curi("info",
-                                    "doi/" + doiPart.replaceAll("%2F","/")).build();
+                            String doiPart = URIUtil.encode(v, Charset.forName("UTF-8"));
+                            doiPart = doiPart.replaceAll("%2F","/");
+                            IRI doi = IRI.builder().curi("info", "doi/" + doiPart).build();
+                            IRI id = IRI.builder().scheme("http").host("xbib.info")
+                                    .path("/works/doi").fragment(doiPart).build();
+                            r.id(id);
                             r.add("dcterms:identifier", doi)
                                     .add("prism:doi", v);
                         } catch (Exception e) {
@@ -550,8 +550,8 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             }
         };
         try {
-            URIUtil.parseQueryString(coins.toURI(), "UTF-8", listener);
-        } catch (InvalidCharacterException | UnsupportedEncodingException | URISyntaxException e) {
+            URIUtil.parseQueryString(coins.toURI(), Charset.forName("UTF-8"), listener);
+        } catch (InvalidCharacterException | URISyntaxException e) {
             logger.warn("can't parse query string: " + coins, e);
         }
         listener.close();

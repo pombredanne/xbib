@@ -33,12 +33,10 @@ package org.xbib.oai.metadata;
 
 import org.xbib.oai.DefaultOAIResponse;
 
-import java.io.Writer;
+public class ListMetadataFormatsResponse extends DefaultOAIResponse<ListMetadataFormatsResponse> {
 
-public class ListMetadataFormatsResponse extends DefaultOAIResponse {
-
-    public ListMetadataFormatsResponse(ListMetadataFormatsRequest request, Writer writer) {
-        super(request, writer);
+    public ListMetadataFormatsResponse(ListMetadataFormatsRequest request) {
+        super(request);
     }
 
 }

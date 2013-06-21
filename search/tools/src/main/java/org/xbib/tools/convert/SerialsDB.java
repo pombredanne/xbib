@@ -32,15 +32,16 @@
 package org.xbib.tools.convert;
 
 import org.xbib.csv.CSVParser;
+import org.xbib.grouping.bibliographic.work.PublishedJournal;
 import org.xbib.io.file.Finder;
 import org.xbib.io.file.TextFileConnectionFactory;
-import org.xbib.io.util.MessageDigestUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.IRINamespaceContext;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.standardnumber.ISSN;
 import org.xbib.standardnumber.InvalidStandardNumberException;
@@ -59,6 +60,11 @@ import java.util.TreeMap;
 import java.util.Map;
 import java.util.Queue;
 
+/**
+ * Import serials list
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class SerialsDB {
 
     private final static Logger logger = LoggerFactory.getLogger(SerialsDB.class.getName());
@@ -113,17 +119,18 @@ public class SerialsDB {
 
     public SerialsDB(Reader input, String outputFile) throws IOException {
 
-        /*String fileName = outputFile + ".db";
-        ObjectSerializer ser = new OOSSerializer();
-        File f = new File(fileName);
-        map = new PersistentHashMap(f, ser, true);
-        */
+        String fileName = outputFile + ".ttl";
+        FileWriter w = new FileWriter(fileName);
+
         map = new TreeMap();
 
         IRINamespaceContext context = IRINamespaceContext.newInstance();
         context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
         context.addNamespace("prism", "http://prismstandard.org/namespaces/basic/2.1/");
         resourceContext.newNamespaceContext(context);
+        final TurtleWriter writer = new TurtleWriter()
+                .setContext(context)
+                .output(w);
 
         CSVParser parser = new CSVParser(input);
         try {
@@ -136,10 +143,12 @@ public class SerialsDB {
                 String doi = parser.nextToken().trim();
                 String publicationStructure = parser.nextToken();
                 String[] issnArr = issn.split("\\|");
+                // skip fake titles
+                if ("xxxx".equals(journalTitle)) {
+                    continue;
+                }
                 if (i > 0) {
                     Resource resource = resourceContext.newResource();
-                    MessageDigestUtil md = new MessageDigestUtil("MD5")
-                            .add(publisher).add(journalTitle);
                     String issn1 = buildISSN(issnArr, 0);
                     String issn2 = buildISSN(issnArr, 1);
                     try {
@@ -152,7 +161,15 @@ public class SerialsDB {
                         if (issn1 != null && issn1.equals(issn2)) {
                             issn2 = null;
                         }
-                        IRI iri = getBaseIRI().resolve("serials#"+md.toString());
+                        String id = new PublishedJournal()
+                                .journalName(journalTitle)
+                                .publisherName(publisher)
+                                .createIdentifier();
+                        // journals are not "works", they are endeavors
+                        IRI iri = IRI.builder().scheme("http")
+                                        .host("xbib.info")
+                                        .path("/endeavors/" + id)
+                                        .build();
                         resource.id(iri)
                             .add("dc:publisher", publisher.isEmpty() ? null : publisher)
                             .add("dc:title", journalTitle)
@@ -160,18 +177,13 @@ public class SerialsDB {
                             .add("prism:issn", issn2)
                             .add("prism:doi", doi.isEmpty() ? null : doi);
                         if (!map.containsKey(journalTitle)) {
-                            /*StringWriter sw = new StringWriter();
-                            final TurtleWriter writer = new TurtleWriter()
-                                    .setContext(context)
-                                    .output(sw);
                             writer.write(resource);
-                            */
                             map.put(journalTitle, resource);
                         } else {
                             logger.info("ignoring double serial title: {}", journalTitle);
                         }
                     } catch (InvalidStandardNumberException ex) {
-                        // skip
+                        // skip fake ISSN titles
                     }
                 }
                 i++;
@@ -185,15 +197,17 @@ public class SerialsDB {
         return map;
     }
 
-    public IRI getBaseIRI() {
-        return IRI.create("http://xbib.info/serials#");
-    }
-
     private String buildISSN(String[] issnArr, int i) {
         return issnArr.length > i && !issnArr[i].isEmpty() ?
                 new StringBuilder(issnArr[i]).insert(4,'-').toString() : null;
     }
 
+    /**
+     * Simple text list of serials, with IRIs
+     *
+     * @param w
+     * @throws IOException
+     */
     public void writeSerials(Writer w) throws IOException{
         for (String j : getMap().keySet()) {
             w.write(j + "|" + getMap().get(j));
@@ -201,4 +215,5 @@ public class SerialsDB {
         }
         w.close();
     }
+
 }

@@ -22,6 +22,7 @@ package org.xbib.common.xcontent;
 
 import org.xbib.common.xcontent.json.JsonXContent;
 import org.xbib.common.xcontent.smile.SmileXContent;
+import org.xbib.common.xcontent.xml.XmlXContent;
 import org.xbib.common.xcontent.yaml.YamlXContent;
 
 /**
@@ -85,6 +86,25 @@ public enum XContentType {
         public XContent xContent() {
             return YamlXContent.yamlXContent;
         }
+    },
+    /**
+     * The XML format.
+     */
+    XML(3) {
+        @Override
+        public String restContentType() {
+            return "application/xml";
+        }
+
+        @Override
+        public String shortName() {
+            return "xml";
+        }
+
+        @Override
+        public XContent xContent() {
+            return XmlXContent.xmlXContent;
+        }
     };
 
     public static XContentType fromRestContentType(String contentType) {
@@ -101,6 +121,10 @@ public enum XContentType {
 
         if ("application/yaml".equals(contentType) || "yaml".equalsIgnoreCase(contentType)) {
             return YAML;
+        }
+
+        if ("application/xml".equals(contentType) || "xml".equalsIgnoreCase(contentType)) {
+            return XML;
         }
 
         return null;

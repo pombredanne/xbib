@@ -115,8 +115,8 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                     .maxConcurrentBulkRequests((Integer) options.valueOf("bulks"));
 
             logger.info("connected to ES with bulk size {} and max bulks {}",
-                    (Integer) options.valueOf("bulksize"),
-                    (Integer) options.valueOf("bulks"));
+                    options.valueOf("bulksize"),
+                    options.valueOf("bulks"));
 
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
@@ -126,11 +126,12 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                         public Importer newImporter() {
                             return new CE(sink);
                         }
-                    }).execute().shutdown();
+                    }).execute();
 
             logger.info("finished, number of files = {}, resources indexed = {}",
                     fileCounter, sink.getCounter());
 
+            service.shutdown();
             es.shutdown();
 
         } catch (IOException | InterruptedException | ExecutionException e) {

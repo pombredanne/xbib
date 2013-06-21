@@ -33,12 +33,10 @@ package org.xbib.oai.set;
 
 import org.xbib.oai.DefaultOAIResponse;
 
-import java.io.Writer;
+public class ListSetsResponse extends DefaultOAIResponse<ListSetsResponse> {
 
-public class ListSetsResponse extends DefaultOAIResponse {
-
-    public ListSetsResponse(ListSetsRequest request, Writer writer) {
-        super(request, writer);
+    public ListSetsResponse(ListSetsRequest request) {
+        super(request);
     }
 
 }

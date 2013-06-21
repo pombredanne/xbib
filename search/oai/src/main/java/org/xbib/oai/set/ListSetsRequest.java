@@ -33,13 +33,12 @@ package org.xbib.oai.set;
 
 import org.xbib.oai.DefaultOAIRequest;
 import org.xbib.oai.OAISession;
-import org.xbib.oai.OAIRequest;
 
-public class ListSetsRequest extends DefaultOAIRequest implements OAIRequest {
+public class ListSetsRequest extends DefaultOAIRequest<ListSetsRequest> {
 
     public ListSetsRequest(OAISession session) {
         super(session);
-        addParameter(VERB_PARAMETER, "ListSets");
+        addParameter(VERB_PARAMETER, LIST_SETS);
     }
 
 }

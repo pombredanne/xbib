@@ -50,22 +50,15 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
 
     private Response response;
 
-    private Writer writer;
-
     private boolean failure;
 
     public DefaultOAIResponseListener() {
         this.failure = false;
     }
 
-    protected DefaultOAIResponseListener(OAIRequest request, Writer writer) {
+    protected DefaultOAIResponseListener(OAIRequest request) {
         this.request = request;
-        this.writer = writer;
         this.failure = false;
-    }
-
-    public Writer getWriter() {
-        return writer;
     }
 
     public boolean isFailure() {
@@ -93,11 +86,11 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
             logger.error("no response");
             return;
         }
-        if (writer != null) {
-            response.setReader(new StringReader(result.getBody()));
-            response.to(writer);
+        logger.info("got content type {}", result.getContentType());
+        if (!result.getContentType().endsWith("xml")) {
+            logger.warn("got non-XML body {}", result.getBody());
         } else {
-            logger.info("got body {}", result.getBody());
+            response.setReader(new StringReader(result.getBody()));
         }
     }
 

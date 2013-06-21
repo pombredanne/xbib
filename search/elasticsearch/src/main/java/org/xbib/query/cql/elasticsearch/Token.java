@@ -37,9 +37,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.xbib.date.DateUtil;
-import org.xbib.query.Filter;
-import org.xbib.query.QuotedStringTokenizer;
-import org.xbib.query.UnterminatedQuotedStringException;
+import org.xbib.strings.encode.Filter;
+import org.xbib.strings.encode.QuotedStringTokenizer;
+import org.xbib.strings.encode.UnterminatedQuotedStringException;
 
 /**
  * Elasticsearch query tokens
@@ -214,6 +214,7 @@ public class Token implements Node {
         try {
             Filter.filter(new QuotedStringTokenizer(s, " \t\n\r\f", "\"", '\\', false), l, isWordPred);
         } catch (UnterminatedQuotedStringException e) {
+            // swallow exception
         }
         return l;
     }

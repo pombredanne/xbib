@@ -41,12 +41,10 @@ public class MetadataPrefixService {
         if (metadataPrefix == null) {
             return new XmlReader();
         }
-        switch (metadataPrefix.toLowerCase()) {
-            case "rdfxml":
+        // OAI server announcing RDF/XML
+        if ("rdfxml".equals(metadataPrefix.toLowerCase())) {
                 return new RdfXmlReader();
-            default: {
-                return new XmlReader();
-            }
         }
+        return new XmlReader();
     }
 }

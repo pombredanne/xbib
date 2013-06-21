@@ -40,6 +40,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A default HTTP response
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class DefaultHttpResponse extends HttpPacket implements HttpResponse {
 
     private URI uri;
@@ -49,6 +54,10 @@ public class DefaultHttpResponse extends HttpPacket implements HttpResponse {
     private FluentCaseInsensitiveStringsMap headers;
 
     private String body;
+
+    private String contentType;
+
+    private String encoding;
 
     private Throwable throwable;
 
@@ -70,14 +79,27 @@ public class DefaultHttpResponse extends HttpPacket implements HttpResponse {
     public int getStatusCode() {
         return statusCode;
     }
+
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
     
     public DefaultHttpResponse setHeaders(FluentCaseInsensitiveStringsMap headers) {
         this.headers = headers;
+        parseContentType(headers.getFirstValue("content-type"));
         return this;
     }
     
     public Map<String,List<String>> getHeaders() {
         Map<String,List<String>> map = new LinkedHashMap();
+        if (headers == null) {
+            return map;
+        }
         for (String key : headers.keySet()) {
             List<String> values = headers.get(key);
             map.put(key, values);
@@ -123,6 +145,20 @@ public class DefaultHttpResponse extends HttpPacket implements HttpResponse {
     @Override
     public boolean fatal() {
         return (getStatusCode() >= 500 && getStatusCode() < 600) || getThrowable() != null;
+    }
+
+    private void parseContentType(String contentType) {
+        int pos = contentType.indexOf(';');
+        this.contentType = pos > 0 ? contentType.substring(0, pos).trim() : contentType;
+        this.encoding = pos > 0 ? contentType.substring(pos+1).trim() : System.getProperty("file.encoding");
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[uri=").append(uri).append("]")
+                .append("[headers=]").append(getHeaders()).append("]")
+                .append("[body length=").append(body.length()).append("]");
+        return sb.toString();
     }
 
 }

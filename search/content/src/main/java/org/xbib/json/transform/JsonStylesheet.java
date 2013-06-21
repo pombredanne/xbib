@@ -58,7 +58,7 @@ import java.util.Arrays;
  */
 public class JsonStylesheet {
 
-    private QName root;
+    private final QName root;
 
     private StylesheetTransformer transformer;
 
@@ -66,12 +66,8 @@ public class JsonStylesheet {
 
     private IRINamespaceContext context;
 
-    public JsonStylesheet() {
-    }
-
-    public JsonStylesheet root(QName root) {
+    public JsonStylesheet(QName root) {
         this.root = root;
-        return this;
     }
 
     public JsonStylesheet setTransformer(StylesheetTransformer transformer) {

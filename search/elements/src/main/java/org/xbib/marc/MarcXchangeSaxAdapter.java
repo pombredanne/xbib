@@ -105,6 +105,7 @@ public class MarcXchangeSaxAdapter implements MarcXchangeConstants, MarcXchangeL
     private int buffersize = 8192;
 
     public MarcXchangeSaxAdapter() {
+        this.nsUri = NS_URI;
         this.subfieldOpen = false;
         this.recordOpen = false;
     }

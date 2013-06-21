@@ -87,6 +87,14 @@ public class Iso2709Reader implements XMLReader {
      * XML content handler
      */
     private ContentHandler contentHandler;
+
+    private EntityResolver entityResolver;
+
+    private DTDHandler dtdHandler;
+
+    private ErrorHandler errorHandler;
+
+    private Map<String, Boolean> features = new HashMap();
     /**
      * MarcXchange listener
      */
@@ -107,13 +115,12 @@ public class Iso2709Reader implements XMLReader {
 
     @Override
     public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
-        // TODO
-        throw new UnsupportedOperationException();
+         return features.get(name);
     }
 
     @Override
     public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
-        // TODO
+        this.features.put(name, value);
     }
 
     @Override
@@ -128,22 +135,22 @@ public class Iso2709Reader implements XMLReader {
 
     @Override
     public void setEntityResolver(EntityResolver resolver) {
-        //ignore
+       this.entityResolver = resolver;
     }
 
     @Override
     public EntityResolver getEntityResolver() {
-        throw new UnsupportedOperationException();
+        return entityResolver;
     }
 
     @Override
     public void setDTDHandler(DTDHandler handler) {
-        //ignore
+        this.dtdHandler = handler;
     }
 
     @Override
     public DTDHandler getDTDHandler() {
-        throw new UnsupportedOperationException();
+        return dtdHandler;
     }
 
     @Override
@@ -158,12 +165,12 @@ public class Iso2709Reader implements XMLReader {
 
     @Override
     public void setErrorHandler(ErrorHandler handler) {
-        //ignore
+        this.errorHandler = handler;
     }
 
     @Override
     public ErrorHandler getErrorHandler() {
-        throw new UnsupportedOperationException();
+        return errorHandler;
     }
 
     /**

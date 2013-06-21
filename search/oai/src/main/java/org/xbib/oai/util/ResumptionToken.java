@@ -44,12 +44,12 @@ public class ResumptionToken<T> {
     
     //private final static long DEFAULT_TTL = 1000L;
     
-    private final static int DEFAULT_INTERVAL_SIZE = 1000;    
-    
-    //private final static LruCache<UUID,ResumptionToken> cache 
+    //private final static LruCache<UUID,ResumptionToken> cache
     //        = new SynchronizedLruCache(DEFAULT_CAPACITY, DEFAULT_TTL, DEFAULT_CAPACITY / 100);
-    
-    private final static Cache<UUID,ResumptionToken> cache 
+
+    private final static int DEFAULT_INTERVAL_SIZE = 1000;
+
+    private final static Cache<UUID,ResumptionToken> cache
             = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterAccess(1200, TimeUnit.SECONDS)
@@ -81,15 +81,18 @@ public class ResumptionToken<T> {
     private Date from;
     
     private Date until;
+
+    private boolean completed;
     
     private ResumptionToken() {
-       this(DEFAULT_INTERVAL_SIZE);     
+        this(DEFAULT_INTERVAL_SIZE);
+        this.completed = false;
     }
     
     private ResumptionToken(int interval) {
         this.uuid = UUID.randomUUID();
-        this.interval = interval;
         this.position = 0;
+        this.interval = interval;
         this.value = null;
         cache.put(uuid, this);
     }
@@ -144,6 +147,7 @@ public class ResumptionToken<T> {
     
     public ResumptionToken setCompleteListSize(int size) {
         this.completeListSize = size;
+        completed = size < interval;
         return this;
     }
     
@@ -159,7 +163,7 @@ public class ResumptionToken<T> {
     public int getCursor() {
         return cursor;
     }
-    
+
     public ResumptionToken setMetadataPrefix(String metadataPrefix) {
         this.metadataPrefix = metadataPrefix;
         return this;
@@ -199,6 +203,10 @@ public class ResumptionToken<T> {
     public void update(int completeListSize, int pageSize, int currentPage) {
         this.completeListSize = completeListSize;
         this.cursor = pageSize * currentPage;
+    }
+
+    public boolean isComplete() {
+        return completed;
     }
     
     @Override

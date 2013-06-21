@@ -33,6 +33,14 @@ package org.xbib.importer;
 
 import java.util.Iterator;
 
+/**
+ * Abstract importer, iterated over files
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <T>
+ * @param <R>
+ */
 public abstract class AbstractImporter<T,R> implements Importer<T,R> {
 
     @Override

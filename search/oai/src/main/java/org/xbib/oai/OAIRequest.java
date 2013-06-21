@@ -41,17 +41,17 @@ import java.util.Date;
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface OAIRequest extends HttpRequest, OAIConstants {
+public interface OAIRequest<R extends OAIRequest> extends HttpRequest, OAIConstants {
 
-    OAIRequest setSet(String set);
+    R setSet(String set);
 
-    OAIRequest setMetadataPrefix(String prefix);
+    R setMetadataPrefix(String prefix);
 
-    OAIRequest setFrom(Date from);
+    R setFrom(Date from);
 
-    OAIRequest setUntil(Date until);
+    R setUntil(Date until);
 
-    OAIRequest setResumptionToken(ResumptionToken token);
+    R setResumptionToken(ResumptionToken token);
 
     ResumptionToken getResumptionToken();
 

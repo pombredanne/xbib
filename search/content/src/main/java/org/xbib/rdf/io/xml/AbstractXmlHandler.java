@@ -34,25 +34,39 @@ package org.xbib.rdf.io.xml;
 import java.util.Iterator;
 import java.util.Stack;
 import javax.xml.namespace.QName;
+
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.TripleListener;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * Abstract XML handler
  *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHandler {
 
-    protected final ResourceContext resourceContext;
-    protected TripleListener listener;
-    protected StringBuilder content = new StringBuilder();
+    private final Logger logger = LoggerFactory.getLogger(AbstractXmlHandler.class.getName());
+
+    private final ResourceContext resourceContext;
+
+    private final StringBuilder content = new StringBuilder();
+
+    private final Stack<QName> parents = new Stack();
+
+    private TripleListener listener;
+
     private String defaultPrefix;
+
     private String defaultNamespace;
-    private Stack<QName> parents = new Stack();
+
     private int lastlevel;
 
     public AbstractXmlHandler(ResourceContext context) {
@@ -88,50 +102,66 @@ public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHa
 
     @Override
     public void startElement(String nsURI, String localname, String qname, Attributes atts) throws SAXException {
-        QName name = makeQName(nsURI, localname, qname);
-        boolean delimiter = isResourceDelimiter(name);
-        if (delimiter) {
-            closeResource();
-            openResource();
-        }
-        if (skip(name)) {
-            return;
-        }
-        int level = parents.size();
-        if (!delimiter) {
-            openPredicate(parents.peek(), name, lastlevel - level);
-        }
-        if (atts != null) {
-            for (int i = 0; i < atts.getLength(); i++) {
-                startElement(atts.getURI(i), atts.getLocalName(i), atts.getQName(i), null);
-                endElement(atts.getURI(i), '@'+atts.getLocalName(i), atts.getQName(i));
+        try {
+            QName name = makeQName(nsURI, localname, qname);
+            boolean delimiter = isResourceDelimiter(name);
+            if (delimiter) {
+                closeResource();
+                openResource();
             }
+            if (skip(name)) {
+                return;
+            }
+            int level = parents.size();
+            if (!delimiter) {
+                openPredicate(parents.peek(), name, lastlevel - level);
+            }
+            parents.push(name);
+            lastlevel = level;
+            if (atts != null) {
+                // transform attributes as if they were elements, but with a '@' prefix
+                for (int i = 0; i < atts.getLength(); i++) {
+                    String attrValue = atts.getValue(i);
+                    if (attrValue != null && !attrValue.isEmpty()) {
+                        String attrName = '@' + atts.getLocalName(i);
+                        if (!skip(new QName(atts.getURI(i), attrName, atts.getQName(i)))) {
+                            startElement(atts.getURI(i), attrName , atts.getQName(i), null);
+                            characters(attrValue.toCharArray(), 0, attrValue.length());
+                            endElement(atts.getURI(i), attrName, atts.getQName(i));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
-        parents.push(name);
-        lastlevel = level;
     }
 
     @Override
     public void endElement(String nsURI, String localname, String qname) throws SAXException {
-        QName name = makeQName(nsURI, localname, qname);
-        if (skip(name)) {
+        try {
+            QName name = makeQName(nsURI, localname, qname);
+            if (skip(name)) {
+                content.setLength(0);
+                return;
+            }
+            int level = parents.size();
+            parents.pop();
+            identify(name, content(), resourceContext.resource().id());
+            if (!isResourceDelimiter(name)) {
+                closePredicate(parents.peek(), name, level - lastlevel);
+            }
             content.setLength(0);
-            return;
+            lastlevel = level;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
-        int level = parents.size();
-        parents.pop();
-        identify(name, content(), resourceContext.resource().id());
-        if (!isResourceDelimiter(name)) {
-            closePredicate(parents.peek(), name, level - lastlevel);
-        }
-        content.setLength(0);
-        lastlevel = level;
     }
 
     @Override
     public void characters(char[] chars, int start, int length) throws SAXException {
         content.append(new String(chars, start, length));
-        addToPredicate(content.toString());
+        addToPredicate(parents.peek(), content());
     }
 
     @Override
@@ -141,7 +171,8 @@ public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHa
 
     @Override
     public void endPrefixMapping(String prefix) throws SAXException {
-        resourceContext.namespaceContext().removeNamespace(prefix);
+        // we do not remove namespaces, or you will get trouble in RDF serializations...
+        //resourceContext.namespaceContext().removeNamespace(prefix);
     }
 
     protected String makePrefix(String name) {
@@ -190,7 +221,7 @@ public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHa
 
     public abstract void openPredicate(QName parent, QName child, int level);
 
-    public abstract void addToPredicate(String content);
+    public abstract void addToPredicate(QName parent, String content);
 
     public abstract void closePredicate(QName parent, QName child, int level);
 }

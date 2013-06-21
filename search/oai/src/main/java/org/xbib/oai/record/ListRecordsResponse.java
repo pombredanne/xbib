@@ -31,14 +31,52 @@
  */
 package org.xbib.oai.record;
 
+import org.xbib.date.DateUtil;
 import org.xbib.oai.DefaultOAIResponse;
+import org.xbib.oai.exceptions.BadArgumentException;
+import org.xbib.oai.exceptions.BadResumptionTokenException;
+import org.xbib.oai.exceptions.NoRecordsMatchException;
+import org.xbib.oai.exceptions.OAIException;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
 import java.io.Writer;
 
-public class ListRecordsResponse extends DefaultOAIResponse {
+public class ListRecordsResponse extends DefaultOAIResponse<ListRecordsResponse> {
 
-    public ListRecordsResponse(ListRecordsRequest request, Writer writer) {
-        super(request, writer);
+    ListRecordsRequest request;
+
+    public ListRecordsResponse(ListRecordsRequest request) {
+        super(request);
+        this.request = request;
+    }
+
+    public ListRecordsResponse(ListRecordsServerRequest request) {
+        super(request);
+    }
+
+    @Override
+    public ListRecordsResponse to(Writer writer) throws IOException {
+        try {
+            StreamResult streamResult = new StreamResult(writer);
+            getTransformer().setResult(streamResult).transform();
+        } catch (TransformerException e) {
+            throw new IOException(e);
+        }
+        if ("noRecordsMatch".equals(getError())) {
+            throw new NoRecordsMatchException("metadataPrefix=" + request.getMetadataPrefix()
+                    + ",set=" + request.getSet()
+                    + ",from=" + DateUtil.formatDateISO(request.getFrom())
+                    + ",until=" + DateUtil.formatDateISO(request.getUntil()));
+        } else if ("badResumptionToken".equals(getError())) {
+            throw new BadResumptionTokenException(request.getResumptionToken());
+        } else if ("badArgument".equals(getError())) {
+            throw new BadArgumentException();
+        } else if (getError() != null) {
+            throw new OAIException(getError());
+        }
+        return this;
     }
 
 }

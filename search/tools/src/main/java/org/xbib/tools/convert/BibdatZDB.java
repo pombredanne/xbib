@@ -69,16 +69,101 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final static AtomicLong outputCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
+
     private PicaBuilderFactory factory;
+
     private boolean done = false;
+
     private static int pipelines;
-    private static int buffersize;
-    private static boolean detect;
+
+    public static void main(String[] args) {
+        try {
+            OptionParser parser = new OptionParser() {
+                {
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
+                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("output.nt");
+                }
+            };
+            options = parser.parse(args);
+            if (options.hasArgument("help")) {
+                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
+                        + " --threads <n>          the number of threads (optional, default: 1)"
+                        + " --pipeline <n>         the number of pipeline (optional, default: 1)"
+                        + " --output <name>        the output filename (default: output.nt)"
+                );
+                System.exit(1);
+            }
+
+            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            pipelines = (Integer)options.valueOf("pipelines");
+            final Integer threads = (Integer) options.valueOf("threads");
+
+            final String output = options.valueOf("output").toString();
+
+            final OurElementOutput eo = new OurElementOutput(output);
+
+            final PicaBuilderFactory factory = new PicaBuilderFactory() {
+                public PicaBuilder newBuilder() {
+                    return new PicaBuilder().addOutput(eo);
+                }
+            };
+
+            long t0 = System.currentTimeMillis();
+            ImportService service = new ImportService().threads(threads).factory(
+                    new ImporterFactory() {
+                        @Override
+                        public Importer newImporter() {
+                            return new BibdatZDB(factory);
+                        }
+                    }).execute();
+
+            long t1 = System.currentTimeMillis();
+            long docs = outputCounter.get();
+            long bytes = eo.getVolumeInBytes();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter,
+                    docs,
+                    t,
+                    (t1-t0),
+                    bytes,
+                    byteSize,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            service.shutdown();
+            eo.shutdown();
+
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.exit(0);
+    }
 
     BibdatZDB(PicaBuilderFactory factory) {
         this.factory = factory;
@@ -178,91 +263,6 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         public void shutdown() throws IOException {
             fw.close();
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            OptionParser parser = new OptionParser() {
-                {
-                    accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("buffersize").withRequiredArg().ofType(Integer.class).defaultsTo(8192);
-                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("output.nt");
-                }
-            };
-            options = parser.parse(args);
-            if (options.hasArgument("help")) {
-                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
-                        + " --help                 print this help message" + lf
-                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --pipeline <n>         the number of pipeline (optional, default: 1)"
-                        + " --buffersize <n>       the buffersize (optional, default: 1)"
-                        + " --detect <n>           if unknown elements should be detected (optional, default: false)"
-                        + " --output <name>        the output filename (default: output.nt)"
-                );
-                System.exit(1);
-            }
-
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
-            pipelines = (Integer)options.valueOf("pipelines");
-            buffersize = (Integer)options.valueOf("buffersize");
-            detect = (Boolean)options.valueOf("detect");
-            final Integer threads = (Integer) options.valueOf("threads");
-
-            final String output = options.valueOf("output").toString();
-
-            final OurElementOutput eo = new OurElementOutput(output);
-
-            final PicaBuilderFactory factory = new PicaBuilderFactory() {
-                public PicaBuilder newBuilder() {
-                    return new PicaBuilder().addOutput(eo);
-                }
-            };
-
-            long t0 = System.currentTimeMillis();
-            ImportService service = new ImportService().threads(threads).factory(
-                    new ImporterFactory() {
-                        @Override
-                        public Importer newImporter() {
-                            return new BibdatZDB(factory);
-                        }
-                    }).execute();
-
-            long t1 = System.currentTimeMillis();
-            long docs = outputCounter.get();
-            long bytes = eo.getVolumeInBytes();
-            double dps = docs * 1000.0 / (double)(t1 - t0);
-            double avg = bytes / (docs + 1); // avoid div by zero
-            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = TimeValue.timeValueMillis(t1 - t0).format();
-            String byteSize = FormatUtil.convertFileSize(bytes);
-            String avgSize = FormatUtil.convertFileSize(avg);
-            NumberFormat formatter = NumberFormat.getNumberInstance();
-            logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter,
-                    docs,
-                    t,
-                    (t1-t0),
-                    bytes,
-                    byteSize,
-                    avgSize,
-                    formatter.format(avg),
-                    formatter.format(dps),
-                    formatter.format(mbps));
-
-            service.shutdown();
-            eo.shutdown();
-
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.exit(0);
     }
 
 }

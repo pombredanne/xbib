@@ -31,9 +31,12 @@
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import org.xbib.elasticsearch.support.ingest.ClientIngest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
+import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
+import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -44,12 +47,10 @@ import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.xml.AbstractXmlHandler;
+import org.xbib.rdf.io.xml.AbstractXmlResourceHandler;
 import org.xbib.rdf.io.xml.XmlReader;
-import org.xbib.rdf.io.xml.XmlResourceHandler;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -62,67 +63,101 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Elasticsearch indexer tool for Medline XML files
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(Medline.class.getName());
+
+    private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
+
     private final SimpleResourceContext resourceContext = new SimpleResourceContext();
+
     private ElementOutput out;
+
     private boolean done = false;
+
+    private static String index;
+
+    private static String type;
 
     public static void main(String[] args) {
         try {
             OptionParser parser = new OptionParser() {
 
                 {
-                    accepts("es").withRequiredArg().ofType(String.class).required();
-                    accepts("index").withRequiredArg().ofType(String.class).required();
-                    accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
+                    accepts("index").withRequiredArg().ofType(String.class).required().defaultsTo("medline");
+                    accepts("type").withRequiredArg().ofType(String.class).required().defaultsTo("medline");
+                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("medline*.xml.gz");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("bulksize").withRequiredArg().ofType(Integer.class).defaultsTo(100);
-                    accepts("bulks").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("medline13*.xml.gz");
+                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
                 }
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for ElasticsearchMedlineIndexer");
-                System.err.println(" --help                 print this help message");
-                System.err.println(" --es <uri>             Elasticesearch URI");
-                System.err.println(" --index <index>        Elasticsearch index name");
-                System.err.println(" --type <type>          Elasticsearch type name");
-                System.err.println(" --path <path>          a file path from where the input files are recursively collected (required)");
-                System.err.println(" --pattern <pattern>    a regex for selecting matching file names for input (required)");
-                System.err.println(" --threads <n>          the number of threads (required, default: 1)");
+                System.err.println("Help for " + Medline.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
+                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.json)" + lf
+                        + " --threads <n>          the number of threads (optional, default: <num-of=cpus)"
+                );
                 System.exit(1);
             }
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            input = new Finder((String)options.valueOf("pattern"))
+                    .find((String)options.valueOf("path"))
+                    .pathSorted()
+                    .getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
             logger.info("input = {},  threads = {}", input, threads);
 
-            URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final ClientIngest es = new TransportClientIngestSupport()
-                    .newClient(uri)
-                    .setIndex(options.valueOf("index").toString())
-                    .setType(options.valueOf("type").toString())
-                    .maxBulkActions((Integer)options.valueOf("bulksize"))
-                    .maxConcurrentBulkRequests((Integer)options.valueOf("bulks"));
+            URI esURI = URI.create((String)options.valueOf("elasticsearch"));
+            index = (String)options.valueOf("index");
+            type = (String)options.valueOf("type");
+            int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
+            int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
+            boolean mock = (Boolean)options.valueOf("mock");
+
+            final TransportClientBulk es = mock ?
+                    new MockTransportClientBulk() :
+                    new TransportClientBulkSupport();
+
+            es.maxBulkActions(maxbulkactions)
+                    .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
+                    .newClient(esURI)
+                    .waitForHealthyCluster(ClusterHealthStatus.YELLOW, TimeValue.timeValueSeconds(30));
 
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
-            new ImportService().threads(threads).factory(
+            ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
 
                         @Override
                         public Importer newImporter() {
                             return new Medline(sink);
                         }
-                    }).execute().shutdown();
+                    }).execute();
             logger.info("files indexed = {}, resources indexed = {}", fileCounter, sink.getCounter());
+
+            service.shutdown();
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -154,7 +189,6 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         }
         try {
             AbstractXmlHandler handler = new Handler(resourceContext)
-                    .setListener(new ResourceBuilder())
                     .setDefaultNamespace("ml", "http://www.nlm.nih.gov/medline");
             InputStream in = InputService.getInputStream(uri);
             new XmlReader()
@@ -169,7 +203,9 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         return fileCounter;
     }
 
-    class Handler extends XmlResourceHandler {
+    class Handler extends AbstractXmlResourceHandler {
+
+        private String id = null;
 
         public Handler(ResourceContext ctx) {
             super(ctx);
@@ -179,8 +215,15 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
         public void closeResource() {
             super.closeResource();
             try {
+                resourceContext.resource().id(IRI.builder()
+                        .scheme("http")
+                        .host(index)
+                        .query(type)
+                        .fragment(id)
+                        .build());
                 out.output(resourceContext);
-            } catch (IOException e) {
+                id = null;
+            } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         }
@@ -192,41 +235,20 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void identify(QName name, String value, IRI identifier) {
-            if ("PMID".equals(name.getLocalPart())) {
-               resourceContext.resource().id(IRI.builder().curi("pmid", value).build());
+            // important: there are many occurances of PMID. We must only take the first occurance for the ID.
+            if (id == null && "PMID".equals(name.getLocalPart())) {
+                this.id = value;
             }
         }
 
         @Override
         public boolean skip(QName name) {
             boolean skipped = "MedlineCitationSet".equals(name.getLocalPart())
-                    || "MedlineCitation".equals(name.getLocalPart());
+                    || "MedlineCitation".equals(name.getLocalPart())
+                    // gives ES "unknown property" error
+                    || "@Label".equals(name.getLocalPart())
+                    || "@NlmCategory".equals(name.getLocalPart());
             return skipped;
-        }
-    }
-
-    class ResourceBuilder implements TripleListener {
-
-        @Override
-        public TripleListener startPrefixMapping(String prefix, String uri) {
-            return this;
-        }
-
-        @Override
-        public TripleListener endPrefixMapping(String prefix) {
-            return this;
-        }
-
-        @Override
-        public ResourceBuilder newIdentifier(IRI identifier) {
-            resourceContext.resource().id(identifier);
-            return this;
-        }
-
-        @Override
-        public ResourceBuilder triple(Triple triple) {
-            resourceContext.resource().add(triple);
-            return this;
         }
     }
 

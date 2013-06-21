@@ -32,17 +32,20 @@
 package org.xbib.oai.service;
 
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.testng.annotations.Test;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.OAISession;
 import org.xbib.oai.identify.IdentifyResponse;
 import org.xbib.oai.identify.IdentifyServerRequest;
 
 public class SimpleServiceTest {
+
+    private final Logger logger = LoggerFactory.getLogger(SimpleServiceTest.class.getName());
 
     @Test
     public void testIdentifyService() throws Exception {
@@ -50,9 +53,9 @@ public class SimpleServiceTest {
         OAISession session = service.connect();
         StringWriter sw = new StringWriter();
         MyIdentifyRequest request = new MyIdentifyRequest(session);
-        request.setURI(URI.create("http://localhost"));
-        IdentifyResponse response = new IdentifyResponse(request, sw);
+        IdentifyResponse response = new IdentifyResponse(request);
         service.identify(request, response);
+        response.to(sw);
         service.disconnect(session);
     }
     

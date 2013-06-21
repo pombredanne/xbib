@@ -31,21 +31,15 @@
  */
 package org.xbib.oai.record;
 
-import org.xbib.date.DateUtil;
 import org.xbib.oai.DefaultOAIRequest;
 import org.xbib.oai.OAIConstants;
 import org.xbib.oai.OAISession;
-import org.xbib.oai.OAIRequest;
 
-public class ListRecordsRequest extends DefaultOAIRequest
-        implements OAIRequest {
+public class ListRecordsRequest extends DefaultOAIRequest<ListRecordsRequest> {
 
     public ListRecordsRequest(OAISession session) {
         super(session);
-        addParameter(OAIConstants.VERB_PARAMETER, "ListRecords");
-        addParameter(OAIConstants.METADATA_PREFIX_PARAMETER, getMetadataPrefix());
-        addParameter(OAIConstants.SET_PARAMETER, getSet());
-        addParameter(OAIConstants.FROM_PARAMETER, DateUtil.formatDateISO(getFrom()));
-        addParameter(OAIConstants.UNTIL_PARAMETER, DateUtil.formatDateISO(getUntil()));
+        addParameter(OAIConstants.VERB_PARAMETER, LIST_RECORDS);
     }
+
 }

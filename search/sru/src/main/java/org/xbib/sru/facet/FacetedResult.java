@@ -31,13 +31,17 @@
  */
 package org.xbib.sru.facet;
 
+import org.xbib.facet.Facet;
+import org.xbib.facet.FacetTerm;
 import org.xbib.xml.XMLUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Faceted result for SerachRetrieve
+ * Faceted result for SearchRetrieve
+ *
+ * TODO need better XML handling here
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -54,96 +58,54 @@ public class FacetedResult {
         StringBuilder sb = new StringBuilder();
         sb.append("<facet:facets>");
         for (Facet facet : facets) {
-            sb.append(facet.toXML());
+            sb.append(toXML(facet));
         }
         sb.append("</facet:facets>");
         return sb.toString();
     }
 
-    public class Facet {
-
-        private String displayLabel;
-
-        private String description;
-
-        private String index;
-
-        private String relation;
-
-        private List<Term> terms = new ArrayList();
-
-        public Facet(String displayLabel, String description, String index, String relation) {
-            this.displayLabel = displayLabel;
-            this.description = description;
-            this.index = index;
-            this.relation = relation;
-            this.terms = new ArrayList();
+    public String toXML(Facet facet) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<facet:facet>");
+        if (facet.getDisplayLabel() != null) {
+            sb.append("<facet:facetDisplaylabel>").append(XMLUtil.escape(facet.getDisplayLabel())).append("</facet:facetDisplaylabel>");
         }
-
-        public void add(Term term) {
-            terms.add(term);
+        if (facet.getDescription() != null) {
+            sb.append("<facet:facetDescription>").append(XMLUtil.escape(facet.getDescription())).append("</facet:facetDescription>");
         }
-
-        public String toXML() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<facet:facet>");
-            if (displayLabel != null) {
-                sb.append("<facet:facetDisplaylabel>").append(XMLUtil.escape(displayLabel)).append("</facet:facetDisplaylabel>");
-            }
-            if (description != null) {
-                sb.append("<facet:facetDescription>").append(XMLUtil.escape(description)).append("</facet:facetDescription>");
-            }
-            if (index != null) {
-                sb.append("<facet:index>").append(XMLUtil.escape(index)).append("</facet:index>");
-            }
-            if (relation != null) {
-                sb.append("<facet:relation>").append(XMLUtil.escape(relation)).append("</facet:relation>");
-            }
-            sb.append("<facet:terms>");
-            for (Term term : terms) {
-                sb.append(term.toXML());
-            }
-            sb.append("</facet:terms>");
-            sb.append("</facet:facet>");
-            return sb.toString();
+        if (facet.getIndex() != null) {
+            sb.append("<facet:index>").append(XMLUtil.escape(facet.getIndex())).append("</facet:index>");
         }
+        if (facet.getRelation() != null) {
+            sb.append("<facet:relation>").append(XMLUtil.escape(facet.getRelation())).append("</facet:relation>");
+        }
+        sb.append("<facet:terms>");
+        for (FacetTerm term : facet.getTerms()) {
+            sb.append(toXML(term));
+        }
+        sb.append("</facet:terms>");
+        sb.append("</facet:facet>");
+        return sb.toString();
     }
 
-    public class Term {
-
-        private String actualTerm;
-
-        private String query;
-
-        private String requestUrl;
-
-        private Long count;
-
-        public Term(String actualTerm, long count, String query, String requestUrl) {
-            this.actualTerm = actualTerm;
-            this.query = query;
-            this.requestUrl = requestUrl;
-            this.count = count;
+    public String toXML(FacetTerm term) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<facet:term>");
+        if (term.getActualTerm() != null) {
+            sb.append("<facet:actualterm>").append(XMLUtil.escape(term.getActualTerm())).append("</facet:actualterm>");
         }
-
-        public String toXML() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<facet:term>");
-            if (actualTerm != null) {
-                sb.append("<facet:actualterm>").append(XMLUtil.escape(actualTerm)).append("</facet:actualterm>");
-            }
-            if (count != null) {
-                sb.append("<facet:count>").append(Long.toString(count)).append("</facet:count>");
-            }
-            if (query != null) {
-                sb.append("<facet:query>").append(XMLUtil.escape(query)).append("</facet:query>");
-            }
-            if (requestUrl != null) {
-                sb.append("<facet:requestUrl>").append(XMLUtil.escape(requestUrl)).append("</facet:requestUrl>");
-            }
-            sb.append("</facet:term>");
-            return sb.toString();
+        if (term.getCount() != null) {
+            sb.append("<facet:count>").append(Long.toString(term.getCount())).append("</facet:count>");
         }
-
+        if (term.getQuery() != null) {
+            sb.append("<facet:query>").append(XMLUtil.escape(term.getQuery())).append("</facet:query>");
+        }
+        if (term.getRequestUrl() != null) {
+            sb.append("<facet:requestUrl>").append(XMLUtil.escape(term.getRequestUrl())).append("</facet:requestUrl>");
+        }
+        sb.append("</facet:term>");
+        return sb.toString();
     }
+
+
 }

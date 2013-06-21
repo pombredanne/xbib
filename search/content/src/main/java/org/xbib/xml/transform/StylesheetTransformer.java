@@ -69,6 +69,10 @@ public class StylesheetTransformer {
      *
      * Do not use static SAXTransformerFactory. It is not thread safe.
      */
+    private final static String TRANSFORMER_FACTORY =
+            // "org.apache.xalan.processor.TransformerFactoryImpl";
+            "net.sf.saxon.TransformerFactoryImpl";
+
     private final SAXTransformerFactory transformerFactory;
 
     private final TransformerURIResolver resolver;
@@ -81,16 +85,17 @@ public class StylesheetTransformer {
 
     private Result result;
 
+
     public StylesheetTransformer() {
         this.resolver = new TransformerURIResolver();
-        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance(TRANSFORMER_FACTORY, null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
         transformerFactory.setURIResolver(resolver);
     }
 
     public StylesheetTransformer(String... path) {
         this.resolver = new TransformerURIResolver(path);
-        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance(TRANSFORMER_FACTORY, null);
         transformerFactory.setErrorListener(new StylesheetErrorListener());
         transformerFactory.setURIResolver(resolver);
     }

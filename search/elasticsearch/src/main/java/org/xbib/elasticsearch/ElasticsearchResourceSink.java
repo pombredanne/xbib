@@ -54,7 +54,9 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         implements ElementOutput<C> {
 
     private final ClientIngest ingester;
+
     private final AtomicInteger resourceCounter = new AtomicInteger(0);
+
     private boolean enabled;
 
     public ElasticsearchResourceSink(final ClientIngest ingester) {
@@ -81,16 +83,34 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         @Override
         public void index(R resource, String source) throws IOException {
             String index = makeIndex(resource);
+            if (index == null) {
+                throw new IOException("index must not be null, no host set in IRI?");
+            }
             String type = makeType(resource);
+            if (type == null) {
+                throw new IOException("type must not be null, no query set in IRI?");
+            }
             String id = makeId(resource);
+            if (id == null) {
+                throw new IOException("id must not be null, no fragment set in IRI?");
+            }
             ingester.indexDocument(index, type, id, source);
         }
 
         @Override
         public void delete(R resource) throws IOException {
             String index = makeIndex(resource);
+            if (index == null) {
+                throw new IOException("index must not be null, no host set in IRI?");
+            }
             String type = makeType(resource);
+            if (type == null) {
+                throw new IOException("type must not be null, no query set in IRI?");
+            }
             String id = makeId(resource);
+            if (id == null) {
+                throw new IOException("id must not be null, no fragment set in IRI?");
+            }
             ingester.deleteDocument(index, type, id);
         }
     };

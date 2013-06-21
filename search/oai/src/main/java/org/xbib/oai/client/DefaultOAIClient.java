@@ -35,22 +35,15 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.xbib.io.http.netty.DefaultHttpSession;
-import org.xbib.io.http.HttpResponse;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.OAIConstants;
-import org.xbib.oai.identify.IdentifyResponse;
-import org.xbib.oai.identify.ListIdentifiersResponse;
-import org.xbib.oai.metadata.ListMetadataFormatsResponse;
 import org.xbib.oai.record.GetRecordRequest;
 import org.xbib.oai.identify.IdentifyRequest;
 import org.xbib.oai.identify.ListIdentifiersRequest;
 import org.xbib.oai.metadata.ListMetadataFormatsRequest;
-import org.xbib.oai.record.GetRecordResponse;
 import org.xbib.oai.record.ListRecordsRequest;
-import org.xbib.oai.record.ListRecordsResponse;
 import org.xbib.oai.set.ListSetsRequest;
-import org.xbib.oai.set.ListSetsResponse;
 import org.xbib.oai.util.ResumptionToken;
 
 /**
@@ -64,59 +57,26 @@ public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
 
     private URI uri;
 
-    private String username;
-
-    private String password;
-
-    private String proxyhost;
-
-    private int proxyport;
-
-    private int timeout;
-
-    private HttpResponse response;
-
     @Override
-    public DefaultOAIClient setURI(URI uri) {
+    public DefaultOAIClient setURL(URI uri) {
         this.uri = uri;
         return this;
     }
 
     @Override
-    public URI getURI() {
+    public URI getURL() {
         return uri;
     }
 
     @Override
-    public DefaultOAIClient setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public DefaultOAIClient setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
     public DefaultOAIClient setProxy(String host, int port) {
-        this.proxyhost = host;
-        this.proxyport = port;
+        super.setProxy(host, port);
         return this;
     }
 
     @Override
     public DefaultOAIClient setTimeout(long millis) {
-        this.timeout = (int) millis;
+        super.setTimeout((int)millis);
         return this;
     }
 
@@ -128,122 +88,119 @@ public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
     @Override
     public IdentifyRequest newIdentifyRequest() {
         ensureOpen();
-        return new IdentifyRequest(this);
-    }
-
-    @Override
-    public IdentifyRequest resume(IdentifyRequest request, IdentifyResponse response) {
-        if (response == null) {
-            return null;
-        }
-        ensureOpen();
-        if (response == null) {
-            return request;
-        }
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
-        }
-        return request;
-    }
-
-    @Override
-    public ListRecordsRequest newListRecordsRequest() {
-        ensureOpen();
-        return new ListRecordsRequest(this);
-    }
-
-    @Override
-    public ListRecordsRequest resume(ListRecordsRequest request, ListRecordsResponse response) {
-        if (response == null) {
-            return null;
-        }
-        ensureOpen();
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
-        }
-        return request;
-    }
-
-    @Override
-    public ListIdentifiersRequest newListIdentifiersRequest() {
-        ensureOpen();
-        return new ListIdentifiersRequest(this);
-    }
-
-    @Override
-    public ListIdentifiersRequest resume(ListIdentifiersRequest request, ListIdentifiersResponse response) {
-        if (response == null) {
-            return null;
-        }
-        ensureOpen();
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
-        }
+        IdentifyRequest request = new IdentifyRequest(this);
+        request.setURL(getURL());
         return request;
     }
 
     @Override
     public ListMetadataFormatsRequest newListMetadataFormatsRequest() {
         ensureOpen();
-        return new ListMetadataFormatsRequest(this);
-    }
-
-    @Override
-    public ListMetadataFormatsRequest resume(ListMetadataFormatsRequest request, ListMetadataFormatsResponse response) {
-        if (response == null) {
-            return null;
-        }
-        ensureOpen();
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
-        }
+        ListMetadataFormatsRequest request = new ListMetadataFormatsRequest(this);
+        request.setURL(getURL());
         return request;
     }
 
     @Override
     public ListSetsRequest newListSetsRequest() {
         ensureOpen();
-        return new ListSetsRequest(this);
+        ListSetsRequest request = new ListSetsRequest(this);
+        request.setURL(getURL());
+        return request;
     }
 
     @Override
-    public ListSetsRequest resume(ListSetsRequest request, ListSetsResponse response) {
-        if (response == null) {
-            return null;
-        }
+    public ListIdentifiersRequest newListIdentifiersRequest() {
         ensureOpen();
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
-        }
+        ListIdentifiersRequest request = new ListIdentifiersRequest(this);
+        request.setURL(getURL());
         return request;
     }
 
     @Override
     public GetRecordRequest newGetRecordRequest() {
         ensureOpen();
-        return new GetRecordRequest(this);
+        GetRecordRequest request = new GetRecordRequest(this);
+        request.setURL(getURL());
+        return request;
     }
 
     @Override
-    public GetRecordRequest resume(GetRecordRequest request, GetRecordResponse response) {
-        if (response == null) {
+    public ListRecordsRequest newListRecordsRequest() {
+        ensureOpen();
+        ListRecordsRequest request = new ListRecordsRequest(this);
+        request.setURL(getURL());
+        return request;
+    }
+
+    @Override
+    public IdentifyRequest resume(IdentifyRequest request, ResumptionToken token) {
+        if (token == null) {
             return null;
         }
         ensureOpen();
-        ResumptionToken token = response.getRequest().getResumptionToken();
-        if (token != null) {
-            request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        request = newIdentifyRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        return request;
+    }
+
+    @Override
+    public ListRecordsRequest resume(ListRecordsRequest request, ResumptionToken token) {
+        if (token == null) {
+            return null;
         }
+        ensureOpen();
+        request = newListRecordsRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        return request;
+    }
+
+    @Override
+    public ListIdentifiersRequest resume(ListIdentifiersRequest request, ResumptionToken token) {
+        if (token == null) {
+            return null;
+        }
+        ensureOpen();
+        request = newListIdentifiersRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        return request;
+    }
+
+    @Override
+    public ListMetadataFormatsRequest resume(ListMetadataFormatsRequest request, ResumptionToken token) {
+        if (token == null) {
+            return null;
+        }
+        ensureOpen();
+        request = newListMetadataFormatsRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        return request;
+    }
+
+    @Override
+    public ListSetsRequest resume(ListSetsRequest request, ResumptionToken token) {
+        if (token == null) {
+            return null;
+        }
+        ensureOpen();
+        request = this.newListSetsRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
+        return request;
+    }
+
+    @Override
+    public GetRecordRequest resume(GetRecordRequest request, ResumptionToken token) {
+        if (token == null) {
+            return null;
+        }
+        ensureOpen();
+        request = newGetRecordRequest();
+        request.addParameter(OAIConstants.RESUMPTION_TOKEN_PARAMETER, token.toString());
         return request;
     }
 
     private void ensureOpen() {
-        if (getURI() == null) {
+        if (uri == null) {
             throw new IllegalArgumentException("no URL set for session");
         }
         if (!isOpen()) {

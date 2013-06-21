@@ -31,6 +31,13 @@
  */
 package org.xbib.oai.record;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.xbib.date.DateUtil;
 import org.xbib.io.http.HttpResponse;
 import org.xbib.logging.Logger;
@@ -40,23 +47,11 @@ import org.xbib.oai.util.MetadataHandler;
 import org.xbib.oai.OAIConstants;
 import org.xbib.oai.util.RecordHeader;
 import org.xbib.oai.util.ResumptionToken;
-import org.xbib.oai.exceptions.BadArgumentException;
-import org.xbib.oai.exceptions.BadResumptionTokenException;
-import org.xbib.oai.exceptions.NoRecordsMatchException;
-import org.xbib.oai.exceptions.OAIException;
 import org.xbib.xml.XMLFilterReader;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class ListRecordsResponseListener extends DefaultOAIResponseListener {
 
@@ -68,14 +63,20 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
 
     private List<MetadataHandler> metadataHandlers = new ArrayList();
 
-    public ListRecordsResponseListener(ListRecordsRequest request, Writer writer) {
-        super(request, writer);
+    private ResumptionToken token;
+
+    public ListRecordsResponseListener(ListRecordsRequest request) {
+        super(request);
         this.request = request;
     }
 
     public ListRecordsResponseListener register(MetadataHandler metadataHandler) {
         metadataHandlers.add(metadataHandler);
         return this;
+    }
+
+    public ResumptionToken getResumptionToken() {
+        return token;
     }
 
     @Override
@@ -86,12 +87,12 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
     @Override
     public void receivedResponse(HttpResponse result) throws IOException {
         super.receivedResponse(result);
-        this.response = new ListRecordsResponse(request, getWriter());
+        this.response = new ListRecordsResponse(request);
         int status = result.getStatusCode();
         if (status == 503) {
             String retryAfter = result.getHeaders().get("retry-after").get(0);
             if (retryAfter != null) {
-                logger.debug("got retry-after {}", retryAfter);
+                logger.info("got retry-after {}", retryAfter);
                 if (isDigits(retryAfter)) {
                     // retry-after is given in seconds
                     response.setExpire(Integer.parseInt(retryAfter));
@@ -107,28 +108,16 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
         if (!result.ok()) {
             throw new IOException(status + " " + result.getThrowable());
         }
+        // XML content type?
+        if (!result.getContentType().endsWith("xml")) {
+            throw new IOException("answer to " + request
+                    + " does not have XML content type: "
+                    + result.getContentType());
+        }
+        Reader r = new StringReader(result.getBody());
         XMLFilterReader reader = new ListRecordsFilterReader(response);
-        InputSource source = new InputSource(new StringReader(result.getBody()));
-        StreamResult streamResult = new StreamResult(response.getWriter());
-        try {
-            response.getTransformer().setSource(reader, source).setResult(streamResult).transform();
-        } catch (TransformerException e) {
-            throw new IOException(e);
-        }
-        // check for OAI errors
-        if ("noRecordsMatch".equals(response.getError())) {
-            throw new NoRecordsMatchException("metadataPrefix=" + request.getMetadataPrefix()
-                    + ",set=" + request.getSet()
-                    + ",from=" + DateUtil.formatDateISO(request.getFrom())
-                    + ",until=" + DateUtil.formatDateISO(request.getUntil()));
-        } else if ("badResumptionToken".equals(response.getError())) {
-            throw new BadResumptionTokenException(request.getResumptionToken());
-        } else if ("badArgument".equals(response.getError())) {
-            throw new BadArgumentException();
-        } else if (response.getError() != null) {
-            throw new OAIException(response.getError());
-        }
-        return;
+        InputSource source = new InputSource(r);
+        response.getTransformer().setSource(reader, source);
     }
 
     private boolean isDigits(String str) {
@@ -184,7 +173,7 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
                     }
                     case "resumptionToken": {
                         try {
-                            ResumptionToken token = ResumptionToken.newToken(null);
+                            token = ResumptionToken.newToken(null);
                             String cursor = atts.getValue("cursor");
                             if (cursor != null) {
                                 token.setCursor(Integer.parseInt(cursor));
@@ -193,7 +182,9 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
                             if (completeListSize != null) {
                                 token.setCompleteListSize(Integer.parseInt(completeListSize));
                             }
-                            request.setResumptionToken(token);
+                            if (!token.isComplete()) {
+                                request.setResumptionToken(token);
+                            }
                         } catch (Exception e) {
                             throw new SAXException(e);
                         }
@@ -214,9 +205,9 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
         }
 
         @Override
-        public void endElement(String uri, String localname, String qname) throws SAXException {
-            super.endElement(uri, localname, qname);
-            if (OAIConstants.NS_URI.equals(uri)) {
+        public void endElement(String nsURI, String localname, String qname) throws SAXException {
+            super.endElement(nsURI, localname, qname);
+            if (OAIConstants.NS_URI.equals(nsURI)) {
                 switch (localname) {
                     case "metadata": {
                         for (MetadataHandler mh : metadataHandlers) {
@@ -231,17 +222,28 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
                         break;
                     }
                     case "resumptionToken": {
-                        if (content != null && content.length() > 0) {
-                            request.setResumptionToken(request.getResumptionToken().setValue(content.toString()));
+                        if (token != null && content != null && content.length() > 0) {
+                            token.setValue(content.toString());
+                            // feedback to request
+                            request.setResumptionToken(token);
                         } else {
-                            // some servers send an empty token as last token, we need to clean out the resuming
+                            // some servers send a null or an empty token as last token
+                            token = null;
                             request.setResumptionToken(null);
                         }
                         break;
                     }
+                    case "header": {
+                        for (MetadataHandler mh : metadataHandlers) {
+                            mh.setHeader(header);
+                        }
+                        header = new RecordHeader();
+                        break;
+                    }
                     case "identifier": {
                         if (header != null && content != null && content.length() > 0) {
-                            header.setIdentifier(content.toString().trim());
+                            String id = content.toString().trim();
+                            header.setIdentifier(id);
                         }
                         break;
                     }
@@ -257,20 +259,13 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
                         }
                         break;
                     }
-                    case "header": {
-                        for (MetadataHandler mh : metadataHandlers) {
-                            mh.setHeader(header);
-                        }
-                        header = new RecordHeader();
-                        break;
-                    }
                 }
                 content.setLength(0);
                 return;
             }
             if (inMetadata) {
                 for (MetadataHandler mh : metadataHandlers) {
-                    mh.endElement(uri, localname, qname);
+                    mh.endElement(nsURI, localname, qname);
                 }
             }
             content.setLength(0);
@@ -307,4 +302,5 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
             }
         }
     }
+
 }

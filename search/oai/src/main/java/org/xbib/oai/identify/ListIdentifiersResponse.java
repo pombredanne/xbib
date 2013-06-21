@@ -33,24 +33,10 @@ package org.xbib.oai.identify;
 
 import org.xbib.oai.DefaultOAIResponse;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-
 public class ListIdentifiersResponse extends DefaultOAIResponse {
 
-    public ListIdentifiersResponse(ListIdentifiersRequest request, Writer writer) {
-        super(request, writer);
-    }
-
-    @Override
-    public ListIdentifiersResponse to(HttpServletResponse response) throws IOException {
-        return this;
-    }
-
-    @Override
-    public ListIdentifiersResponse to(Writer writer) throws IOException {
-        return this;
+    public ListIdentifiersResponse(ListIdentifiersRequest request) {
+        super(request);
     }
 
 }

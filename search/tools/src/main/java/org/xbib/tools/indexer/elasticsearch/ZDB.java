@@ -47,7 +47,6 @@ import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.marc.MARCBuilder;
 import org.xbib.elements.marc.MARCBuilderFactory;
-import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elements.output.ElementOutput;
@@ -60,7 +59,6 @@ import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
@@ -78,134 +76,40 @@ import org.xml.sax.InputSource;
 public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(ZDB.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final static AtomicLong outputCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
+
     private static String index;
+
     private static String type;
+
     private static String shards;
-    private static String replica;
+
     private static String elements;
+
     private static int pipelines;
+
     private static int buffersize;
+
     private static boolean mock;
+
     private static boolean detect;
+
     private ElementOutput output;
+
     private boolean done;
 
-    public ZDB(ElementOutput output) {
-        this.output = output;
-        this.done = false;
-    }
+    private final Charset UTF8 = Charset.forName("UTF-8");
 
-    @Override
-    public void close() throws IOException {
-        input.clear();
-    }
-
-    @Override
-    public boolean hasNext() {
-        return !done && !input.isEmpty();
-    }
-
-    @Override
-    public AtomicLong next() {
-        URI uri = input.poll();
-        done = uri == null;
-        if (done) {
-            return fileCounter;
-        }
-        try {
-            final MARCElementMapper mapper = new MARCElementMapper(elements)
-                    .pipelines(pipelines)
-                    .detectUnknownKeys(detect)
-                    .start(buildFactory);
-
-            logger.info("mapper map={}", mapper.map().size());
-
-            final Charset UTF8 = Charset.forName("UTF-8");
-            final Charset ISO88591 = Charset.forName("ISO-8859-1");
-
-            final MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
-                    .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
-                        @Override
-                        public String transform(String value) {
-                            return Normalizer.normalize(new String(value.getBytes(ISO88591), UTF8),
-                                    Normalizer.Form.NFKC);
-                        }
-                    })
-                    .addListener(mapper);
-            final Iso2709Reader reader = new Iso2709Reader()
-                    .setMarcXchangeListener(kv);
-            reader.setProperty(Iso2709Reader.FORMAT, "MARC");
-            if ("marc/holdings".equals(elements)) {
-                reader.setProperty(Iso2709Reader.TYPE, "Holdings");
-            }
-            reader.setProperty(Iso2709Reader.FATAL_ERRORS, false);
-            reader.setProperty(Iso2709Reader.SILENT_ERRORS, true);
-            reader.setProperty(Iso2709Reader.BUFFER_SIZE, buffersize);
-            InputStreamReader r = new InputStreamReader(InputService.getInputStream(uri), ISO88591);
-            InputSource source = new InputSource(r);
-            reader.parse(source);
-            r.close();
-            fileCounter.incrementAndGet();
-            logger.info("unknown keys={}", mapper.unknownKeys());
-            mapper.close();
-        } catch (Exception ex) {
-            logger.error("error while getting next document: " + ex.getMessage(), ex);
-        }
-        return fileCounter;
-    }
-
-    final MARCBuilderFactory buildFactory = new MARCBuilderFactory() {
-        public MARCBuilder newBuilder() {
-            MARCBuilder builder = new OurMARCBuilder()
-                    .addOutput(new OurElementOutput());
-            return builder;
-        }
-    };
-
-    final class OurMARCBuilder extends MARCBuilder {
-
-        @Override
-        public void build(MARCElement element, FieldCollection fields, String value) {
-            if (context().resource().id() == null) {
-                IRI id = IRI.builder().scheme("http")
-                        .host(index)
-                        .query(type)
-                        .fragment(Long.toString(context().increment())).build();
-                context().resource().id(id);
-            }
-        }
-    }
-
-    final class OurElementOutput implements ElementOutput<ResourceContext> {
-
-        @Override
-        public boolean enabled() {
-            return true;
-        }
-
-        @Override
-        public void enabled(boolean enabled) {
-        }
-
-        @Override
-        public void output(ResourceContext context) throws IOException {
-            if (logger.isDebugEnabled()) {
-                logger.debug("context={} resource size={}", context.asMap(), context.resource().size());
-            }
-            output.output(context);
-            outputCounter.incrementAndGet();
-        }
-
-        @Override
-        public long getCounter() {
-            return outputCounter.get();
-        }
-    }
+    private final Charset ISO88591 = Charset.forName("ISO-8859-1");
 
     public static void main(String[] args) {
         try {
@@ -215,7 +119,6 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("replica").withRequiredArg().ofType(Integer.class).defaultsTo(0);
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("1208zdblokutf8.mrc");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
@@ -237,7 +140,6 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         + " --index <index>        Elasticsearch index name" + lf
                         + " --type <type>          Elasticsearch type name" + lf
                         + " --shards <n>           Elasticsearch number of shards" + lf
-                        + " --replica <n>          Elasticsearch number of replica" + lf
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
                         + " --threads <n>          the number of threads for import (optional, default: 1)"
@@ -261,7 +163,6 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             index = options.valueOf("index").toString();
             type = options.valueOf("type").toString();
             shards = options.valueOf("shards").toString();
-            replica = options.valueOf("replica").toString();
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             elements = options.valueOf("elements").toString();
@@ -324,6 +225,104 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    public ZDB(ElementOutput output) {
+        this.output = output;
+        this.done = false;
+    }
+
+    @Override
+    public void close() throws IOException {
+        input.clear();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !done && !input.isEmpty();
+    }
+
+    @Override
+    public AtomicLong next() {
+        URI uri = input.poll();
+        done = uri == null;
+        if (done) {
+            return fileCounter;
+        }
+        try {
+            final MARCElementMapper mapper = new MARCElementMapper(elements)
+                    .pipelines(pipelines)
+                    .detectUnknownKeys(detect)
+                    .start(buildFactory);
+
+            logger.info("mapper map size={}", mapper.map().size());
+
+            final MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
+                    .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
+                        @Override
+                        public String transform(String value) {
+                            return Normalizer.normalize(new String(value.getBytes(ISO88591), UTF8),
+                                    Normalizer.Form.NFKC);
+                        }
+                    })
+                    .addListener(mapper);
+            final Iso2709Reader reader = new Iso2709Reader()
+                    .setMarcXchangeListener(kv);
+            reader.setProperty(Iso2709Reader.FORMAT, "MARC");
+            if ("marc/holdings".equals(elements)) {
+                reader.setProperty(Iso2709Reader.TYPE, "Holdings");
+            }
+            reader.setProperty(Iso2709Reader.FATAL_ERRORS, false);
+            reader.setProperty(Iso2709Reader.SILENT_ERRORS, true);
+            reader.setProperty(Iso2709Reader.BUFFER_SIZE, buffersize);
+            InputStreamReader r = new InputStreamReader(InputService.getInputStream(uri), ISO88591);
+            InputSource source = new InputSource(r);
+            reader.parse(source);
+            r.close();
+            fileCounter.incrementAndGet();
+            logger.info("unknown keys={}", mapper.unknownKeys());
+            mapper.close();
+        } catch (Exception ex) {
+            logger.error("error while getting next document: " + ex.getMessage(), ex);
+        }
+        return fileCounter;
+    }
+
+    final MARCBuilderFactory buildFactory = new MARCBuilderFactory() {
+        public MARCBuilder newBuilder() {
+            MARCBuilder builder = new MARCBuilder()
+                    .addOutput(new OurElementOutput());
+            return builder;
+        }
+    };
+
+    final class OurElementOutput implements ElementOutput<ResourceContext> {
+
+        @Override
+        public boolean enabled() {
+            return true;
+        }
+
+        @Override
+        public void enabled(boolean enabled) {
+        }
+
+        @Override
+        public void output(ResourceContext context) throws IOException {
+            if (!context.resource().isEmpty()) {
+                IRI id = IRI.builder().scheme("http")
+                        .host(index)
+                        .query(type)
+                        .fragment(Long.toString(outputCounter.incrementAndGet())).build();
+                context.resource().id(id);
+                output.output(context);
+            }
+        }
+
+        @Override
+        public long getCounter() {
+            return outputCounter.get();
+        }
     }
 
 }

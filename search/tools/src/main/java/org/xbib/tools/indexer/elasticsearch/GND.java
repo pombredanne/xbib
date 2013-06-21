@@ -64,12 +64,11 @@ public class GND {
 
         try {
             OptionParser parser = new OptionParser() {
-
                 {
-                    accepts("gndfile").withRequiredArg().ofType(String.class).required();
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("gndfile").withRequiredArg().ofType(String.class).required();
                     accepts("help");
                 }
             };
@@ -92,19 +91,7 @@ public class GND {
                 throw new IOException("file not found: " + uriStr);
             }
             final ElasticBuilder builder = new ElasticBuilder(elasticsearch, index, type);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
 
-                @Override
-                public void run() {
-                    try {
-                        System.err.println("received interruption, closing, please wait...");
-                        builder.close();
-                        System.err.println("closed");
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
             IRI id = IRI.builder().scheme("http").host("d-nb.info").path("/gnd/").build();
             TurtleReader reader = new TurtleReader(id);
             reader.setTripleListener(builder);
@@ -121,8 +108,11 @@ public class GND {
     private static class ElasticBuilder implements TripleListener {
 
         private final ElasticsearchResourceSink sink;
+
         private final ResourceContext context = new SimpleResourceContext();
+
         private long triplecounter;
+
         private Resource resource;
 
         ElasticBuilder(String esURI, String index, String type) throws IOException {

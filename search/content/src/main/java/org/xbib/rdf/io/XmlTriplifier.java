@@ -41,7 +41,6 @@ import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 public interface XmlTriplifier<S extends Identifier, P extends Property, O extends Node>
         extends Triplifier<S, P, O> {

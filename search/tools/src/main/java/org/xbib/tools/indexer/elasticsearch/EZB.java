@@ -34,6 +34,7 @@ package org.xbib.tools.indexer.elasticsearch;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -59,8 +60,8 @@ import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.xml.AbstractXmlHandler;
+import org.xbib.rdf.io.xml.AbstractXmlResourceHandler;
 import org.xbib.rdf.io.xml.XmlReader;
-import org.xbib.rdf.io.xml.XmlResourceHandler;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
@@ -68,25 +69,35 @@ import org.xbib.tools.util.FormatUtil;
 import org.xml.sax.SAXException;
 
 /**
- *
- *
+ * Elasticsearch indexer for ELektronische Zeitschriftenbibliothek (EZB)
  *
  * Format-Dokumentation
  * http://www.zeitschriftendatenbank.de/fileadmin/user_upload/ZDB/pdf/services/Datenlieferdienst_ZDB_EZB_Lizenzdatenformat.pdf
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-
 public final class EZB extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(EZB.class.getName());
+
     private final static String lf = System.getProperty("line.separator");
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
+
     private static OptionSet options;
-    private final SimpleResourceContext resourceContext = new SimpleResourceContext();
-    private ElementOutput out;
-    private boolean done = false;
+
     private static String index;
+
     private static String type;
+
+    private final SimpleResourceContext resourceContext = new SimpleResourceContext();
+
+    private ElementOutput out;
+
+    private boolean done = false;
+
 
     public static void main(String[] args) {
         try {
@@ -127,7 +138,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
 
             final Integer threads = (Integer) options.valueOf("threads");
 
-            logger.info("input = {},  threads = {}", input, threads);
+            logger.info("input = {}, threads = {}", input, threads);
 
             URI esURI = URI.create(options.valueOf("elasticsearch").toString());
             index = options.valueOf("index").toString();
@@ -231,10 +242,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         return fileCounter;
     }
 
-    class Handler extends XmlResourceHandler {
-
-        private int firstDate;
-        private int lastDate;
+    class Handler extends AbstractXmlResourceHandler {
 
         public Handler(ResourceContext ctx) {
             super(ctx);
@@ -258,10 +266,6 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public boolean isResourceDelimiter(QName name) {
             boolean b = "license_set".equals(name.getLocalPart());
-            if (b) {
-                firstDate = -1;
-                lastDate = -1;
-            }
             return b;
         }
 
@@ -285,12 +289,12 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         }
         
         @Override
-        protected Object toLiteral(QName name, String content) {
+        public Object toObject(QName name, String content) {
             switch (name.getLocalPart()) {
                 case "reference_url":
                     // fall-through
                 case "readme_url":
-                    return URIUtil.decode(content, "UTF-8");
+                    return URIUtil.decode(content, Charset.forName("UTF-8"));
                 case "zdbid": {
                     return content.replaceAll("\\-", "").toLowerCase();
                 }
@@ -328,7 +332,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                     }
                 }
             }
-            return super.toLiteral(name, content);
+            return super.toObject(name, content);
         }
     }
 

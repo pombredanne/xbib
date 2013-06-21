@@ -39,7 +39,7 @@ public class ListMetadataFormatsRequest extends DefaultOAIRequest implements OAI
 
     public ListMetadataFormatsRequest(OAISession session) {
         super(session);
-        addParameter(VERB_PARAMETER, "ListMetadataFormats");
+        addParameter(VERB_PARAMETER, LIST_METADATA_FORMATS);
     }
 
 }

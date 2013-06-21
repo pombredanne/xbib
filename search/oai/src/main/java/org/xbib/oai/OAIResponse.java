@@ -40,19 +40,22 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public interface OAIResponse extends HttpResponse {
+/**
+ *  OAI response
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
+public interface OAIResponse<R extends OAIResponse> extends HttpResponse {
 
     OAIRequest getRequest();
 
-    OAIResponse setReader(Reader reader);
+    R setReader(Reader reader);
 
-    OAIResponse setOutputFormat(OutputFormat format);
+    R setOutputFormat(OutputFormat format);
 
-    OAIResponse setStylesheetTransformer(StylesheetTransformer transformer);
+    R setStylesheetTransformer(StylesheetTransformer transformer);
 
-    OAIResponse setStylesheets(String... stylesheets);
+    R setStylesheets(String... stylesheets);
 
-    OAIResponse to(HttpServletResponse servletResponse) throws IOException;
-
-    OAIResponse to(Writer writer) throws IOException;
+    R to(Writer writer) throws IOException;
 }

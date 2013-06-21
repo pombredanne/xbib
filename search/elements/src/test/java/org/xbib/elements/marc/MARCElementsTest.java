@@ -76,24 +76,6 @@ public class MARCElementsTest extends Assert {
     }
 
     @Test
-    public void testZDBElements() throws Exception {
-        InputStream in = getClass().getResourceAsStream("1217zdbtit.dat");
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
-        Writer w = new OutputStreamWriter(new FileOutputStream("target/zdb.xml"), "UTF-8");
-        MARCElementMapper mapper = new MARCElementMapper("marc").start();
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
-        reader.setProperty(Iso2709Reader.FORMAT, "MARC");
-        reader.setProperty(Iso2709Reader.TYPE, "Bibliographic");
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-        InputSource source = new InputSource(br);
-        StreamResult target = new StreamResult(w);
-        transformer.transform(new SAXSource(reader, source), target);
-        mapper.close();
-    }
-
-    @Test
     public void testStbBonnElements() throws Exception {
         InputStream in = getClass().getResourceAsStream("stb-bonn.mrc");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));

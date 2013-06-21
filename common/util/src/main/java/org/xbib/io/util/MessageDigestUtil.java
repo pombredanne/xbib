@@ -54,6 +54,11 @@ public class MessageDigestUtil {
         this.md = digest;
     }
 
+    public MessageDigestUtil reset() {
+        md.reset();
+        return this;
+    }
+
     public MessageDigestUtil add(String s) {
         if (s != null) {
             md.update(s.getBytes(Charset.forName("UTF-8")));

@@ -31,7 +31,6 @@
  */
 package org.xbib.io.file;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystems;
@@ -52,12 +51,21 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A finde for subdirectories
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class Finder extends SimpleFileVisitor<Path> {
 
     private final PathMatcher matcher;
+
     private final LinkedList<PathFile> input = new LinkedList();
+
     private final EnumSet opts;
+
     private FileTime modifiedSince;
+
     private Comparator<PathFile> comparator;
 
     public Finder(String pattern) {
@@ -74,6 +82,14 @@ public class Finder extends SimpleFileVisitor<Path> {
         this.comparator = new Comparator<PathFile>(){
             public int compare(PathFile p1, PathFile p2) {
                 return p1.getAttributes().lastModifiedTime().compareTo(p2.getAttributes().lastModifiedTime());
+            } };
+        return this;
+    }
+
+    public Finder pathSorted() {
+        this.comparator = new Comparator<PathFile>(){
+            public int compare(PathFile p1, PathFile p2) {
+                return p1.getPath().toUri().compareTo(p2.getPath().toUri());
             } };
         return this;
     }

@@ -33,9 +33,7 @@ public class BulkIndexerTest extends Assert {
                     .setType("test");
 
             es.deleteIndex();
-            ResourceContext c = createContext();
-
-            new ElasticsearchResourceSink(es).output(c);
+            new ElasticsearchResourceSink(es).output(createContext());
             es.flush();
             Thread.sleep(2000);
             Logger queryLogger = LoggerFactory.getLogger("test", BulkIndexerTest.class.getName());
@@ -59,14 +57,13 @@ public class BulkIndexerTest extends Assert {
 
     private ResourceContext createContext() {
         ResourceContext context = new JsonLdContext()
-                .id(IRI.create("http://test#1"))
+                .id(IRI.create("http://test?test#1"))
                 .newNamespaceContext();
         context.namespaceContext().addNamespace(ES.NS_PREFIX, ES.NS_URI);
         context.namespaceContext().addNamespace("urn", "http://urn");
         context.namespaceContext().addNamespace("dc", "http://purl.org/dc/terms/");
-        Resource resource = new SimpleResource()
-                .context(context)
-                .id(IRI.create("urn:document#1"))
+        Resource resource = context.newResource()
+                .id(IRI.create("http://test?test#2"))
                 .add("dc:title", "Hello")
                 .add("dc:title", "World")
                 .add("xbib:person", "Jörg Prante")

@@ -43,9 +43,9 @@ import java.net.URI;
  */
 public interface HttpRequest extends Request {
 
-    HttpRequest setURI(URI uri);
+    HttpRequest setURL(URI uri);
 
-    URI getURI();
+    URI getURL();
 
     HttpRequest setUser(String user);
 

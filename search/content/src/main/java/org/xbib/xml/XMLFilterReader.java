@@ -35,18 +35,27 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+/**
+ *
+ */
 public class XMLFilterReader extends XMLFilterImpl {
 
     private final Logger logger = LoggerFactory.getLogger(XMLFilterReader.class.getName());
 
+    private final static String PARSERFACTORY = "org.apache.xerces.jaxp.SAXParserFactoryImpl";
+
     private static final SAXParserFactory parserFactory =
-            SAXParserFactory.newInstance("org.apache.xerces.jaxp.SAXParserFactoryImpl", null);
+            SAXParserFactory.newInstance(PARSERFACTORY, null);
 
     private SAXParser parser;
 
@@ -56,10 +65,29 @@ public class XMLFilterReader extends XMLFilterImpl {
         try {
             parserFactory.setFeature("http://xml.org/sax/features/namespaces", true);
             parserFactory.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+            parserFactory.setFeature("http://xml.org/sax/features/validation", false);
+            parserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            parserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            parserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            parserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             parser = parserFactory.newSAXParser();
         } catch (ParserConfigurationException | SAXException  e) {
             logger.warn(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Saxon uses setFeature, so we override it here, otherwise XmlFilterImpl will bark.
+     *
+     * @param name
+     * @param value
+     * @throws SAXNotRecognizedException
+     * @throws SAXNotSupportedException
+     */
+    @Override
+    public void setFeature (String name, boolean value)
+            throws SAXNotRecognizedException, SAXNotSupportedException {
+        // accept all setFeature calls, but do nothing
     }
 
     @Override

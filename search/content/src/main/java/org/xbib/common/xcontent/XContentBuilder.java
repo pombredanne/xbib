@@ -82,6 +82,7 @@ public final class XContentBuilder implements BytesStream {
 
     private StringBuilder cachedStringBuilder;
 
+    private String wrap;
 
     /**
      * Constructs a new builder using the provided xcontent and an OutputStream. Make sure
@@ -112,6 +113,11 @@ public final class XContentBuilder implements BytesStream {
 
     public XContentBuilder prettyPrint() {
         generator.usePrettyPrint();
+        return this;
+    }
+
+    public XContentBuilder wrapInto(String wrap) throws IOException {
+        this.wrap = wrap;
         return this;
     }
 
@@ -732,6 +738,9 @@ public final class XContentBuilder implements BytesStream {
 
     public void close() {
         try {
+            if (wrap != null) {
+                generator.writeEndObject();
+            }
             generator.close();
         } catch (IOException e) {
             // ignore

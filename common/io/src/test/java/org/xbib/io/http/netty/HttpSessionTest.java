@@ -50,7 +50,7 @@ public class HttpSessionTest {
         session.open(Session.Mode.READ);
         HttpRequest request = session.newRequest()
                 .setMethod("GET")
-                .setURI(URI.create("http://www.google.com/search"))
+                .setURL(URI.create("http://www.google.com/search"))
                 .addParameter("q", "köln");
         request.prepare().execute(new DefaultHttpResponseListener() {
             @Override
@@ -67,7 +67,7 @@ public class HttpSessionTest {
         session.open(Session.Mode.READ);
         HttpRequest request = session.newRequest()
                 .setMethod("POST")
-                .setURI(URI.create("http://www.google.com/search"))
+                .setURL(URI.create("http://www.google.com/search"))
                 .addHeader("Content-Length", "0")
                 .addParameter("q", "köln");        
         request.prepare().execute(new DefaultHttpResponseListener() {

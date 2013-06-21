@@ -40,6 +40,7 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
+
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
@@ -57,6 +58,7 @@ import org.xbib.xml.XMLNamespaceContext;
 public class XmlResourceWriter<S extends Identifier, P extends Property, O extends Node> {
 
     private final NamespaceContext context;
+
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     public XmlResourceWriter() {
@@ -71,13 +73,6 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
             throws XMLStreamException {
         XMLEventWriter xew = XMLOutputFactory.newInstance().createXMLEventWriter(w);
         IRI resourceURI = resource.id();
-        // copy all resource statements, this will reconstruct the structure
-        /*Resource<S,P,O> xmlResource = new SimpleResource().id(resourceURI);
-        Iterator<Statement<S, P, O>> it = resource.iterator();
-        while (it.hasNext()) {
-            Statement<S, P, O> st = it.next();
-            xmlResource.add(st);
-        }*/
         // dump resource as XML
         String nsPrefix = resourceURI.getScheme();
         String name = resourceURI.getSchemeSpecificPart();

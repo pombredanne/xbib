@@ -39,6 +39,6 @@ public class IdentifyRequest extends DefaultOAIRequest implements OAIRequest {
 
     public IdentifyRequest(OAISession session) {
         super(session);
-        addParameter(VERB_PARAMETER, "Identify");
+        addParameter(VERB_PARAMETER, IDENTIFY);
     }
 }

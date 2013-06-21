@@ -35,10 +35,11 @@ import org.xbib.xml.XMLFilterReader;
 
 public class MetadataHandler extends XMLFilterReader {
     
-    RecordHeader header;
-    
-    public void setHeader(RecordHeader header) {
+    private RecordHeader header;
+
+    public MetadataHandler setHeader(RecordHeader header) {
         this.header = header;
+        return this;
     }
     
     public RecordHeader getHeader() {

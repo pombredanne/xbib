@@ -147,7 +147,8 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
 
     @Override
     public NTripleWriter endPrefixMapping(String prefix) {
-        context.removeNamespace(prefix);
+        // we don't remove name spaces. It's troubling RDF serializations.
+        //context.removeNamespace(prefix);
         return this;
     }
 

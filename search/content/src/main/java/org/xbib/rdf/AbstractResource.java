@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import org.xbib.iri.IRI;
@@ -85,7 +86,6 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     public S subject() {
         return subject;
     }
-
 
     @Override
     public Resource<S, P, O> add(Triple<S,P,O> triple) {
@@ -195,13 +195,22 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     public void compactPredicate(P predicate) {
         Collection<Resource<S, P, O>> res = resources().get(predicate);
         if (res.size() == 1) {
-            Resource<S, P, O> resource = res.iterator().next();
-            Collection<O> literals = resource.objects(predicate);
-            // get the single value and put it to properties
-            if (literals.size() == 1) {
-                attributes.removeAll(predicate);
-                attributes.put(predicate, literals.iterator().next());
+            Collection<Node> keep = new LinkedList();
+            for (O o : objects(predicate)) {
+                if (o instanceof Literal) {
+                    keep.add(o);
+                } else if (o instanceof IdentifiableNode) {
+                    if (!((IdentifiableNode)o).isBlank()) {
+                        keep.add(o);
+                    }
+                }
             }
+            Resource<S, P, O> resource = res.iterator().next();
+            keep.addAll(new LinkedList(resource.objects(predicate)));
+            attributes.removeAll(predicate);
+            attributes.putAll(predicate, keep);
+        } else {
+            logger.warn("more than one resource for {}", predicate);
         }
     }
 
@@ -263,4 +272,10 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         }
     };
 
+    private final static Predicate<Node> literals = new Predicate<Node>() {
+        @Override
+        public boolean apply(Node n) {
+            return n instanceof Literal;
+        }
+    };
 }

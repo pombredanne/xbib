@@ -43,6 +43,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.xml.namespace.NamespaceContext;
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 /**
  * Contains a simple context for namespaces
@@ -51,10 +53,14 @@ import org.xbib.iri.IRI;
  */
 public class XMLNamespaceContext implements CompactingNamespaceContext, NamespaceContext {
 
+    private final Logger logger = LoggerFactory.getLogger(XMLNamespaceContext.class.getName());
+
     private static XMLNamespaceContext instance;
     // we use TreeMap here for platform-independent stable order of name space definitions
-    protected final SortedMap<String, String> namespaces = new TreeMap<>();
-    protected final SortedMap<String, Set<String>> prefixes = new TreeMap<>();
+
+    private final SortedMap<String, String> namespaces = new TreeMap();
+
+    private final SortedMap<String, Set<String>> prefixes = new TreeMap();
 
     protected XMLNamespaceContext() {
     }
@@ -92,20 +98,12 @@ public class XMLNamespaceContext implements CompactingNamespaceContext, Namespac
     public final synchronized void addNamespace(String prefix, String namespace) {
         namespaces.put(prefix, namespace);
         if (prefixes.containsKey(namespace)) {
-            (prefixes.get(namespace)).add(prefix);
+            prefixes.get(namespace).add(prefix);
         } else {
-            Set<String> set = new HashSet<>();
+            Set<String> set = new HashSet();
             set.add(prefix);
             prefixes.put(namespace, set);
         }
-    }
-
-    public final synchronized void removeNamespace(String prefix) {
-        String ns = getNamespaceURI(prefix);
-        if (ns != null) {
-            prefixes.remove(ns);
-        }
-        namespaces.remove(prefix);
     }
     
     @Override
@@ -137,7 +135,12 @@ public class XMLNamespaceContext implements CompactingNamespaceContext, Namespac
         if (namespace == null) {
             throw new IllegalArgumentException("namespace URI cannot be null");
         }
-        return prefixes.containsKey(namespace) ? prefixes.get(namespace).iterator() : Collections.EMPTY_SET.iterator();
+        return prefixes.containsKey(namespace) ?
+                prefixes.get(namespace).iterator() : Collections.EMPTY_SET.iterator();
+    }
+
+    public SortedMap<String, Set<String>> getPrefixes() {
+        return prefixes;
     }
 
     /**

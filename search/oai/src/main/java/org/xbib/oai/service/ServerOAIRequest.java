@@ -36,7 +36,7 @@ import org.xbib.oai.OAIRequest;
 import java.util.List;
 import java.util.Map;
 
-public interface ServerOAIRequest extends OAIRequest {
+public interface ServerOAIRequest<R extends ServerOAIRequest> extends OAIRequest<R> {
     
     String getPath();
         

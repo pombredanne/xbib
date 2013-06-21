@@ -37,8 +37,15 @@ import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 
+/**
+ * XML handler with triple listener
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface XmlHandler
      extends EntityResolver, DTDHandler, ContentHandler, ErrorHandler {
+
+    XmlHandler setDefaultNamespace(String prefix, String uri);
 
     XmlHandler setListener(TripleListener listener);
 

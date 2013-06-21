@@ -147,7 +147,7 @@ public class CQLSearchRequest extends BasicRequest {
     }
 
     /**
-     * Translate SearchRetrieve facets to
+     * Translate SearchRetrieve facets to Elasticsearch
      * @param limit
      * @param sort
      * @param facetTypes
@@ -191,7 +191,7 @@ public class CQLSearchRequest extends BasicRequest {
                 String facetType = facetTypes != null && facetTypes.containsKey(index) ?
                         facetTypes.get(index) : "terms";
                 Integer size = facets.get(index);
-                builder.field(index + n)
+                builder.field(index)
                         .startObject()
                         .field(facetType).startObject()
                         .field("field", generator.getModel().getFieldOfIndex(index))

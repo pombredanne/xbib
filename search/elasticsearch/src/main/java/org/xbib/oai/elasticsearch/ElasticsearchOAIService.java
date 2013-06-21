@@ -63,8 +63,8 @@ import org.xbib.oai.set.ListSetsRequest;
 import org.xbib.oai.set.ListSetsResponse;
 import org.xbib.oai.util.ResumptionToken;
 import org.xbib.oai.exceptions.OAIException;
-import org.xbib.query.QuotedStringTokenizer;
 import org.xbib.query.cql.SyntaxException;
+import org.xbib.strings.encode.QuotedStringTokenizer;
 
 /**
  * Elasticsearch OAI service
@@ -126,16 +126,7 @@ public class ElasticsearchOAIService implements OAIService {
                     .query(query)
                     .executeSearch(logger)
                     .read();
-            response
-                    .setReader(new InputStreamReader(in, "UTF-8"))
-                    //.setStylesheetTransformer()
-                    //.setStylesheets()
-                    .to(response.getWriter());
-            /*JsonStylesheet js = new JsonStylesheet();
-            js.root(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
-            js.setStylesheets(getStylesheet());
-            js.setTransformer(transformer);
-            js.transform(in, response.getWriter());*/
+            response.setReader(new InputStreamReader(in, "UTF-8"));
         } catch (NoNodeAvailableException e) {
             logger.error("SRU " + serviceURI + ": unresponsive", e);
             throw new OAIException(e.getMessage());
@@ -156,7 +147,6 @@ public class ElasticsearchOAIService implements OAIService {
     @Override
     public void getRecord(GetRecordRequest request, GetRecordResponse response) throws OAIException {
     }
-
 
     @Override
     public Date getLastModified() {

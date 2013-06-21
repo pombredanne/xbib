@@ -35,7 +35,6 @@ import com.google.common.base.Objects;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Visitor;
-import org.xbib.xml.XSD;
 
 /**
  * A simple Literal is a value of object type
@@ -130,7 +129,7 @@ public class SimpleLiteral<O extends Object>
 
     @Override
     public String toString() {
-        return value != null ? value.toString() : null;
+        return toLiteral(); //value != null ? value.toString() : null;
     }
 
     public String toLiteral() {
@@ -159,10 +158,8 @@ public class SimpleLiteral<O extends Object>
                 return Float.parseFloat(s);
             case "xsd:double":
                 return Double.parseDouble(s);
-            case "xsd:string":
-                return s;
             default:
-                throw new IllegalArgumentException("unknown type:" + type);
+                return s;
         }
     }
 

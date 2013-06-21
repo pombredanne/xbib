@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+
+    <responseDate>2013-06-19T07:11:37Z</responseDate>
+    <request verb="ListRecords" from="2013-01-01T00:00:00Z" until="2013-01-02T00:00:00Z" metadataPrefix="oai_dc">http://doaj.org/oai</request>
+
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>oai:doaj.org:2011-9860</identifier>
+                <datestamp>2013-01-01T12:30:30Z</datestamp>
+                <setSpec>Biology_and_Life_Sciences</setSpec>
+            </header>
+            <metadata>
+                <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                    <dc:title>Morfolia</dc:title>
+                    <dc:identifier>http://www.revistas.unal.edu.co/index.php/morfolia</dc:identifier>
+                    <dc:identifier>http://www.doaj.org/doaj?func=openurl&amp;genre=journal&amp;issn=20119860</dc:identifier>
+                    <dc:identifier>issn: 2011-9860</dc:identifier>
+                    <dc:publisher>Universidad Nacional de Colombia</dc:publisher>
+                    <dc:date>2008</dc:date>
+                    <dc:language>Spanish</dc:language>
+                    <dc:subject>morphology</dc:subject>
+                    <dc:subject>anatomy</dc:subject>
+                    <dc:subject>histology</dc:subject>
+                    <dc:subject>embryology</dc:subject>
+                    <dc:subject>genetics</dc:subject>
+                    <dc:subject>DoajSubjectTerm: Biology
+                    </dc:subject>
+                    <dc:subject>LCC: QH301-705.5</dc:subject>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+        <record>
+            <header>
+                <identifier>oai:doaj.org:1091-1774</identifier>
+                <datestamp>2013-01-01T01:02:00Z</datestamp>
+                <setSpec>Social_Sciences</setSpec>
+            </header>
+            <metadata>
+                <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                    <dc:title>Hmong Studies Journal</dc:title>
+                    <dc:identifier>http://www.hmongstudies.org/HmongStudiesJournal.html </dc:identifier>
+                    <dc:identifier>http://www.doaj.org/doaj?func=openurl&amp;genre=journal&amp;issn=10911774</dc:identifier>
+                    <dc:identifier>issn: 1091-1774</dc:identifier>
+                    <dc:publisher>Hmong Studies Journal</dc:publisher>
+                    <dc:date>1996</dc:date>
+                    <dc:language>English</dc:language>
+                    <dc:subject>Hmong culture</dc:subject>
+                    <dc:subject>Hmong history</dc:subject>
+                    <dc:subject>southeast Asian Americans</dc:subject>
+                    <dc:subject>Asian American studies</dc:subject>
+                    <dc:subject>southeast Asian studies</dc:subject>
+                    <dc:subject>DoajSubjectTerm: Social Sciences
+                    </dc:subject>
+                    <dc:subject>LCC: H1-99</dc:subject>
+                    <dc:subject>LCC: HD28-9999</dc:subject>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+        <resumptionToken cursor="0" completeListSize="2"/>
+    </ListRecords>
+
+</OAI-PMH>

@@ -39,6 +39,6 @@ public class ListIdentifiersRequest extends DefaultOAIRequest implements OAIRequ
 
     public ListIdentifiersRequest(OAISession session) {
         super(session);
-        addParameter(VERB_PARAMETER, "ListIdentifiers");
+        addParameter(VERB_PARAMETER, LIST_IDENTIFIERS);
     }
 }

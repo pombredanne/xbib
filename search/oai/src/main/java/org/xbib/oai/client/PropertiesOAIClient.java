@@ -31,8 +31,6 @@
  */
 package org.xbib.oai.client;
 
-import org.xbib.oai.client.DefaultOAIClient;
-
 import java.util.Properties;
 
 public class PropertiesOAIClient extends DefaultOAIClient {

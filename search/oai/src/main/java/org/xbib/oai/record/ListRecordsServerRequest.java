@@ -31,14 +31,16 @@
  */
 package org.xbib.oai.record;
 
+import org.xbib.oai.DefaultOAIRequest;
 import org.xbib.oai.OAISession;
-import org.xbib.oai.record.ListRecordsRequest;
 import org.xbib.oai.service.ServerOAIRequest;
 
 import java.util.List;
 import java.util.Map;
 
-public class ListRecordsServerRequest extends ListRecordsRequest implements ServerOAIRequest {
+public class ListRecordsServerRequest
+    extends DefaultOAIRequest<ListRecordsServerRequest>
+    implements ServerOAIRequest<ListRecordsServerRequest> {
 
     String path;
 

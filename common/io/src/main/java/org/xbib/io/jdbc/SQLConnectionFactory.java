@@ -74,11 +74,7 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
      */
     @Override
     public Connection<SQLSession> getConnection(final URI uri) throws IOException {
-        try {
-            this.properties = URIUtil.getPropertiesFromURI(uri);
-        } catch (UnsupportedEncodingException e) {
-            throw new IOException(e.getMessage());
-        }
+        this.properties = URIUtil.getPropertiesFromURI(uri);
         Context context = null;
         DataSource ds = null;
         for (String name : new String[]{

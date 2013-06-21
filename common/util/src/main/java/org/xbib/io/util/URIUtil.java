@@ -34,6 +34,7 @@ package org.xbib.io.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +48,10 @@ import java.util.StringTokenizer;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class URIUtil {
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+
+    private static final Charset LATIN1 = Charset.forName("ISO-8859-1");
 
     private URIUtil() {
     }
@@ -71,7 +76,7 @@ public final class URIUtil {
      * @throws UnsupportedEncodingException 
      * @throws URISyntaxException
      */
-    public static URI addParameter(URI uri, String key, String value, String encoding)
+    public static URI addParameter(URI uri, String key, String value, Charset encoding)
             throws UnsupportedEncodingException, URISyntaxException {
         Map<String,String> m = parseQueryString(uri, encoding);
         m.put(key, value);
@@ -92,8 +97,8 @@ public final class URIUtil {
      * @throws UnsupportedEncodingException 
      * @throws URISyntaxException 
      */
-    public static URI addParameter(URI uri, Map<String,String> m, String encoding)
-            throws UnsupportedEncodingException, URISyntaxException {
+    public static URI addParameter(URI uri, Map<String,String> m, Charset encoding)
+            throws URISyntaxException {
         Map<String,String> oldMap = parseQueryString(uri, encoding);
         oldMap.putAll(m);
         String query = renderQueryString(oldMap);
@@ -124,7 +129,7 @@ public final class URIUtil {
      * @return The decoded URI
      *
      */
-    public static String decode(String s, String encoding) {
+    public static String decode(String s, Charset encoding) {
         StringBuilder sb = new StringBuilder();
         boolean fragment = false;
         for (int i = 0; i < s.length(); i++) {
@@ -151,11 +156,7 @@ public final class URIUtil {
                     break;
             }
         }
-        try {
-            return new String(sb.toString().getBytes("ISO-8859-1"), encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("encoding " + encoding + " not supported");
-        }
+        return new String(sb.toString().getBytes(LATIN1), encoding);
     }
 
     /**
@@ -190,8 +191,7 @@ public final class URIUtil {
      * @exception UnsupportedEncodingException If the named encoding is not
      *            supported
      */
-    public static String encode(String s, String encoding)
-            throws UnsupportedEncodingException {
+    public static String encode(String s, Charset encoding) {
         int length = s.length();
         int start = 0;
         int i = 0;
@@ -241,8 +241,7 @@ public final class URIUtil {
      * @throws UnsupportedEncodingException 
      * @throws URISyntaxException 
      */
-    public static URI encodeQueryString(String s)
-            throws UnsupportedEncodingException, URISyntaxException {
+    public static URI encodeQueryString(String s) throws URISyntaxException {
         if (s == null) {
             return null;
         }
@@ -259,7 +258,7 @@ public final class URIUtil {
                 if (out.length() > 0) {
                     out.append("&");
                 }
-                out.append(pair.substring(0, pos + 1)).append(encode(pair.substring(pos + 1), "utf-8"));
+                out.append(pair.substring(0, pos + 1)).append(encode(pair.substring(pos + 1), UTF8));
             }
             return new URI(s.substring(0, questionmark + 1) + out.toString());
         } else {
@@ -276,7 +275,7 @@ public final class URIUtil {
      *
      * @throws UnsupportedEncodingException
      */
-    public static Properties getPropertiesFromURI(URI uri) throws UnsupportedEncodingException {
+    public static Properties getPropertiesFromURI(URI uri) {
         if (uri == null) {
             throw new IllegalArgumentException("uri must not be null");
         }
@@ -360,8 +359,8 @@ public final class URIUtil {
      *
      * @throws UnsupportedEncodingException
      */
-    public static Map<String,String> parseQueryString(URI uri) throws UnsupportedEncodingException {
-        return parseQueryString(uri, "UTF-8");
+    public static Map<String,String> parseQueryString(URI uri) {
+        return parseQueryString(uri, UTF8);
     }
 
     /**
@@ -377,8 +376,7 @@ public final class URIUtil {
      * @throws UnsupportedEncodingException 
      * @throws IllegalArgumentException
      */
-    public static Map<String,String> parseQueryString(URI uri, String encoding)
-            throws UnsupportedEncodingException {
+    public static Map<String,String> parseQueryString(URI uri, Charset encoding) {
         return parseQueryString(uri, encoding, null);
     }
 
@@ -393,8 +391,7 @@ public final class URIUtil {
      * @return a Map of parameters
      * @throws UnsupportedEncodingException
      */
-    public static Map<String,String> parseQueryString(URI uri, String encoding, ParameterListener listener)
-        throws UnsupportedEncodingException {
+    public static Map<String,String> parseQueryString(URI uri, Charset encoding, ParameterListener listener) {
         Map<String,String> m = new HashMap();
         if (uri == null) {
             throw new IllegalArgumentException();
@@ -434,11 +431,11 @@ public final class URIUtil {
      *
      * @throws UnsupportedEncodingException
      */
-    public static String renderQueryString(Map<String,String> m) throws UnsupportedEncodingException {
+    public static String renderQueryString(Map<String,String> m)  {
         String key = null;
         String value = null;
         StringBuilder out = new StringBuilder();
-        String encoding = m.containsKey("encoding") ? m.get("encoding") : "utf-8";
+        Charset encoding = m.containsKey("encoding") ? Charset.forName(m.get("encoding")) : UTF8;
         for (Iterator<Map.Entry<String,String>> iter = m.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String,String> me = iter.next();
             key = me.getKey();

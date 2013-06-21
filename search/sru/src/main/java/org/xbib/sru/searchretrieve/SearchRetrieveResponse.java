@@ -223,6 +223,7 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
         try {
             XMLFilterReader reader = new SearchRetrieveFilterReader(request);
+            // TODO normalization should be configurable
             InputSource source = new InputSource(new StringReader(Normalizer.normalize(httpResponse.getBody(), Normalizer.Form.C)));
             getTransformer().setSource(reader, source).setResult(writer);
             SRUVersion version = SRUVersion.fromString(request.getVersion());

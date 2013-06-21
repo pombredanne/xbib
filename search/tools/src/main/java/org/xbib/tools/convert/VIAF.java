@@ -68,7 +68,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPOutputStream;
 
-
+/**
+ * VIAF converter. The original VIAF files are one RDF/XML per line.
+ * This converion generates NTriples or Turtle format.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class VIAF extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(VIAF.class.getName());
@@ -224,7 +229,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
 
         OutputStream out;
 
-        VIAFPipeline(int i) throws Exception{
+        VIAFPipeline(int i) throws Exception {
             String fileName = DateUtil.today() + "_" + i + "_" + fileCounter.get() + "_" + output + ".gz";
             FileOutputStream fout = new FileOutputStream(fileName);
             this.out = new GZIPOutputStream(fout){

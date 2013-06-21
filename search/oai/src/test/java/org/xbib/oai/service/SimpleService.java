@@ -96,7 +96,8 @@ public class SimpleService implements OAIService {
 
     @Override
     public OAISession connect() {
-        this.client = new DefaultOAIClient().setURI(getURI());
+        this.client = new DefaultOAIClient()
+                .setURL(getURI());
         return client;
     }
 

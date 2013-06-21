@@ -33,6 +33,11 @@ package org.xbib.oai;
 
 import org.xbib.io.http.HttpResponseListener;
 
+/**
+ *  OAI response listener
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface OAIResponseListener<Response extends OAIResponse> extends HttpResponseListener {
 
     Response getResponse();

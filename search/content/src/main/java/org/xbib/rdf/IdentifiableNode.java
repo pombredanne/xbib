@@ -72,13 +72,17 @@ public class IdentifiableNode implements Identifier {
         return id;
     }
 
+    public boolean isBlank() {
+        return Identifier.GENID.equals(id.getScheme());
+    }
+
     @Override
     public String toString() {
         if (id == null) {
             // blank
             blank();
         }
-        return Identifier.GENID.equals(id.getScheme()) ?
+        return isBlank() ?
                 PLACEHOLDER + id.getSchemeSpecificPart() : id.toString();
     }
 

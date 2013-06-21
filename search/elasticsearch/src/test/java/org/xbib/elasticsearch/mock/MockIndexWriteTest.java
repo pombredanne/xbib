@@ -65,7 +65,7 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
 
     private ResourceContext createContext() {
         Resource<S, P, O> resource = new SimpleResource()
-                .id(IRI.create("urn:document"))
+                .id(IRI.create("http://test?test#document"))
                 .add("dc:title", "Hello")
                 .add("dc:title", "World")
                 .add("xbib:person", "Jörg Prante")

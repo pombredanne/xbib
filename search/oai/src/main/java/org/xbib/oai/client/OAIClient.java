@@ -32,6 +32,7 @@
 package org.xbib.oai.client;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.xbib.oai.OAIConstants;
 import org.xbib.oai.OAISession;
@@ -47,6 +48,7 @@ import org.xbib.oai.record.ListRecordsRequest;
 import org.xbib.oai.record.ListRecordsResponse;
 import org.xbib.oai.set.ListSetsRequest;
 import org.xbib.oai.set.ListSetsResponse;
+import org.xbib.oai.util.ResumptionToken;
 
 /**
  * OAI client API
@@ -54,6 +56,10 @@ import org.xbib.oai.set.ListSetsResponse;
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface OAIClient extends OAISession, OAIConstants {
+
+    OAIClient setURL(URI uri);
+
+    URI getURL();
 
     /**
      * This verb is used to retrieve information about a repository.
@@ -63,7 +69,7 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     IdentifyRequest newIdentifyRequest();
 
-    IdentifyRequest resume(IdentifyRequest request, IdentifyResponse response);
+    IdentifyRequest resume(IdentifyRequest request, ResumptionToken token);
 
     /**
      * This verb is an abbreviated form of ListRecords, retrieving only
@@ -76,7 +82,7 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     ListIdentifiersRequest newListIdentifiersRequest();
 
-    ListIdentifiersRequest resume(ListIdentifiersRequest request, ListIdentifiersResponse response);
+    ListIdentifiersRequest resume(ListIdentifiersRequest request, ResumptionToken token);
 
     /**
      * This verb is used to retrieve the metadata formats available 
@@ -85,7 +91,7 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     ListMetadataFormatsRequest newListMetadataFormatsRequest();
 
-    ListMetadataFormatsRequest resume(ListMetadataFormatsRequest request, ListMetadataFormatsResponse response);
+    ListMetadataFormatsRequest resume(ListMetadataFormatsRequest request, ResumptionToken token);
 
     /**
      * This verb is used to retrieve the set structure of a repository, 
@@ -93,7 +99,7 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     ListSetsRequest newListSetsRequest();
 
-    ListSetsRequest resume(ListSetsRequest request, ListSetsResponse response);
+    ListSetsRequest resume(ListSetsRequest request, ResumptionToken token);
 
     /**
      * This verb is used to harvest records from a repository. 
@@ -106,7 +112,7 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     ListRecordsRequest newListRecordsRequest();
 
-    ListRecordsRequest resume(ListRecordsRequest request, ListRecordsResponse response);
+    ListRecordsRequest resume(ListRecordsRequest request, ResumptionToken token);
 
     /**
      * This verb is used to retrieve an individual metadata record from 
@@ -120,6 +126,6 @@ public interface OAIClient extends OAISession, OAIConstants {
      */
     GetRecordRequest newGetRecordRequest();
 
-    GetRecordRequest resume(GetRecordRequest request, GetRecordResponse response) throws IOException;
+    GetRecordRequest resume(GetRecordRequest request, ResumptionToken token);
 
 }

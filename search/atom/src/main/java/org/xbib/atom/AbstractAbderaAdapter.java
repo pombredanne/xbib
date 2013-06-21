@@ -22,6 +22,7 @@ package org.xbib.atom;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
@@ -66,16 +67,17 @@ public abstract class AbstractAbderaAdapter extends ManagedCollectionAdapter {
         String query = null;
         try {
             URI uri = request.getUri().toURI();
-            Map<String, String> params = URIUtil.parseQueryString(uri, "UTF-8");
+            Map<String, String> params = URIUtil.parseQueryString(uri, Charset.forName("UTF-8"));
             query = params.get("q");
             if (query == null) {
                 query = params.get("query");
             }
             from = Integer.parseInt(params.get("from"));
             size = Integer.parseInt(params.get("size"));
-        } catch (UnsupportedEncodingException ex) {
         } catch (URISyntaxException ex) {
+            //
         } catch (Exception ex) {
+            //
         }
         if (query == null) {
             return ProviderHelper.badrequest(request, "bad query parameter");

@@ -58,12 +58,19 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TarSession implements Session {
 
     private final StreamCodecService codecFactory = StreamCodecService.getInstance();
+
     private boolean isOpen;
+
     private FileInputStream fin;
+
     private FileOutputStream fout;
+
     private TarArchiveInputStream in;
+
     private TarArchiveOutputStream out;
+
     private String scheme;
+
     private String part;
 
     public void setScheme(String scheme) {
@@ -219,10 +226,10 @@ public class TarSession implements Session {
         }
         ObjectPacket packet = new ObjectPacket();
         String name = entry.getName();
-        packet.setName(name);
+        packet.name(name);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         IOUtils.copy(getInputStream(), bout);
-        packet.setPacket(new String(bout.toByteArray()));
+        packet.packet(new String(bout.toByteArray()));
         return packet;
     }
 
@@ -233,7 +240,7 @@ public class TarSession implements Session {
         }
         byte[] buf = packet.toString().getBytes();
         if (buf.length > 0) {
-            String name = createEntryName(packet.getName(), packet.getNumber());
+            String name = createEntryName(packet.name(), Long.toString(packet.number()));
             TarArchiveEntry entry = new TarArchiveEntry(name);
             entry.setModTime(new Date());
             entry.setSize(buf.length);

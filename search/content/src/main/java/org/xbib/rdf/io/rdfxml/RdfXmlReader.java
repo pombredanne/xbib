@@ -92,6 +92,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     private final Factory<S,P,O> factory = Factory.getInstance();
 
     private XmlHandler xmlHandler = new Handler();
+
     private TripleListener<S,P,O> listener;
     // counter for blank node generation
     private int bn = 0;
@@ -410,11 +411,21 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     class Handler extends DefaultHandler implements XmlHandler {
 
         private Stack<Frame> stack = new Stack<>();
+
         private StringBuilder pcdata = null;
+
         private StringBuilder xmlLiteral = null;
+
         private TripleListener listener;
+
         private int literalLevel = 0; // level in XMLLiteral
 
+        @Override
+        public Handler setDefaultNamespace(String prefix, String namespaceURI) {
+            return this;
+        }
+
+        @Override
         public Handler setListener(TripleListener listener) {
             this.listener = listener;
             return this;

@@ -21,8 +21,11 @@ package org.xbib.io;
 public class ObjectPacket implements Packet<Object> {
     
     private String name;
+
     private long number;
+
     private String link;
+
     private Object object;
 
     public ObjectPacket() {
@@ -79,6 +82,5 @@ public class ObjectPacket implements Packet<Object> {
     public String toString() {
         return object.toString();
     }
-    
-    
+
 }

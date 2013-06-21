@@ -38,9 +38,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -83,7 +83,7 @@ public class MABFileTest {
                     "xan"
                 }) {
             System.err.println(s);
-            InputStream in = new FileInputStream("/Users/joerg/Daten/hbzoeb/orig/" + s + "_2011_november");
+            InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/hbzoeb/orig/" + s + "_2011_november");
             if (in != null) {
                 FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
                 Writer target = new OutputStreamWriter(out, "UTF-8");
@@ -102,7 +102,7 @@ public class MABFileTest {
                     "sol", // MAB-Diskette, aber ohne ###
                 }) {
             System.err.println(s);
-            InputStream in = new FileInputStream("/Users/joerg/Daten/hbzoeb/orig/" + s + "_2011_november");
+            InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/hbzoeb/orig/" + s + "_2011_november");
             if (in != null) {
                 FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
                 Writer target = new OutputStreamWriter(out, "UTF-8");
@@ -141,7 +141,7 @@ public class MABFileTest {
                     "rvk"
                 }) {
             System.err.println(s);
-            InputStream in = new FileInputStream("/Users/joerg/Daten/hbzoeb/orig/" + s + "_2011_november");
+            InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/hbzoeb/orig/" + s + "_2011_november");
             if (in != null) {
                 FileOutputStream out = new FileOutputStream("target/" + s + ".xml");
                 Writer target = new OutputStreamWriter(out, "UTF-8");
@@ -154,7 +154,7 @@ public class MABFileTest {
     }
 
     private void read(InputSource source, Writer w) throws IOException, SAXException,
-            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+            ParserConfigurationException, TransformerException {
         Iso2709Reader reader = new Iso2709Reader();
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
         TransformerFactory tFactory = TransformerFactory.newInstance();

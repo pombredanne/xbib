@@ -31,31 +31,18 @@
  */
 package org.xbib.elements.marc.extensions.mab;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
-import org.xbib.io.InputService;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.extensions.MABTarReader;
-import org.xml.sax.InputSource;
+import org.xbib.marc.extensions.MarcXmlTarReader;
 
 public class MABElementsTest {
 
@@ -63,36 +50,6 @@ public class MABElementsTest {
 
     private MABElementMapper mapper;
 
-    public void testSetupOfElements() throws Exception {
-        MABBuilder builder = new MABBuilder();
-        mapper = new MABElementMapper("mab").start(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
-        reader.setProperty(Iso2709Reader.FORMAT, "MAB");
-        reader.setProperty(Iso2709Reader.TYPE, "Titel");
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-        mapper.close();
-    }
-    
-    public void testZDBElements() throws Exception {
-        InputStream in =  InputService.getInputStream(URI.create("file:src/test/resources/1217zdbtit.dat"));
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
-        Writer w = new OutputStreamWriter(new FileOutputStream("target/ZDB-MAB-Titel.xml"), "UTF-8");
-        MABBuilder builder = new MABBuilder();
-        mapper = new MABElementMapper("mab").start(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
-        reader.setProperty(Iso2709Reader.FORMAT, "MAB");
-        reader.setProperty(Iso2709Reader.TYPE, "Titel");
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-        InputSource source = new InputSource(br);
-        StreamResult target = new StreamResult(w);
-        transformer.transform(new SAXSource(reader, source), target);
-        mapper.close();
-    }
-    
     public void testAlephXML() throws InterruptedException, ExecutionException {
         ImporterFactory factory = new ImporterFactory() {
 
@@ -132,7 +89,7 @@ public class MABElementsTest {
         MABBuilder builder = new MABBuilder().addOutput(output);
         mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
-        return new MABTarReader()
+        return new MarcXmlTarReader()
                 .setURI(URI.create("tarbz2:src/test/resources/20120805_20120806"))
                 .setListener(kv);
     }

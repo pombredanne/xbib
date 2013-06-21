@@ -14,7 +14,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 public class ElasticsearchResourceBuilderTest {
 
@@ -28,7 +34,8 @@ public class ElasticsearchResourceBuilderTest {
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
         MABBuilder builder = new MABBuilder().addOutput(sink);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
-        MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
+        MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
+                .addListener(mapper);
         try {
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
             reader.setProperty(Iso2709Reader.FORMAT, "MAB");
@@ -45,7 +52,7 @@ public class ElasticsearchResourceBuilderTest {
         }
     }
 
-    public void testZDBElements() throws Exception {
+    public void testZDBMAB() throws Exception {
         InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1211zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");

@@ -70,6 +70,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private final Logger logger = LoggerFactory.getLogger(TurtleWriter.class.getName());
 
     private final static char LF = '\n';
+
     private final static char TAB = '\t';
 
     private Writer writer;
@@ -125,6 +126,11 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         this.translatePicaSortMarker = null;
     }
 
+    public TurtleWriter setContext(IRINamespaceContext context) {
+        this.context = context;
+        return this;
+    }
+
     public long getByteCounter() {
         return byteCounter;
     }
@@ -170,7 +176,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
 
     @Override
     public TurtleWriter endPrefixMapping(String prefix) {
-        // hmmm keep it, for last resource writing in close()
+        // nooooo keep it!
         //context.removeNamespace(prefix);
         return this;
     }
@@ -183,11 +189,6 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-    }
-
-    public TurtleWriter setContext(IRINamespaceContext context) {
-        this.context = context;
-        return this;
     }
 
     public TurtleWriter output(OutputStream out) throws IOException {
@@ -218,6 +219,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             byteCounter += sb.length();
             sb.setLength(0);
         }
+        // for safe next resource writing, empty stack here
+        stack.clear();
         return this;
     }
 
@@ -237,40 +240,6 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         } finally {
             writingStarted = false;
         }
-    }
-
-    private void writeDynamicNamespaces(Resource<S, P, O> resource) throws IOException {
-        if (resource == null) {
-            return;
-        }
-        // first, collect namespace URIs and prefixes
-        IRINamespaceContext newContext = IRINamespaceContext.newInstance();
-        Iterator<Triple<S,P,O>> it = resource.iterator();
-        while (it.hasNext()) {
-            Triple<S,P,O> stmt = it.next();
-            String[] s = context.inContext(stmt.subject().id());
-            if (s != null) {
-                newContext.addNamespace(s[0], s[1]);
-            }
-            s = context.inContext(stmt.predicate().id());
-            if (s != null) {
-                newContext.addNamespace(s[0], s[1]);
-            }
-            O o = stmt.object();
-            if (o instanceof Resource) {
-                s = context.inContext(((Resource) o).id());
-                if (s != null) {
-                    newContext.addNamespace(s[0], s[1]);
-                }
-            } else if (o instanceof Literal) {
-                s = context.inContext(((Literal) o).type());
-                if (s != null) {
-                    newContext.addNamespace(s[0], s[1]);
-                }
-            }
-        }
-        this.context = newContext;
-        writeNamespaces();
     }
 
     public TurtleWriter writeNamespaces() throws IOException {
@@ -392,7 +361,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         } else if (object instanceof IdentifiableNode) {
             writeURI(((IdentifiableNode)object).id());
         } else {
-            throw new IllegalArgumentException("unknown value class: " + (object != null ? object.getClass() : "<null>"));
+            throw new IllegalArgumentException("unknown value class: "
+                    + (object != null ? object.getClass() : "<null>"));
         }
     }
 
@@ -418,11 +388,12 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     }
 
     private void writeURI(IRI uri) throws IOException {
-        String abbrev = context.compact(uri, ':', false);
+        String abbrev = context.compact(uri);
         if (!abbrev.equals(uri.toString())) {
             sb.append(abbrev);
             return;
         }
+        // URI scheme = namespace prefix in context?
         if (context.getNamespaceURI(uri.getScheme()) != null) {
             sb.append(uri.toString());
             return;
@@ -437,7 +408,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         if (translatePicaSortMarker != null) {
             literal = recognizeSortOrder(literal, translatePicaSortMarker);
         }
-        String value = literal.object().toString();
+        String value = literal.nativeValue().toString();
         if (value.indexOf('\n') > 0 || value.indexOf('\r') > 0 || value.indexOf('\t') > 0) {
             // Write label as long string
             sb.append("\"\"\"")
@@ -451,12 +422,10 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         }
         if (literal.type() != null) {
             // Append the literal's type
-            sb.append("^^")
-                .append(literal.type().toString());
+            sb.append("^^").append(literal.type().toString());
         } else if (literal.language() != null) {
             // Append the literal's language
-            sb.append('@')
-              .append(literal.language());
+            sb.append('@').append(literal.language());
         }
     }
 
@@ -493,6 +462,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
                     samePredicate = false;
                 }
             } else {
+                // what about stack???
                 sb.append(".")
                 .append(LF);
                 sameSubject = false;

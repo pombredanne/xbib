@@ -39,6 +39,6 @@ public class GetRecordRequest extends DefaultOAIRequest implements OAIRequest {
 
     public GetRecordRequest(OAISession session) {
         super(session);
-        addParameter(VERB_PARAMETER, "GetRecord");
+        addParameter(VERB_PARAMETER, GET_RECORD);
     }
 }

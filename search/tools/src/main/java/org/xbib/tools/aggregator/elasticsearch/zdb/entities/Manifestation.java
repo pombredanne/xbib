@@ -32,6 +32,7 @@
 package org.xbib.tools.aggregator.elasticsearch.zdb.entities;
 
 import org.xbib.date.DateUtil;
+import org.xbib.grouping.bibliographic.work.PublishedJournal;
 import org.xbib.map.MapBasedAnyObject;
 
 import java.text.DecimalFormat;
@@ -44,23 +45,44 @@ import java.util.Map;
 public class Manifestation extends MapBasedAnyObject {
 
     private final String id;
+
     private final String targetID;
+
     private final String key;
+
     private final String title;
+
+    private final String publisher;
+
     private final String language;
+
     private final String fromDate;
+
     private final String toDate;
+
     private final String description;
+
     private boolean head;
+
     private boolean part;
+
     private boolean hasPrintEdition;
+
     private String contentType;
+
     private String mediaType;
+
     private String carrierType;
+
     private boolean isSupplement;
+
     private String supplementID;
+
     private String supplementTargetID;
+
     private Map<String,Object> identifiers;
+
+    private String unique;
 
     public Manifestation(Map<String, Object> m) {
         super(m);
@@ -68,6 +90,7 @@ public class Manifestation extends MapBasedAnyObject {
         this.id = getString("IdentifierDNB.identifierDNB");
         this.targetID = getString("IdentifierZDB.identifierZDB");
         this.title = getString("TitleStatement.titleMain");
+        this.publisher = getString("PublicationStatement.publisherName");
         this.language = getString("Language.value", "unknown");
         this.fromDate = getString("date1");
         this.toDate = getString("date2");
@@ -93,6 +116,11 @@ public class Manifestation extends MapBasedAnyObject {
         // last, compute key
         this.key = computeKey();
         this.identifiers = makeIdentifiers();
+        // unique identifier
+        this.unique = new PublishedJournal()
+                .journalName(title)
+                .publisherName(publisher)
+                .createIdentifier();
     }
 
     public Manifestation(Manifestation m, String id, String targetID,
@@ -101,6 +129,7 @@ public class Manifestation extends MapBasedAnyObject {
         this.id = id;
         this.targetID = targetID;
         this.title = m.title();
+        this.publisher = m.publisher();
         this.language = m.language();
         this.fromDate = m.fromDate();
         this.toDate = m.toDate();
@@ -114,6 +143,7 @@ public class Manifestation extends MapBasedAnyObject {
         this.contentType = contentType;
         this.mediaType = mediaType;
         this.carrierType = carrierType;
+        this.unique = m.getUniqueIdentifier();
         this.key = computeKey();
     }
 
@@ -154,6 +184,10 @@ public class Manifestation extends MapBasedAnyObject {
 
     public String title() {
         return title;
+    }
+
+    public String publisher() {
+        return publisher;
     }
 
     public String language() {
@@ -198,6 +232,10 @@ public class Manifestation extends MapBasedAnyObject {
 
     public Map<String,Object> getIdentifiers() {
         return identifiers;
+    }
+
+    public String getUniqueIdentifier() {
+        return unique;
     }
 
     private void computeTypes() {
@@ -333,6 +371,7 @@ public class Manifestation extends MapBasedAnyObject {
 
     private Map<String,Object> makeIdentifiers() {
         Map<String,Object> m = new HashMap();
+        // get all ISSN
         m.put("issn", map().get("IdentifierISSN"));
         return m;
     }

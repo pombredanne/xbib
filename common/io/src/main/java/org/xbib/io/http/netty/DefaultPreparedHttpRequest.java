@@ -36,6 +36,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.HttpResponseBodyPart;
 import com.ning.http.client.HttpResponseHeaders;
 import com.ning.http.client.HttpResponseStatus;
+import com.ning.http.client.Request;
 import org.xbib.io.http.HttpFuture;
 import org.xbib.io.http.HttpRequest;
 import org.xbib.io.http.HttpResponse;
@@ -65,6 +66,7 @@ public class DefaultPreparedHttpRequest implements PreparedHttpRequest {
         this.bound = bound;
     }
 
+    @Override
     public DefaultPreparedHttpRequest setEncoding(String encoding) {
         this.encoding = encoding;
         return this;
@@ -74,11 +76,17 @@ public class DefaultPreparedHttpRequest implements PreparedHttpRequest {
         return encoding;
     }
 
+    @Override
     public HttpFuture execute() throws IOException {
+        Request r = bound.build();
+        logger.debug("executing raw URL {}", r.getRawUrl());
         return new DefaultHttpFuture(bound.execute());
     }
 
+    @Override
     public HttpFuture execute(HttpResponseListener listener) throws IOException {
+        Request r = bound.build();
+        logger.debug("executing raw URL {}", r.getRawUrl());
         return new DefaultHttpFuture(bound.execute(new Handler(listener)));
     }
 
@@ -133,6 +141,7 @@ public class DefaultPreparedHttpRequest implements PreparedHttpRequest {
 
         @Override
         public void onThrowable(Throwable t) {
+            logger.error(t.getMessage(), t);
             result.setThrowable(t);
             if (listener != null) {
                 try {

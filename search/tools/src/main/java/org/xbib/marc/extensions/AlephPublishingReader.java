@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -54,6 +55,7 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
 import org.xbib.importer.AbstractImporter;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionService;
@@ -71,20 +73,35 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
 
     private final static Logger logger = LoggerFactory.getLogger(AlephPublishingReader.class.getName());
     private XMLInputFactory factory = XMLInputFactory.newInstance();
+
     private final DecimalFormat df = new DecimalFormat("000000000");
+
     private final static int CLOB_BUF_SIZE = 8192;
+
     private URI uri;
+
     private Iterator<Integer> iterator;
-    private Integer pos;
+
+    private Integer sysNumber;
+
     private String library;
+
     private String name;
+
     private Connection<SQLSession> connection;
+
     private SQLSession session;
+
     private String clob;
+
     private StringBuilder sb = new StringBuilder();
+
     private MarcXchangeListener listener;
+
     private boolean prepared = false;
+
     private boolean inRecord = false;
+
     private final Object lock = new Object();
 
     public AlephPublishingReader() {
@@ -215,9 +232,6 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
             connection.close();
             logger.info("connection closed");
         }
-    }
-
-    public void release() throws IOException {
         if (iterator instanceof Closeable) {
             ((Closeable) iterator).close();
         }
@@ -256,9 +270,9 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
         do {
             skip = false;
             synchronized (lock) {
-                this.pos = iterator.hasNext() ? iterator.next() : null;
+                this.sysNumber = iterator.hasNext() ? iterator.next() : null;
             }
-            if (pos == null) {
+            if (sysNumber == null) {
                 this.prepared = false;
                 return false;
             }
@@ -266,7 +280,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
                 createSession();
             }
             final Map<String, String> params = new HashMap<>();
-            params.put("docNumber", df.format(pos));
+            params.put("docNumber", df.format(sysNumber));
             final Query query = new Query("select z00p_str, z00p_ptr from "
                     + library + ".z00p where z00p_set = '" + name + "' and z00p_doc_number = ?",
                     new String[]{"docNumber"}, params);
@@ -282,7 +296,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
                     this.prepared = true;
                     return true;
                 } else {
-                    logger.warn("skipped {}", pos);
+                    logger.warn("skipped {}", sysNumber);
                     skip = true;
                 }
             } catch (SQLException | IOException e) {
@@ -314,7 +328,7 @@ public class AlephPublishingReader extends AbstractImporter<Integer, Integer>
             logger.error(e.getMessage(), e);
         }
         prepared = false;
-        return pos;
+        return sysNumber;
     }
 
     private void processEvent(Stack<Field> stack, XMLEvent event) {
