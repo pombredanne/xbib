@@ -17,6 +17,8 @@ package org.xbib.json;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.namespace.QName;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -45,24 +47,34 @@ public class JsonXmlReader implements XMLReader {
 
     private final QName root;
 
+    private Map<String,Boolean> map = new HashMap();
+
     private ContentHandler contentHandler;
-    
+
+    private EntityResolver entityResolver;
+
+    private DTDHandler dtdHandler;
+
+    private ErrorHandler errorHandler;
+
     public JsonXmlReader(QName root) {
         this.root = root;
     }
 
     @Override
-    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
-        throw new UnsupportedOperationException();
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        map.put(name, value);
     }
 
     @Override
-    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return map.get(name);
     }
+
 
     @Override
     public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
@@ -72,22 +84,22 @@ public class JsonXmlReader implements XMLReader {
 
     @Override
     public void setEntityResolver(EntityResolver resolver) {
-        //ignore
+        this.entityResolver = resolver;
     }
 
     @Override
     public EntityResolver getEntityResolver() {
-        throw new UnsupportedOperationException();
+        return entityResolver;
     }
 
     @Override
     public void setDTDHandler(DTDHandler handler) {
-        //ignore
+        this.dtdHandler = handler;
     }
 
     @Override
     public DTDHandler getDTDHandler() {
-        throw new UnsupportedOperationException();
+        return dtdHandler;
     }
 
     @Override
@@ -102,12 +114,12 @@ public class JsonXmlReader implements XMLReader {
 
     @Override
     public void setErrorHandler(ErrorHandler handler) {
-        //ignore
+        this.errorHandler = handler;
     }
 
     @Override
     public ErrorHandler getErrorHandler() {
-        throw new UnsupportedOperationException();
+        return errorHandler;
     }
 
     @Override

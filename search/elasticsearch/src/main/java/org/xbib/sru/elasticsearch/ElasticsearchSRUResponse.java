@@ -51,6 +51,8 @@ import org.xbib.io.OutputFormat;
 import org.xbib.io.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.transform.JsonStylesheet;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUVersion;
 import org.xbib.sru.facet.FacetedResult;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
@@ -63,6 +65,11 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
+
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUResponse.class.getName());
+
+    // javax.xml.parsers.DocumentBuilderFactory
+    private DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     private ElasticsearchSRURequest request;
 
@@ -101,12 +108,13 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
             responseFacets.parse(facets);
             String xmlFacets = facetedResult.toXML();
 
+            logger.debug("facets built = {}", xmlFacets);
+
             // this does not work, but would be sooo nice
             //getTransformer().addParameter("facets", new StreamSource(new StringReader(xmlFacets)));
 
             // build DOM, pass it to XSL as parameter
             if (xmlFacets != null && xmlFacets.length() > 0) {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 try {
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     Document doc = builder.parse(new InputSource(new StringReader(xmlFacets)));
