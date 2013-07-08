@@ -54,7 +54,7 @@ public class WorkAuthor implements IdentifiableEndeavor {
 
     private final static Set<String> blacklist =
             InputService.getTextLinesFromInputStream(
-                    "/org/xbib/grouping/bibliographic/work/work-blacklist.txt");
+                    "/org/xbib/grouping/bibliographic/endeavor/work-blacklist.txt");
 
     public WorkAuthor() {
     }

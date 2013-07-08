@@ -22,22 +22,22 @@ public class PrivateSRUServiceTest {
     public void testSRUService() throws IOException {
         for (String name : Arrays.asList("DE-600", "DE-601", "DE-602", "DE-604", "DE-604", "DE-605")) {
             logger.info("trying " + name);
-            SRUService service = ZSRUServiceFactory.getService(name);
-            SRUClient client = service.newClient();
-            FileOutputStream out = new FileOutputStream("target/sru-" + service.getURI().getHost() + ".xml");
-            try (Writer writer = new OutputStreamWriter(out, "UTF-8")) {
-                String query = "dc.title = test";
-                int from = 1;
-                int size = 10;
-                try {
+            try {
+                SRUService service = ZSRUServiceFactory.getService(name);
+                SRUClient client = service.newClient();
+                FileOutputStream out = new FileOutputStream("target/sru-" + service.getURI().getHost() + ".xml");
+                try (Writer writer = new OutputStreamWriter(out, "UTF-8")) {
+                    String query = "dc.title = test";
+                    int from = 1;
+                    int size = 10;
                     SearchRetrieveRequest request = client.newSearchRetrieveRequest();
                     request.setQuery(query)
                             .setStartRecord(from)
                             .setMaximumRecords(size);
                     client.execute(request).to(writer);
-                } catch (Exception e) {
-                    logger.warn(e.getMessage());
                 }
+            } catch (Exception e) {
+                logger.warn(e.getMessage());
             }
         }
     }

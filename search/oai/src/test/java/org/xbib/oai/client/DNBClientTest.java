@@ -57,8 +57,8 @@ public class DNBClientTest {
 
     @Test
     public void testIdentify() throws Exception {
-        logger.info("trying to connect to ZDB for Identify request");
-        OAIClient client = OAIClientFactory.newClient("ZDB");
+        logger.info("trying to connect to DNB for Identify request");
+        OAIClient client = OAIClientFactory.newClient("http://services.dnb.de/oai/repository");
         IdentifyRequest request = client.newIdentifyRequest();
         request.prepare().execute(new IdentifyResponseListener() {}).waitFor();
     }
