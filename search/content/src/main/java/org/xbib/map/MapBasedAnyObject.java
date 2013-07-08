@@ -16,10 +16,6 @@
 
 package org.xbib.map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -30,8 +26,6 @@ import java.util.Map;
 public class MapBasedAnyObject implements AnyObject {
 
     private final Map map;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public MapBasedAnyObject(Map map) {
         this.map = new LinkedHashMap(map);
@@ -55,8 +49,7 @@ public class MapBasedAnyObject implements AnyObject {
         if (o instanceof List) {
             o = ((List)o).get(0);
         }
-        return (T) (key.length > 1
-                ? get((Map) o, Arrays.copyOfRange(key, 1, key.length)) : o);
+        return (T) (key.length > 1 ? get((Map) o, Arrays.copyOfRange(key, 1, key.length)) : o);
     }
 
     <T> T getAll(String key) {
@@ -154,20 +147,6 @@ public class MapBasedAnyObject implements AnyObject {
 
     public Boolean getBoolean(String key, Boolean defValue) {
         return (Boolean) get(key, defValue);
-    }
-
-    public byte[] toJsonAsBytes() throws IOException {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            mapper.writeValue(out, map);
-            return out.toByteArray();
-        }
-    }
-
-    public String toJson() throws IOException {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            mapper.writeValue(out, map);
-            return out.toString();
-        }
     }
 
     public String toString() {

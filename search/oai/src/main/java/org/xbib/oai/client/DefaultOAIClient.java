@@ -75,12 +75,6 @@ public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
     }
 
     @Override
-    public DefaultOAIClient setTimeout(long millis) {
-        super.setTimeout((int)millis);
-        return this;
-    }
-
-    @Override
     public DefaultHttpSession getSession() {
         return this;
     }

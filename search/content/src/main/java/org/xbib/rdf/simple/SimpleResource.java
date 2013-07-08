@@ -32,7 +32,6 @@
 package org.xbib.rdf.simple;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.xbib.iri.IRI;
@@ -56,7 +55,7 @@ import org.xbib.rdf.context.ResourceContext;
 public class SimpleResource<S extends Identifier, P extends Property, O extends Node>
         extends AbstractResource<S, P, O> {
 
-    private transient final Factory<S,P,O> factory = Factory.getInstance();
+    private transient final SimpleFactory<S,P,O> simpleFactory = SimpleFactory.getInstance();
 
     private ResourceContext context = new SimpleResourceContext();
 
@@ -82,75 +81,75 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
 
     @Override
     public Resource<S, P, O> add(P predicate, String value) {
-        return add(predicate, factory.asLiteral(value));
+        return add(predicate, simpleFactory.asLiteral(value));
     }
 
     @Override
     public Resource<S, P, O> add(P predicate, Integer value) {
-        return add(predicate, factory.asLiteral(value));
+        return add(predicate, simpleFactory.asLiteral(value));
     }
 
     @Override
     public Resource<S, P, O> add(P predicate, Collection literals) {
         for (Object object : literals) {
-            add(predicate, factory.asLiteral(object));
+            add(predicate, simpleFactory.asLiteral(object));
         }
         return this;
     }
 
     @Override
     public Resource<S, P, O> add(String predicate, String value) {
-        return add(factory.asPredicate(predicate), value);
+        return add(simpleFactory.asPredicate(predicate), value);
     }
 
     @Override
     public Resource<S, P, O> add(String predicate, Integer value) {
-        return add(factory.asPredicate(predicate), value);
+        return add(simpleFactory.asPredicate(predicate), value);
     }
 
     @Override
     public Resource<S, P, O> add(String predicate, Literal value) {
-        return add(factory.asPredicate(predicate), value);
+        return add(simpleFactory.asPredicate(predicate), value);
     }
     
     @Override
     public Resource<S, P, O> add(String predicate, IRI externalResource) {
-        return add(factory.asPredicate(predicate), externalResource);
+        return add(simpleFactory.asPredicate(predicate), externalResource);
     }
 
     @Override
     public Resource<S, P, O> add(String predicate, Collection literals) {
-        return add(factory.asPredicate(predicate), literals);
+        return add(simpleFactory.asPredicate(predicate), literals);
     }
 
     @Override
     public Resource<S, P, O> newResource(IRI predicate) {
-        return newResource(factory.asPredicate(predicate));
+        return newResource(simpleFactory.asPredicate(predicate));
     }
 
     @Override
     public Resource<S, P, O> newResource(String predicate) {
-        return newResource(factory.asPredicate(predicate));
+        return newResource(simpleFactory.asPredicate(predicate));
     }
 
     @Override
     public Resource<S, P, O> add(String predicate, Resource<S, P, O> resource) {
-        return add(factory.asPredicate(predicate), resource);
+        return add(simpleFactory.asPredicate(predicate), resource);
     }
     
     @Override
     public Set<P> predicateSet(String subject) {
-        return predicateSet(factory.asSubject(subject));
+        return predicateSet(simpleFactory.asSubject(subject));
     }
 
     @Override
     public Collection<O> objects(String predicate) {
-        return objects(factory.asPredicate(predicate));
+        return objects(simpleFactory.asPredicate(predicate));
     }
 
     @Override
     public O literal(String predicate) {
-        return literal(factory.asPredicate(predicate));
+        return literal(simpleFactory.asPredicate(predicate));
     }
 
     @Override
@@ -192,12 +191,12 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     }
 
     public Resource<S, P, O> type(IRI type) {
-        add(factory.rdfType(), type);
+        add(simpleFactory.rdfType(), type);
         return this;
     }
 
     public IRI type() {
-        Collection<Node> c = attributes.get(factory.rdfType());
+        Collection<Node> c = attributes.get(simpleFactory.rdfType());
         Node node = c != null ? c.iterator().hasNext() ?
                 c.iterator().next()
                 : null : null;
@@ -205,12 +204,12 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     }
 
     public Resource<S, P, O> language(String lang) {
-        add(factory.rdfLang(), lang);
+        add(simpleFactory.rdfLang(), lang);
         return this;
     }
 
     public String language() {
-        Collection<Node> c = attributes.get(factory.rdfLang());
+        Collection<Node> c = attributes.get(simpleFactory.rdfLang());
         return c != null ? c.iterator().hasNext() ?
                 c.iterator().next().toString()
                 : null : null;

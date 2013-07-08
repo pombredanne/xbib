@@ -51,7 +51,7 @@ import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.Triplifier;
-import org.xbib.rdf.simple.Factory;
+import org.xbib.rdf.simple.SimpleFactory;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.simple.SimpleResource;
@@ -71,7 +71,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
 
     private final Logger logger = LoggerFactory.getLogger(TurtleReader.class.getName());
 
-    private final Factory<S,P,O> factory = Factory.getInstance();
+    private final SimpleFactory<S,P,O> simpleFactory = SimpleFactory.getInstance();
     /**
      * The base IRI
      */
@@ -305,14 +305,14 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
         if (ch == 'a') {
             char ch2 = read();
             if (isWhitespace(ch2)) {
-                return factory.asPredicate("rdf:type");
+                return simpleFactory.asPredicate("rdf:type");
             }
             reader.unread(ch2);
         }
         reader.unread(ch);
         O obj = parseValue();
         if (obj instanceof Resource) {
-            return factory.asPredicate(obj.toString());
+            return simpleFactory.asPredicate(obj.toString());
         } else {
             throw new IOException(baseIRI + ": illegal predicate value: " + obj);
         }
@@ -446,7 +446,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             if (ch != ':') {
                 String value = sb.toString();
                 if (value.equals("true") || value.equals("false")) {
-                    return (O)factory.newLiteral(value).type(IRI.create("xsd:boolean"));
+                    return (O) simpleFactory.newLiteral(value).type(IRI.create("xsd:boolean"));
                 }
             }
             validate(ch, ':');
@@ -520,14 +520,14 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             S oldsubject = subject;
             P oldpredicate = predicate;
             subject = (S)first.id();
-            predicate = factory.asPredicate("rdf:first");
+            predicate = simpleFactory.asPredicate("rdf:first");
             parseObject();
             ch = skipWhitespace();
             Identifier blanknode = new IdentifiableNode().id(first.id());
             while (ch != ')') {
                 Identifier value = new IdentifiableNode();
                 if (listener != null) {
-                    listener.triple(new SimpleTriple(blanknode, factory.asPredicate("rdf:rest"), value));
+                    listener.triple(new SimpleTriple(blanknode, simpleFactory.asPredicate("rdf:rest"), value));
                 }
                 subject = (S) value;
                 blanknode = value;
@@ -537,7 +537,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
             reader.read();
             if (listener != null) {
                 listener.triple(new SimpleTriple(blanknode,
-                        factory.asPredicate("rdf:rest"),
+                        simpleFactory.asPredicate("rdf:rest"),
                         "rdf:null"));
             }
             subject = oldsubject;

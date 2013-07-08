@@ -43,6 +43,10 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
+/**
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public class OAIServiceFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(OAIServiceFactory.class.getName());

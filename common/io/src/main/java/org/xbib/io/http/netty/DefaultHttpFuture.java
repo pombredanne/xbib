@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * Default HTTP future
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -52,7 +53,6 @@ public class DefaultHttpFuture implements HttpFuture {
 
     public void waitFor() throws InterruptedException, ExecutionException, TimeoutException {
         future.get();
-
     }
 
     public void waitFor(long l, TimeUnit tu) throws InterruptedException, ExecutionException, TimeoutException {

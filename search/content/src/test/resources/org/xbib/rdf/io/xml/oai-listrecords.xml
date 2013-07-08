@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+
+    <responseDate>2013-06-29T18:31:40Z</responseDate>
+    <request verb="ListRecords" metadataPrefix="doajArticle" from="1994-12-31T23:00:00Z" until="2013-06-30T22:00:00Z">http://www.doaj.org/oai.article</request>
+    <ListRecords>
+<record>
+<header>
+<identifier>oai:doaj-articles:8f128127aa68db508da01e428930bbcc</identifier>
+<datestamp>2004-05-31T00:00:00Z</datestamp>
+<setSpec>Health_Sciences</setSpec>
+</header>
+<metadata>
+    <record xmlns="http://www.doaj.org/schemas/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.doaj.org/schemas/ http://www.doaj.org/schemas/doajArticle.xsd">
+        <publisher>Medknow Publications</publisher>
+        <journalTitle>Journal of Postgraduate Medicine</journalTitle>
+        <issn>00223859</issn>
+        <eissn>09722823</eissn>
+        <publicationDate>2003</publicationDate>
+        <volume>49</volume>
+        <issue>2</issue>
+        <startPage>182</startPage>
+        <endPage>5</endPage>
+        <title>Brain natriuretic peptide in diagnosis and treatment of heart failure.</title>
+        <authors>
+            <author>
+                <name>Bhatia V</name>
+            </author>
+            <author>
+                <name>Nayyar P</name>
+            </author>
+            <author>
+                <name>Dhindsa S</name>
+            </author>
+        </authors>
+        <abstract>Currently we are in the midst of a chronic disease epidemic of congestive heart failure (CHF) worldwide. This epidemic is marked by a rapid rise in prevalent cases over the past decade that is due in part to the aging population and improved survival in patients with other cardiovascular conditions. At present there are 5 million Americans with congestive heart failure, with nearly 500000 new cases every year. To provide cost-effective treatment for patients with congestive heart failure, rapid and accurate differentiation of congestive heart failure from other causes of dyspnea must be accomplished. Although echocardiography is considered the gold standard for the detection of left ventricular dysfunction, it is expensive, is not always easily accessible, and may not always reflect an acute condition. B-type natriuretic peptide (BNP) is a cardiac neurohormone specifically secreted from the cardiac ventricles as a response to ventricular volume expansion, pressure overload, and resultant increased wall tension. BNP can be used in the diagnosis of CHF. However, the present American College of Cardiology/American Heart Association practice guidelines (2001) for the evaluation and management of CHF state that the role of blood BNP in the identification of patients with CHF remains to be fully clarified. We have discussed the role of BNP in the diagnosis and management of CHF.</abstract>
+        <fullTextUrl>http://www.jpgmonline.com/article.asp?issn=0022-3859;year=2003;volume=49;issue=2;spage=182;epage=5;aulast=Bhatia</fullTextUrl>
+     </record>
+</metadata>
+</record>
+<resumptionToken cursor="0" completeListSize="1138208">:1994-12-31T23:00:00Z:2013-06-30T22:00:00Z:doajArticle:50</resumptionToken>
+</ListRecords>
+
+</OAI-PMH>

@@ -40,7 +40,13 @@ public interface Packet<P> {
 
     String name();
 
+    Packet<P> name(String name);
+
     long number();
 
+    Packet<P> number(long number);
+
     P packet();
+
+    Packet<P> packet(P packet);
 }

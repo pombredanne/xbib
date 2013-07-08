@@ -50,7 +50,7 @@ import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.rdf.io.RDFSerializer;
+import org.xbib.rdf.io.ResourceSerializer;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.SimpleResource;
 
@@ -65,7 +65,7 @@ import org.xbib.rdf.simple.SimpleResource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TurtleWriter<S extends Identifier, P extends Property, O extends Node>
-    implements RDFSerializer<S,P,O>, TripleListener<S,P,O> {
+    implements ResourceSerializer<S,P,O>, TripleListener<S,P,O> {
 
     private final Logger logger = LoggerFactory.getLogger(TurtleWriter.class.getName());
 
@@ -81,30 +81,25 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
      */
     private IRINamespaceContext context;
 
-    /**
-     * Flag for write start
-     */
-    private boolean writingStarted;
+    private boolean sameResource;
 
-    private boolean sameSubject;
-
-    private boolean samePredicate;
-    /**
-     * for indenting
-     */
-    private Stack<Triple<S,P,O>> stack;
+    private boolean sameProperty;
 
     private S lastSubject;
 
     private P lastPredicate;
-    /**
-     * the current triple
-     */
+
+    private Stack<IRI> embedded;
+
+    private Stack<Triple<S,P,O>> triples;
+
     private Triple<S,P,O> triple;
 
     private boolean nsWritten;
 
     private String translatePicaSortMarker;
+
+    private StringBuilder namespaceBuilder;
 
     private StringBuilder sb;
 
@@ -116,14 +111,15 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         this.context = IRINamespaceContext.newInstance();
         this.nsWritten = false;
         this.resource = new SimpleResource();
-        this.writingStarted = false;
-        this.sameSubject = false;
-        this.samePredicate = false;
-        this.stack = new Stack();
+        this.sameResource = false;
+        this.sameProperty = false;
+        this.triples = new Stack();
+        this.embedded = new Stack();
         this.byteCounter = 0L;
         this.idCounter = 0L;
-        this.sb = new StringBuilder();
         this.translatePicaSortMarker = null;
+        this.namespaceBuilder = new StringBuilder();
+        this.sb = new StringBuilder();
     }
 
     public TurtleWriter setContext(IRINamespaceContext context) {
@@ -183,6 +179,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
 
     public void close() {
         try {
+            // write last resource
             write(resource);
             idCounter++;
             writer.flush();
@@ -206,40 +203,29 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
 
     @Override
     public TurtleWriter write(Resource<S, P, O> resource) throws IOException {
-        if (resource != null) {
-            start();
-            Iterator<Triple<S, P, O>> it = resource.iterator();
-            while (it.hasNext()) {
-                writeTriple(it.next());
-            }
-            end();
-            if (writer != null) {
-                writer.write(sb.toString());
-            }
-            byteCounter += sb.length();
-            sb.setLength(0);
+        if (resource == null) {
+            return this;
         }
-        // for safe next resource writing, empty stack here
-        stack.clear();
+        Iterator<Triple<S, P, O>> it = resource.iterator();
+        while (it.hasNext()) {
+            writeTriple(it.next());
+        }
+        // close hanging embedded resources
+        while (!embedded.isEmpty()) {
+            closeEmbeddedResource();
+        }
+        if (sb.length() > 0) {
+            sb.append('.').append(LF);
+        }
+        if (writer != null) {
+            writer.write(namespaceBuilder.toString());
+            writer.write(sb.toString());
+        }
+        byteCounter += namespaceBuilder.length();
+        byteCounter += sb.length();
+        namespaceBuilder.setLength(0);
+        sb.setLength(0);
         return this;
-    }
-
-    private void start() throws IOException {
-        if (writingStarted) {
-            throw new IOException("document writing has already started");
-        }
-        writingStarted = true;
-    }
-
-    private void end() throws IOException {
-        if (!writingStarted) {
-            throw new IOException("document writing has not yet started");
-        }
-        try {
-            closeStatement();
-        } finally {
-            writingStarted = false;
-        }
     }
 
     public TurtleWriter writeNamespaces() throws IOException {
@@ -251,24 +237,20 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             if (entry.getValue().length() > 0) {
                 String nsURI = entry.getValue().toString();
                 if (!RDF.NS_URI.equals(nsURI)) {
-                    writeNamespace(entry.getKey(), nsURI);
+                    namespaceBuilder.append("@prefix ")
+                            .append(entry.getKey())
+                            .append(": <")
+                            .append(encodeURIString(nsURI))
+                            .append("> .")
+                            .append(LF);
                     nsWritten = true;
                 }
             }
         }
         if (nsWritten) {
-            sb.append(LF);
+            namespaceBuilder.append(LF);
         }
         return this;
-    }
-
-    private void writeNamespace(String prefix, String name) throws IOException {
-        sb.append("@prefix ")
-                .append(prefix)
-                .append(": <")
-                .append(encodeURIString(name))
-                .append("> .")
-                .append(LF);
     }
 
     /**
@@ -278,9 +260,6 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
      * @throws IOException
      */
     public void writeTriple(Triple<S,P,O> stmt) throws IOException {
-        if (!writingStarted) {
-            throw new IOException("document writing has not yet been started");
-        }
         this.triple = stmt;
         S subject = stmt.subject();
         P predicate = stmt.predicate();
@@ -288,40 +267,69 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         if (subject == null || predicate == null) {
             return;
         }
-        if (subject.equals(lastSubject)) {
-            if (predicate.equals(lastPredicate)) {
+        boolean sameSubject = subject.equals(lastSubject);
+        boolean samePredicate = predicate.equals(lastPredicate);
+        if (sameSubject) {
+            if (samePredicate) {
                 sb.append(", ");
                 writeObject(object);
             } else {
                 // same subject, predicate changed
                 sb.append(';');
                 sb.append(LF);
-                writeIndent(stack.size() + 1);
+                writeIndent(embedded.size() + 1);
                 writePredicate(predicate);
                 writeObject(object);
             }
         } else {
-            // another subject
-            closeStatement();
-            writeIndent(stack.size());
-            if (!sameSubject) {
+            // embedded resource switchback?
+            IRI iri = embedded.isEmpty() ? null : embedded.peek();
+            boolean closeEmbedded = isBlank(lastSubject) && !subject.id().equals(iri);
+            int n = embedded.indexOf(iri) - embedded.indexOf(subject.id());
+            if (closeEmbedded) {
+                for (int i = 0; i < n; i++) {
+                    closeEmbeddedResource();
+                }
+            }
+            // continuation (only if last subject is there)
+            if (lastSubject != null) {
+                if (sameResource) {
+                    if (sameProperty) {
+                        sb.append(','); // values on same line
+                    } else {
+                        sb.append(';').append(LF); // other property
+                        writeIndent(1);
+                        writeIndent(embedded.size());
+                    }
+                } else {
+                    if (sameProperty) {
+                        sb.append(";").append(LF);
+                        writeIndent(1);
+                    } else if (closeEmbedded) {
+                        sb.append(";").append(LF); // not really cute...
+                        writeIndent(1);
+                    }
+                    writeIndent(embedded.size());
+                }
+            }
+            // don't repeat subject in same resource
+            if (!sameResource) {
                 writeSubject(subject);
+            }
+            // don't repeat predicate in same property
+            if (!sameProperty) {
                 writePredicate(predicate);
-                sameSubject = true;
-                samePredicate = true;
-            } else if (!samePredicate) {
-                writePredicate(predicate);
-                samePredicate = true;
             }
             writeObject(object);
         }
     }
 
     private void writeSubject(S subject) throws IOException {
-        if (subject == null || subject.id() == null) {
+        if (subject.id() == null) {
+            sb.append("<> ");
             return;
         }
-        // skip blank nodes 
+        // do not output blank subjects
         if (!isBlank(subject)) {
             sb.append('<')
                 .append(subject.toString())
@@ -330,12 +338,15 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         lastSubject = subject;
     }
 
+    private final static String TYPE = RDF.NS_URI + "type";
+
     private void writePredicate(P predicate) throws IOException {
-        if (predicate == null) {
+        if (predicate.id() == null) {
             sb.append("<> ");
             return;
         }
-        if ("rdf:type".equals(predicate.toString()) || predicate.toString().equals(RDF.NS_URI + "type")) {
+        String p = predicate.toString();
+        if ("rdf:type".equals(p)|| TYPE.equals(p)) {
             sb.append("a ");
         } else {
             writeURI(predicate.id());
@@ -349,10 +360,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             Resource r = (Resource<S,P,O>)object;
             if (isBlank(r)) {
                 // blank node?
-                openResource();
-                sameSubject = false;
-                samePredicate = false;
-                lastSubject = (S)r;
+                openEmbeddedResource(r.id());
+                sameResource = false;
+                sameProperty = false;
             } else {
                 writeURI(r.id());
             }
@@ -366,25 +376,27 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         }
     }
 
-    private void openResource() throws IOException {
-        stack.push(triple);
-        sb.append('[')
-           .append(LF);
+    private void openEmbeddedResource(IRI iri) throws IOException {
+        triples.push(triple);
+        embedded.push(iri);
+        sb.append('[').append(LF);
         writeIndent(1);
     }
 
-    private void closeResource() throws IOException {
-        if (!stack.isEmpty()) {
-            sb.append(LF);
-            writeIndent(stack.size());
-            sb.append(']');
-            Triple<S,P,O> t = stack.pop();
-            lastSubject = t.subject();
-            lastPredicate = t.predicate();
-        } else {
-            lastSubject = null;
-            lastPredicate = null;
+    private IRI closeEmbeddedResource() throws IOException {
+        if (embedded.isEmpty()) {
+            return null;
         }
+        sb.append(LF);
+        writeIndent(embedded.size());
+        sb.append(']');
+        Triple<S,P,O> t = triples.pop();
+        lastSubject = t.subject();
+        lastPredicate = t.predicate();
+        IRI iri = ((Identifier)t.object()).id();
+        sameResource = triple.subject().equals(lastSubject);
+        sameProperty = triple.predicate().equals(lastPredicate);
+        return embedded.pop();
     }
 
     private void writeURI(IRI uri) throws IOException {
@@ -447,27 +459,6 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
                     .language(language);
         }
         return literal;
-    }
-
-    private void closeStatement() throws IOException {
-        if (sameSubject) {
-            closeResource();
-            if (triple.subject().equals(lastSubject)) {
-                if (triple.predicate().equals(lastPredicate)) {
-                    sb.append(',');
-                } else {
-                    sb.append(';')
-                    .append(LF);
-                    writeIndent(1);
-                    samePredicate = false;
-                }
-            } else {
-                // what about stack???
-                sb.append(".")
-                .append(LF);
-                sameSubject = false;
-            }
-        }
     }
 
     private void writeIndent(int indentLevel) throws IOException {
@@ -589,7 +580,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         return buf.toString();
     }
 
-    private boolean isBlank(Identifier n) {
-        return Identifier.GENID.equals(n.id().getScheme());
+    private boolean isBlank(Identifier id) {
+        return id == null ? false : Identifier.GENID.equals(id.id().getScheme());
     }
+
 }

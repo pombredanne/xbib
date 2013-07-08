@@ -34,28 +34,28 @@ package org.xbib.elements.dublincore;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
-import org.xbib.rdf.simple.Factory;
+import org.xbib.rdf.simple.SimpleFactory;
 
 /**
  * THe Dublin Core Elements as RDF Properties
  */
 public interface DublinCoreProperties extends DC {
 
-    final Factory<Identifier,Property,Node> factory = Factory.getInstance();
+    final SimpleFactory<Identifier,Property,Node> SIMPLE_FACTORY = SimpleFactory.getInstance();
     
-    Property DC_CREATOR = factory.asPredicate(NS_URI + "creator");
-    Property DC_CONTRIBUTOR = factory.asPredicate(NS_URI + "contributor");
-    Property DC_COVERAGE = factory.asPredicate(NS_URI + "coverage");
-    Property DC_DATE = factory.asPredicate(NS_URI  + "date");
-    Property DC_DESCRIPTION = factory.asPredicate(NS_URI + "description");
-    Property DC_FORMAT =factory.asPredicate( NS_URI + "format");
-    Property DC_IDENTIFIER = factory.asPredicate(NS_URI + "identifier");
-    Property DC_LANGUAGE = factory.asPredicate(NS_URI + "language");
-    Property DC_PUBLISHER = factory.asPredicate(NS_URI + "publisher");
-    Property DC_SOURCE = factory.asPredicate(NS_URI + "source");
-    Property DC_SUBJECT = factory.asPredicate(NS_URI + "subject");
-    Property DC_RELATION = factory.asPredicate(NS_URI + "relation");
-    Property DC_RIGHTS = factory.asPredicate(NS_URI + "rights");
-    Property DC_TITLE = factory.asPredicate(NS_URI + "title");
-    Property DC_TYPE = factory.asPredicate(NS_URI + "type");
+    Property DC_CREATOR = SIMPLE_FACTORY.asPredicate(NS_URI + "creator");
+    Property DC_CONTRIBUTOR = SIMPLE_FACTORY.asPredicate(NS_URI + "contributor");
+    Property DC_COVERAGE = SIMPLE_FACTORY.asPredicate(NS_URI + "coverage");
+    Property DC_DATE = SIMPLE_FACTORY.asPredicate(NS_URI  + "date");
+    Property DC_DESCRIPTION = SIMPLE_FACTORY.asPredicate(NS_URI + "description");
+    Property DC_FORMAT = SIMPLE_FACTORY.asPredicate( NS_URI + "format");
+    Property DC_IDENTIFIER = SIMPLE_FACTORY.asPredicate(NS_URI + "identifier");
+    Property DC_LANGUAGE = SIMPLE_FACTORY.asPredicate(NS_URI + "language");
+    Property DC_PUBLISHER = SIMPLE_FACTORY.asPredicate(NS_URI + "publisher");
+    Property DC_SOURCE = SIMPLE_FACTORY.asPredicate(NS_URI + "source");
+    Property DC_SUBJECT = SIMPLE_FACTORY.asPredicate(NS_URI + "subject");
+    Property DC_RELATION = SIMPLE_FACTORY.asPredicate(NS_URI + "relation");
+    Property DC_RIGHTS = SIMPLE_FACTORY.asPredicate(NS_URI + "rights");
+    Property DC_TITLE = SIMPLE_FACTORY.asPredicate(NS_URI + "title");
+    Property DC_TYPE = SIMPLE_FACTORY.asPredicate(NS_URI + "type");
 }

@@ -43,7 +43,6 @@ import org.xbib.logging.Loggers;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.io.TripleListener;
-import org.xbib.rdf.io.ntriple.NTripleWriter;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.CharUtils.Profile;
@@ -54,9 +53,8 @@ public class XmlReaderTest extends Assert {
 
     private final Logger logger = Loggers.getLogger(XmlReaderTest.class);
 
-
     @Test
-    public void testOAIReader() throws Exception {
+    public void testOAIDC() throws Exception {
         String filename = "/org/xbib/rdf/io/xml/oro-eprint-25656.xml";
         InputStream in = getClass().getResourceAsStream(filename);
         if (in == null) {

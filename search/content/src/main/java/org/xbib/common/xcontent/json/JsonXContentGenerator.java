@@ -199,6 +199,7 @@ public class JsonXContentGenerator implements XContentGenerator {
         flush();
         copy(content, bos);
     }
+
     public static final int BUFFER_SIZE = 1024 * 8;
 
     public static long copy(InputStream in, OutputStream out) throws IOException {

@@ -122,7 +122,11 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
                 } catch (SAXException | ParserConfigurationException e) {
                     throw new IOException(e);
                 }
+            } else {
+                logger.warn("no facet variable passed to XSLT");
             }
+        } else {
+            logger.warn("no facets in response");
         }
 
         // transport parameters into XSL transformer for style sheets

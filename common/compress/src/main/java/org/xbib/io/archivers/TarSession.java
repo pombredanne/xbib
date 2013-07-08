@@ -73,6 +73,9 @@ public class TarSession implements Session {
 
     private String part;
 
+    protected TarSession() {
+    }
+
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }

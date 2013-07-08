@@ -39,7 +39,6 @@ import org.xbib.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.Writer;
 
 public class DefaultOAIResponseListener<Response extends OAIResponse>
         extends DefaultHttpResponseListener implements OAIResponseListener<Response> {
@@ -81,12 +80,11 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
         if (result.getThrowable() != null) {
             throw new IOException(result.getThrowable());
         }
-        logger.info("got status {}", result.getStatusCode());
+        logger.info("got status = {}, content type = {}", result.getStatusCode(), result.getContentType());
         if (result.getBody() == null || result.getBody().isEmpty() ) {
             logger.error("no response");
             return;
         }
-        logger.info("got content type {}", result.getContentType());
         if (!result.getContentType().endsWith("xml")) {
             logger.warn("got non-XML body {}", result.getBody());
         } else {

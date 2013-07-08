@@ -31,14 +31,18 @@
  */
 package org.xbib.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 public class InputService {
 
@@ -86,4 +90,21 @@ public class InputService {
         }
         return output.toString();
     }
-}
+
+    public static Set<String> getTextLinesFromInputStream(String name)  {
+        Set<String> set = new HashSet();
+        try {
+            InputStream in = InputService.class.getResourceAsStream(name);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+            String line;
+            while ((line = br.readLine()) != null) {
+                set.add(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            return set;
+        }
+    }
+ }

@@ -47,8 +47,6 @@ public interface OAISession extends HttpSession {
 
     OAISession setProxy(String host, int port);
 
-    OAISession setTimeout(long timeout);
-
     void close() throws IOException;
 
 }

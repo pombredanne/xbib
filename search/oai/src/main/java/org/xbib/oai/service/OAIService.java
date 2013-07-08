@@ -51,6 +51,11 @@ import org.xbib.oai.set.ListSetsRequest;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.oai.set.ListSetsResponse;
 
+/**
+ *  OAI service
+ *
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ */
 public interface OAIService {
 
     URI getURI();

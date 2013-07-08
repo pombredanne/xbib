@@ -61,7 +61,7 @@ public class GroupStream extends SequentialCharStream {
         this.data = data;
     }
     
-    public Iterator<Group> createIterator() throws IOException {
+    public Iterator<GroupSeparable> createIterator() throws IOException {
         
         
         setListener( new CharStreamListener() {
@@ -90,7 +90,7 @@ public class GroupStream extends SequentialCharStream {
         // read first group
         readData();
         
-        return new Iterator<Group> () {
+        return new Iterator<GroupSeparable> () {
 
             @Override
             public boolean hasNext() {
@@ -98,13 +98,13 @@ public class GroupStream extends SequentialCharStream {
             }
 
             @Override
-            public Group next() {
-               Group group = new Group(data);
+            public GroupSeparable next() {
+               GroupSeparable groupSeparable = new GroupSeparable(data);
                 try {
                     readData();
                 } catch (IOException ex) {
                 }
-                return group;
+                return groupSeparable;
             }
 
             @Override

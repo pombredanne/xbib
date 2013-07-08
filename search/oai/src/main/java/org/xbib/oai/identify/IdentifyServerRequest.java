@@ -32,7 +32,6 @@
 package org.xbib.oai.identify;
 
 import org.xbib.oai.OAISession;
-import org.xbib.oai.identify.IdentifyRequest;
 import org.xbib.oai.service.ServerOAIRequest;
 
 import java.util.List;

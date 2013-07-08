@@ -114,7 +114,7 @@ public class JsonWriter<S extends Identifier, P extends Property, O extends Node
 
     @Override
     public TripleListener<S, P, O> triple(Triple<S, P, O> triple) {
-        return null;
+        return null; // TODO
     }
 
     public JsonWriter writeNamespaces() throws IOException {
@@ -135,6 +135,7 @@ public class JsonWriter<S extends Identifier, P extends Property, O extends Node
     }
 
     private void writeNamespace(String prefix, String name) throws IOException {
+        // TODO
 
     }
 

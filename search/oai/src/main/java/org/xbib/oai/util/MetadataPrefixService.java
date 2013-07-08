@@ -31,7 +31,7 @@
  */
 package org.xbib.oai.util;
 
-import org.xbib.rdf.io.XmlTriplifier;
+import org.xbib.rdf.io.xml.XmlTriplifier;
 import org.xbib.rdf.io.rdfxml.RdfXmlReader;
 import org.xbib.rdf.io.xml.XmlReader;
 

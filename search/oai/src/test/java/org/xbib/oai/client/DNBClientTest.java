@@ -33,7 +33,7 @@ package org.xbib.oai.client;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
+
 import org.testng.annotations.Test;
 import org.xbib.date.DateUtil;
 import org.xbib.iri.IRI;
@@ -43,11 +43,11 @@ import org.xbib.oai.identify.IdentifyRequest;
 import org.xbib.oai.identify.IdentifyResponseListener;
 import org.xbib.oai.record.ListRecordsRequest;
 import org.xbib.oai.record.ListRecordsResponseListener;
-import org.xbib.oai.util.MetadataPrefixService;
 import org.xbib.oai.util.MetadataHandler;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
-import org.xbib.rdf.io.XmlTriplifier;
+import org.xbib.rdf.io.xml.XmlReader;
+import org.xbib.rdf.io.xml.XmlTriplifier;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -64,7 +64,7 @@ public class DNBClientTest {
     }
 
     @Test
-    public void testListRecordsDOAJ() throws Exception {
+    public void testListRecordsDNB() throws Exception {
         logger.info("trying to connect to DNB");
 
         OAIClient client = OAIClientFactory.newClient("http://services.dnb.de/oai/repository");
@@ -75,7 +75,7 @@ public class DNBClientTest {
                 .setSet("bib")
                 .setMetadataPrefix("PicaPlus-xml");
 
-        final XmlTriplifier reader = MetadataPrefixService.getTriplifier(request.getMetadataPrefix());
+        final XmlTriplifier reader = new XmlReader();
         final TripleListener triples = new TripleListener() {
 
             @Override
@@ -90,13 +90,11 @@ public class DNBClientTest {
 
             @Override
             public TripleListener newIdentifier(IRI uri) {
-                //getResource().id(uri);
                 return this;
             }
 
             @Override
             public TripleListener triple(Triple statement) {
-                //getResource().add(statement);
                 return this;
             }
         };
@@ -105,55 +103,35 @@ public class DNBClientTest {
 
             @Override
             public void startDocument() throws SAXException {
-                //handler.startDocument();
-                //setResource(new SimpleResource());
                 logger.info("startDocument");
             }
 
             @Override
             public void endDocument() throws SAXException {
                 logger.info("endDocument");
-                //handler.endDocument();
-                //if (resource.id() == null) {
-                //    resource.id(IRI.builder().host("test").query("test").fragment(getHeader().getIdentifier()).build());
-                //}
-                    /*StringWriter sw = new StringWriter();
-                    try {
-                        TurtleWriter t = new TurtleWriter().output(sw);
-                        t.write(getResource());
-                        t.close();
-                        logger.info(sw.toString());
-                    } catch (IOException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }*/
             }
 
             @Override
             public void startPrefixMapping(String prefix, String uri) throws SAXException {
-                //handler.startPrefixMapping(prefix, uri);
             }
 
             @Override
             public void endPrefixMapping(String prefix) throws SAXException {
-                //handler.endPrefixMapping(prefix);
             }
 
             @Override
             public void startElement(String ns, String localname, String qname, Attributes atrbts) throws SAXException {
-                //handler.startElement(ns, localname, qname, atrbts);
             }
 
             @Override
             public void endElement(String ns, String localname, String qname) throws SAXException {
-                //handler.endElement(ns, localname, qname);
             }
 
             @Override
             public void characters(char[] chars, int pos, int len) throws SAXException {
-                //handler.characters(chars, pos, len);
             }
         };
-        FileWriter sw = new FileWriter("target/bib.xml");
+        FileWriter sw = new FileWriter("target/dnb-pica.xml");
         try {
             do {
                 ListRecordsResponseListener listener = new ListRecordsResponseListener(request)

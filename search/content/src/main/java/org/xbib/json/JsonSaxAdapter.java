@@ -76,7 +76,7 @@ public class JsonSaxAdapter {
     private XMLNamespaceContext context = XMLNamespaceContext.getInstance();
 
     public JsonSaxAdapter(Reader reader, ContentHandler contentHandler, QName root) throws IOException {
-        this(factory.createJsonParser(reader), contentHandler, root);
+        this(factory.createParser(reader), contentHandler, root);
     }
 
     public JsonSaxAdapter(JsonParser jsonParser, ContentHandler contentHandler, QName root) {

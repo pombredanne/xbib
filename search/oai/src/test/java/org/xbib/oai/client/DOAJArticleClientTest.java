@@ -38,14 +38,15 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.record.ListRecordsRequest;
 import org.xbib.oai.record.ListRecordsResponseListener;
-import org.xbib.oai.util.RdfMetadataHandler;
-import org.xbib.oai.util.RdfOutput;
-import org.xbib.oai.util.RdfResourceHandler;
+import org.xbib.oai.util.rdf.RdfMetadataHandler;
+import org.xbib.oai.util.rdf.RdfOutput;
+import org.xbib.oai.util.rdf.RdfResourceHandler;
+import org.xbib.rdf.Property;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xbib.rdf.simple.SimpleLiteral;
-import org.xbib.xml.XSD;
+import org.xbib.rdf.simple.SimpleProperty;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -63,6 +64,8 @@ public class DOAJArticleClientTest {
     private final static String DOAJ_NS_PREFIX = "doaj";
 
     private final static String DOAJ_NS_URI = "http://www.doaj.org/schemas/";
+
+    private StringWriter sw = new StringWriter();
 
     @Test
     public void testListRecordsDOAJArticles() throws Exception {
@@ -84,25 +87,26 @@ public class DOAJArticleClientTest {
                 .setUntil(DateUtil.parseDateISO("2013-01-02T00:00:00Z"))
                 .setMetadataPrefix("doajArticle");
 
-        boolean failure;
-        do {
-            ListRecordsResponseListener listener = new ListRecordsResponseListener(request)
-                .register(metadataHandler);
-            try {
+        try {
+            do {
+                ListRecordsResponseListener listener = new ListRecordsResponseListener(request)
+                        .register(metadataHandler);
                 request.prepare().execute(listener).waitFor();
                 if (listener.getResponse() != null) {
                     StringWriter sw = new StringWriter();
                     listener.getResponse().to(sw);
-                    //logger.info("response from DOAJ article = {}", sw);
+                    logger.info("response from DOAJ article = {}", sw);
                 }
-                failure = listener.isFailure();
-                request = client.resume(request, listener.getResumptionToken());
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-                failure = true;
-            }
-        } while (request != null && request.getResumptionToken() != null && !failure);
+                request = listener.isFailure() ? null :
+                        client.resume(request, listener.getResumptionToken());
+            } while (request != null);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
     }
+
+    private final IRI ISSN = IRI.create("urn:ISSN");
+    private final IRI EISSN = IRI.create("urn:EISSN");
 
     class DOAJResourceHandler extends RdfResourceHandler {
 
@@ -126,7 +130,24 @@ public class DOAJArticleClientTest {
         }
 
         @Override
+        public Property toProperty(Property property) {
+            if ("issn".equals(property.id().getSchemeSpecificPart())) {
+                return new SimpleProperty(IRI.builder().curi("dc", "identifier").build());
+            }
+            if ("eissn".equals(property.id().getSchemeSpecificPart())) {
+                return new SimpleProperty(IRI.builder().curi("dc", "identifier").build());
+            }
+            return property;
+        }
+
+        @Override
         public Object toObject(QName name, String content) {
+            if ("issn".equals(name.getLocalPart())) {
+                return new SimpleLiteral(content.substring(0,4) + "-" + content.substring(4)).type(ISSN);
+            }
+            if ("eissn".equals(name.getLocalPart())) {
+                return new SimpleLiteral(content.substring(0,4) + "-" + content.substring(4)).type(EISSN);
+            }
             return content;
         }
     }
@@ -137,16 +158,17 @@ public class DOAJArticleClientTest {
 
         MyOutput(IRINamespaceContext context) throws IOException{
             this.writer = new TurtleWriter()
+                    .output(sw)
                     .setContext(context)
                     .writeNamespaces();
         }
 
         @Override
         public RdfOutput output(ResourceContext resourceContext) throws IOException {
-            StringWriter sw = new StringWriter();
-            writer.output(sw);
             writer.write(resourceContext.resource());
             logger.info("out = {}", sw);
+            sw = new StringWriter();
+            writer.output(sw);
             return this;
         }
     }

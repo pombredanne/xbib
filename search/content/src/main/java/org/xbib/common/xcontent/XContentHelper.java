@@ -25,6 +25,7 @@ import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.Pair;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,6 @@ public class XContentHelper {
         }
         return XContentFactory.xContent(bytes).createParser(bytes.streamInput());
     }
-
 
     public static XContentParser createParser(byte[] data, int offset, int length) throws IOException {
         return XContentFactory.xContent(data, offset, length).createParser(data, offset, length);
@@ -129,6 +129,29 @@ public class XContentHelper {
             parser = XContentFactory.xContent(xContentType).createParser(data, offset, length);
             parser.nextToken();
             XContentBuilder builder = XContentFactory.jsonBuilder();
+            if (prettyPrint) {
+                builder.prettyPrint();
+            }
+            builder.copyCurrentStructure(parser);
+            return builder.string();
+        } finally {
+            if (parser != null) {
+                parser.close();
+            }
+        }
+    }
+
+    public static String convertToXml(byte[] data, int offset, int length) throws IOException {
+        return convertToJson(data, offset, length, false);
+    }
+
+    public static String convertToXml(byte[] data, int offset, int length, boolean prettyPrint) throws IOException {
+        XContentType xContentType = XContentFactory.xContentType(data, offset, length);
+        XContentParser parser = null;
+        try {
+            parser = XContentFactory.xContent(xContentType).createParser(data, offset, length);
+            parser.nextToken();
+            XContentBuilder builder = XContentFactory.xmlBuilder();
             if (prettyPrint) {
                 builder.prettyPrint();
             }

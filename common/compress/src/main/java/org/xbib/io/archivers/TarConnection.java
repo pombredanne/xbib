@@ -45,8 +45,12 @@ import java.util.List;
  */
 public class TarConnection implements Connection<TarSession> {
 
-    private List<TarSession> sessions = new ArrayList<TarSession>();
+    private List<TarSession> sessions = new ArrayList();
+
     private URI uri;
+
+    protected TarConnection() {
+    }
 
     @Override
     public TarConnection setURI(URI uri) {

@@ -19,8 +19,13 @@ public class BaseformEncoder {
     private static final MessageDigestUtil digest = new MessageDigestUtil("MD5");
 
     public static String normalizedName(String name) {
-        String s = Normalizer.normalize(new String(name.getBytes(ISO88591), UTF8), Normalizer.Form.NFKC);
-        s = URIUtil.decode(s, UTF8);
+        String s;
+        try {
+            s = URIUtil.decode(name, UTF8);
+        } catch (StringIndexOutOfBoundsException e) {
+            // ignore
+        }
+        s = Normalizer.normalize(new String(name.getBytes(ISO88591), UTF8), Normalizer.Form.NFKC);
         s = nonword.matcher(s).replaceAll("");
         s = s.toLowerCase(Locale.ENGLISH);
         return s;

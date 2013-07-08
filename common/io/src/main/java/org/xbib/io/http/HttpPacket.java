@@ -34,6 +34,7 @@ package org.xbib.io.http;
 import org.xbib.io.Packet;
 
 /**
+ * A dummy HTTP packet
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -45,12 +46,27 @@ public class HttpPacket implements Packet {
     }
 
     @Override
+    public Packet name(String name) {
+        return null;
+    }
+
+    @Override
     public long number() {
         return 0;
     }
 
     @Override
+    public Packet number(long number) {
+        return null;
+    }
+
+    @Override
     public Object packet() {
+        return null;
+    }
+
+    @Override
+    public Packet packet(Object packet) {
         return null;
     }
 }

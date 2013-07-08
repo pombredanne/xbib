@@ -18,7 +18,7 @@ import org.xbib.rdf.Triple;
 public class SimpleResourceTest<S extends Identifier, P extends Property, O extends Node>
         extends Assert {
 
-    private final Factory<S, P, O> factory = Factory.getInstance();
+    private final SimpleFactory<S, P, O> simpleFactory = SimpleFactory.getInstance();
 
     @Test
     public void testResourceId() throws Exception {
@@ -158,7 +158,7 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
         Resource<S, P, O> r = new SimpleResource<>();
         r.id(IRI.create("urn:doc"))
                 .add("urn:value1", "Hello World");
-        P predicate = factory.asPredicate("urn:pred");
+        P predicate = simpleFactory.asPredicate("urn:pred");
         Resource<S, P, O> r1 = r.newResource(predicate);
         r1.add(predicate, "a value");
         Iterator<Triple<S,P,O>> it = r.iterator();

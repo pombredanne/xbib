@@ -42,20 +42,20 @@ import org.xbib.iri.IRI;
  */
 public class IdentifiableProperty extends IRI implements Property {
 
-    public IdentifiableProperty(String uri) {
-        super(uri);
+    public IdentifiableProperty(String iri) {
+        super(iri);
     }
 
-    public IdentifiableProperty(IRI uri) {
-        super(uri);
+    public IdentifiableProperty(IRI iri) {
+        super(iri);
     }
     
-    public static IdentifiableProperty create(IRI uri) {
-        return new IdentifiableProperty(uri);
+    public static IdentifiableProperty create(IRI iri) {
+        return new IdentifiableProperty(iri);
     }
 
-    public static IdentifiableProperty create(String uri) {
-        return new IdentifiableProperty(uri);
+    public static IdentifiableProperty create(String iri) {
+        return new IdentifiableProperty(iri);
     }
     
     @Override

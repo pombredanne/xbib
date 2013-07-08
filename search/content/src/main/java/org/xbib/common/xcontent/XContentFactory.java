@@ -20,12 +20,12 @@
 package org.xbib.common.xcontent;
 
 import com.fasterxml.jackson.dataformat.smile.SmileConstants;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.xbib.common.bytes.BytesArray;
 import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.xcontent.json.JsonXContent;
 import org.xbib.common.xcontent.smile.SmileXContent;
 import org.xbib.common.xcontent.xml.XmlXContent;
+import org.xbib.common.xcontent.xml.XmlXParams;
 import org.xbib.common.xcontent.yaml.YamlXContent;
 
 import java.io.IOException;
@@ -79,7 +79,14 @@ public class XContentFactory {
      * Constructs a new xml builder using XML.
      */
     public static XContentBuilder xmlBuilder() throws IOException {
-        return contentBuilder(XContentType.XML).wrapInto("root");
+        return XmlXContent.contentBuilder(XmlXParams.getDefaultParams());
+    }
+
+    /**
+     * Constructs a new xml builder using XML.
+     */
+    public static XContentBuilder xmlBuilder(XmlXParams params) throws IOException {
+        return XmlXContent.contentBuilder(params);
     }
 
     /**
@@ -87,6 +94,13 @@ public class XContentFactory {
      */
     public static XContentBuilder xmlBuilder(OutputStream os) throws IOException {
         return new XContentBuilder(XmlXContent.xmlXContent, os);
+    }
+
+    /**
+     * Constructs a new xml builder that will output the result into the provided output stream.
+     */
+    public static XContentBuilder xmlBuilder(OutputStream os, XmlXParams params) throws IOException {
+        return new XContentBuilder(XmlXContent.xmlXContent, os, params);
     }
 
     /**

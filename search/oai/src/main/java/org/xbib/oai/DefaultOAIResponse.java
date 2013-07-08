@@ -90,16 +90,6 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
         this.transformer = new StylesheetTransformer("/xsl");
     }
 
-    /*public DefaultOAIResponse(OAIRequest request) {
-        this(request);
-        /*
-        try {
-            eventWriter = outputFactory.createXMLEventWriter(writer);
-        } catch (XMLStreamException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }*/
-
     public OAIRequest getRequest() {
         return request;
     }
@@ -126,18 +116,10 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
         return transformer;
     }
 
-    public String[] getStylesheets() {
-        return stylesheets;
-    }
-
     @Override
     public R setOutputFormat(OutputFormat format) {
         this.format = format;
         return (R)this;
-    }
-
-    public OutputFormat getOutputFormat() {
-        return format;
     }
 
     public void flush() throws IOException {
@@ -169,16 +151,8 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
         this.responseDate = date;
     }
 
-    public Date getResponseDate() {
-        return responseDate;
-    }
-
     public void setExpire(long millis) {
         this.expire = millis;
-    }
-
-    public long getExpire() {
-        return expire;
     }
 
     @Override

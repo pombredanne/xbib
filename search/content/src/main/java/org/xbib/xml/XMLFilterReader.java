@@ -46,7 +46,11 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
+ * A XML reader which is also a filter.
  *
+ * Does evaluate namespaces and does not validate or import external entities or document type definitions.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class XMLFilterReader extends XMLFilterImpl {
 

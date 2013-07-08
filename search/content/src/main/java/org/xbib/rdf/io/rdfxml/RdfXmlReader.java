@@ -52,14 +52,15 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Triple;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.xml.XmlHandler;
-import org.xbib.rdf.simple.Factory;
+import org.xbib.rdf.simple.SimpleFactory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
-import org.xbib.rdf.io.XmlTriplifier;
+import org.xbib.rdf.io.xml.XmlTriplifier;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.simple.SimpleTriple;
@@ -89,11 +90,12 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
 
     private final Logger logger = LoggerFactory.getLogger(RdfXmlReader.class.getName());
 
-    private final Factory<S,P,O> factory = Factory.getInstance();
+    private final SimpleFactory<S,P,O> simpleFactory = SimpleFactory.getInstance();
 
     private XmlHandler xmlHandler = new Handler();
 
     private TripleListener<S,P,O> listener;
+
     // counter for blank node generation
     private int bn = 0;
 
@@ -151,7 +153,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
     }
 
     private void yield(Object s, Object p, Object o) {
-        yield(new SimpleTriple(factory.asSubject(s), factory.asPredicate(p), factory.asObject(o)));
+        yield(new SimpleTriple(simpleFactory.asSubject(s), simpleFactory.asPredicate(p), simpleFactory.asObject(o)));
     }
 
     private void yield(S s, P p, O o) {
@@ -432,6 +434,11 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
         }
 
         @Override
+        public ResourceContext resourceContext() {
+            return null;
+        }
+
+        @Override
         public void startPrefixMapping (String prefix, String uri)
                 throws SAXException {
             if (listener != null) {
@@ -529,9 +536,9 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
                             case "Collection":
                                 frame.isCollection = true;
                                 frame.collection = new LinkedList();
-                                S s = factory.asSubject(ancestorSubject(stack));
-                                P p = factory.asPredicate(frame.node);
-                                O o = factory.asObject(blankNode());
+                                S s = simpleFactory.asSubject(ancestorSubject(stack));
+                                P p = simpleFactory.asPredicate(frame.node);
+                                O o = simpleFactory.asObject(blankNode());
                                 frame.collectionHead = new SimpleTriple(s,p,o);
                                 pcdata = null;
                                 break;
@@ -610,7 +617,7 @@ public class RdfXmlReader<S extends Identifier, P extends Property, O extends No
                             // in this case, the value of this property is rdf:nil
                             yield(ppFrame.collectionHead.subject(),
                                     ppFrame.collectionHead.predicate(),
-                                    factory.asObject(RDF_NIL));
+                                    simpleFactory.asObject(RDF_NIL));
                         } else {
                             yield(ppFrame.collectionHead);
                             Object prevNode = null;

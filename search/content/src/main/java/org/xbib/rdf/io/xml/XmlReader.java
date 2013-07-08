@@ -41,7 +41,6 @@ import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.io.TripleListener;
-import org.xbib.rdf.io.XmlTriplifier;
 import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

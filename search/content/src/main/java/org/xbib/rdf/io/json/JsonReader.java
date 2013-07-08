@@ -43,6 +43,7 @@ import org.xbib.rdf.Resource;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.Triplifier;
 import org.xbib.rdf.io.xml.AbstractXmlHandler;
+import org.xbib.rdf.io.xml.XmlHandler;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
@@ -56,7 +57,9 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
         implements Triplifier<S, P, O> {
 
     private TripleListener listener;
-    private AbstractXmlHandler handler;
+
+    private XmlHandler handler;
+
     private QName root;
 
     public JsonReader() {
@@ -68,12 +71,12 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
         return this;
     }
 
-    public JsonReader setHandler(AbstractXmlHandler handler) {
+    public JsonReader setHandler(XmlHandler handler) {
         this.handler = handler;
         return this;
     }
 
-    public AbstractXmlHandler getHandler() {
+    public XmlHandler getHandler() {
         return handler;
     }
 

@@ -63,16 +63,6 @@ import org.xml.sax.XMLReader;
  */
 public class StylesheetTransformer {
 
-    /**
-     * We really depend on Xalan 2.7.1 for now. With JDK 6 internal Xalan, there
-     * are NPEs while processing attribute patterns
-     *
-     * Do not use static SAXTransformerFactory. It is not thread safe.
-     */
-    private final static String TRANSFORMER_FACTORY =
-            // "org.apache.xalan.processor.TransformerFactoryImpl";
-            "net.sf.saxon.TransformerFactoryImpl";
-
     private final SAXTransformerFactory transformerFactory;
 
     private final TransformerURIResolver resolver;
@@ -85,17 +75,13 @@ public class StylesheetTransformer {
 
     private Result result;
 
-
     public StylesheetTransformer() {
-        this.resolver = new TransformerURIResolver();
-        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance(TRANSFORMER_FACTORY, null);
-        transformerFactory.setErrorListener(new StylesheetErrorListener());
-        transformerFactory.setURIResolver(resolver);
+        this((String[])null);
     }
 
     public StylesheetTransformer(String... path) {
-        this.resolver = new TransformerURIResolver(path);
-        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance(TRANSFORMER_FACTORY, null);
+        this.resolver = path == null ?  new TransformerURIResolver() : new TransformerURIResolver(path);
+        transformerFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
         transformerFactory.setErrorListener(new StylesheetErrorListener());
         transformerFactory.setURIResolver(resolver);
     }

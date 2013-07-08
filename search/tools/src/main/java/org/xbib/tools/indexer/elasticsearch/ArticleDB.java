@@ -69,7 +69,7 @@ import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.InvalidCharacterException;
-import org.xbib.tools.convert.SerialsDB;
+import org.xbib.tools.convert.SerialsDBConverter;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
@@ -115,7 +115,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private final ElementOutput output;
 
-    private static SerialsDB serialsdb;
+    private static SerialsDBConverter serialsdb;
 
     private static Map<String,Resource> serials;
 
@@ -169,7 +169,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
             for (URI uri : input) {
                 InputStream in = factory.getInputStream(uri);
-                serialsdb = new SerialsDB(new InputStreamReader(in, "UTF-8"), "serials" );
+                serialsdb = new SerialsDBConverter(new InputStreamReader(in, "UTF-8"), "serials" );
                 serials = serialsdb.getMap();
                 logger.info("serials done, {}", serials.size());
             }
@@ -285,7 +285,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         return inputCounter;
     }
 
-    private void process(URI uri) throws Exception {
+    protected void process(URI uri) throws Exception {
         if (uri == null) {
             return;
         }
@@ -305,7 +305,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         resourceContext.newNamespaceContext(context);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
-            JsonParser parser = jsonFactory.createJsonParser(reader);
+            JsonParser parser = jsonFactory.createParser(reader);
             JsonToken token = parser.nextToken();
             Resource resource = null;
             String key = null;
@@ -371,9 +371,12 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         }
     }
 
-    interface URIListener extends URIUtil.ParameterListener {
+    protected interface URIListener extends URIUtil.ParameterListener {
+
         void close();
+
         boolean hasErrors();
+
         boolean missingSerial();
     }
 
@@ -387,11 +390,11 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private IRI FABIO_PRINT_OBJECT = IRI.create("fabio:PrintObject");
 
-    enum Result {
+    protected enum Result {
         OK, ERROR, MISSINGSERIAL
     }
 
-    private Result parseCoinsInto(Resource resource, String value) {
+    protected Result parseCoinsInto(Resource resource, String value) {
         IRI coins = IRI.builder()
                 .scheme("http")
                 .host("localhost")

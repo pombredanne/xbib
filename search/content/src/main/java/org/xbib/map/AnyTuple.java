@@ -18,6 +18,7 @@ package org.xbib.map;
 import java.util.Arrays;
 
 public class AnyTuple {
+
     private final String key;
 
     private final Object o;

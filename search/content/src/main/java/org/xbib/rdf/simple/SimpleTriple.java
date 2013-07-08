@@ -44,7 +44,7 @@ import org.xbib.rdf.Triple;
 public class SimpleTriple<S extends Identifier, P extends Property, O extends Node>
         implements Triple, Comparable<Triple> {
     
-    private final Factory<S,P,O> factory = Factory.getInstance();
+    private final SimpleFactory<S,P,O> simpleFactory = SimpleFactory.getInstance();
 
     private S subject;
     private P predicate;
@@ -64,9 +64,9 @@ public class SimpleTriple<S extends Identifier, P extends Property, O extends No
     }
     
     public SimpleTriple(Object subject, Object predicate, Object object) {
-        this.subject = factory.asSubject(subject);
-        this.predicate = factory.asPredicate(predicate);
-        this.object = factory.asObject(object);
+        this.subject = simpleFactory.asSubject(subject);
+        this.predicate = simpleFactory.asPredicate(predicate);
+        this.object = simpleFactory.asObject(object);
     }
 
     public void subject(S subject) {

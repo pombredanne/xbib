@@ -39,7 +39,7 @@ import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.simple.Factory;
+import org.xbib.rdf.simple.SimpleFactory;
 
 /**
  * The XML resource handler can create nested RDF resources from arbitrary XML.
@@ -49,7 +49,7 @@ import org.xbib.rdf.simple.Factory;
 public abstract class AbstractXmlResourceHandler
         extends AbstractXmlHandler implements XmlResourceHandler {
 
-    private final Factory factory = Factory.getInstance();
+    private final SimpleFactory simpleFactory = SimpleFactory.getInstance();
 
     private final Stack<Resource> stack = new Stack();
 
@@ -79,7 +79,7 @@ public abstract class AbstractXmlResourceHandler
      */
     @Override
     public void openPredicate(QName parent, QName name, int level) {
-        Property p = (Property) factory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
+        Property p = toProperty((Property) simpleFactory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart()));
         stack.push(stack.peek().newResource(p));
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractXmlResourceHandler
 
     @Override
     public void closePredicate(QName parent, QName name, int level) {
-        Property p = (Property) factory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart());
+        Property p = toProperty((Property) simpleFactory.asPredicate(makePrefix(name.getPrefix()) + ":" + name.getLocalPart()));
         Resource r = stack.pop();
         if (level < 0) {
             // it's a Resource
@@ -102,8 +102,7 @@ public abstract class AbstractXmlResourceHandler
             if (s != null) {
                 // compact predicate because it has only a single value
                 if (!stack.isEmpty()) {
-                    //Literal l = factory.asLiteral(toLiteral(name, s));
-                    Object o = factory.asObject(toObject(name, s));
+                    Object o = simpleFactory.asObject(toObject(name, s));
                     if (o instanceof Literal) {
                         r.add(p, (Literal)o);
                     } else if (o instanceof IdentifiableNode) {
@@ -113,6 +112,10 @@ public abstract class AbstractXmlResourceHandler
                 }
             }
         }
+    }
+
+    public Property toProperty(Property property) {
+        return property;
     }
 
     public Object toObject(QName name, String content) {

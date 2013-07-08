@@ -19,7 +19,7 @@ package org.xbib.text;
 
 import java.text.AttributedString;
 import java.util.Arrays;
-import org.xbib.rfc4646.Lang;
+import org.xbib.language.Lang;
 
 /**
  * Bidi guessing algorithms

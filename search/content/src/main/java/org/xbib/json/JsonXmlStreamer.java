@@ -121,7 +121,7 @@ public class JsonXmlStreamer {
     public void toXML(InputStream in, XMLEventConsumer consumer, QName root)
             throws XMLStreamException, IOException {
         this.root = root;
-        JsonParser parser = jsonFactory.createJsonParser(new InputStreamReader(in, "UTF-8"));
+        JsonParser parser = jsonFactory.createParser(new InputStreamReader(in, "UTF-8"));
         JsonToken token = parser.nextToken();
         // first token must be a START_OBJECT token
         if (token != JsonToken.START_OBJECT) {

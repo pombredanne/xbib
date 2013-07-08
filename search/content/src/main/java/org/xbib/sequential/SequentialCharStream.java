@@ -27,12 +27,9 @@ import java.io.Reader;
  * subsequent Reader. It is advisable to wrap a BufferedReader around those
  * Readers whose read operations may have high latency. For example, the
  * following code
- * <p/>
- * <
- * pre>
+ * <pre>
  * SequentialCharStream inReader = new SequentialCharStream(new FileReader(&quot;file.java&quot;));
  * </pre>
- * <p/>
  * will buffer input for the file
  * <code>file.java</code>.
  *
@@ -40,12 +37,19 @@ import java.io.Reader;
 public class SequentialCharStream extends Reader implements CharStream {
 
     private Reader in;
+
     private char[] buf;
+
     private int marklimit = -1;
+
     private int count;
+
     private int markpos = -1;
+
     private int pos;
+
     private CharStreamListener listener;
+
     private final static int DEFAULT_BUFFER_SIZE = 8192;
 
     /**

@@ -21,7 +21,6 @@ package org.xbib.common.xcontent.xml;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.io.FastStringReader;
 import org.xbib.common.xcontent.XContent;
@@ -37,69 +36,67 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * A XML based content implementation using Jackson.
+ * A XML based content implementation using Jackson XML dataformat
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class XmlXContent implements XContent {
 
     public static XContentBuilder contentBuilder() throws IOException {
-        return XContentBuilder.builder(xmlXContent);
+        return contentBuilder(XmlXParams.getDefaultParams());
+    }
+
+    public static XContentBuilder contentBuilder(XmlXParams params) throws IOException {
+        XContentBuilder builder = XContentBuilder.builder(xmlXContent);
+        XmlXContentGenerator generator = (XmlXContentGenerator)builder.generator();
+        generator.setParams(params);
+        return builder;
     }
 
     final static XmlFactory xmlFactory;
+
     public final static XmlXContent xmlXContent;
 
     static {
-        xmlFactory = new XmlFactory()
-                .configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
-
+        xmlFactory = new XmlFactory();
         xmlXContent = new XmlXContent();
     }
 
     private XmlXContent() {
     }
 
-    
     public XContentType type() {
         return XContentType.XML;
     }
 
-    
     public byte streamSeparator() {
-        throw new UnsupportedOperationException("yaml does not support stream parsing...");
+        throw new UnsupportedOperationException("xml does not support stream parsing...");
     }
 
-    
     public XContentGenerator createGenerator(OutputStream os) throws IOException {
         return new XmlXContentGenerator(xmlFactory.createGenerator(os, JsonEncoding.UTF8));
     }
-
     
     public XContentGenerator createGenerator(Writer writer) throws IOException {
-        XmlXContentGenerator gen = new XmlXContentGenerator(xmlFactory.createGenerator(writer));
-        return gen;
+        return new XmlXContentGenerator(xmlFactory.createGenerator(writer));
     }
 
-    
     public XContentParser createParser(String content) throws IOException {
         return new XmlXContentParser(xmlFactory.createParser(new FastStringReader(content)));
     }
 
-    
     public XContentParser createParser(InputStream is) throws IOException {
         return new XmlXContentParser(xmlFactory.createParser(is));
     }
 
-    
     public XContentParser createParser(byte[] data) throws IOException {
         return new XmlXContentParser(xmlFactory.createParser(data));
     }
 
-    
     public XContentParser createParser(byte[] data, int offset, int length) throws IOException {
         return new XmlXContentParser(xmlFactory.createParser(data, offset, length));
     }
 
-    
     public XContentParser createParser(BytesReference bytes) throws IOException {
         if (bytes.hasArray()) {
             return createParser(bytes.array(), bytes.arrayOffset(), bytes.length());
@@ -107,7 +104,6 @@ public class XmlXContent implements XContent {
         return createParser(bytes.streamInput());
     }
 
-    
     public XContentParser createParser(Reader reader) throws IOException {
         return new XmlXContentParser(xmlFactory.createParser(reader));
     }

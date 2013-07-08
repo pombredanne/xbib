@@ -59,7 +59,9 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
 
     private final NamespaceContext context;
 
-    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+    private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+
+    private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     public XmlResourceWriter() {
         this(XMLNamespaceContext.getInstance());
@@ -71,7 +73,7 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
 
     public void toXML(Resource<S, P, O> resource, Writer w)
             throws XMLStreamException {
-        XMLEventWriter xew = XMLOutputFactory.newInstance().createXMLEventWriter(w);
+        XMLEventWriter xew = outputFactory.createXMLEventWriter(w);
         IRI resourceURI = resource.id();
         // dump resource as XML
         String nsPrefix = resourceURI.getScheme();

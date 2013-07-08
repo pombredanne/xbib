@@ -48,7 +48,7 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
-import org.xbib.rdf.io.RDFSerializer;
+import org.xbib.rdf.io.ResourceSerializer;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.SimpleResource;
 
@@ -58,7 +58,7 @@ import org.xbib.rdf.simple.SimpleResource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class NTripleWriter<S extends Identifier, P extends Property, O extends Node>
-    implements RDFSerializer<S,P,O>, TripleListener<S,P,O> {
+    implements ResourceSerializer<S,P,O>, TripleListener<S,P,O> {
 
     private final Logger logger = LoggerFactory.getLogger(NTripleWriter.class.getName());
 

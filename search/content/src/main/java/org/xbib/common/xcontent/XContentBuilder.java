@@ -71,6 +71,9 @@ public final class XContentBuilder implements BytesStream {
         return new XContentBuilder(xContent, new FastByteArrayOutputStream());
     }
 
+    public static XContentBuilder builder(XContent xContent, Object payload) throws IOException {
+        return new XContentBuilder(xContent, new FastByteArrayOutputStream(), payload);
+    }
 
     private XContentGenerator generator;
 
@@ -81,8 +84,6 @@ public final class XContentBuilder implements BytesStream {
     private FieldCaseConversion fieldCaseConversion = globalFieldCaseConversion;
 
     private StringBuilder cachedStringBuilder;
-
-    private String wrap;
 
     /**
      * Constructs a new builder using the provided xcontent and an OutputStream. Make sure
@@ -96,7 +97,7 @@ public final class XContentBuilder implements BytesStream {
      * Constructs a new builder using the provided xcontent and an OutputStream. Make sure
      * to call {@link #close()} when the builder is done with.
      */
-    public XContentBuilder(XContent xContent, OutputStream bos,Object payload) throws IOException {
+    public XContentBuilder(XContent xContent, OutputStream bos, Object payload) throws IOException {
         this.bos = bos;
         this.generator = xContent.createGenerator(bos);
         this.payload = payload;
@@ -111,13 +112,12 @@ public final class XContentBuilder implements BytesStream {
         return generator.contentType();
     }
 
-    public XContentBuilder prettyPrint() {
-        generator.usePrettyPrint();
-        return this;
+    public XContentGenerator generator() {
+        return generator;
     }
 
-    public XContentBuilder wrapInto(String wrap) throws IOException {
-        this.wrap = wrap;
+    public XContentBuilder prettyPrint() {
+        generator.usePrettyPrint();
         return this;
     }
 
@@ -738,9 +738,6 @@ public final class XContentBuilder implements BytesStream {
 
     public void close() {
         try {
-            if (wrap != null) {
-                generator.writeEndObject();
-            }
             generator.close();
         } catch (IOException e) {
             // ignore

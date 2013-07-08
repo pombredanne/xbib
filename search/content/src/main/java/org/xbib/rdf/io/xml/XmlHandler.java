@@ -31,6 +31,7 @@
  */
 package org.xbib.rdf.io.xml;
 
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.TripleListener;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -49,4 +50,5 @@ public interface XmlHandler
 
     XmlHandler setListener(TripleListener listener);
 
+    ResourceContext resourceContext();
 }

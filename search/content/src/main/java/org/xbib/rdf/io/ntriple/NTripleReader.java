@@ -42,7 +42,7 @@ import java.util.regex.PatternSyntaxException;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Triple;
 import org.xbib.rdf.io.TripleListener;
-import org.xbib.rdf.simple.Factory;
+import org.xbib.rdf.simple.SimpleFactory;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
@@ -71,7 +71,7 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
     public static final Pattern NTRIPLE_PATTERN = Pattern.compile(tripleExpression);
     private BufferedReader reader;
     private boolean eof;
-    private final Factory<S,P,O> factory = Factory.getInstance();
+    private final SimpleFactory<S,P,O> simpleFactory = SimpleFactory.getInstance();
     private TripleListener<S, P, O> listener;
 
     @Override
@@ -133,12 +133,12 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
         }
         // subject
         if (matcher.group(2) != null) {
-            subject = (S)factory.newBlankNode(matcher.group(1));
+            subject = (S) simpleFactory.newBlankNode(matcher.group(1));
         } else {
             // resource node
             String subj = matcher.group(1);
             IRI subjURI = IRI.create(subj.substring(1, subj.length() - 1));
-            subject =factory.asSubject(subjURI);
+            subject = simpleFactory.asSubject(subjURI);
         }
         // predicate
         String p = matcher.group(4);
@@ -146,17 +146,17 @@ public class NTripleReader<S extends Identifier, P extends Property, O extends N
         // object
         if (matcher.group(7) != null) {
             // anonymous node
-            object = (O) factory.newBlankNode(matcher.group(6));
+            object = (O) simpleFactory.newBlankNode(matcher.group(6));
         } else if (matcher.group(8) != null) {
             // resource node
             String obj = matcher.group(6);
-            object = factory.asObject(IRI.create(obj.substring(1, obj.length() - 1)));
+            object = simpleFactory.asObject(IRI.create(obj.substring(1, obj.length() - 1)));
         } else {
             // literal node
             // 10 is without quotes or apostrophs
             // with quotes or apostrophes. to have the value without them you need to look at groups 12 and 15
             String literal = matcher.group(10);
-            object = (O) factory.newLiteral(literal);
+            object = (O) simpleFactory.newLiteral(literal);
         }
         if (listener != null) {
             Triple stmt = new SimpleTriple<>(subject, predicate, object);
