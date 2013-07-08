@@ -76,9 +76,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private Writer writer;
 
     private Resource resource;
-    /**
-     * A Namespace context with URI-related methods
-     */
+
     private IRINamespaceContext context;
 
     private boolean sameResource;
@@ -393,9 +391,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         Triple<S,P,O> t = triples.pop();
         lastSubject = t.subject();
         lastPredicate = t.predicate();
-        IRI iri = ((Identifier)t.object()).id();
-        sameResource = triple.subject().equals(lastSubject);
-        sameProperty = triple.predicate().equals(lastPredicate);
+        //IRI iri = ((Identifier)t.object()).id();
+        sameResource = lastSubject.equals(triple.subject());
+        sameProperty = lastPredicate.equals(triple.predicate());
         return embedded.pop();
     }
 
