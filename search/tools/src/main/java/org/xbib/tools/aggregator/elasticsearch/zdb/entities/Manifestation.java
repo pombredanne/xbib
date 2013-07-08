@@ -32,7 +32,7 @@
 package org.xbib.tools.aggregator.elasticsearch.zdb.entities;
 
 import org.xbib.date.DateUtil;
-import org.xbib.grouping.bibliographic.work.PublishedJournal;
+import org.xbib.grouping.bibliographic.endeavor.PublishedJournal;
 import org.xbib.map.MapBasedAnyObject;
 
 import java.text.DecimalFormat;

@@ -32,7 +32,7 @@
 package org.xbib.tools.convert;
 
 import org.xbib.csv.CSVParser;
-import org.xbib.grouping.bibliographic.work.PublishedJournal;
+import org.xbib.grouping.bibliographic.endeavor.PublishedJournal;
 import org.xbib.io.file.Finder;
 import org.xbib.io.file.TextFileConnectionFactory;
 import org.xbib.iri.IRI;

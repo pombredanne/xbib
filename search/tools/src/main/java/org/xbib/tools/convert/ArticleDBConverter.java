@@ -35,7 +35,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import org.xbib.grouping.bibliographic.work.WorkAuthor;
+import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
