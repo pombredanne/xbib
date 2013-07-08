@@ -109,12 +109,12 @@ public class AsyncClientTest {
 
                 @Override
                 public void recordData(Collection<XMLEvent> record) {
-                    logger.info("recordData = " + record + " events");
+                    logger.info("recordData = " + record.size() + " events");
                 }
 
                 @Override
                 public void extraRecordData(Collection<XMLEvent> record) {
-                    logger.info("extraRecordData = " + record + " events");
+                    logger.info("extraRecordData = " + record.size() + " events");
                 }
 
                 @Override

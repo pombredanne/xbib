@@ -23,22 +23,40 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <tasks>
+                        <property name="src.dir" value="${project.build.directory}/generated-sources/java/" />
+                        <property name="package.dir" value="org/xbib/util" />
+                        <property name="package.name" value="org.xbib.util" />
+                        <property name="buildtime" value="${maven.build.timestamp}" />
+                        <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
+                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
+                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
+                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="}${line.separator}" />
+                        <echo message="BUILD ${buildtime}" />
+                    </tasks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
                         <configuration>
-                            <tasks>
-                                <property name="src.dir" value="${project.build.sourceDirectory}" />
-                                <property name="package.dir" value="org/xbib/util" />
-                                <property name="package.name" value="org.xbib.util" />
-                                <property name="buildtime" value="${maven.build.timestamp}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="}${line.separator}" />
-                                <echo message="BUILD ${buildtime}" />
-                            </tasks>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java/</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>

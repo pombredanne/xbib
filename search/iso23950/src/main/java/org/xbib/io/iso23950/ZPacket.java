@@ -44,12 +44,27 @@ public class ZPacket implements Packet {
     }
 
     @Override
+    public Packet name(String name) {
+        return this;
+    }
+
+    @Override
     public long number() {
         return 0;
     }
 
     @Override
+    public Packet number(long number) {
+        return this;
+    }
+
+    @Override
     public Object packet() {
         return null;
+    }
+
+    @Override
+    public Packet packet(Object packet) {
+        return this;
     }
 }

@@ -64,19 +64,6 @@ public class InputService {
         return null;
     }
 
-    public static Reader getReader(URI uri, String encoding) throws IOException {
-        InputStreamFactory factory;
-        ServiceLoader<InputStreamFactory> loader = ServiceLoader.load(InputStreamFactory.class);
-        Iterator<InputStreamFactory> it = loader.iterator();
-        while (it.hasNext()) {
-            factory = it.next();
-            if (uri.getScheme() != null && factory.providesScheme(uri.getScheme())) {
-                return new InputStreamReader(factory.getInputStream(uri), encoding);
-            }
-        }
-        return null;
-    }
-    
     public static String getString(InputStream input, String encoding) throws IOException {
         return getString(new InputStreamReader(input,encoding));
     }
@@ -103,8 +90,7 @@ public class InputService {
             br.close();
         } catch (IOException e) {
             // ignore
-        } finally {
-            return set;
         }
+        return set;
     }
  }
