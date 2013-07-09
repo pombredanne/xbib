@@ -29,52 +29,47 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.strings.encode;
+package org.xbib.numbers.encode;
 
-import org.xbib.io.util.URIUtil;
+import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.nio.charset.Charset;
-import java.text.Normalizer;
-import java.util.Locale;
-import java.util.regex.Pattern;
+public class RunLengthEncoder {
 
-/**
- * A base form encoder
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
-public class BaseformEncoder {
+    private final List members = new LinkedList();
 
-    private static final Pattern p = Pattern.compile("[^\\p{IsWord}\\p{IsSpace}]");
+    private final NumberFormat format = NumberFormat.getInstance();
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-
-    private static final Charset ISO88591 = Charset.forName("ISO-8859-1");
-
-    public static String normalizedFromUTF8(String name) {
-        String s;
-        try {
-            s = URIUtil.decode(name, UTF8);
-        } catch (StringIndexOutOfBoundsException e) {
-            // ignore
-        }
-        s = Normalizer.normalize(name, Normalizer.Form.NFC);
-        s = p.matcher(s).replaceAll("");
-        s = s.toLowerCase(Locale.ENGLISH); // just english lowercase rules (JVM independent)
-        return s;
+    public RunLengthEncoder() {
     }
 
-    public static String normalizedFromISO88591(String name) {
-        String s;
-        try {
-            s = URIUtil.decode(name, UTF8);
-        } catch (StringIndexOutOfBoundsException e) {
-            // ignore
+    public RunLengthEncoder member(Number number) {
+        this.members.add(number);
+        return this;
+    }
+
+    public RunLengthEncoder member(String string) {
+        this.members.add(string);
+        return this;
+    }
+
+    public String encode() {
+        StringBuilder sb = new StringBuilder();
+        for (Object o : members) {
+            if (o instanceof Number) {
+                Number number = (Number)o;
+                String s = format.format(number);
+                if (s.length() <= 9) {
+                    sb.append(Integer.toString(s.length())).append(s);
+                } else {
+                    throw new IllegalArgumentException("number too long");
+                }
+            } else {
+                sb.append(o.toString());
+            }
         }
-        s = Normalizer.normalize(new String(name.getBytes(ISO88591), UTF8), Normalizer.Form.NFC);
-        s = p.matcher(s).replaceAll("");
-        s = s.toLowerCase(Locale.ENGLISH);
-        return s;
+        return sb.toString();
     }
 
 }

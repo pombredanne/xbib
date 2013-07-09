@@ -11,5 +11,5 @@ java \
     --maxconcurrentbulkrequests 10 \
     --index "bib" \
     --type "zdbadr" \
-    --path "$HOME/Daten/zdb/adressen" \
+    --path "$HOME/import/zdb/adressen" \
     --pattern "1302Bibdatzdb.pp.xml"

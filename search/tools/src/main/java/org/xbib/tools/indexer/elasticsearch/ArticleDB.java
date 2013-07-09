@@ -36,21 +36,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
 import org.xbib.elements.output.ElementOutput;
+import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -63,6 +57,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
+import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.context.ResourceContext;
@@ -73,6 +68,7 @@ import org.xbib.tools.convert.SerialsDBConverter;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
+import org.xbib.util.Entities;
 import org.xbib.xml.XMLUtil;
 
 import java.io.BufferedReader;
@@ -89,8 +85,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 
 /**
  * Index article DB into Elasticsearch
@@ -111,9 +105,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private final static TextFileConnectionFactory factory = new TextFileConnectionFactory();
 
-    private final static SimpleResourceContext resourceContext = new SimpleResourceContext();
-
-    private final ElementOutput output;
+    private final static Charset UTF8 = Charset.forName("UTF-8");
 
     private static SerialsDBConverter serialsdb;
 
@@ -125,9 +117,11 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private static String type;
 
+    private final ElementOutput output;
+
     private boolean done = false;
 
-    private Client client;
+    private final Entities entities = new Entities();
 
     public static void main(String[] args) {
         int exitcode = 0;
@@ -169,10 +163,10 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
             for (URI uri : input) {
                 InputStream in = factory.getInputStream(uri);
-                serialsdb = new SerialsDBConverter(new InputStreamReader(in, "UTF-8"), "serials" );
+                serialsdb = new SerialsDBConverter(new InputStreamReader(in, UTF8), "serials" );
                 serials = serialsdb.getMap();
-                logger.info("serials done, {}", serials.size());
             }
+            logger.info("serials done, size = {}", serials.size());
 
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
 
@@ -224,13 +218,15 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             double dps = docs * 1000.0 / (double)(t1 - t0);
             double avg = bytes / (docs + 1.0); // avoid div by zero
             double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = TimeValue.timeValueMillis(t1 - t0).format();
-            String byteSize = FormatUtil.convertFileSize(bytes);
-            String avgSize = FormatUtil.convertFileSize(avg);
             NumberFormat formatter = NumberFormat.getNumberInstance();
             logger.info("Indexing complete. {} input files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    inputCounter, docs, t, (t1-t0), byteSize, bytes,
-                    avgSize,
+                    inputCounter,
+                    docs,
+                    TimeValue.timeValueMillis(t1 - t0).format(),
+                    (t1-t0),
+                    FormatUtil.convertFileSize(bytes),
+                    bytes,
+                    FormatUtil.convertFileSize(avg),
                     formatter.format(avg),
                     formatter.format(dps),
                     formatter.format(mbps));
@@ -247,7 +243,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private ArticleDB(ElementOutput output, TransportClientSearchSupport searchSupport) {
         this.output = output;
-        this.client = searchSupport.client();
     }
 
     @Override
@@ -296,6 +291,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
         final SimpleResourceContext resourceContext = new SimpleResourceContext();
         IRINamespaceContext context = IRINamespaceContext.newInstance();
+        context.addNamespace(RDF.NS_PREFIX, RDF.NS_URI);
         context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
         context.addNamespace("dcterms", "http://purl.org/dc/terms/");
         context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");
@@ -304,7 +300,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         context.addNamespace("prism", "http://prismstandard.org/namespaces/basic/2.1/");
         resourceContext.newNamespaceContext(context);
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, UTF8))) {
             JsonParser parser = jsonFactory.createParser(reader);
             JsonToken token = parser.nextToken();
             Resource resource = null;
@@ -390,6 +386,14 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private IRI FABIO_PRINT_OBJECT = IRI.create("fabio:PrintObject");
 
+    private IRI FOAF_MAKER = IRI.create("foaf:maker");
+
+    private IRI FOAF_AGENT = IRI.create("foaf:agent");
+
+    private IRI FRBR_PARTOF = IRI.create("frbr:partOf");
+
+    private IRI FRBR_EMBODIMENT = IRI.create("frbr:embodiment");
+
     protected enum Result {
         OK, ERROR, MISSINGSERIAL
     }
@@ -416,6 +420,9 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             Collection<Node> issns = null;
             String year = null;
 
+            String author = null;
+            String work = null;
+
             @Override
             public void received(String k, String v) {
                 if (v == null) {
@@ -433,14 +440,16 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         if (v.startsWith("info:doi/")) {
                             v = v.substring(9);
                         }
+                        // DOI is case-insensitive
+                        v = v.toUpperCase();
                         try {
                             // info URI RFC wants slash as unencoded character
-                            String doiPart = URIUtil.encode(v, Charset.forName("UTF-8"));
+                            String doiPart = URIUtil.encode(v, UTF8);
                             doiPart = doiPart.replaceAll("%2F","/");
                             IRI doi = IRI.builder().curi("info", "doi/" + doiPart).build();
-                            IRI id = IRI.builder().scheme("http").host("xbib.info")
-                                    .path("/works/doi").fragment(doiPart).build();
-                            r.id(id);
+                            IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
+                                    .path("/doi/").fragment(doiPart).build();
+                            r.id(dereferencable);
                             r.add("dcterms:identifier", doi)
                                     .add("prism:doi", v);
                         } catch (Exception e) {
@@ -449,13 +458,16 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.atitle" : {
+                        v = entities.unescape(v);
                         r.add("dc:title", v);
+                        work = v;
                         break;
                     }
                     case "rft.jtitle" : {
+                        v = entities.unescape(v);
                         title = v;
-                        j = r.newResource("frbr:partOf")
-                                .add("rdf:type", FABIO_JOURNAL)
+                        j = r.newResource(FRBR_PARTOF)
+                                .a(FABIO_JOURNAL)
                                 .add("prism:publicationName", v);
                         if (serials.containsKey(v)) {
                             Resource serial = serials.get(v);
@@ -476,10 +488,12 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.aulast" : {
+                        v = entities.unescape(v);
                         if (aulast != null) {
-                            r.newResource("foaf:maker")
+                            r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst );
+                            author = aulast + " " + aufirst;
                             aulast = null;
                             aufirst = null;
                         } else {
@@ -489,9 +503,10 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     }
                     case "rft.aufirst" : {
                         if (aufirst != null) {
-                            r.newResource("foaf:maker")
+                            r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst);
+                            author = aulast + " " + aufirst;
                             aulast = null;
                             aufirst = null;
                         } else {
@@ -500,31 +515,40 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.au" : {
+                        // fix author strings
+                        if ("&NA;".equals(v)) {
+                            v = null;
+                        } else {
+                            v = entities.unescape(v);
+                        }
                         r.add("dc:creator", v);
+                        if (author == null) {
+                            author = v;
+                        }
                         break;
                     }
                     case "rft.date" : {
                         year = v;
-                        Literal l = new SimpleLiteral<>(v).type(Literal.GYEAR);
+                        Literal l = new SimpleLiteral(v).type(Literal.GYEAR);
                         r.add("prism:publicationDate", l);
                         break;
                     }
                     case "rft.volume" : {
-                        r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_VOLUME)
+                        r.newResource(FRBR_EMBODIMENT)
+                                .a(FABIO_PERIODICAL_VOLUME)
                                 .add("prism:volume", v);
                         break;
                     }
                     case "rft.issue" : {
-                        r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_ISSUE)
+                        r.newResource(FRBR_EMBODIMENT)
+                                .a(FABIO_PERIODICAL_ISSUE)
                                 .add("prism:issueIdentifier", v);
                         break;
                     }
                     case "rft.spage" : {
                         if (spage != null) {
-                            r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                            r.newResource(FRBR_EMBODIMENT)
+                                    .a(FABIO_PRINT_OBJECT)
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -536,8 +560,8 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     }
                     case "rft.epage" : {
                         if (epage != null) {
-                            r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                            r.newResource(FRBR_EMBODIMENT)
+                                    .a(FABIO_PRINT_OBJECT)
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -562,18 +586,30 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             public void close() {
                 // pending fields...
                 if (aufirst != null || aulast != null) {
-                    r.newResource("foaf:maker")
-                            .add("rdf:type", IRI.create("foaf:Agent"))
+                    r.newResource(FOAF_MAKER)
+                            .a(FOAF_AGENT)
                             .add("foaf:familyName", aulast)
                             .add("foaf:givenName", aufirst);
+                    author = aulast + " " + aufirst;
                 }
                 if (spage != null || epage != null) {
-                    r.newResource("frbr:embodiment")
-                            .add("rdf:type", IRI.create("fabio:PrintObject"))
+                    r.newResource(FRBR_EMBODIMENT)
+                            .a(FABIO_PRINT_OBJECT)
                             .add("prism:startingPage", spage)
                             .add("prism:endingPage", epage);
                 }
-                addZDB(title, issns, year, j);
+                // create bibliographic key
+                String key = new WorkAuthor()
+                        .authorName(author)
+                        .workName(work)
+                        .createIdentifier();
+                // move aulast to author if no author
+                if (author == null && aulast != null) {
+                    author = aulast;
+                }
+                if (author!= null && work != null && key != null) {
+                    r.add("xbib:key", key);
+                }
             }
 
             public boolean hasErrors() {
@@ -585,80 +621,14 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             }
         };
         try {
-            URIUtil.parseQueryString(coins.toURI(), Charset.forName("UTF-8"), listener);
+            URIUtil.parseQueryString(coins.toURI(), UTF8, listener);
         } catch (InvalidCharacterException | URISyntaxException  e) {
             logger.warn("can't parse query string: " + coins, e);
         }
         listener.close();
-        return listener.hasErrors() ? Result.ERROR : listener.missingSerial() ? Result.MISSINGSERIAL : Result.OK;
-    }
-
-    /**
-     * The journal should be equipped with ZDB.
-     *
-     * Search is problematic since title is not unique and ISSNs are not always there (conference, proceedings,
-     * mismatches...)
-     *
-     * 1. one ISSN
-     * 2. two ISSN (which one is right?)
-     * 3. year of article for chronology check?
-     *
-     * Better method: iterate through ZDB and attach all matching articles to ZDB ID.
-     *
-     * @param title
-     * @param issns
-     * @param year
-     * @param resource
-     */
-    private void addZDB(String title, Collection<Node> issns, String year, Resource resource) {
-        long millis = 1000;
-        QueryBuilder queryBuilder =
-                matchPhraseQuery("preferredWorkTitle", title);
-        SearchRequestBuilder searchRequest = client.prepareSearch()
-                .setQuery(queryBuilder)
-                .setSize(10) // size is per shard!
-                .setSearchType(SearchType.SCAN)
-                .setScroll(TimeValue.timeValueMillis(millis));
-        searchRequest.setIndices("mix");
-        searchRequest.setTypes("works");
-        SearchResponse searchResponse = searchRequest.execute().actionGet();
-        searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
-                .setScroll(TimeValue.timeValueMillis(millis))
-                .execute().actionGet();
-        long totalHits = searchResponse.getHits().getTotalHits();
-        //logger.info("searching for {} --> {} hits", title, totalHits);
-        while (true) {
-            searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
-                    .setScroll(TimeValue.timeValueMillis(millis))
-                    .execute().actionGet();
-            SearchHits hits = searchResponse.getHits();
-            if (hits.getHits().length == 0) {
-                break;
-            }
-            if (hits.getHits().length == 1) {
-                addZDB(hits.getHits()[0], resource);
-                break;
-            }
-            for (SearchHit hit : hits) {
-                String foundTitle = (String)hit.getSource().get("preferredWorkTitle");
-                if (title.toLowerCase().equals(foundTitle.toLowerCase())) {
-                    addZDB(hit, resource);
-                }
-            }
-        }
-    }
-
-    private void addZDB(SearchHit hit, Resource resource) {
-        // xbib - FRBR model
-        IRI zdbid = IRI.builder().scheme("http").host("xbib.info")
-                .path("/works/zdb/").fragment(hit.id()).build();
-        // bibo - flat model
-        String p = "/resource/" + hit.id();
-        IRI zdbservices = IRI.builder().scheme("http").host("ld.zdb-services.de")
-                .path(new StringBuilder(p).insert(p.length()-1, "-").toString()).build();
-        logger.info("found ZDB {} {} {} ", hit.id(), zdbid, zdbservices);
-        resource.add("dcterms:identifier", zdbid)
-            .add("dcterms:identifier", zdbservices);
+        return listener.hasErrors() ?
+                Result.ERROR : listener.missingSerial() ?
+                Result.MISSINGSERIAL : Result.OK;
     }
 
 }

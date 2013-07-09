@@ -26,7 +26,6 @@
                     <appendAssemblyId>true</appendAssemblyId>
                     <outputDirectory>${basedir}/lib</outputDirectory>
                     <descriptors>
-                        <descriptor>${basedir}/src/main/assemblies/source.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/content.xml</descriptor>
                         <descriptor>${basedir}/src/main/assemblies/elasticsearch.xml</descriptor>
                     </descriptors>

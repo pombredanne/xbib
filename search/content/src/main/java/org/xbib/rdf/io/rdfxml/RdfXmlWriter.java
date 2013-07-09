@@ -206,7 +206,8 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
             // Write new subject:
             writeNewLine();
             writeStartOfStartTag(NS_URI, "Description");
-            if (subj.id().getScheme().equals(Identifier.GENID)) {
+            //if (subj.id().getScheme().equals(Identifier.GENID)) {
+            if (subj.isBlank()) {
                 writeAttribute(NS_URI, "nodeID", subj.toString());
             } else {
                 writeAttribute(NS_URI, "about", subj.toString());

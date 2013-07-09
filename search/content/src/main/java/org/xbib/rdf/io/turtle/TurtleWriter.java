@@ -282,7 +282,9 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         } else {
             // embedded resource switchback?
             IRI iri = embedded.isEmpty() ? null : embedded.peek();
-            boolean closeEmbedded = isBlank(lastSubject) && !subject.id().equals(iri);
+            boolean closeEmbedded = lastSubject != null
+                    && lastSubject.isBlank()
+                    && !subject.id().equals(iri);
             int n = embedded.indexOf(iri) - embedded.indexOf(subject.id());
             if (closeEmbedded) {
                 for (int i = 0; i < n; i++) {
@@ -328,7 +330,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
             return;
         }
         // do not output blank subjects
-        if (!isBlank(subject)) {
+        if (!subject.isBlank()) {
             sb.append('<')
                 .append(subject.toString())
                 .append("> ");
@@ -356,7 +358,7 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
     private void writeObject(O object) throws IOException {
         if (object instanceof Resource) {
             Resource r = (Resource<S,P,O>)object;
-            if (isBlank(r)) {
+            if (r.isBlank()) {
                 // blank node?
                 openEmbeddedResource(r.id());
                 sameResource = false;
@@ -578,8 +580,8 @@ public class TurtleWriter<S extends Identifier, P extends Property, O extends No
         return buf.toString();
     }
 
-    private boolean isBlank(Identifier id) {
+    /*private boolean isBlank(Identifier id) {
         return id == null ? false : Identifier.GENID.equals(id.id().getScheme());
-    }
+    }*/
 
 }

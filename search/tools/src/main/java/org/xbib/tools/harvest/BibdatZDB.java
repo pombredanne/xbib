@@ -56,9 +56,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.xbib.tools.opt.util.DateConverter.datePattern;
 
-public class NatLizOAI {
+public class BibdatZDB {
 
-    private final static Logger logger = LoggerFactory.getLogger(NatLizOAI.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getSimpleName());
 
     private static OptionSet options;
 
@@ -80,7 +80,7 @@ public class NatLizOAI {
                     accepts("until").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd'T'hh:mm:ss'Z'")).defaultsTo(new Date());
                     accepts("fromDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd"));
                     accepts("untilDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd")).defaultsTo(new Date());
-                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("oai.ttl");
+                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("bibdat.xml");
                 }
             };
             options = parser.parse(args);
@@ -88,7 +88,6 @@ public class NatLizOAI {
             String server = (String) options.valueOf("server");
             String prefix = (String) options.valueOf("prefix");
             String set = (String) options.valueOf("set");
-
             Date from = options.valueOf("fromDate") != null?
                     (Date) options.valueOf("fromDate") :  (Date) options.valueOf("from");
             Date until = options.valueOf("untilDate") != null?
@@ -103,7 +102,7 @@ public class NatLizOAI {
                     .setFrom(from)
                     .setUntil(until);
 
-            new NatLizOAI(client, output).execute(request).close();
+            new BibdatZDB(client, output).execute(request).close();
 
             logger.info("harvested {} documents", counter.get());
 
@@ -114,7 +113,7 @@ public class NatLizOAI {
         System.exit(exitcode);
     }
 
-    private NatLizOAI(OAIClient client, String output) throws Exception {
+    private BibdatZDB(OAIClient client, String output) throws Exception {
         this.client = client;
         TarConnectionFactory factory = new TarConnectionFactory();
         Connection<TarSession> connection = factory.getConnection(URI.create("targz:" + output));
@@ -122,7 +121,7 @@ public class NatLizOAI {
         session.open(Session.Mode.WRITE);
     }
 
-    private NatLizOAI execute(ListRecordsRequest request) throws Exception {
+    private BibdatZDB execute(ListRecordsRequest request) throws Exception {
         final XmlMetadataHandler metadataHandler = new PacketHandler()
                 .setWriter(new StringWriter());
         try {
@@ -133,7 +132,7 @@ public class NatLizOAI {
                 if (listener.getResponse() != null) {
                     StringWriter sw = new StringWriter();
                     listener.getResponse().to(sw);
-                    //logger.info("response from NatLiz = {}", sw);
+                    //logger.info("response from OAI = {}", sw);
                 }
                 request = listener.isFailure() ? null :
                         client.resume(request, listener.getResumptionToken());

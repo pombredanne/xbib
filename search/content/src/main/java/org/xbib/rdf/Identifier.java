@@ -38,9 +38,9 @@ import org.xbib.iri.IRI;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface Identifier extends Node, Property {
+public interface Identifier {
 
-    String GENID = "genid";
+    IRI id();
 
     /**
      * Set the identifier
@@ -55,5 +55,7 @@ public interface Identifier extends Node, Property {
      * @param identifier a identifier
      */
     Identifier id(String identifier);
+
+    boolean isBlank();
 
 }

@@ -31,7 +31,6 @@
  */
 package org.xbib.tools.convert;
 
-import org.xbib.date.DateUtil;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -48,35 +47,28 @@ import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
 import org.xml.sax.InputSource;
 
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.net.URI;
 import java.text.NumberFormat;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPOutputStream;
 
+import static org.xbib.tools.util.FormatUtil.formatMillis;
+
 /**
- * VIAF converter. The original VIAF files are one RDF/XML per line.
- * This converion generates NTriples or Turtle format.
+ * Convert GND from RDF/XML to Turtle or Ntriples
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class VIAF extends AbstractImporter<Long, AtomicLong> {
+public class GNDConverter extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(VIAF.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(GNDConverter.class.getName());
 
     private final static String lf = System.getProperty("line.separator");
 
@@ -90,15 +82,7 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
 
     private static OptionSet options;
 
-    private String output;
-
     private boolean done = false;
-
-    private BlockingQueue<String> pump;
-
-    private int numPumps;
-
-    private ExecutorService pumpService;
 
     public static void main(String[] args) {
         try {
@@ -106,38 +90,32 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
                 {
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.xml");
-                    accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
-                    accepts("pumps").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("format").withOptionalArg().ofType(String.class).defaultsTo("turtle");
                     accepts("output").withOptionalArg().ofType(String.class).defaultsTo("output.ttl");
-                    accepts("translatePicaSortMarker").withOptionalArg().ofType(String.class).defaultsTo("x-viaf");
+                    accepts("translatePicaSortMarker").withOptionalArg().ofType(String.class).defaultsTo("de-DE-x-rak");
                 }
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + VIAF.class.getCanonicalName() + lf
-                        + " --help                 print this help message" + lf
-                        + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
-                        + " --threads <n>          the number of threads (optional, default: 1)"
-                        + " --pumps <n>            the number of pumps (optional, default: 1)"
+                System.err.println("Help for " + GNDConverter.class.getCanonicalName() + lf
+                        + " --help                                   print this help message" + lf
+                        + " --path <path>                            a file path from where the input files are recursively collected (required)" + lf
+                        + " --pattern <pattern>                      a regex for selecting matching file names for input (default: *.xml)" + lf
                         + " --format 'turtle'|'ntriples'             the output format (default: turtle)"
                         + " --output <name>                          the output filename (default: output.ttl)"
-                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'x-viaf')"
+                        + " --translatePicaSortMarker <language>     if Pica '@' sort marker should be translated to a W3C language tag, see http://www.w3.org/International/articles/language-tags/ (default: 'de-DE-x-rak')"
                 );
                 System.exit(1);
             }
 
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
-            final Integer threads = (Integer) options.valueOf("threads");
 
             long t0 = System.currentTimeMillis();
-            ImportService service = new ImportService().threads(threads).factory(
+            ImportService service = new ImportService().threads(1).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
-                            return new VIAF();
+                            return new GNDConverter();
                         }
                     }).execute();
 
@@ -147,15 +125,13 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
             double dps = docs * 1000.0 / (double)(t1 - t0);
             double avg = bytes / (docs + 1); // avoid div by zero
             double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = FormatUtil.formatMillis(t1 - t0);
             String byteSize = FormatUtil.convertFileSize(bytes);
             String avgSize = FormatUtil.convertFileSize(avg);
             NumberFormat formatter = NumberFormat.getNumberInstance();
-            logger.info("Converting complete. {} files, {} docs, {} = {} ms, {} = {} chars, {} = {} avg size, {} dps, {} MB/s",
+            logger.info("Converting complete. {} files, {} docs, {}, {} = {} chars, {} = {} avg size, {} dps, {} MB/s",
                     fileCounter,
                     docs,
-                    t,
-                    (t1-t0),
+                    formatMillis(t1 - t0),
                     bytes,
                     byteSize,
                     avgSize,
@@ -170,13 +146,6 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
             System.exit(1);
         }
         System.exit(0);
-    }
-
-    VIAF() {
-        this.output = (String)options.valueOf("output");
-        this.numPumps = (Integer)options.valueOf("pumps");
-        this.pump = new SynchronousQueue(true);
-        this.pumpService = Executors.newFixedThreadPool(numPumps);
     }
 
     @Override
@@ -198,94 +167,49 @@ public class VIAF extends AbstractImporter<Long, AtomicLong> {
         }
         try {
             InputStream in = InputService.getInputStream(uri);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            for (int i = 0; i < numPumps; i++) {
-                pumpService.submit(new VIAFPipeline(i));
+            String outName = options.valueOf("output") + ".gz";
+            if (fileCounter.get() > 0) {
+                outName += "." + fileCounter.get();
             }
-            String line;
-            long linecounter = 0;
-            while ((line = reader.readLine()) != null) {
-                pump.put(line);
-                linecounter++;
-                if (linecounter % 10000 == 0) {
-                    logger.info("{}", linecounter);
-                }
-            }
-            in.close();
-            for (int i = 0; i < numPumps; i++) {
-                pump.put("|");
-            }
-            fileCounter.incrementAndGet();
-        } catch (Exception ex) {
-            logger.error("error while getting next document: " + ex.getMessage(), ex);
-        } finally {
-            pumpService.shutdownNow();
-            pumpService = null;
-        }
-        return fileCounter;
-    }
-
-    class VIAFPipeline implements Callable<Boolean> {
-
-        OutputStream out;
-
-        VIAFPipeline(int i) throws Exception {
-            String fileName = DateUtil.today() + "_" + i + "_" + fileCounter.get() + "_" + output + ".gz";
-            FileOutputStream fout = new FileOutputStream(fileName);
-            this.out = new GZIPOutputStream(fout){
+            OutputStream out = new FileOutputStream(outName);
+            out = new GZIPOutputStream(out){
                 {
                     def.setLevel(Deflater.BEST_COMPRESSION);
                 }
             };
-        }
-
-        @Override
-        public Boolean call() throws Exception {
-            try {
-                String marker = (String)options.valueOf("translatePicaSortMarker");
-                if ("ntriples".equals(options.valueOf("format"))) {
-                    NTripleWriter writer = new NTripleWriter()
-                            .output(out)
-                            .translatePicaSortMarker(marker);
-                    while (true) {
-                        String line = pump.take();
-                        if ("|".equals(line)) {
-                            break;
-                        }
-                        RdfXmlReader rdfxml = new RdfXmlReader();
-                        rdfxml.setTripleListener(writer);
-                        rdfxml.parse(new InputSource(new StringReader(line)));
-                    }
-                    writer.close();
-                    docCounter.getAndAdd(writer.getIdentifierCounter());
-                    charCounter.getAndAdd(writer.getByteCounter());
-                }
-                else if ("turtle".equals(options.valueOf("format"))) {
-                    TurtleWriter writer = new TurtleWriter()
-                            .output(out)
-                            .translatePicaSortMarker(marker);
-                    while (true) {
-                        String line = pump.take();
-                        if ("|".equals(line)) {
-                            break;
-                        }
-                        RdfXmlReader rdfxml = new RdfXmlReader();
-                        rdfxml.setTripleListener(writer);
-                        rdfxml.parse(new InputSource(new StringReader(line)));
-                    }
-                    writer.close();
-                    docCounter.getAndAdd(writer.getIdentifierCounter());
-                    charCounter.getAndAdd(writer.getByteCounter());
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                return false;
-            } finally {
+            String marker = (String)options.valueOf("translatePicaSortMarker");
+            if ("turtle".equals(options.valueOf("format").toString())) {
+                TurtleWriter turtle = new TurtleWriter()
+                    .translatePicaSortMarker(marker)
+                    .output(out);
+                RdfXmlReader reader = new RdfXmlReader();
+                reader.setTripleListener(turtle);
+                reader.parse(new InputSource(in));
+                turtle.close();
+                in.close();
                 out.close();
+                docCounter.getAndAdd(turtle.getIdentifierCounter());
+                charCounter.getAndAdd(turtle.getByteCounter());
             }
-            return true;
+            else if ("ntriples".equals(options.valueOf("format").toString())) {
+                NTripleWriter ntriples = new NTripleWriter()
+                    .translatePicaSortMarker(marker)
+                    .output(out);
+                RdfXmlReader reader = new RdfXmlReader();
+                reader.setTripleListener(ntriples);
+                reader.parse(new InputSource(in));
+                ntriples.close();
+                in.close();
+                out.close();
+                charCounter.getAndAdd(ntriples.getByteCounter());
+            }
+            fileCounter.incrementAndGet();
+        } catch (Exception ex) {
+            logger.error("error while getting next document: " + ex.getMessage(), ex);
         }
+        return fileCounter;
     }
+
 
 }
 

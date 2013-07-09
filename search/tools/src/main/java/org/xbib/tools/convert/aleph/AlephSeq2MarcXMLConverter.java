@@ -73,9 +73,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
-public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
+public class AlephSeq2MarcXMLConverter extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(AlephSeq2MarcXML.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(AlephSeq2MarcXMLConverter.class.getName());
     private final static AtomicLong fileCounter = new AtomicLong(0L);
     private final int BUFFER_SIZE = 8192;
     private final String INPUT_ENCODING = "UTF-8";
@@ -146,7 +146,7 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
 
                         @Override
                         public Importer newImporter() {
-                            AlephSeq2MarcXML importer = new AlephSeq2MarcXML().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
+                            AlephSeq2MarcXMLConverter importer = new AlephSeq2MarcXMLConverter().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
                             return importer;
                         }
                     }).execute();
@@ -157,36 +157,36 @@ public class AlephSeq2MarcXML extends AbstractImporter<Long, AtomicLong> {
         System.exit(0);
     }
 
-    public AlephSeq2MarcXML() {
+    public AlephSeq2MarcXMLConverter() {
         this.watcher = new BytesProgressWatcher(BUFFER_SIZE);
     }
 
-    public AlephSeq2MarcXML setURI(URI uri) {
+    public AlephSeq2MarcXMLConverter setURI(URI uri) {
         return this;
     }
 
-    public AlephSeq2MarcXML setInput(Queue<URI> list) {
+    public AlephSeq2MarcXMLConverter setInput(Queue<URI> list) {
         if (list != null) {
             this.input = list;
         }
         return this;
     }
 
-    public AlephSeq2MarcXML setSplitSize(Long size) {
+    public AlephSeq2MarcXMLConverter setSplitSize(Long size) {
         if (size != null) {
             this.splitsize = size;
         }
         return this;
     }
 
-    public AlephSeq2MarcXML setLinkPattern(String linkpattern) {
+    public AlephSeq2MarcXMLConverter setLinkPattern(String linkpattern) {
         if (linkpattern != null) {
             this.linkformat = linkpattern;
         }
         return this;
     }
 
-    public AlephSeq2MarcXML setEnable(List<Integer> enable) {
+    public AlephSeq2MarcXMLConverter setEnable(List<Integer> enable) {
         if (enable != null) {
             this.enable = enable;
         }

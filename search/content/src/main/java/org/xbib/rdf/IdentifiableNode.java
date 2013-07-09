@@ -39,9 +39,11 @@ import org.xbib.iri.IRI;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class IdentifiableNode implements Identifier {
+public class IdentifiableNode implements Identifier, Node {
     
     private final static AtomicLong nodeCounter = new AtomicLong();
+
+    private final static String GENID = "genid";
 
     private final static String PLACEHOLDER = "_:";
 
@@ -57,7 +59,7 @@ public class IdentifiableNode implements Identifier {
     
     @Override
     public IdentifiableNode id(String id) {
-        id(IRI.builder().curi(Identifier.GENID, id).build());
+        id(IRI.builder().curi(GENID, id).build());
         return this;
     }
     
@@ -73,7 +75,7 @@ public class IdentifiableNode implements Identifier {
     }
 
     public boolean isBlank() {
-        return Identifier.GENID.equals(id.getScheme());
+        return GENID.equals(id.getScheme());
     }
 
     @Override
@@ -84,6 +86,11 @@ public class IdentifiableNode implements Identifier {
         }
         return isBlank() ?
                 PLACEHOLDER + id.getSchemeSpecificPart() : id.toString();
+    }
+
+    @Override
+    public Object nativeValue() {
+        return id;
     }
 
     @Override

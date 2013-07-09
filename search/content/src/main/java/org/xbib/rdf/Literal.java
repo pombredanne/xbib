@@ -79,11 +79,5 @@ public interface Literal<O> extends Serializable, Node, XSD {
      * @return the language
      */
     String language();
-    
-    /**
-     * Get native value (Java primitive type)
-     * @return 
-     */
-    Object nativeValue();
 
 }

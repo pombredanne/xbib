@@ -48,6 +48,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
+import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.io.ResourceSerializer;
@@ -57,6 +58,8 @@ import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.InvalidCharacterException;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+import org.xbib.util.CompactHashMap;
+import org.xbib.util.Entities;
 import org.xbib.xml.XMLUtil;
 
 import java.io.BufferedReader;
@@ -68,9 +71,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.Deflater;
@@ -86,6 +89,8 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
     private final static Logger logger = LoggerFactory.getLogger(ArticleDBConverter.class.getName());
 
     private final static String lf = System.getProperty("line.separator");
+
+    private final static Charset UTF8 = Charset.forName("UTF-8");
 
     protected static Queue<URI> input;
 
@@ -111,11 +116,11 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
 
     private static FileWriter missingserials;
 
-    private static Map<String,IRI> articles;
-
     private final static AtomicLong dupCounter = new AtomicLong(0L);
 
     private final static AtomicLong counter = new AtomicLong(0L);
+
+    private final Entities entities = new Entities();
 
     public static void main(String[] args) {
         int exitcode = 0;
@@ -152,12 +157,10 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
 
             for (URI uri : input) {
                 InputStream in = factory.getInputStream(uri);
-                serialsdb = new SerialsDBConverter(new InputStreamReader(in, "UTF-8"), "serials" );
+                serialsdb = new SerialsDBConverter(new InputStreamReader(in, UTF8), "serials" );
                 serials = serialsdb.getMap();
             }
             logger.info("serials done, {}", serials.size());
-
-            articles = new ConcurrentHashMap();
 
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
 
@@ -166,6 +169,7 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
             logger.info("found {} input files", input);
 
             IRINamespaceContext context = IRINamespaceContext.newInstance();
+            context.addNamespace(RDF.NS_PREFIX, RDF.NS_URI);
             context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
             context.addNamespace("dcterms", "http://purl.org/dc/terms/");
             context.addNamespace("foaf", "http://xmlns.com/foaf/0.1/");
@@ -275,7 +279,8 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
         try {
             URI uri = input.poll();
             if (uri != null) {
-                logger.info("starting process of {}, {} files left", uri, input.size());
+                logger.info("starting process of {}, {} files left, {} counts, {} dups",
+                        uri, input.size(), counter.get(), dupCounter.get());
                 process(uri);
             } else {
                 done = true;
@@ -376,6 +381,14 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
 
     private IRI FABIO_PRINT_OBJECT = IRI.create("fabio:PrintObject");
 
+    private IRI FOAF_MAKER = IRI.create("foaf:maker");
+
+    private IRI FOAF_AGENT = IRI.create("foaf:agent");
+
+    private IRI FRBR_PARTOF = IRI.create("frbr:partOf");
+
+    private IRI FRBR_EMBODIMENT = IRI.create("frbr:embodiment");
+
     protected enum Result {
         OK, ERROR, MISSINGSERIAL
     }
@@ -417,29 +430,33 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                         if (v.startsWith("info:doi/")) {
                             v = v.substring(9);
                         }
+                        // DOI is case-insensitive
+                        v = v.toUpperCase();
                         try {
                             // info URI RFC wants slash as unencoded character
-                            String doiPart = URIUtil.encode(v, Charset.forName("UTF-8"));
-                            doiPart = doiPart.replaceAll("%2F","/");
+                            String doiPart = URIUtil.encode(v, UTF8);
+                            doiPart = doiPart.replaceAll("%2F","/"); // case insensitive
                             IRI doi = IRI.builder().curi("info", "doi/" + doiPart).build();
-                            IRI id = IRI.builder().scheme("http").host("xbib.info")
-                                    .path("/works/doi").fragment(doiPart).build();
-                            r.id(id);
+                            IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
+                                    .path("/doi/").fragment(doiPart).build();
+                            r.id(dereferencable);
                             r.add("dcterms:identifier", doi)
-                                    .add("prism:doi", v);
+                                    .add("prism:doi", v.toUpperCase());
                         } catch (Exception e) {
                             logger.warn("can't build IRI from DOI " + v, e);
                         }
                         break;
                     }
                     case "rft.atitle" : {
+                        v = entities.unescape(v);
                         r.add("dcterms:title", v);
                         work = v;
                         break;
                     }
                     case "rft.jtitle" : {
-                        Resource j = r.newResource("frbr:partOf")
-                                .add("rdf:type", FABIO_JOURNAL)
+                        v = entities.unescape(v);
+                        Resource j = r.newResource(FRBR_PARTOF)
+                                .a(FABIO_JOURNAL)
                                 .add("prism:publicationName", v);
                         if (serials.containsKey(v)) {
                                 Resource serial = serials.get(v);
@@ -465,8 +482,9 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.aulast" : {
+                        v = entities.unescape(v);
                         if (aulast != null) {
-                            r.newResource("foaf:maker")
+                            r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst);
                             aulast = null;
@@ -474,14 +492,11 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                         } else {
                             aulast = v;
                         }
-                        if (author == null) {
-                            author = v;
-                        }
                         break;
                     }
                     case "rft.aufirst" : {
                         if (aufirst != null) {
-                            r.newResource("foaf:maker")
+                            r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
                                     .add("foaf:givenName", aufirst );
                             aulast = null;
@@ -492,31 +507,39 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.au" : {
+                        // fix author
+                        if ("&NA;".equals(v)) {
+                            v = null;
+                        } else {
+                            v = entities.unescape(v);
+                        }
                         r.add("dc:creator", v);
-                        author = v;
+                        if (author == null) {
+                            author = v;
+                        }
                         break;
                     }
                     case "rft.date" : {
-                        Literal l = new SimpleLiteral<>(v).type(Literal.GYEAR);
+                        Literal l = new SimpleLiteral(v).type(Literal.GYEAR);
                         r.add("prism:publicationDate", l);
                         break;
                     }
                     case "rft.volume" : {
-                        r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_VOLUME)
+                        r.newResource(FRBR_EMBODIMENT)
+                                .a(FABIO_PERIODICAL_VOLUME)
                                 .add("prism:volume", v);
                         break;
                     }
                     case "rft.issue" : {
-                        r.newResource("frbr:embodiment")
-                                .add("rdf:type", FABIO_PERIODICAL_ISSUE )
+                        r.newResource(FRBR_EMBODIMENT)
+                                .a(FABIO_PERIODICAL_ISSUE)
                                 .add("prism:issueIdentifier", v);
                         break;
                     }
                     case "rft.spage" : {
                         if (spage != null) {
-                            r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                            r.newResource(FRBR_EMBODIMENT)
+                                    .a(FABIO_PRINT_OBJECT)
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -528,8 +551,8 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                     }
                     case "rft.epage" : {
                         if (epage != null) {
-                            r.newResource("frbr:embodiment")
-                                    .add("rdf:type", FABIO_PRINT_OBJECT)
+                            r.newResource(FRBR_EMBODIMENT)
+                                    .a(FABIO_PRINT_OBJECT)
                                     .add("prism:startingPage", spage)
                                     .add("prism:endingPage", epage);
                             spage = null;
@@ -554,13 +577,13 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
             public void close() {
                 // pending fields...
                 if (aufirst != null || aulast != null) {
-                    r.newResource("foaf:maker")
+                    r.newResource(FOAF_MAKER)
                             .add("foaf:familyName", aulast)
                             .add("foaf:givenName", aufirst);
                 }
                 if (spage != null || epage != null) {
-                    r.newResource("frbr:embodiment")
-                            .add("rdf:type", FABIO_PRINT_OBJECT)
+                    r.newResource(FRBR_EMBODIMENT)
+                            .a(FABIO_PRINT_OBJECT)
                             .add("prism:startingPage", spage)
                             .add("prism:endingPage", epage);
                 }
@@ -569,16 +592,19 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                         .authorName(author)
                         .workName(work)
                         .createIdentifier();
+                // move aulast to author if no author
+                if (author == null && aulast != null) {
+                    author = aulast;
+                }
                 if (author!= null && work != null && key != null) {
-                    r.add("dc:identifier", key);
-                    if (articles.containsKey(key)) {
-                        //logger.warn("duplicate article key '{}' new==> {} old==> {}", key, coins, articles.get(key));
+                    r.add("xbib:key", key);
+                    /*if (articles.containsKey(key)) {
                         dupCounter.incrementAndGet();
                     } else {
                         //logger.info("new articles key {}", key);
                         articles.put(key, coins);
                         counter.incrementAndGet();
-                    }
+                    }*/
                 }
             }
 
@@ -591,12 +617,14 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
             }
         };
         try {
-            URIUtil.parseQueryString(coins.toURI(), Charset.forName("UTF-8"), listener);
+            URIUtil.parseQueryString(coins.toURI(), UTF8, listener);
         } catch (InvalidCharacterException | URISyntaxException e) {
             logger.warn("can't parse query string: " + coins, e);
         }
         listener.close();
-        return listener.hasErrors() ? Result.ERROR : listener.missingSerial() ? Result.MISSINGSERIAL : Result.OK;
+        return listener.hasErrors() ?
+                Result.ERROR : listener.missingSerial() ?
+                Result.MISSINGSERIAL : Result.OK;
     }
 
 }

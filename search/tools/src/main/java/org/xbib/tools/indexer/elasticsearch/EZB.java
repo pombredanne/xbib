@@ -43,6 +43,7 @@ import javax.xml.namespace.QName;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
@@ -147,7 +148,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean overwrite = (Boolean) options.valueOf("overwrite");
 
-            final TransportClientIngestSupport es = new TransportClientIngestSupport();
+            final TransportClientBulkSupport es = new TransportClientBulkSupport();
 
             // we always delete index first, and we disable date detection
             es.maxBulkActions(maxbulkactions)
@@ -252,7 +253,6 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         public void endElement (String uri, String localName, String qName)
                 throws SAXException {
             super.endElement(uri, localName, qName);
-
         }
 
         @Override
@@ -284,7 +284,8 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             boolean skip =
                     "ezb-export".equals(name.getLocalPart())
                     || "release".equals(name.getLocalPart())
-                    || "version".equals(name.getLocalPart());
+                    || "version".equals(name.getLocalPart())
+                    || name.getLocalPart().startsWith("@");
             return skip;
         }
         

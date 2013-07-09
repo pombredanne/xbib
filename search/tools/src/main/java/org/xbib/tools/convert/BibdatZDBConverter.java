@@ -66,9 +66,9 @@ import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
+public final class BibdatZDBConverter extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(BibdatZDBConverter.class.getName());
 
     private final static String lf = System.getProperty("line.separator");
 
@@ -99,7 +99,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + BibdatZDB.class.getCanonicalName() + lf
+                System.err.println("Help for " + BibdatZDBConverter.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
                         + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.xml)" + lf
@@ -129,7 +129,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
-                            return new BibdatZDB(factory);
+                            return new BibdatZDBConverter(factory);
                         }
                     }).execute();
 
@@ -165,7 +165,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         System.exit(0);
     }
 
-    BibdatZDB(PicaBuilderFactory factory) {
+    BibdatZDBConverter(PicaBuilderFactory factory) {
         this.factory = factory;
     }
 
@@ -187,7 +187,6 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             return fileCounter;
         }
         try {
-
             PicaElementMapper mapper = new PicaElementMapper("pica/zdb/bib")
                     .pipelines(pipelines)
                     .detectUnknownKeys(true)
@@ -197,7 +196,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
                     .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
                         @Override
                         public String transform(String value) {
-                            return Normalizer.normalize(value, Normalizer.Form.NFKC);
+                            return Normalizer.normalize(value, Normalizer.Form.NFC);
                         }
                     })
                     .addListener(mapper);

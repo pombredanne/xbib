@@ -12,9 +12,6 @@ import org.xbib.rdf.Triple;
 
 public class BlankNodeTest extends Assert {
 
-    private final Logger logger = LoggerFactory.getLogger(BlankNodeTest.class.getName());
-
-
     @Test
     public void testBlankNodeRenumbering() throws Exception {
         IdentifiableNode.reset();
@@ -24,15 +21,11 @@ public class BlankNodeTest extends Assert {
         // test order of adding
         Resource r1 = r.newResource("urn:res1");
         r1.add("urn:has", "a first resource");
-
         r.add("urn:has", "a first property");
-
         Resource q = new SimpleResource().id(IRI.create("urn:meta2"));
-
         Resource r2 = q.newResource("urn:res2");
         r2.add("urn:has", "a second resource");
         q.add("urn:has", "a second property");
-
         // we test here resource adding
         r.add("a:res", q);
 

@@ -31,50 +31,15 @@
  */
 package org.xbib.strings.encode;
 
-import org.xbib.io.util.URIUtil;
+import org.xbib.io.util.MessageDigestUtil;
 
-import java.nio.charset.Charset;
-import java.text.Normalizer;
-import java.util.Locale;
-import java.util.regex.Pattern;
+public class BaseformDigestEncoder extends BaseformEncoder {
 
-/**
- * A base form encoder
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
-public class BaseformEncoder {
+    private static final MessageDigestUtil digest = new MessageDigestUtil("MD5");
 
-    private static final Pattern p = Pattern.compile("[^\\p{IsWord}\\p{IsSpace}]");
-
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-
-    private static final Charset ISO88591 = Charset.forName("ISO-8859-1");
-
-    public static String normalizedFromUTF8(String name) {
-        String s;
-        try {
-            s = URIUtil.decode(name, UTF8);
-        } catch (StringIndexOutOfBoundsException e) {
-            // ignore
+    public static String createBaseIdentifier(String value) {
+        synchronized (digest) {
+            return digest.reset().add(normalizedFromUTF8(value)).toString();
         }
-        s = Normalizer.normalize(name, Normalizer.Form.NFC);
-        s = p.matcher(s).replaceAll("");
-        s = s.toLowerCase(Locale.ENGLISH); // just english lowercase rules (JVM independent)
-        return s;
     }
-
-    public static String normalizedFromISO88591(String name) {
-        String s;
-        try {
-            s = URIUtil.decode(name, UTF8);
-        } catch (StringIndexOutOfBoundsException e) {
-            // ignore
-        }
-        s = Normalizer.normalize(new String(name.getBytes(ISO88591), UTF8), Normalizer.Form.NFC);
-        s = p.matcher(s).replaceAll("");
-        s = s.toLowerCase(Locale.ENGLISH);
-        return s;
-    }
-
 }

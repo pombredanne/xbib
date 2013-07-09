@@ -45,7 +45,9 @@ public class SimpleLiteral<O extends Object>
         implements Literal<O>, Comparable<Literal<O>> {
 
     private O value;
+
     private IRI type;
+
     private String lang;
 
     public SimpleLiteral() {
@@ -129,10 +131,10 @@ public class SimpleLiteral<O extends Object>
 
     @Override
     public String toString() {
-        return toLiteral(); //value != null ? value.toString() : null;
+        return lexicalValue(); //value != null ? value.toString() : null;
     }
 
-    public String toLiteral() {
+    public String lexicalValue() {
         return (value != null ? value : "")
                 + (lang != null ? "@" + lang : "")
                 + (type != null ? "^^" + type : "");
@@ -158,6 +160,9 @@ public class SimpleLiteral<O extends Object>
                 return Float.parseFloat(s);
             case "xsd:double":
                 return Double.parseDouble(s);
+            case "xsd:gYear":
+                return Integer.parseInt(s);
+            // add more xsd here ...
             default:
                 return s;
         }

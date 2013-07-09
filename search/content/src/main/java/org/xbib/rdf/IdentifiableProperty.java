@@ -40,7 +40,7 @@ import org.xbib.iri.IRI;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * 
  */
-public class IdentifiableProperty extends IRI implements Property {
+public class IdentifiableProperty extends IRI implements Identifier, Property {
 
     public IdentifiableProperty(String iri) {
         super(iri);
@@ -62,7 +62,27 @@ public class IdentifiableProperty extends IRI implements Property {
     public IRI id() {
         return this;
     }
-    
+
+    @Override
+    public Identifier id(IRI identifier) {
+        return this;
+    }
+
+    @Override
+    public Identifier id(String identifier) {
+        return this;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return false;
+    }
+
+    @Override
+    public Object nativeValue() {
+        return this;
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

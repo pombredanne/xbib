@@ -74,7 +74,7 @@ import static org.xbib.tools.opt.util.DateConverter.datePattern;
  */
 public class DOAJ {
 
-    private final static Logger logger = LoggerFactory.getLogger(DOAJ.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(DOAJ.class.getSimpleName());
 
     private static OptionSet options;
 

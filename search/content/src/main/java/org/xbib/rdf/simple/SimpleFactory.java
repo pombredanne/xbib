@@ -104,15 +104,20 @@ public final class SimpleFactory<S,P,O> implements XSD {
     }
 
     private final static Property TYPE = new Property() {
-      @Override
-      public IRI id() {
-          return RDF.RDF_TYPE;
-      }
+        @Override
+        public IRI id() {
+            return RDF.RDF_TYPE;
+        }
 
-      @Override
-      public void accept(Visitor visitor) {
-      }
-  };
+        @Override
+        public Object nativeValue() {
+            return this;
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+        }
+    };
 
     public P rdfType() {
         return (P)TYPE;
@@ -123,6 +128,11 @@ public final class SimpleFactory<S,P,O> implements XSD {
         @Override
         public IRI id() {
             return RDF.RDF_LANGUAGE;
+        }
+
+        @Override
+        public Object nativeValue() {
+            return this;
         }
 
         @Override

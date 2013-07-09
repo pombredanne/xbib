@@ -243,7 +243,7 @@ public class TarSession implements Session {
         }
         byte[] buf = packet.toString().getBytes();
         if (buf.length > 0) {
-            String name = createEntryName(packet.name(), Long.toString(packet.number()));
+            String name = createEntryName(packet);
             TarArchiveEntry entry = new TarArchiveEntry(name);
             entry.setModTime(new Date());
             entry.setSize(buf.length);
@@ -261,19 +261,21 @@ public class TarSession implements Session {
         nf.setMinimumIntegerDigits(12);
     }
 
-
-    private String createEntryName(String name, String number) {
+    private String createEntryName(Packet packet) {
+        String name = packet.name();
         StringBuilder sb = new StringBuilder();
         if (name != null && name.length() > 0) {
             sb.append(name);
-        }
-        if (number != null) {
-            // distribute numbered entries over 12-digit directories (10.000 per directory)
-            String d = nf.format(counter.incrementAndGet());
-            sb.append("/").append(d.substring(0, 4))
+        } else {
+            Long number = packet.number();
+            if (number != null) {
+                // distribute numbered entries over 12-digit directories (10.000 per directory)
+                String d = nf.format(counter.incrementAndGet());
+                sb.append("/").append(d.substring(0, 4))
                     .append("/").append(d.substring(4, 8))
                     .append("/").append(d.substring(8, 12))
                     .append("/").append(number);
+            }
         }
         return sb.toString();
     }

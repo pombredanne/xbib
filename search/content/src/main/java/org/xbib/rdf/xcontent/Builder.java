@@ -40,11 +40,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.xbib.common.xcontent.XContentBuilder;
+import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.context.JsonLdContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.xml.CompactingNamespaceContext;
 
@@ -62,20 +62,6 @@ public class Builder<C extends ResourceContext, R extends Resource> {
             throws IOException {
         XContentBuilder builder = jsonBuilder();
         builder.startObject();
-        if (context instanceof JsonLdContext) {
-            /**
-             * TODO
-             */
-            JsonLdContext jsonLdContext = (JsonLdContext) context;
-            // create @context
-            build(builder, context, jsonLdContext.newResource());
-            // create @id IRI
-            builder.field("@id", resource.id().toString());
-            /*if (resource. != null) {
-             // create @type IRI
-             builder.field("@type", resource.type().toString());
-             }*/
-        }
         build(builder, context, resource);
         builder.endObject();
         return builder.string();
@@ -95,17 +81,21 @@ public class Builder<C extends ResourceContext, R extends Resource> {
             // drop values with size 0 silently
             if (values.size() == 1) {
                 // single value
-                O value = values.iterator().next();
-                if (!(value instanceof Identifier)) {
-                    builder.field(context.compact(predicate.id()), value.toString()); // nativeValue
+                O object = values.iterator().next();
+                if (object instanceof Identifier) {
+                    Identifier id = (Identifier)object;
+                    if (id.isBlank()) {
+                        continue;
+                    }
                 }
+                builder.field(context.compact(predicate.id()), object.nativeValue());
             } else if (values.size() > 1) {
                 // array of values
                 Collection<O> properties = filterBlankNodes(values);
                 if (!properties.isEmpty()) {
                     builder.startArray(context.compact(predicate.id()));
-                    for (O value : properties) {
-                        builder.value(value.toString()); // nativeValue
+                    for (O object : properties) {
+                        builder.value(object.nativeValue());
                     }
                     builder.endArray();
                 }
@@ -141,7 +131,7 @@ public class Builder<C extends ResourceContext, R extends Resource> {
         for (O object : objects) {
             if (object instanceof Identifier) {
                 Identifier id = (Identifier)object;
-                if (Identifier.GENID.equals(id.id().getScheme())) {
+                if (id.isBlank()) {
                     continue;
                 }
             }

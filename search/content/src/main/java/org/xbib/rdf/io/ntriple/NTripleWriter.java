@@ -181,7 +181,8 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
     }
 
     public String writeSubject(S subject) {
-        return Identifier.GENID.equals(subject.id().getScheme()) ?
+        return //Identifier.GENID.equals(subject.id().getScheme()) ?
+                subject.isBlank() ?
                 subject.toString() :
                 "<" + escape(subject.toString()) + ">" ;
     }
@@ -195,9 +196,7 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
                     .build();
             return "<" + escape(iri.toString()) + ">";
         }
-        return Identifier.GENID.equals(predicate.id().getScheme()) ?
-                predicate.toString() :
-                "<" + escape(predicate.toString()) + ">";
+        return "<" + escape(predicate.id().toString()) + ">";
     }
 
     public String writeObject(O object) {
@@ -221,7 +220,8 @@ public class NTripleWriter<S extends Identifier, P extends Property, O extends N
             return s;
         } else if (object instanceof IdentifiableNode) {
             IdentifiableNode node = (IdentifiableNode)object;
-            return Identifier.GENID.equals(node.id().getScheme()) ?
+            return //Identifier.GENID.equals(node.id().getScheme()) ?
+                    node.isBlank() ?
                     node.toString() :
                     "<" + escape(node.toString()) + ">" ;
         }

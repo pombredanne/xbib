@@ -60,6 +60,8 @@ public class GND {
 
     private static final Logger logger = LoggerFactory.getLogger(GND.class.getName());
 
+    private final static String lf = System.getProperty("line.separator");
+
     public static void main(String[] args) {
 
         try {
@@ -74,11 +76,13 @@ public class GND {
             };
             final OptionSet options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("ElasticsearchGNDIndexer");
-                System.err.println("--gndfile <uri>");
-                System.err.println("--elasticsearch <uri>");
-                System.err.println("--index <name>");
-                System.err.println("--type <name>");
+                System.err.println("Help for " + EZB.class.getCanonicalName() + lf
+                        + " --help                 print this help message" + lf
+                        + " --elasticsearch <uri>  Elasticesearch URI" + lf
+                        + " --index <index>        Elasticsearch index name" + lf
+                        + " --type <type>          Elasticsearch type name" + lf
+                        + " --gndfile <uri>        GND file" + lf
+                );
                 System.exit(1);
             }
             final String uriStr = (String) options.valueOf("gndfile");
@@ -97,7 +101,7 @@ public class GND {
             reader.setTripleListener(builder);
             reader.parse(in);
             builder.close();
-            System.err.println("done, indexed resources have " + builder.getTripleCounter() + " triples.");
+            logger.info("done, indexed resources have " + builder.getTripleCounter() + " triples.");
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

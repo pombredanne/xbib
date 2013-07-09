@@ -85,8 +85,8 @@ public class WorkAuthor implements IdentifiableEndeavor {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("wa-");
-        String wName = BaseformEncoder.normalizedName(workName.toString())
+        sb.append("wa");
+        String wName = BaseformEncoder.normalizedFromUTF8(workName.toString())
                 .replaceAll("aeiou", "");
         try {
             wName = encoder.encode(wName);
@@ -95,14 +95,14 @@ public class WorkAuthor implements IdentifiableEndeavor {
         }
         sb.append(wName);
         if (authorName != null) {
-            String aName = BaseformEncoder.normalizedName(authorName.toString())
+            String aName = BaseformEncoder.normalizedFromUTF8(authorName.toString())
                     .replaceAll("aeiou", "");
             try {
                 aName = encoder.encode(aName);
             } catch (EncoderException e) {
                 //ignore
             }
-            sb.append('-').append(aName);
+            sb.append(aName);
         }
         return sb.toString();
     }

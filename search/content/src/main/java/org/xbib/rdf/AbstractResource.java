@@ -163,6 +163,12 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     }
 
     @Override
+    public Resource<S, P, O> a(IRI externalResource) {
+        add("rdf:type", externalResource);
+        return this;
+    }
+
+    @Override
     public Set<P> predicateSet(S subject) {
         return attributes.keySet();
     }

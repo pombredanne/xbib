@@ -47,7 +47,7 @@ import org.xbib.rdf.context.ResourceContext;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Resource<S extends Identifier, P extends Property, O extends Node>
-        extends Identifier, Iterable<Triple<S,P,O>> {
+        extends Identifier, Node, Iterable<Triple<S,P,O>> {
 
     /**
      * Set the identifier of this resource
@@ -192,6 +192,15 @@ public interface Resource<S extends Identifier, P extends Property, O extends No
      * @return the new resource with the resource added
      */
     Resource<S, P, O> add(String predicate, Resource<S, P, O> resource);
+
+    /**
+     * Setting the type of the resource.
+     * This is equivalent to add("rdf:type", externalResource)
+     *
+     * @param externalResource
+     * @return
+     */
+    Resource<S, P, O> a(IRI externalResource);
 
     /**
      * Return the map of nodes attached to the properties of this resource.

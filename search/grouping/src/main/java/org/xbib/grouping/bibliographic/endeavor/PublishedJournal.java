@@ -64,8 +64,8 @@ public class PublishedJournal implements IdentifiableEndeavor {
         journalName = journalName.replaceAll(" [sS]eries$", "");
         WordBoundaryEntropyEncoder encoder = new WordBoundaryEntropyEncoder();
         StringBuilder sb = new StringBuilder();
-        sb.append("s-");
-        String shortJournalName = BaseformEncoder.normalizedName(journalName);
+        sb.append("s");
+        String shortJournalName = BaseformEncoder.normalizedFromUTF8(journalName);
         int l = shortJournalName.length();
         if (l == 0) {
             shortJournalName = journalName; // restore non-latin-script titles
@@ -80,7 +80,7 @@ public class PublishedJournal implements IdentifiableEndeavor {
         sb.append(shortJournalName);
         if (publisherName != null) {
             publisherName = publisherName.replaceAll("\\p{P}", "");
-            String shortPublisherName = BaseformEncoder.normalizedName(publisherName);
+            String shortPublisherName = BaseformEncoder.normalizedFromUTF8(publisherName);
             l = shortPublisherName.length();
             if (l == 0) {
                 shortPublisherName = publisherName; // restore
@@ -92,7 +92,7 @@ public class PublishedJournal implements IdentifiableEndeavor {
                 }
             }
             shortPublisherName.replaceAll("\\s", "");
-            sb.append('-').append(shortPublisherName);
+            sb.append(shortPublisherName);
         }
         return sb.toString();
     }
