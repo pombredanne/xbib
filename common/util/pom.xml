@@ -27,14 +27,6 @@
     </build>
 
     <dependencies>
-
-        <!--
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <type>jar</type>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-logging</artifactId>
@@ -50,13 +42,6 @@
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>xbib-compress</artifactId>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <!-- for XML transformer -->
-        <dependency>
-            <groupId>org.xbib</groupId>
-            <artifactId>xbib-content</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>

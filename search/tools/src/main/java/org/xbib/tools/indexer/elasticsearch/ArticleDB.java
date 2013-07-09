@@ -121,8 +121,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
     private boolean done = false;
 
-    private final Entities entities = new Entities();
-
     public static void main(String[] args) {
         int exitcode = 0;
         try {
@@ -458,13 +456,13 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.atitle" : {
-                        v = entities.unescape(v);
+                        v = Entities.HTML40.unescape(v);
                         r.add("dc:title", v);
                         work = v;
                         break;
                     }
                     case "rft.jtitle" : {
-                        v = entities.unescape(v);
+                        v = Entities.HTML40.unescape(v);
                         title = v;
                         j = r.newResource(FRBR_PARTOF)
                                 .a(FABIO_JOURNAL)
@@ -488,7 +486,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.aulast" : {
-                        v = entities.unescape(v);
+                        v = Entities.HTML40.unescape(v);
                         if (aulast != null) {
                             r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
@@ -502,6 +500,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case "rft.aufirst" : {
+                        v = Entities.HTML40.unescape(v);
                         if (aufirst != null) {
                             r.newResource(FOAF_MAKER)
                                     .add("foaf:familyName", aulast)
@@ -519,7 +518,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                         if ("&NA;".equals(v)) {
                             v = null;
                         } else {
-                            v = entities.unescape(v);
+                            v = Entities.HTML40.unescape(v);
                         }
                         r.add("dc:creator", v);
                         if (author == null) {

@@ -44,7 +44,6 @@ import org.testng.Assert;
  */
 public class PacketTest extends Assert {
 
-
     @Test
     public void testPacketWrite() throws Exception {
         String uri = "filegz:target/packetdemo";
