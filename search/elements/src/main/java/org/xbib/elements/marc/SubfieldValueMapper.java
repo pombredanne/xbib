@@ -33,8 +33,6 @@ package org.xbib.elements.marc;
 
 import java.util.Map;
 
-import org.xbib.logging.Logger;
-import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;
 
 /**
@@ -43,8 +41,6 @@ import org.xbib.marc.Field;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SubfieldValueMapper {
-
-    private final static Logger logger = LoggerFactory.getLogger(SubfieldValueMapper.class.getName());
 
     private SubfieldValueMapper() {
     }

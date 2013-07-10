@@ -31,7 +31,7 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import org.xbib.elements.dublincore.DublinCoreContext;
+import org.xbib.analyzer.dublincore.DublinCoreContext;
 
 public class PicaContext extends DublinCoreContext {
 

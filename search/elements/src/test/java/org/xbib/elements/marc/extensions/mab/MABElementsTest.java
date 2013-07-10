@@ -55,12 +55,10 @@ public class MABElementsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MABElementsTest.class.getName());
 
-    private MABElementMapper mapper;
 
     @Test
     public void testSetupOfElements() throws Exception {
-        MABBuilder builder = new MABBuilder();
-        mapper = new MABElementMapper("mab").start(builder);
+        MABElementMapper mapper = new MABElementMapper("mab").start();
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
@@ -75,8 +73,7 @@ public class MABElementsTest {
         InputStream in =  InputService.getInputStream(URI.create("file:src/test/resources/org/xbib/elements/marc/extensions/mab/1217zdbtit.dat"));
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/ZDB-MAB-Titel.xml"), "UTF-8");
-        MABBuilder builder = new MABBuilder();
-        mapper = new MABElementMapper("mab").start(builder);
+        MABElementMapper mapper = new MABElementMapper("mab").start();
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");

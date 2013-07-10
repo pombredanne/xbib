@@ -434,11 +434,9 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                             // info URI RFC wants slash as unencoded character
                             String doiPart = URIUtil.encode(v, UTF8);
                             doiPart = doiPart.replaceAll("%2F","/"); // case insensitive
-                            IRI doi = IRI.builder().curi("info", "doi/" + doiPart).build();
                             IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
                                     .path("/doi/").fragment(doiPart).build();
-                            r.id(dereferencable);
-                            r.add("dcterms:identifier", doi)
+                            r.id(dereferencable)
                                     .add("prism:doi", v.toUpperCase());
                         } catch (Exception e) {
                             logger.warn("can't build IRI from DOI " + v, e);

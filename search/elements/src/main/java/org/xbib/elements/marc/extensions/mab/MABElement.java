@@ -32,13 +32,16 @@
 package org.xbib.elements.marc.extensions.mab;
 
 import org.xbib.elements.Element;
+import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.bibliographic.ExtraBibliographicProperties;
-import org.xbib.elements.dublincore.DublinCoreProperties;
-import org.xbib.elements.dublincore.DublinCoreTerms;
-import org.xbib.elements.dublincore.DublinCoreTermsProperties;
+import org.xbib.analyzer.dublincore.DublinCoreProperties;
+import org.xbib.analyzer.dublincore.DublinCoreTerms;
+import org.xbib.analyzer.dublincore.DublinCoreTermsProperties;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.marc.Field;
 import org.xbib.marc.FieldCollection;
+import org.xbib.rdf.Resource;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -72,7 +75,6 @@ public abstract class MABElement
 
     @Override
     public MABElement build(MABBuilder builder, FieldCollection key, String value) {
-        builder.context().resource().add("xbib:" + getClass().getSimpleName(), value);
         return this;
     }
 
@@ -80,15 +82,47 @@ public abstract class MABElement
     public MABElement end() {
         return this;
     }
-    
-    protected String cleanRAKCharacters(String value) {
+
+    /**
+     * Process mapped element. Empty by default.
+     *
+     * @param builder
+     * @param fields
+     * @param value
+     */
+    public void fields(ElementBuilder<FieldCollection, String, MABElement, MABContext> builder, FieldCollection fields, String value) {
+        // overridden
+    }
+
+    /**
+     * Process mapped element with subfield mappings. Empty by default.
+     *
+     * @param builder
+     * @param field
+     * @param subfieldType
+     */
+    public void field(ElementBuilder<FieldCollection, String, MABElement, MABContext> builder, Field field, String subfieldType) {
+        // overridden
+    }
+
+    /**
+     * Transform field data
+     * @param value
+     * @return
+     */
+    public String data(String resourcePredicate, Resource resource, String property, String value) {
+        return value;
+    }
+
+
+    /*protected String cleanRAKCharacters(String value) {
         // remove <<...>>
         // remove <dt.>
         return value.replaceAll("\\s*<<.*?>>", "").replaceAll("\\s*<.*?>", "");
-    }
+    }*/
     
 
-    protected String cleanDate(String value) {
+    /*protected String cleanDate(String value) {
         String dateStr = "0001";
         String s = value.replaceAll("[^\\p{Digit}]", "");
         if (s.length() > 4) {
@@ -101,7 +135,7 @@ public abstract class MABElement
             }
         }
         return dateStr;
-    }
+    }*/
     
     /** current year for sanity checks */
     private static int currentYear;

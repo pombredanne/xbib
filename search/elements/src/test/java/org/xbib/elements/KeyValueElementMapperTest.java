@@ -33,6 +33,7 @@ package org.xbib.elements;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xbib.elements.marc.MARCSpecification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -48,25 +49,22 @@ public class KeyValueElementMapperTest extends Assert {
         String value = "100$0$1$abc";
         Element element = new NullElement();
         Map map = new TreeMap(); // for sorting
-        Map m = ElementMap.addSegment(value, element, map);
-
+        Specification specification = new MARCSpecification();
+        Map m = specification.addSpec(value, element, map);
         value = "100$0$2$abc";
         element = new NullElement();
-        m = ElementMap.addSegment(value, element, m);
-
+        m = specification.addSpec(value, element, m);
         value = "100$0$2$def";
         element = new NullElement();
-        m = ElementMap.addSegment(value, element, m);
-
+        m = specification.addSpec(value, element, m);
         value = "200$0$2$abc";
         element = new NullElement();
-        m = ElementMap.addSegment(value, element, m);
-
+        m = specification.addSpec(value, element, m);
         assertEquals("{100={0={2={abc=<null>, def=<null>}, 1={abc=<null>}}}, 200={0={2={abc=<null>}}}}", m.toString());
 
-        Element e = ElementMap.getElement("100$0$1$abc", m);
+        Element e = specification.getElement("100$0$1$abc", m);
         logger.info("e={}", e);
-        e = ElementMap.getElement("100$0$1$def", m);
+        e = specification.getElement("100$0$1$def", m);
         logger.info("e={}", e);
     }
 

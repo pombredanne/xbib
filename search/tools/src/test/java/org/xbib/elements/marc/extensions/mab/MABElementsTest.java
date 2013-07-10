@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;

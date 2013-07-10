@@ -35,9 +35,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.marc.MARCBuilder;
 import org.xbib.elements.marc.MARCBuilderFactory;
-import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.marc.MARCElementMapper;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
@@ -47,22 +46,18 @@ import org.xbib.marc.FieldCollection;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
-import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.GZIPInputStream;
 
 public class ZDBHoldingsElementsTest extends Assert {
 

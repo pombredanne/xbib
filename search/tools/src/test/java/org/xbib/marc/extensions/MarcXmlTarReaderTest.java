@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;

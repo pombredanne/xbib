@@ -44,6 +44,7 @@ import org.xbib.logging.LoggerFactory;
 public class ValueMapFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(ValueMapFactory.class.getName());
+
     private final static Map<String, Object> maps = new HashMap();
 
     private ValueMapFactory() {

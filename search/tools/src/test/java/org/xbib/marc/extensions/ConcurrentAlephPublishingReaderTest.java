@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;

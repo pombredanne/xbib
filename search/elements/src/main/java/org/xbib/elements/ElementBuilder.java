@@ -31,9 +31,19 @@
  */
 package org.xbib.elements;
 
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.rdf.context.ResourceContext;
 
+/**
+ * Element Builder
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+
+ * @param <K>
+ * @param <V>
+ * @param <E>
+ * @param <C>
+ */
 public interface ElementBuilder<K, V, E extends Element, C extends ResourceContext> {
 
     ResourceContextFactory<C> contextFactory();

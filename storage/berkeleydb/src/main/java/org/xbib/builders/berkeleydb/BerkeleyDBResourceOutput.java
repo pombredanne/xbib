@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.xbib.berkeleydb.BerkeleyDBSession;
 import org.xbib.berkeleydb.Write;
-import org.xbib.elements.output.DefaultElementOutput;
+import org.xbib.analyzer.output.DefaultElementOutput;
 import org.xbib.io.Session;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;

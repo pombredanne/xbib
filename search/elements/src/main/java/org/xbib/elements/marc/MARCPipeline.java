@@ -32,7 +32,7 @@
 package org.xbib.elements.marc;
 
 import org.xbib.elements.ElementBuilderFactory;
-import org.xbib.elements.ElementMap;
+import org.xbib.elements.Specification;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.keyvalue.KeyValue;
 import org.xbib.logging.Logger;
@@ -61,10 +61,11 @@ public class MARCPipeline
     private final Logger logger = LoggerFactory.getLogger(MARCPipeline.class.getName());
 
     public MARCPipeline(int i,
+                        Specification specification,
                         BlockingQueue<List<KeyValue>> queue,
                         Map map,
                         ElementBuilderFactory<FieldCollection, String, MARCElement, MARCContext> factory) {
-        super(i, queue, map, factory);
+        super(i, specification, queue, map, factory);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class MARCPipeline
         String key = fields.toString();
         MARCElement element = null;
         try {
-            element = (MARCElement) ElementMap.getElement(key, map());
+            element = (MARCElement) specification.getElement(key, map());
         } catch (ClassCastException e) {
             logger.error("not a MARCElement instance for key " + key);
         }

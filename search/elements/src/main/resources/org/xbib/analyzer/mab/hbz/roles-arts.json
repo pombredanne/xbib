@@ -1,0 +1,514 @@
+{
+  "roles" : {
+    "role" : [
+         {
+            "text" : "[Animation]",
+            "code" : "anm"
+         },
+         {
+            "text" : "[Bühnenbild]",
+            "code" : "dsr"
+         },
+         {
+            "text" : "[Choreinstud.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreogr.]",
+            "code" : "chr"
+         },
+         {
+            "text" : "[Darst.]",
+            "code" : "act"
+         },
+         {
+            "text" : "[Drehbuch]",
+            "code" : "aud"
+         },
+         {
+            "text" : "[Drehbuchautor]",
+            "code" : "aud"
+         },
+         {
+            "text" : "[Inszenierung]",
+            "code" : "scr"
+         },
+         {
+            "text" : "[Kostüm]",
+            "code" : "cst"
+         },
+         {
+            "text" : "[Ltg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie]",
+            "code" : "drt"
+         },
+         {
+            "text" : "[Regie; Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regisseur]",
+            "code" : "drt"
+         },
+         {
+            "text" : "[Sprecher]",
+            "code" : "nrt"
+         },
+         {
+            "text" : "[Sprecherin]",
+            "code" : "nrt"
+         },
+         {
+            "text" : "[Animator, Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Animator]",
+            "code" : ""
+         },
+         {
+            "text" : "[Animatorin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr,]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Artistic Director]",
+            "code" : ""
+         },
+         {
+            "text" : "[Artwork]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aufn.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aufnahmen]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ausstattung]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beleuchter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beleuchtung]",
+            "code" : ""
+         },
+         {
+            "text" : "[Buch, Gestaltung, Kamera, Schnitt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Buch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Coord.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Drehbuch, Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Musik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Regie, Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darsteller]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darstr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Design]",
+            "code" : ""
+         },
+         {
+            "text" : "[Director]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Darst.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Lit. Vorl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Musik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Prod.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Vorl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Filmmusik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Idee, Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Idee]",
+            "code" : ""
+         },
+         {
+            "text" : "[Inszenierung, Bildregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Interpretin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kostüme]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kurator]",
+            "code" : ""
+         },
+         {
+            "text" : "[Künstler/in]",
+            "code" : ""
+         },
+         {
+            "text" : "[Künstler]",
+            "code" : ""
+         },
+         {
+            "text" : "[Künstlerin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Lit, Vorl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Lit. Vorl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Lit. Vorlage]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie + Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie und Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Darst., Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Darst.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Darst.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Kamera, Schnitt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Kamera]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Komp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Musik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Produzent]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Schnitt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch, Vorl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Hörspielmusik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Komp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Prod.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie, Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie; Buch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Regie; Darst.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Reg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Reg]",
+            "code" : ""
+         },
+         {
+            "text" : "[Rezeptfotogr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sammler, Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sammlerin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Schnitt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Schreiber]",
+            "code" : ""
+         },
+         {
+            "text" : "[Spezialeffek. Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text, Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text, Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text, Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text, Sammler]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Textdichter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Texte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Texter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Textverf., Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Textverf..]",
+            "code" : ""
+         },
+         {
+            "text" : "[Videoregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Videorgie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vinyl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorlage, Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorlage]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bildregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bühne]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Filmmusik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Gesang]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Kamera]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Musik, Gesang]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst., Ton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst..]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst.; Drehbuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst.; Komp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst.; Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst.].",
+            "code" : ""
+         },
+         {
+            "text" : "[Darst]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dramaturgie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drebuch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch ]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Kamera]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Präsentation]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Romanvorlage]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch, Story]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch; Adaption]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch; Story]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuch] ; [Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehbuchautorin]",
+            "code" : ""
+         }
+      ]
+   }
+}

@@ -41,8 +41,17 @@ public class MABElementMapper
         extends ElementMapper<FieldCollection, String, MABElement, MABContext> {
 
     public MABElementMapper(String format) {
-        super("/org/xbib/analyzer/elements/", format);
-        pipelines(Runtime.getRuntime().availableProcessors());
+        super("/org/xbib/analyzer/", format, new MABSpecification());
+    }
+
+    public MABElementMapper pipelines(int pipelines) {
+        super.pipelines(pipelines);
+        return this;
+    }
+
+    public MABElementMapper detectUnknownKeys(boolean enabled) {
+        super.detectUnknownKeys(enabled);
+        return this;
     }
 
     public MABElementMapper start() {
@@ -62,7 +71,7 @@ public class MABElementMapper
     }
 
     protected KeyValuePipeline createPipeline(int i) {
-        return new MABPipeline(i, queue, map, factory);
+        return new MABPipeline(i, specification, queue, map, factory);
     }
 
 }

@@ -1,0 +1,1582 @@
+{
+    "roles" : {
+       "role" : [
+         {
+            "text" : "[Interpr.]",
+            "code" : "arr"
+         },
+         {
+            "text" : "[Interpret]",
+            "code" : "arr"
+         },
+         {
+            "text" : "[Akk]",
+            "code" : ""
+         },
+         {
+            "text" : "[Akkordeon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Becken]",
+            "code" : ""
+         },
+         {
+            "text" : "[angebl. Komp.]",
+            "code" : "cmp"
+         },
+         {
+            "text" : "[Drehleier, Blockflöte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehorgel]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drum Programming]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drums Electronics]",
+            "code" : ""
+         },
+         {
+            "text" : "[E-Gitarre]",
+            "code" : ""
+         },
+         {
+            "text" : "[E-Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[E-Orgel]",
+            "code" : ""
+         },
+         {
+            "text" : "[E-Va]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir]",
+            "code" : "drt"
+         },
+         {
+            "text" : "[Dir.]",
+            "code" : "drt"
+         },
+         {
+            "text" : "[Dirigent]",
+            "code" : "drt"
+         },
+         {
+            "text" : "[Gesang]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Komp.]",
+            "code" : "cmp"
+         },
+         {
+            "text" : "[Komponist]",
+            "code" : "cmp"
+         },
+         {
+            "text" : "[Mezzosopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tänzer]",
+            "code" : "dnc"
+         },
+         {
+            "text" : "[Musik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Orgel]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt-Fl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt-Sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alto-Gitarre]",
+            "code" : ""
+         },
+         {
+            "text" : "[Altsaxophon u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Altus]",
+            "code" : ""
+         },
+         {
+            "text" : "[Barock-Violine]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass-Bariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass-Klar Klar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass/Bariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassbar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassbariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Basset]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassetthorn]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassettklarinette]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassflöte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassklar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassklarinette]",
+            "code" : ""
+         },
+         {
+            "text" : "[Basso Continuo]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baß-Bariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baß]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baßbar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baßposaune]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blfl Dir]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blfl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blockflöte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cembalo u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cembalo]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreinstud]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreinstudierung]",
+            "code" : ""
+         },
+         {
+            "text" : "[Chorleit.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Chorltg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Chorus director]",
+            "code" : ""
+         },
+         {
+            "text" : "[Clavichord]",
+            "code" : ""
+         },
+         {
+            "text" : "[Comp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cond.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cond]",
+            "code" : ""
+         },
+         {
+            "text" : "[Conductor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Congas]",
+            "code" : ""
+         },
+         {
+            "text" : "[Contratenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Counterten]",
+            "code" : ""
+         },
+         {
+            "text" : "[Countertenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Kl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Sprech]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Vl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir. Vl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir. u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir. u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Diskantsopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drehleier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dudelsack]",
+            "code" : ""
+         },
+         {
+            "text" : "[Elektronik/Tontechnik]",
+            "code" : ""
+         },
+         {
+            "text" : "[Elektronisches Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Englisch Horn]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drums]",
+            "code" : ""
+         },
+         {
+            "text" : "[Fagott]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flute]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flöte u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flöte, Dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flöte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flöten u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Flügelhorn]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gesang Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gesang u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gesang u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Git Lt Theorbo]",
+            "code" : ""
+         },
+         {
+            "text" : "[Git]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gitarre u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gitarre]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gsg]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hammerflügel]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hammerkl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hammerklavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Harfe]",
+            "code" : ""
+         },
+         {
+            "text" : "[Harmonium]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hf]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hmk]",
+            "code" : ""
+         },
+         {
+            "text" : "[Horn]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hornist]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hörspiel, Regie, Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kad.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kadenz]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kantor u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kb]",
+            "code" : ""
+         },
+         {
+            "text" : "[Keyboards]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kinderklavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kl Sprech]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kl, Schz]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klangregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klarinette]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klarinetten]",
+            "code" : ""
+         },
+         {
+            "text" : "[Klavier u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Knabenalt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Knabensopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Koloratursopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kontrabass]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kontrabaß]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kontratenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Konzept, Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Konzertmeister]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kpmm.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Laute]",
+            "code" : ""
+         },
+         {
+            "text" : "[Leader, Bandleader]",
+            "code" : ""
+         },
+         {
+            "text" : "[Leader]",
+            "code" : ""
+         },
+         {
+            "text" : "[Leit. und Klangregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Leit.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Libretto]",
+            "code" : ""
+         },
+         {
+            "text" : "[Lt. Kurt Wald]",
+            "code" : ""
+         },
+         {
+            "text" : "[Lt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ltg Ob]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ltg Vl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ltg, Orfeo]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ltg., Arr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ltg]",
+            "code" : ""
+         },
+         {
+            "text" : "[Marimba]",
+            "code" : ""
+         },
+         {
+            "text" : "[Marimbaphon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Maultrommel]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mezzo-Sopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mezzosopr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Musico]",
+            "code" : ""
+         },
+         {
+            "text" : "[Musik, Gesang]",
+            "code" : ""
+         },
+         {
+            "text" : "[Musikalischer Direktor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ob]",
+            "code" : ""
+         },
+         {
+            "text" : "[Oboe u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Oboe]",
+            "code" : ""
+         },
+         {
+            "text" : "[Orchesterleit.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Org Clavichord]",
+            "code" : ""
+         },
+         {
+            "text" : "[Org.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Organetto]",
+            "code" : ""
+         },
+         {
+            "text" : "[Orgel und Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Panfl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Pauke u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Pauke]",
+            "code" : ""
+         },
+         {
+            "text" : "[Pauken]",
+            "code" : ""
+         },
+         {
+            "text" : "[Percussion]",
+            "code" : ""
+         },
+         {
+            "text" : "[Perkussion]",
+            "code" : ""
+         },
+         {
+            "text" : "[Piano]",
+            "code" : ""
+         },
+         {
+            "text" : "[Piccolo-Flöte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Pk Schz Stimme]",
+            "code" : ""
+         },
+         {
+            "text" : "[Player Piano]",
+            "code" : ""
+         },
+         {
+            "text" : "[Posaune, Tuba]",
+            "code" : ""
+         },
+         {
+            "text" : "[Posaune]",
+            "code" : ""
+         },
+         {
+            "text" : "[Präpariertes Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[Saxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Schlagzeug]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sopr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sopran u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sopran/Mezzosopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sopransaxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Spinett]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sprech]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sprecher",
+            "code" : ""
+         },
+         {
+            "text" : "[Sprecher, Klavier]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sprecher, Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sprecher/in]",
+            "code" : ""
+         },
+         {
+            "text" : "[Stage director]",
+            "code" : ""
+         },
+         {
+            "text" : "[Stimme u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Stimme]",
+            "code" : ""
+         },
+         {
+            "text" : "[Synthesizer]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tackpiano]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tam-tam]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tamboura]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tambourin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tamburin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ten]",
+            "code" : ""
+         },
+         {
+            "text" : "[Timbales]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tonband]",
+            "code" : ""
+         },
+         {
+            "text" : "[Triple-Harp]",
+            "code" : ""
+         },
+         {
+            "text" : "[Trompete]",
+            "code" : ""
+         },
+         {
+            "text" : "[Trp Clarino]",
+            "code" : ""
+         },
+         {
+            "text" : "[Trp]",
+            "code" : ""
+         },
+         {
+            "text" : "[Trumpet]",
+            "code" : ""
+         },
+         {
+            "text" : "[Tuba]",
+            "code" : ""
+         },
+         {
+            "text" : "[Uillean-Pipes]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vibraphon u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vibraphon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vibraphone]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violine u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violine u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violine]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violoncello u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violoncello u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violoncello]",
+            "code" : ""
+         },
+         {
+            "text" : "[Violone]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vl Dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[Xylophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Zimbalon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Zither]",
+            "code" : ""
+         },
+         {
+            "text" : "[acc keys p ...]",
+            "code" : ""
+         },
+         {
+            "text" : "[acc]",
+            "code" : ""
+         },
+         {
+            "text" : "[accordion]",
+            "code" : ""
+         },
+         {
+            "text" : "[akk]",
+            "code" : ""
+         },
+         {
+            "text" : "[alto saxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[alto saxophone]",
+            "code" : ""
+         },
+         {
+            "text" : "[alto]",
+            "code" : ""
+         },
+         {
+            "text" : "[as fl]",
+            "code" : ""
+         },
+         {
+            "text" : "[as ss]",
+            "code" : ""
+         },
+         {
+            "text" : "[as v]",
+            "code" : ""
+         },
+         {
+            "text" : "[as]",
+            "code" : ""
+         },
+         {
+            "text" : "[b cello]",
+            "code" : ""
+         },
+         {
+            "text" : "[b dr keys ...]",
+            "code" : ""
+         },
+         {
+            "text" : "[b g]",
+            "code" : ""
+         },
+         {
+            "text" : "[b voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[b-cl]",
+            "code" : ""
+         },
+         {
+            "text" : "[b]",
+            "code" : ""
+         },
+         {
+            "text" : "[bandoneon]",
+            "code" : ""
+         },
+         {
+            "text" : "[bass]",
+            "code" : ""
+         },
+         {
+            "text" : "[bs]",
+            "code" : ""
+         },
+         {
+            "text" : "[cello el-cello]",
+            "code" : ""
+         },
+         {
+            "text" : "[cga perc]",
+            "code" : ""
+         },
+         {
+            "text" : "[cga tabla]",
+            "code" : ""
+         },
+         {
+            "text" : "[cl sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[cl]",
+            "code" : ""
+         },
+         {
+            "text" : "[clarinet]",
+            "code" : ""
+         },
+         {
+            "text" : "[co]",
+            "code" : ""
+         },
+         {
+            "text" : "[col]",
+            "code" : ""
+         },
+         {
+            "text" : "[cornet]",
+            "code" : ""
+         },
+         {
+            "text" : "[counter-ten]",
+            "code" : ""
+         },
+         {
+            "text" : "[countertenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[dr g gambre voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[dr melodica p]",
+            "code" : ""
+         },
+         {
+            "text" : "[dr perc]",
+            "code" : ""
+         },
+         {
+            "text" : "[dr voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[dr]",
+            "code" : ""
+         },
+         {
+            "text" : "[drums electrified drums]",
+            "code" : ""
+         },
+         {
+            "text" : "[drums]",
+            "code" : ""
+         },
+         {
+            "text" : "[el-g]",
+            "code" : ""
+         },
+         {
+            "text" : "[el-p mellotron org p voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[el-p]",
+            "code" : ""
+         },
+         {
+            "text" : "[el-v perc]",
+            "code" : ""
+         },
+         {
+            "text" : "[fl synth ts voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[fl ts]",
+            "code" : ""
+         },
+         {
+            "text" : "[g Geräusche perc voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[g g-synth]",
+            "code" : ""
+         },
+         {
+            "text" : "[g voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[g]",
+            "code" : ""
+         },
+         {
+            "text" : "[git]",
+            "code" : ""
+         },
+         {
+            "text" : "[guest ed.]",
+            "code" : ""
+         },
+         {
+            "text" : "[guitar]",
+            "code" : ""
+         },
+         {
+            "text" : "[harp zahlr Instr]",
+            "code" : ""
+         },
+         {
+            "text" : "[keyboards]",
+            "code" : ""
+         },
+         {
+            "text" : "[keys ld voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[keys voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[keys]",
+            "code" : ""
+         },
+         {
+            "text" : "[kl]",
+            "code" : ""
+         },
+         {
+            "text" : "[ld tb]",
+            "code" : ""
+         },
+         {
+            "text" : "[ld]",
+            "code" : ""
+         },
+         {
+            "text" : "[leader, bandleader]",
+            "code" : ""
+         },
+         {
+            "text" : "[ltg]",
+            "code" : ""
+         },
+         {
+            "text" : "[org p]",
+            "code" : ""
+         },
+         {
+            "text" : "[org]",
+            "code" : ""
+         },
+         {
+            "text" : "[p vib]",
+            "code" : ""
+         },
+         {
+            "text" : "[p voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[p]",
+            "code" : ""
+         },
+         {
+            "text" : "[perc voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[perc]",
+            "code" : ""
+         },
+         {
+            "text" : "[percussion]",
+            "code" : ""
+         },
+         {
+            "text" : "[piano]",
+            "code" : ""
+         },
+         {
+            "text" : "[sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[sopr]",
+            "code" : ""
+         },
+         {
+            "text" : "[ss ts]",
+            "code" : ""
+         },
+         {
+            "text" : "[synth]",
+            "code" : ""
+         },
+         {
+            "text" : "[synthesizer]",
+            "code" : ""
+         },
+         {
+            "text" : "[tabla]",
+            "code" : ""
+         },
+         {
+            "text" : "[tambura]",
+            "code" : ""
+         },
+         {
+            "text" : "[tape-delay-system]",
+            "code" : ""
+         },
+         {
+            "text" : "[tb]",
+            "code" : ""
+         },
+         {
+            "text" : "[ten]",
+            "code" : ""
+         },
+         {
+            "text" : "[tenor saxophone]",
+            "code" : ""
+         },
+         {
+            "text" : "[tp]",
+            "code" : ""
+         },
+         {
+            "text" : "[trp]",
+            "code" : ""
+         },
+         {
+            "text" : "[trumpet]",
+            "code" : ""
+         },
+         {
+            "text" : "[ts]",
+            "code" : ""
+         },
+         {
+            "text" : "[ud]",
+            "code" : ""
+         },
+         {
+            "text" : "[v]",
+            "code" : ""
+         },
+         {
+            "text" : "[vib]",
+            "code" : ""
+         },
+         {
+            "text" : "[vibraharp]",
+            "code" : ""
+         },
+         {
+            "text" : "[vibraphone]",
+            "code" : ""
+         },
+         {
+            "text" : "[violin]",
+            "code" : ""
+         },
+         {
+            "text" : "[voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[vocal]",
+            "code" : ""
+         },
+         {
+            "text" : "[voice]",
+            "code" : ""
+         },
+         {
+            "text" : "[zahlr Instr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt Msopr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt Saxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt-Sax Sopr-Sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt-Sax Tenor-Sax]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alt/Mezzosopran]",
+            "code" : ""
+         },
+         {
+            "text" : "[Altposaune]",
+            "code" : ""
+         },
+         {
+            "text" : "[Altsaxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arpeggione]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr., Dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr., Gesang]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr., Prod.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Arr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ass. ed.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ass.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Assistent Choreograph]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ausf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bariton/Bass]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bariton/Tenor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass clarinet]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass-Klar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass-Klarinette]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass-g voc]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bass/Bassbariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassetthr Klar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassinstrument]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bassvioline]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baß-Bar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baßbariton]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baßklarinette/Saxophon]",
+            "code" : ""
+         },
+         {
+            "text" : "[Baßklarinette]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blf Fl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blfl Fl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blfl, Fl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blockflöte u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Blockflöte u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cel Kl]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cello]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Clavichord Fortepiano]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Dir Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Dir]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Hf Orgelpositiv]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Kl Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Ltg Orch]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Ltg]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb Sprech]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cemb, Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cembalo u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Cembalo, Orgel]",
+            "code" : ""
+         },
+         {
+            "text" : "[Chor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreinstud Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreinstud Sprech]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreinstud. u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Choreographie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Clavinova]",
+            "code" : ""
+         },
+         {
+            "text" : "[Contraalto]",
+            "code" : ""
+         },
+         {
+            "text" : "[Contralto]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Pos]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Va]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir Vc]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir. Violine]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Arr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Cemb]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Chorleiter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Org]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Prod.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dir., Violine]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dirigent/in]",
+            "code" : ""
+         }
+      ]
+    }
+ }

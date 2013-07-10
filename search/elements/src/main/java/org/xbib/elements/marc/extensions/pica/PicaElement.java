@@ -31,13 +31,13 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import org.xbib.analyzer.elements.pica.zdb.bib.LibraryAddressProperties;
+import org.xbib.analyzer.pica.zdb.bib.LibraryAddressProperties;
 import org.xbib.elements.Element;
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.bibliographic.ExtraBibliographicProperties;
-import org.xbib.elements.dublincore.DublinCoreProperties;
-import org.xbib.elements.dublincore.DublinCoreTerms;
-import org.xbib.elements.dublincore.DublinCoreTermsProperties;
+import org.xbib.analyzer.dublincore.DublinCoreProperties;
+import org.xbib.analyzer.dublincore.DublinCoreTerms;
+import org.xbib.analyzer.dublincore.DublinCoreTermsProperties;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Field;

@@ -39,11 +39,16 @@ public class PicaElementMapper
         extends ElementMapper<FieldCollection, String, PicaElement, PicaContext> {
 
     public PicaElementMapper(String format) {
-        super("/org/xbib/analyzer/elements/", format);
+        super("/org/xbib/analyzer/", format, new PicaSpecification());
     }
 
     public PicaElementMapper pipelines(int pipelines) {
         super.pipelines(pipelines);
+        return this;
+    }
+
+    public PicaElementMapper detectUnknownKeys(boolean enabled) {
+        super.detectUnknownKeys(enabled);
         return this;
     }
 
@@ -57,13 +62,8 @@ public class PicaElementMapper
         return this;
     }
 
-    public PicaElementMapper detectUnknownKeys(boolean enabled) {
-        super.detectUnknownKeys(enabled);
-        return this;
-    }
-
     protected KeyValuePipeline createPipeline(int i) {
-        return new PicaPipeline(i, queue, map, factory);
+        return new PicaPipeline(i, specification, queue, map, factory);
     }
 
 }

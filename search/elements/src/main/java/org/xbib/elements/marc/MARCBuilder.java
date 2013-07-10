@@ -33,9 +33,8 @@ package org.xbib.elements.marc;
 
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ResourceContextFactory;
-import org.xbib.elements.dublincore.DublinCoreProperties;
-import org.xbib.elements.output.ElementOutput;
-import org.xbib.iri.IRI;
+import org.xbib.analyzer.dublincore.DublinCoreProperties;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.marc.FieldCollection;
 
 /**
@@ -65,18 +64,5 @@ public class MARCBuilder
         super.addOutput(output);
         return this;
     }
-
-   /* @Override
-    public void build(MARCElement element, FieldCollection fields, String value) {
-        // by default, we just assign an ID to the resource
-        if (context().resource().id() == null) {
-            IRI id = IRI.builder()
-                    .scheme("http")
-                    .host("xbib.org")
-                    .fragment(Long.toString(context().increment()))
-                    .build();
-            context().resource().id(id);
-        }
-    }*/
     
 }

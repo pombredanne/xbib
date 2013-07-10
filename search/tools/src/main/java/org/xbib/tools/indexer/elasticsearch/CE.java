@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;

@@ -1,0 +1,1054 @@
+{
+   "roles" : {
+      "role" : [
+         {
+            "text" : "[Adressat]",
+            "code" : "crp"
+         },
+         {
+            "text" : "[Addressat]",
+            "code" : "crp"
+         },
+         {
+            "text" : "[Angebl. Verf.]",
+            "code" : "aut"
+         },
+         {
+            "text" : "[angebl. Verf.]",
+            "code" : "aut"
+         },
+         {
+            "text" : "[bearb.]",
+            "code" : "adp"
+         },
+         {
+            "text" : "[Bearb.]",
+            "code" : "adp"
+         },
+         {
+            "text" : "[Bearb. und Hrsg.]",
+            "code" : "adp"
+         },
+         {
+            "text" : "[begr.]",
+            "code" : "fnd"
+         },
+         {
+            "text" : "[Begr.]",
+            "code" : "fnd"
+         },
+         {
+            "text" : "[Beitr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ed.]",
+            "code" : "edt"
+         },
+         {
+            "text" : "[Einf.]",
+            "code" : "aui"
+         },
+         {
+            "text" : "[Fotogr.]",
+            "code" : "pht"
+         },
+         {
+            "text" : "[Forts.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Geleitw.]",
+            "code" : "aui"
+         },
+         {
+            "text" : "[Hrsg]",
+            "code" : "edt"
+         },
+         {
+            "text" : "[Hrsg.]",
+            "code" : "edt"
+         },
+         {
+            "text" : "[Ill.]",
+            "code" : "ill"
+         },
+         {
+            "text" : "[Interviewer]",
+            "code" : "ivr"
+         },
+         {
+            "text" : "[Interviewter]",
+            "code" : "ive"
+         },
+         {
+            "text" : "[Kamera]",
+            "code" : "cng"
+         },
+         {
+            "text" : "[Kartograph]",
+            "code" : "ctg"
+         },
+         {
+            "text" : "[Komm.]",
+            "code" : "cmm"
+         },
+         {
+            "text" : "[Komment.]",
+            "code" : "cmm"
+         },
+         {
+            "text" : "[Mitarb.]",
+            "code" : "oth"
+         },
+         {
+            "text" : "[Mitverf.]",
+            "code" : "aut"
+         },
+         {
+            "text" : "[Moderation]",
+            "code" : "mod"
+         },
+         {
+            "text" : "[Mutmaßl. Verf.]",
+            "code" : "dub"
+         },
+         {
+            "text" : "[Mutmassl. Verf.]",
+            "code" : "dub"
+         },
+         {
+            "text" : "[mutmaßl. Verf.]",
+            "code" : "dub"
+         },
+         {
+            "text" : "[mutmassl. Verf.]",
+            "code" : "dub"
+         },
+         {
+            "text" : "[mutmassl. Verf./Komp.]",
+            "code" : "dub"
+         },
+         {
+            "text" : "[Nachw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Photogr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Prod.]",
+            "code" : "pro"
+         },
+         {
+            "text" : "[Realisation]",
+            "code" : "sad"
+         },
+         {
+            "text" : "[Red.]",
+            "code" : "red"
+         },
+         {
+            "text" : "[Redakteur]",
+            "code" : "red"
+         },
+         {
+            "text" : "[Ref.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Referent]",
+            "code" : ""
+         },
+         {
+            "text" : "[Reporter]",
+            "code" : "cmm"
+         },
+         {
+            "text" : "[Resp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Sammler]",
+            "code" : "col"
+         },
+         {
+            "text" : "[Stecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Textverf.]",
+            "code" : "cwt"
+         },
+         {
+            "text" : "[Ursprüngl. Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers.]",
+            "code" : "trl"
+         },
+         {
+            "text" : "[Vorl.]",
+            "code" : "org"
+         },
+         {
+            "text" : "[Vorw.]",
+            "code" : "aui"
+         },
+         {
+            "text" : "[Vorr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorred.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Widmungsempfänger]",
+            "code" : ""
+         },
+         {
+            "text" : "[Zeichner]",
+            "code" : "ill"
+         },
+         {
+            "text" : "[Zensor]",
+            "code" : ""
+         },
+         {
+            "text" : "Bearb.",
+            "code" : ""
+         },
+         {
+            "text" : "Hrsg",
+            "code" : ""
+         },
+         {
+            "text" : "Hrsg.",
+            "code" : ""
+         },
+         {
+            "text" : "Ill.",
+            "code" : ""
+         },
+         {
+            "text" : "Klavier",
+            "code" : ""
+         },
+         {
+            "text" : "Red.",
+            "code" : ""
+         },
+         {
+            "text" : "[Adressatin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Advisory ed.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aktion]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aktionsltg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Alte Priesterin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Angebe Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Angebl. Komp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Angebl. Textverf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Anm. und Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Anm.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Architekt]",
+            "code" : ""
+         },
+         {
+            "text" : "[Auftraggeber]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aukt.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Aut.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Autor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beabr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bear.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearab.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb,]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb. u. Dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Kommentar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Sammler]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Text, Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Vorw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb]",
+            "code" : ""
+         },
+         {
+            "text" : "[Begründer]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beiträger k.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beiträger]",
+            "code" : ""
+         },
+         {
+            "text" : "[Berichter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bespr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bet.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Betr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Drucker]",
+            "code" : ""
+         },
+         {
+            "text" : "[Dt. Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Eigentl. Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Einl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Erl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Erläut.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Erz.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Erzähler]",
+            "code" : ""
+         },
+         {
+            "text" : "[Festschr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Fotograf, Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Fotograf]",
+            "code" : ""
+         },
+         {
+            "text" : "[Fotos]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gef.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gefeierte Person]",
+            "code" : ""
+         },
+         {
+            "text" : "[Geleitw.:]",
+            "code" : ""
+         },
+         {
+            "text" : "[General ed.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Gesamtred.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Glossar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Grusswort]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrgs.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrs.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg,]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg. ]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg. u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg. und Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Komm.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Kommentar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Textverf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Vorw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Hrsg., Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[ILL.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Illustr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Interviewte]",
+            "code" : ""
+         },
+         {
+            "text" : "[Intr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Introd.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kartogr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kommentar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Kommentator]",
+            "code" : ""
+         },
+         {
+            "text" : "[Komp., Dir.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Koord.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Korres.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Korresp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mitarb., Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mitarb., Textverf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mitarb., Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mitarb]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mitbegr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mithrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mod.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Moderator]",
+            "code" : ""
+         },
+         {
+            "text" : "[Mutmassl. Verf./Komp.]",
+            "code" : ""
+         },
+         {
+            "text" : "[MutmaÆl. Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Nachl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Nachr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Nachwort]",
+            "code" : ""
+         },
+         {
+            "text" : "[Narrator]",
+            "code" : ""
+         },
+         {
+            "text" : "[Photograph]",
+            "code" : ""
+         },
+         {
+            "text" : "[Photographin]",
+            "code" : ""
+         },
+         {
+            "text" : "[Photos]",
+            "code" : ""
+         },
+         {
+            "text" : "[Postf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Programmierung]",
+            "code" : ""
+         },
+         {
+            "text" : "[Projektltr]",
+            "code" : ""
+         },
+         {
+            "text" : "[Präs.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Préf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red. ]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red., Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red., Vorw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red., Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red..]",
+            "code" : ""
+         },
+         {
+            "text" : "[Red]",
+            "code" : ""
+         },
+         {
+            "text" : "[Redaktion]",
+            "code" : ""
+         },
+         {
+            "text" : "[Schriftl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Schriftleitung]",
+            "code" : ""
+         },
+         {
+            "text" : "[Transl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Uebers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Unterz.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Unterzeichner]",
+            "code" : ""
+         },
+         {
+            "text" : "[Verantw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorr., Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorredner]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vortr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorw., Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorw., Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorw., Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorw., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Vorwort]",
+            "code" : ""
+         },
+         {
+            "text" : "[Widm.-Empf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Zsgest.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Zusammengest.]",
+            "code" : ""
+         },
+         {
+            "text" : "[[Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[[Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[bearb. u. hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[ed.]",
+            "code" : ""
+         },
+         {
+            "text" : "[eds.]",
+            "code" : ""
+         },
+         {
+            "text" : "[hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[ill.]",
+            "code" : ""
+         },
+         {
+            "text" : "[lll.]",
+            "code" : ""
+         },
+         {
+            "text" : "[postface]",
+            "code" : ""
+         },
+         {
+            "text" : "[préf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[réd.]",
+            "code" : ""
+         },
+         {
+            "text" : "[textverf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[transl.]",
+            "code" : ""
+         },
+         {
+            "text" : "[u.a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[wirkl. Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Éd.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Überarb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Kommentar]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Nachw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers..]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers./Vorr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übertr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "hrsg.",
+            "code" : ""
+         },
+         {
+            "text" : "Übers.",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers. ]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers. u. Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers. und Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Bearb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Ill.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Komm.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Mitarb.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Nachr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Vorr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers., Vorw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers./Nachr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Übers./Red.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Adr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Adress.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beab.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb. ]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb. u. Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb. u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb.)",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Nachw.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Red., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Sprecher]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Textverf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Theaterregie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Übers., Text]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb., Übers.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb.],",
+            "code" : ""
+         },
+         {
+            "text" : "[Bearb.u. a.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Begründer, Hrsg.]",
+            "code" : ""
+         },
+         {
+            "text" : "[BegründerIn]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beitr. k]",
+            "code" : ""
+         },
+         {
+            "text" : "[Beiträger, l.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bericht.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Berichterstatter]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bibliogr.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bibliografie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bildautor]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bildred.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Bildschm.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Buch und Regie]",
+            "code" : ""
+         },
+         {
+            "text" : "[Einleit.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Ermittelter Verf.]",
+            "code" : ""
+         },
+         {
+            "text" : "[Erzähl.]",
+            "code" : ""
+         }
+      ]
+   }
+}

@@ -35,7 +35,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elements.marc.extensions.pica.PicaBuilder;
 import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
 import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;

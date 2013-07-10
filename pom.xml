@@ -453,11 +453,11 @@
         <module>search/content</module>
         <module>search/elements</module>
         <module>search/query</module>
+        <module>search/elasticsearch</module>
         <module>search/sru</module>
         <module>search/oai</module>
         <module>search/iso23950</module>
-        <module>search/atom</module>
-        <module>search/elasticsearch</module>
+        <module>search/opensearch</module>
         <module>search/federator</module>
         <module>search/tools</module>
 
@@ -470,7 +470,7 @@
         <module>storage/printclient</module>
 -->
 <!-- 
-   not ready for build
+   text mining not ready at all for build
         <module>textmining/crf</module>
         <module>textmining/citparse</module>
         <module>textmining/pdf2xml</module>        

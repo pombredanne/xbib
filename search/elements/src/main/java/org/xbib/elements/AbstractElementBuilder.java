@@ -35,12 +35,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.context.ResourceContext;
 
+/**
+ *
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <K>
+ * @param <V>
+ * @param <E>
+ * @param <C>
+ */
 public abstract class AbstractElementBuilder<K, V, E extends Element, C extends ResourceContext>
         implements ElementBuilder<K, V, E, C> {
 

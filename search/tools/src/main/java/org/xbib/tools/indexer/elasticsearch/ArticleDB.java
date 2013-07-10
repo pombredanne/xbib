@@ -43,7 +43,7 @@ import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -444,11 +444,9 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                             // info URI RFC wants slash as unencoded character
                             String doiPart = URIUtil.encode(v, UTF8);
                             doiPart = doiPart.replaceAll("%2F","/");
-                            IRI doi = IRI.builder().curi("info", "doi/" + doiPart).build();
                             IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
                                     .path("/doi/").fragment(doiPart).build();
-                            r.id(dereferencable);
-                            r.add("dcterms:identifier", doi)
+                            r.id(dereferencable)
                                     .add("prism:doi", v);
                         } catch (Exception e) {
                             logger.warn("can't build IRI from DOI " + v, e);

@@ -51,7 +51,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.xbib.elements.marc.extensions.mab.MABBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xml.sax.InputSource;

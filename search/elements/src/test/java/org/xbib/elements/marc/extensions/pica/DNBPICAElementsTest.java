@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;

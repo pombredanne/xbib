@@ -47,7 +47,7 @@ public class MARCElementMapper extends ElementMapper {
      * @param format name of the configuration to be loaded
      */
     public MARCElementMapper(String format) {
-        super("/org/xbib/analyzer/elements/", format);
+        super("/org/xbib/analyzer/", format, new MARCSpecification());
     }
 
     public MARCElementMapper pipelines(int pipelines) {
@@ -71,7 +71,7 @@ public class MARCElementMapper extends ElementMapper {
     }
 
     protected KeyValuePipeline createPipeline(int i) {
-        return new MARCPipeline(i, queue, map, factory);
+        return new MARCPipeline(i, specification, queue, map, factory);
     }
 
 }

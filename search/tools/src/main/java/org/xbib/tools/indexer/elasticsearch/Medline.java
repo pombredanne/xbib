@@ -37,7 +37,7 @@ import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;

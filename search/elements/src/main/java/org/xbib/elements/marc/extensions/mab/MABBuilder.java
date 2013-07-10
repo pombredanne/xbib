@@ -33,8 +33,8 @@ package org.xbib.elements.marc.extensions.mab;
 
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ResourceContextFactory;
-import org.xbib.elements.dublincore.DublinCoreProperties;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.dublincore.DublinCoreProperties;
+import org.xbib.analyzer.output.ElementOutput;
 
 public class MABBuilder<K,V> 
     extends AbstractElementBuilder<K,V,MABElement,MABContext>

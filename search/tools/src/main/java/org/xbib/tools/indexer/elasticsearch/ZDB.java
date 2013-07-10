@@ -49,7 +49,7 @@ import org.xbib.elements.marc.MARCBuilder;
 import org.xbib.elements.marc.MARCBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elements.output.ElementOutput;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;

@@ -45,21 +45,42 @@ import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * A key/value pipeline for parallel processing of elements
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <K>
+ * @param <V>
+ * @param <E>
+ * @param <C>
+ */
 public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
         implements Callable<Boolean> {
+
+    protected final Specification specification;
+
     private final BlockingQueue<List<KeyValue>> queue;
+
     private final ElementBuilder<K,V,E,C> builder;
+
     private final Map map;
+
     private final Logger logger;
+
     private long counter;
+
     protected boolean detectUnknownKeys;
+
     protected Set<String> unknownKeys;
 
     public KeyValuePipeline(int i,
+                            Specification specification,
                             BlockingQueue<List<KeyValue>> queue,
                             Map map,
                             ElementBuilderFactory<K, V, E, C> factory) {
         this.logger = LoggerFactory.getLogger("pipeline" + i);
+        this.specification = specification;
         this.queue = queue;
         this.map = map;
         this.counter = 0L;

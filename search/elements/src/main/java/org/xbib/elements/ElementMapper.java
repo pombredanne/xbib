@@ -51,30 +51,51 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Element Mapper
+ *
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+
+ * @param <K>
+ * @param <V>
+ * @param <E>
+ * @param <C>
+ */
 public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         implements KeyValueStreamListener<K, V>, Closeable {
 
     private final Logger logger = LoggerFactory.getLogger(ElementMapper.class.getName());
+
+    protected Specification specification;
+
     protected final BlockingQueue<List<KeyValue>> queue;
+
     protected final Map map;
+
     protected ElementBuilderFactory<K, V, E, C> factory;
+
     protected Set<KeyValuePipeline> pipelines;
+
     private ExecutorService service;
+
     private LinkedList<KeyValue> keyvalues;
+
     private int numPipelines;
+
     private boolean detectUnknownKeys;
 
-    public ElementMapper(String path, String format) {
-        this(new URIClassLoader(), path, format);
+    public ElementMapper(String path, String format, Specification specification) {
+        this(new URIClassLoader(), path, format, specification);
     }
 
-    public ElementMapper(ClassLoader cl, String path, String format) {
+    public ElementMapper(ClassLoader cl, String path, String format, Specification specification) {
+        this.specification = specification;
         this.queue = new SynchronousQueue<>(true);
         this.pipelines = new HashSet();
         try {
-            this.map = ElementMap.getElementMap(cl, path, format);
+            this.map = specification.getElementMap(cl, path, format);
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -170,10 +191,6 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         }
     }
 
-    protected KeyValuePipeline createPipeline(int i) {
-        return new KeyValuePipeline(i, queue, map, factory);
-    }
-
     /**
      * Helper method for diagnosing unknown keys.
      *
@@ -199,4 +216,7 @@ public class ElementMapper<K, V, E extends Element, C extends ResourceContext>
         return sb.toString();
     }
 
+    protected KeyValuePipeline createPipeline(int i) {
+        return new KeyValuePipeline(i, specification, queue, map, factory);
+    }
 }
