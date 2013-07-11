@@ -31,14 +31,12 @@
  */
 package org.xbib.elements.marc.extensions.mab;
 
-import org.xbib.elements.ElementBuilder;
-import org.xbib.elements.ElementBuilderFactory;
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.BasicElementMapper;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.marc.FieldCollection;
 
 public class MABElementMapper
-        extends ElementMapper<FieldCollection, String, MABElement, MABContext> {
+        extends BasicElementMapper<FieldCollection, String, MABElement, MABContext> {
 
     public MABElementMapper(String format) {
         super("/org/xbib/analyzer/", format, new MABSpecification());
@@ -55,23 +53,16 @@ public class MABElementMapper
     }
 
     public MABElementMapper start() {
-        start(new MABBuilder());
+        start(new MABElementBuilderFactory());
         return this;
     }
 
-    public MABElementMapper start(final MABBuilder builder) {
-        super.start(new ElementBuilderFactory() {
-
-            @Override
-            public ElementBuilder newBuilder() {
-                return builder;
-            }
-        });
+    public MABElementMapper start(MABElementBuilderFactory factory) {
+        super.start(factory);
         return this;
     }
 
     protected KeyValuePipeline createPipeline(int i) {
         return new MABPipeline(i, specification, queue, map, factory);
     }
-
 }

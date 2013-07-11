@@ -52,7 +52,7 @@ import org.xbib.rdf.Resource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class MARCElement
-        implements Element<FieldCollection, String, MARCBuilder>,
+        implements Element<FieldCollection, String, MARCElementBuilder>,
         DublinCoreProperties,
         DublinCoreTerms,
         DublinCoreTermsProperties,
@@ -80,7 +80,7 @@ public abstract class MARCElement
     }
 
     @Override
-    public MARCElement build(MARCBuilder builder, FieldCollection key, String value) {
+    public MARCElement build(MARCElementBuilder builder, FieldCollection key, String value) {
         return this;
     }
 

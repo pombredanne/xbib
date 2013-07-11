@@ -38,6 +38,7 @@ import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -66,6 +67,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Push Springer citations to Elasticsearch
  *
  * @author Jörg Prante <joergprante@gmail.com>
  */
@@ -79,7 +81,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
 
     private final static AtomicLong fileCounter = new AtomicLong(0L);
 
-    private final SimpleResourceContext context = new SimpleResourceContext();
+    private final SimpleResourceContext resourceContext = new SimpleResourceContext();
 
     private static String index;
 
@@ -99,6 +101,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                     accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(1000);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.txt");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
@@ -112,10 +115,10 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
                         + " --type <type>          Elasticsearch type name" + lf
-                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
-                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
+                        + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 1000)"
+                        + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 4 * cpu cores)"
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.json)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.txt)" + lf
                         + " --threads <n>          the number of threads (optional, default: <num-of=cpus)"
                 );
                 System.exit(1);
@@ -125,7 +128,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                     .getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
-            logger.info("input = {},  threads = {}", input, threads);
+            logger.info("found {} input files", input.size());
 
             URI esURI = URI.create((String)options.valueOf("elasticsearch"));
             index = (String)options.valueOf("index");
@@ -143,6 +146,13 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                     .newClient(esURI)
                     .waitForHealthyCluster(ClusterHealthStatus.YELLOW, TimeValue.timeValueSeconds(30));
 
+            logger.info("creating new index ...");
+            es.setIndex(index)
+                    .setType(type)
+                    .dateDetection(false)
+                    .newIndex(true); // true = ignore IndexAlreadyExistsException
+            logger.info("... new index created");
+
             final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
 
             ImportService service = new ImportService().threads(threads).factory(
@@ -157,7 +167,10 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                     fileCounter, sink.getCounter());
 
             service.shutdown();
+            logger.info("service shutdown");
+
             es.shutdown();
+            logger.info("elasticsearch client shutdown");
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             logger.error(e.getMessage(), e);
@@ -202,7 +215,22 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
         }
         return fileCounter;
     }
-    TextFileConnectionFactory factory = new TextFileConnectionFactory();
+
+    private IRI FABIO_ARTICLE = IRI.create("fabio:Article");
+
+    private IRI FABIO_JOURNAL = IRI.create("fabio:Journal");
+
+    private IRI FABIO_PERIODICAL_VOLUME = IRI.create("fabio:PeriodicalVolume");
+
+    private IRI FABIO_PERIODICAL_ISSUE = IRI.create("fabio:PeriodicalIssue");
+
+    private IRI FABIO_PRINT_OBJECT = IRI.create("fabio:PrintObject");
+
+    private IRI FRBR_PARTOF = IRI.create("frbr:partOf");
+
+    private IRI FRBR_EMBODIMENT = IRI.create("frbr:embodiment");
+
+    private final static TextFileConnectionFactory factory = new TextFileConnectionFactory();
 
     private void push(URI uri) throws Exception {
         if (uri == null) {
@@ -219,13 +247,18 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
             String journal = null;
             String issn = null;
             String volume = null;
-            String number = null;
+            String issue = null;
             String pagination = null;
             String doi = null;
             String publisher = null;
-            StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) {
+                    continue;
+                }
+                if ('%' != line.charAt(0)) {
+                    continue;
+                }
                 char ch = line.charAt(1);
                 switch (ch) {
                     case 'D' : {
@@ -253,7 +286,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                         break;
                     }
                     case 'N' : {
-                        number = line.substring(3).trim();
+                        issue = line.substring(3).trim();
                         break;
                     }
                     case 'P' : {
@@ -268,19 +301,72 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                         publisher = line.substring(3).trim();
                         break;
                     }
+                    case 'U' : {
+                        // URL (DOI resolver)
+                        break;
+                    }
+                    case 'K' : {
+                        // keywords
+                        break;
+                    }
+                    case '0' : {
+                        // record type
+                        break;
+                    }
+                    case '8' : {
+                        // day
+                        break;
+                    }
+                    case 'G' : {
+                        // language
+                        break;
+                    }
+                    default: {
+                        logger.warn("unknown tag: " + line);
+                    }
                 }
             }
-            Resource r = context.newResource()
-                    .id(IRI.builder().curi("info", "doi/" + doi).build())
+            // create bibliographic key
+
+            String key = author.isEmpty() ? null : new WorkAuthor()
+                    .authorName(author.get(0))
+                    .workName(title)
+                    .createIdentifier();
+
+            IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
+                    .path("/doi/").fragment(doi).build();
+
+            Resource r = resourceContext.newResource()
+                    .id(dereferencable)
+                    .a(FABIO_ARTICLE)
+                    .add("xbib:key", key)
+                    .add("prism:doi", doi)
                     .add("dc:title", title);
             for (String a : author) {
                 r.add("dc:creator", a);
             }
-            Literal l = new SimpleLiteral<>(year).type(Literal.GYEAR);
-            r.add("prism:publicationDate", l);
-
-
-            out.output(context);
+            r.add("prism:publicationDate", new SimpleLiteral<>(year).type(Literal.GYEAR));
+            r.newResource(FRBR_EMBODIMENT)
+                    .a(FABIO_PERIODICAL_VOLUME)
+                    .add("prism:volume", volume);
+            r.newResource(FRBR_EMBODIMENT)
+                    .a(FABIO_PERIODICAL_ISSUE)
+                    .add("prism:number", issue);
+            r.newResource(FRBR_EMBODIMENT)
+                    .a(FABIO_PRINT_OBJECT)
+                    .add("prism:pageRange", pagination);
+            r.newResource(FRBR_PARTOF)
+                    .a(FABIO_JOURNAL)
+                    .add("prism:publicationName", journal)
+                    .add("prism:issn", issn)
+                    .add("dc:publisher", publisher);
+            resourceContext.resource().id(IRI.builder()
+                    .scheme("http")
+                    .host(index)
+                    .query(type)
+                    .fragment(resourceContext.resource().id().getFragment())
+                    .build());
+            out.output(resourceContext);
         }
     }
 }

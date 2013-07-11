@@ -31,53 +31,66 @@
  */
 package org.xbib.elements.marc.extensions.mab;
 
+import org.xbib.elements.AbstractSpecification;
 import org.xbib.elements.Element;
-import org.xbib.elements.Specification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Element Map
+ * MAB specification for field collection descriptions.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class MABSpecification extends Specification {
+public class MABSpecification extends AbstractSpecification {
 
     private final static Logger logger = LoggerFactory.getLogger(MABSpecification.class.getName());
 
     protected Map addSpec(String value, Element element, Map map) {
-        int pos = value.indexOf('$');
-        String h = pos > 0 ? value.substring(0,pos) : null;
-        String t = pos > 0 ? value.substring(pos+1) : value;
-        addSegment(h, t, element, map);
+        int pos = value.indexOf('[');
+        if (pos >= 0) {
+            // list
+            String[] specs = value.substring(1, value.length()-1).split(",\\s");
+            String tag = null;
+            String ind = null;
+            StringBuilder subf = new StringBuilder();
+            for (String spec : specs) {
+                tag = spec.length() > 3 ? spec.substring(0,3) : spec;
+                ind = spec.length() > 4 ? spec.substring(3,5) :
+                        spec.length() > 3 ? spec.substring(3,4) : null;
+                String s = spec.length() > 5 ? spec.substring(5) : null;
+                subf.append(s);
+            }
+            addSpec(element, map, tag, ind, subf.toString() );
+        } else {
+            // singleton
+            // six positions: MAB tag (3 characters), MAB ind1, MAB ind2 (synthetic), MAB subfield (synthetic)
+            String tag = value.length() > 3 ? value.substring(0, 3) : value;
+            String ind = value.length() > 4 ? value.substring(3,5) :
+                    value.length() > 3 ? value.substring(3,4) : null;
+            String subf = value.length() > 5 ? value.substring(5) : null;
+            addSpec(element, map, tag, ind, subf);
+        }
         return map;
     }
 
-    private Map addSegment(String head, String tail, Element element, Map map) {
-        if (head == null) {
-            if (map.containsKey(tail)) {
-                logger.warn("already exist in map: {} {}", tail, map);
-                return map;
+    private Map addSpec(Element element, Map map, String tag, String ind, String subf) {
+        if (ind == null && subf == null) {
+            if (!map.containsKey(tag)) {
+                map.put(tag, element);
             }
-            map.put(tail, element);
-            return map;
-        }
-        int pos = tail != null ? tail.indexOf('$') : 0;
-        String h = pos > 0 ? tail.substring(0,pos) : null;
-        String t = pos > 0 ? tail.substring(pos+1) : tail;
-        Object o = map.get(head);
-        if (o != null) {
-            addSegment(h, t, element, (Map)o);
-            return map;
         } else {
-            Map m = new HashMap();
-            Map n = addSegment(h, t, element, m);
-            map.put(head, n);
-            return map;
+            Object o = map.get(tag);
+            if (o instanceof Map) {
+                addSpec(element, (Map)o, ind, subf, null);
+            } else {
+                map.put(tag, addSpec(element, new LinkedHashMap(), ind, subf, null));
+            }
         }
+        return map;
     }
 
 }

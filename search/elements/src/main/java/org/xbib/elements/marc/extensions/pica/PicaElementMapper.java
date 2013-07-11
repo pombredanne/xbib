@@ -31,12 +31,12 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.BasicElementMapper;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.marc.FieldCollection;
 
 public class PicaElementMapper
-        extends ElementMapper<FieldCollection, String, PicaElement, PicaContext> {
+        extends BasicElementMapper<FieldCollection, String, PicaElement, PicaContext> {
 
     public PicaElementMapper(String format) {
         super("/org/xbib/analyzer/", format, new PicaSpecification());

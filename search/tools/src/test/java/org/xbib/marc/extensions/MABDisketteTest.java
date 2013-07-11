@@ -48,7 +48,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
@@ -104,7 +104,7 @@ public class MABDisketteTest {
             }
             
         };
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);

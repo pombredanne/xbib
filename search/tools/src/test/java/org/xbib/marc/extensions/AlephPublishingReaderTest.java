@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ResourceBundle;
 
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
@@ -77,7 +77,7 @@ public class AlephPublishingReaderTest {
                 return counter;
             }
         };        
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                 .addListener(mapper)

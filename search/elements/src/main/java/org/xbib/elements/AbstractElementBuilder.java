@@ -57,6 +57,7 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     private final Logger logger = LoggerFactory.getLogger(AbstractElementBuilder.class.getName());
 
     private final ThreadLocal<C> contexts = new ThreadLocal();
+
     private final List<ElementOutput> outputs = new ArrayList();
 
     @Override

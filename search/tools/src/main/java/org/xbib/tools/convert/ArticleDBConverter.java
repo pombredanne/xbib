@@ -396,7 +396,6 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                 .scheme("http")
                 .host("localhost")
                 .query(XMLUtil.unescape(value)).build();
-        resource.add("rdf:type", FABIO_ARTICLE );
         final Resource r = resource;
         URIListener listener = new URIListener() {
             boolean error = false;
@@ -437,7 +436,8 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                             IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
                                     .path("/doi/").fragment(doiPart).build();
                             r.id(dereferencable)
-                                    .add("prism:doi", v.toUpperCase());
+                                .a(FABIO_ARTICLE)
+                                .add("prism:doi", v.toUpperCase());
                         } catch (Exception e) {
                             logger.warn("can't build IRI from DOI " + v, e);
                         }
@@ -530,7 +530,7 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
                     case "rft.issue" : {
                         r.newResource(FRBR_EMBODIMENT)
                                 .a(FABIO_PERIODICAL_ISSUE)
-                                .add("prism:issueIdentifier", v);
+                                .add("prism:number", v);
                         break;
                     }
                     case "rft.spage" : {

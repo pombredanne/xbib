@@ -31,15 +31,15 @@
  */
 package org.xbib.analyzer.dublincore;
 
+import org.xbib.elements.AbstractSpecification;
 import org.xbib.elements.Element;
-import org.xbib.elements.Specification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DublinCoreSpecification extends Specification {
+public class DublinCoreSpecification extends AbstractSpecification {
 
     private final static Logger logger = LoggerFactory.getLogger(DublinCoreSpecification.class.getName());
 

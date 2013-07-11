@@ -1,6 +1,6 @@
 package org.xbib.analyzer.marc;
 
-import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.elements.ValueMapFactory;
 import org.xbib.elements.items.*;
@@ -26,7 +26,7 @@ public class ItemLibraryIdentifier extends MARCElement {
     }
 
     @Override
-    public ItemLibraryIdentifier build(MARCBuilder b, FieldCollection key, String value) {
+    public ItemLibraryIdentifier build(MARCElementBuilder b, FieldCollection key, String value) {
         boolean servicecreated = false;
         for (Field d : key) {
             switch (d.subfieldId()) {
@@ -45,7 +45,7 @@ public class ItemLibraryIdentifier extends MARCElement {
         return this;
     }
 
-    private String resolveIdentifier(MARCBuilder b, String value) {
+    private String resolveIdentifier(MARCElementBuilder b, String value) {
         if (product2isil.containsKey(value)) {
             for (String isil : product2isil.get(value).get("authorized")) {
                 createISIL(b, isil, value);
@@ -59,7 +59,7 @@ public class ItemLibraryIdentifier extends MARCElement {
         return isil;
     }
 
-    private void createISIL(MARCBuilder b, String isil, String provider) {
+    private void createISIL(MARCElementBuilder b, String isil, String provider) {
         b.context().getResource(b.context().resource(), IDENTIFIER).add(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
         if (provider == null) {
             provider = defaultProvider;
@@ -71,7 +71,7 @@ public class ItemLibraryIdentifier extends MARCElement {
         b.context().access(new Access().name(provider, authority).library(new Library().library(isil, Authority.ISIL)));
     }
 
-    private void createItemService(MARCBuilder b, String itemStatus) {
+    private void createItemService(MARCElementBuilder b, String itemStatus) {
         LiaContext lia = b.context();
         String format = "marc"; //b.context().getFormat();
         boolean continuing = true; //b.context().getContinuing();

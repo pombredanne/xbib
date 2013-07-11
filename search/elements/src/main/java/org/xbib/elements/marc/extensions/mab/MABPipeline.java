@@ -31,8 +31,8 @@
  */
 package org.xbib.elements.marc.extensions.mab;
 
+import org.xbib.elements.AbstractSpecification;
 import org.xbib.elements.ElementBuilderFactory;
-import org.xbib.elements.Specification;
 import org.xbib.elements.KeyValuePipeline;
 import org.xbib.elements.marc.SubfieldValueMapper;
 import org.xbib.elements.marc.TagValueMapper;
@@ -55,7 +55,7 @@ public class MABPipeline extends KeyValuePipeline<FieldCollection, String, MABEl
     private final Logger logger = LoggerFactory.getLogger(MABPipeline.class.getName());
 
     public MABPipeline(int i,
-                       Specification specification,
+                       AbstractSpecification specification,
                        BlockingQueue<List<KeyValue>> queue,
                        Map map,
                        ElementBuilderFactory<FieldCollection, String, MABElement, MABContext> factory) {
@@ -67,12 +67,12 @@ public class MABPipeline extends KeyValuePipeline<FieldCollection, String, MABEl
         if (fields == null) {
             return;
         }
-        String key = fields.toString();
+        String key = fields.toMarcSpec();
         MABElement element = null;
         try {
             element = (MABElement) specification.getElement(key, map());
         } catch (ClassCastException e) {
-            logger.error("not a MARCElement instance for key " + key);
+            logger.error("not a MABElement instance for key: '{}' class={}", key, element != null ? element.getClass() : null);
         }
         if (element != null) {
             // element-based processing

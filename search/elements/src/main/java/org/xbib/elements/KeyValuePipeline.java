@@ -58,7 +58,7 @@ import java.util.concurrent.BlockingQueue;
 public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
         implements Callable<Boolean> {
 
-    protected final Specification specification;
+    protected final AbstractSpecification specification;
 
     private final BlockingQueue<List<KeyValue>> queue;
 
@@ -75,7 +75,7 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
     protected Set<String> unknownKeys;
 
     public KeyValuePipeline(int i,
-                            Specification specification,
+                            AbstractSpecification specification,
                             BlockingQueue<List<KeyValue>> queue,
                             Map map,
                             ElementBuilderFactory<K, V, E, C> factory) {

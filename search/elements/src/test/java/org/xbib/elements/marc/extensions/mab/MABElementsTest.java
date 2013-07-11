@@ -32,11 +32,15 @@
 package org.xbib.elements.marc.extensions.mab;
 
 import org.testng.annotations.Test;
+import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.io.InputService;
+import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
+import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.io.turtle.TurtleWriter;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Transformer;
@@ -45,35 +49,73 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MABElementsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MABElementsTest.class.getName());
 
-
     @Test
-    public void testSetupOfElements() throws Exception {
-        MABElementMapper mapper = new MABElementMapper("mab").start();
+    public void testSetupOfMABElements() throws Exception {
+        MABElementMapper mapper = new MABElementMapper("mab/hbz/dialect").start();
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
         reader.setProperty(Iso2709Reader.TYPE, "Titel");
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
         mapper.close();
     }
 
     @Test
-    public void testZDBElements() throws Exception {
+    public void testZDBMABElements() throws Exception {
         InputStream in =  InputService.getInputStream(URI.create("file:src/test/resources/org/xbib/elements/marc/extensions/mab/1217zdbtit.dat"));
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
-        Writer w = new OutputStreamWriter(new FileOutputStream("target/ZDB-MAB-Titel.xml"), "UTF-8");
-        MABElementMapper mapper = new MABElementMapper("mab").start();
+        Writer w = new OutputStreamWriter(new FileOutputStream("target/zdb-mab-titel.xml"), "UTF-8");
+        final ElementOutput output = new ElementOutput<ResourceContext>() {
+            final AtomicLong counter = new AtomicLong();
+
+            @Override
+            public boolean enabled() {
+                return true;
+            }
+
+            @Override
+            public void enabled(boolean enabled) {
+            }
+
+            @Override
+            public void output(ResourceContext context) throws IOException {
+                IRI iri = IRI.builder().scheme("http")
+                        .host("dummy")
+                        .query("dummy")
+                        .fragment(Long.toString(counter.getAndIncrement())).build();
+                context.resource().id(iri);
+                StringWriter sw = new StringWriter();
+                TurtleWriter tw = new TurtleWriter().output(sw);
+                tw.write(context.resource());
+                //logger.info("out={}", sw.toString());
+            }
+
+            @Override
+            public long getCounter() {
+                return counter.get();
+            }
+        };
+        MABElementBuilderFactory mabElementBuilderfactory = new MABElementBuilderFactory() {
+            public MABElementBuilder newBuilder() {
+                return new MABElementBuilder().addOutput(output);
+            }
+        };
+
+        MABElementMapper mapper = new MABElementMapper("mab/hbz/dialect")
+                .detectUnknownKeys(true)
+                .start(mabElementBuilderfactory);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MAB");
@@ -84,6 +126,7 @@ public class MABElementsTest {
         StreamResult target = new StreamResult(w);
         transformer.transform(new SAXSource(reader, source), target);
         mapper.close();
+        logger.info("unknown elements = {}", mapper.unknownKeys());
     }
 
 }

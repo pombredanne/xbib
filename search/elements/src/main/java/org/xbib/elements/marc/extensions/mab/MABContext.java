@@ -32,10 +32,25 @@
 package org.xbib.elements.marc.extensions.mab;
 
 import org.xbib.elements.items.LiaContext;
+import org.xbib.iri.IRI;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.simple.SimpleResource;
 
 public class MABContext extends LiaContext {
 
+    @Override
+    public MABContext id(IRI id) {
+        super.id(id);
+        return this;
+    }
+
+    @Override
+    public Resource newResource() {
+        return new SimpleResource();
+    }
+
     private String format;
+
     private boolean continuing;
     
     public void setFormat(String format) {

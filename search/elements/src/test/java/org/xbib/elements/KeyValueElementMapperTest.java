@@ -34,6 +34,7 @@ package org.xbib.elements;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elements.marc.MARCSpecification;
+import org.xbib.elements.marc.extensions.mab.MABSpecification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -45,11 +46,11 @@ public class KeyValueElementMapperTest extends Assert {
     private final Logger logger = LoggerFactory.getLogger(KeyValueElementMapperTest.class.getName());
 
     @Test
-    public void testSegmentKey() {
+    public void testMARCSpecs() {
         String value = "100$0$1$abc";
         Element element = new NullElement();
-        Map map = new TreeMap(); // for sorting
-        Specification specification = new MARCSpecification();
+        Map map = new TreeMap(); // for sorted output in assertEquals matching
+        AbstractSpecification specification = new MARCSpecification();
         Map m = specification.addSpec(value, element, map);
         value = "100$0$2$abc";
         element = new NullElement();
@@ -61,12 +62,26 @@ public class KeyValueElementMapperTest extends Assert {
         element = new NullElement();
         m = specification.addSpec(value, element, m);
         assertEquals("{100={0={2={abc=<null>, def=<null>}, 1={abc=<null>}}}, 200={0={2={abc=<null>}}}}", m.toString());
-
         Element e = specification.getElement("100$0$1$abc", m);
         logger.info("e={}", e);
         e = specification.getElement("100$0$1$def", m);
         logger.info("e={}", e);
     }
 
+    @Test
+    public void testMABSpecs() {
+        String value = "331";
+        Element element = new NullElement();
+        Map map = new TreeMap(); // for sorting
+        AbstractSpecification specification = new MABSpecification();
+        Map m = specification.addSpec(value, element, map);
+        logger.info("mab spec 1 = {}", m);
+        value = "331 10";
+        m = specification.addSpec(value, element, map);
+        logger.info("mab spec 2 = {}", m);
+        value = "[331 1a, 331 19]";
+        m = specification.addSpec(value, element, map);
+        logger.info("mab spec 3 = {}", m);
+    }
 
 }

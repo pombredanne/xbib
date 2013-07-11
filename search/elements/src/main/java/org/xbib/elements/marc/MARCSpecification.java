@@ -31,15 +31,15 @@
  */
 package org.xbib.elements.marc;
 
+import org.xbib.elements.AbstractSpecification;
 import org.xbib.elements.Element;
-import org.xbib.elements.Specification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MARCSpecification extends Specification {
+public class MARCSpecification extends AbstractSpecification {
 
     private final static Logger logger = LoggerFactory.getLogger(MARCSpecification.class.getName());
 
@@ -61,7 +61,7 @@ public class MARCSpecification extends Specification {
             return map;
         }
         int pos = tail != null ? tail.indexOf('$') : 0;
-        String h = pos > 0 ? tail.substring(0,pos) : null;
+        String h = pos > 0 ? tail.substring(0, pos) : null;
         String t = pos > 0 ? tail.substring(pos+1) : tail;
         Object o = map.get(head);
         if (o != null) {

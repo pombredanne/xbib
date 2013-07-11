@@ -50,8 +50,8 @@ import org.xml.sax.SAXException;
 
 public class MarcTest {
 
-    
-    public void testCorrectMarc() throws IOException, SAXException,
+    @Test
+    public void testProperMarc() throws IOException, SAXException,
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
         for (String s : new String[]{
                     "brkrtest.mrc", "makrtest.mrc", "chabon-loc.mrc", "chabon.mrc", "diacritic4.mrc",
@@ -70,8 +70,8 @@ public class MarcTest {
             }
         }
     }
-    
-    
+
+    @Test
     public void testFaultyMarc() throws IOException, SAXException,
             ParserConfigurationException, TransformerConfigurationException, TransformerException {
         for (String s : new String[]{

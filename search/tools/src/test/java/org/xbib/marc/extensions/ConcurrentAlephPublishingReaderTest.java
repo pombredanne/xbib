@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
@@ -113,7 +113,7 @@ public class ConcurrentAlephPublishingReaderTest {
                 return count.get();
             }
         };        
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new AlephPublishingReader().setListener(kv).setIterator(iterator)

@@ -50,6 +50,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -65,6 +66,10 @@ public class MARCElementsTest extends Assert {
     @Test
     public void testSetupOfElements() throws Exception {
         MARCElementMapper mapper = new MARCElementMapper("marc").start();
+        Writer writer = new FileWriter("marcelements.json");
+        mapper.dump("marc", writer);
+        writer.close();
+
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.setProperty(Iso2709Reader.FORMAT, "MARC");
@@ -111,11 +116,9 @@ public class MARCElementsTest extends Assert {
                 return counter.get();
             }
         };
-
-
-        MARCBuilderFactory factory = new MARCBuilderFactory() {
-            public MARCBuilder newBuilder() {
-                MARCBuilder builder = new MARCBuilder();
+        MARCElementBuilderFactory factory = new MARCElementBuilderFactory() {
+            public MARCElementBuilder newBuilder() {
+                MARCElementBuilder builder = new MARCElementBuilder();
                 builder.addOutput(output);
                 return builder;
             }

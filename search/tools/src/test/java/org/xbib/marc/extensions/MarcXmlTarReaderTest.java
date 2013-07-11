@@ -1,7 +1,7 @@
 package org.xbib.marc.extensions;
 
 import org.testng.annotations.Test;
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
@@ -59,7 +59,7 @@ public class MarcXmlTarReaderTest {
         Integer from = Integer.parseInt(bundle.getString("from"));
         Integer to = Integer.parseInt(bundle.getString("to"));
 
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                 .addListener(mapper)

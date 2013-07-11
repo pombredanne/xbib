@@ -86,7 +86,7 @@ public class MABElementsTest {
                 return counter;
             }
         };
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new MarcXmlTarReader()

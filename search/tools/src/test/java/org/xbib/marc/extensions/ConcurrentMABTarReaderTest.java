@@ -2,7 +2,7 @@ package org.xbib.marc.extensions;
 
 import java.io.IOException;
 
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABContext;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
@@ -60,7 +60,7 @@ public class ConcurrentMABTarReaderTest {
             }
             
         };        
-        MABBuilder builder = new MABBuilder().addOutput(output);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(output);
         mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         return new MarcXmlTarReader()

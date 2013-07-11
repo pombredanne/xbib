@@ -2,7 +2,7 @@ package org.xbib.builders.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elements.marc.extensions.mab.MABBuilder;
+import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
 import org.xbib.elements.marc.extensions.mab.MABElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.marc.Iso2709Reader;
@@ -32,7 +32,7 @@ public class ElasticsearchResourceBuilderTest {
                 .setIndex("test")
                 .setType("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
-        MABBuilder builder = new MABBuilder().addOutput(sink);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(sink);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                 .addListener(mapper);
@@ -60,7 +60,7 @@ public class ElasticsearchResourceBuilderTest {
                 .setIndex("test")
                 .setType("test");
         ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
-        MABBuilder builder = new MABBuilder().addOutput(sink);
+        MABElementBuilder builder = new MABElementBuilder().addOutput(sink);
         MABElementMapper mapper = new MABElementMapper("mab").start(builder);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         try {

@@ -69,9 +69,9 @@ public class ZDBTitleElementsTest extends Assert {
         //new GZIPInputStream(new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1302zdbtitgesamt.mrc.gz"));
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, ISO88591))) {
             InputSource source = new InputSource(br);
-            MARCBuilderFactory factory = new MARCBuilderFactory() {
-                public MARCBuilder newBuilder() {
-                    MARCBuilder builder = new MARCBuilder().addOutput(out);
+            MARCElementBuilderFactory factory = new MARCElementBuilderFactory() {
+                public MARCElementBuilder newBuilder() {
+                    MARCElementBuilder builder = new MARCElementBuilder().addOutput(out);
                     return builder;
                 }
             };

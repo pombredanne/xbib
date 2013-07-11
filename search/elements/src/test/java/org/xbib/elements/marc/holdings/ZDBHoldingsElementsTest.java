@@ -33,8 +33,8 @@ package org.xbib.elements.marc.holdings;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elements.marc.MARCBuilder;
-import org.xbib.elements.marc.MARCBuilderFactory;
+import org.xbib.elements.marc.MARCElementBuilder;
+import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.iri.IRI;
@@ -73,9 +73,9 @@ public class ZDBHoldingsElementsTest extends Assert {
             //new GZIPInputStream(new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1302zdblokalgesamt.mrc.gz"));
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, ISO88591))) {
             InputSource source = new InputSource(br);
-            MARCBuilderFactory factory = new MARCBuilderFactory() {
-                public MARCBuilder newBuilder() {
-                    MARCBuilder builder = new MARCBuilder().addOutput(out);
+            MARCElementBuilderFactory factory = new MARCElementBuilderFactory() {
+                public MARCElementBuilder newBuilder() {
+                    MARCElementBuilder builder = new MARCElementBuilder().addOutput(out);
                     return builder;
                 }
             };

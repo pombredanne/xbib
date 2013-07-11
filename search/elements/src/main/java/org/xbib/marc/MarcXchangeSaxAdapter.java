@@ -520,7 +520,7 @@ public class MarcXchangeSaxAdapter implements MarcXchangeConstants, MarcXchangeL
                         }
                         endDataField(designator);
                         endRecord(); // close record
-                    // fall through is ok
+                    // fall through is ok!
                     case '\u0000': // start of stream
                         position = 0;
                         // skip line-feed (OCLC PICA quirk)
@@ -542,7 +542,7 @@ public class MarcXchangeSaxAdapter implements MarcXchangeConstants, MarcXchangeL
                             }
                         } else {
                             directory = new FieldDirectory(label, fieldContent);
-                            designator = new Field(label);
+                            designator = new Field();
                         }
                         break;
                     case Separable.RS:

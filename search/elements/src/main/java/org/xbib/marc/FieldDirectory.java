@@ -67,7 +67,7 @@ public class FieldDirectory extends TreeMap<Integer, Field> {
                     int length = Integer.parseInt(buffer.substring(i + keylength, l));
                     int position = label.getBaseAddressOfData()
                             + Integer.parseInt(buffer.substring(l, l + label.getStartingCharacterPositionLength()));
-                    Field field = new Field(label, key, position, length);
+                    Field field = new Field(key, position, length);
                     put(position, field);
                 } catch (NumberFormatException e) {
                     throw new InvalidFieldDirectoryException("directory corrupt? key = " + key + " length = " + directoryLength);

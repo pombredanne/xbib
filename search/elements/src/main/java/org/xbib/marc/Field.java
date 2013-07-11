@@ -88,16 +88,7 @@ public class Field implements Comparable {
         this.length = -1;
     }
 
-    public Field(RecordLabel label) {
-        this.tag = null;
-        this.indicator = null;
-        this.subfieldId = null;
-        this.data = null;
-        this.position = -1;
-        this.length = -1;
-    }
-
-    public Field(RecordLabel label, String tag, int position, int length) {
+    public Field(String tag, int position, int length) {
         this.tag = tag;
         this.indicator = null;
         this.subfieldId = null;

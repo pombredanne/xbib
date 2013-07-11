@@ -168,7 +168,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 
             input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
 
-            logger.info("found {} input files", input);
+            logger.info("found {} input files", input.size());
 
             URI esURI = URI.create((String)options.valueOf("elasticsearch"));
             index = (String)options.valueOf("index");
@@ -229,7 +229,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     formatter.format(dps),
                     formatter.format(mbps));
 
-            service.shutdown();
             es.shutdown();
 
         } catch (IOException | InterruptedException | ExecutionException e) {
@@ -401,7 +400,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                 .scheme("http")
                 .host("localhost")
                 .query(XMLUtil.unescape(value)).build();
-        resource.add("rdf:type", FABIO_ARTICLE);
         final Resource r = resource;
         URIListener listener = new URIListener() {
             boolean error = false;
@@ -447,7 +445,8 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                             IRI dereferencable = IRI.builder().scheme("http").host("xbib.info")
                                     .path("/doi/").fragment(doiPart).build();
                             r.id(dereferencable)
-                                    .add("prism:doi", v);
+                                .a(FABIO_ARTICLE)
+                                .add("prism:doi", v);
                         } catch (Exception e) {
                             logger.warn("can't build IRI from DOI " + v, e);
                         }
@@ -539,7 +538,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                     case "rft.issue" : {
                         r.newResource(FRBR_EMBODIMENT)
                                 .a(FABIO_PERIODICAL_ISSUE)
-                                .add("prism:issueIdentifier", v);
+                                .add("prism:number", v);
                         break;
                     }
                     case "rft.spage" : {

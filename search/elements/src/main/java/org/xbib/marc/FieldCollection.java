@@ -31,6 +31,8 @@
  */
 package org.xbib.marc;
 
+import org.xbib.elements.marc.extensions.mab.MABSpecification;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
@@ -49,7 +51,6 @@ public class FieldCollection extends LinkedList<Field> {
 
     public final static FieldCollection LEADER_KEY = new FieldCollection("LEADER");
 
-
     public FieldCollection() {
         super();
     }
@@ -62,9 +63,6 @@ public class FieldCollection extends LinkedList<Field> {
     public void format() {
         int s = size();
         String[] tags = new String[s];
-        for (int i = 0 ; i < s; i++) {
-
-        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0 ; i < s; i++) {
             sb.append(tags[i]);
@@ -96,7 +94,7 @@ public class FieldCollection extends LinkedList<Field> {
                 sub = field.subfieldId();
             }
             if (!tag.equals(field.tag())) {
-                // very unlikely when parsing MARC
+                // unequal tags are very unlikely when parsing MARC
                 switchToNextTag(map, pattern, tag, ind, sub);
                 tag = field.tag();
                 ind = null;
@@ -173,8 +171,7 @@ public class FieldCollection extends LinkedList<Field> {
         }
     }
 
-    @Override
-    public String toString() {
+    public String toMarcSpec() {
         Map<String,String[]> m = new TreeMap();
         makePattern(m);
         StringBuilder sb = new StringBuilder();
@@ -182,7 +179,8 @@ public class FieldCollection extends LinkedList<Field> {
             sb.append(k);
             String[] values = m.get(k);
             if (values != null) {
-                for (String v : values) {
+                for (int i = 0; i < values.length; i++) {
+                    String v = values[i];
                     sb.append('$');
                     if (v != null) {
                         // sort characters is slow
@@ -196,4 +194,35 @@ public class FieldCollection extends LinkedList<Field> {
         return sb.toString();
     }
 
+    public String toString() {
+        return toMarcSpec();
+    }
+
+    /**
+     * Like MARC spec, but without delimiting '$'
+     * and with a default subfield.
+     * @return
+     */
+    /*public String toMABSpec() {
+        StringBuilder sb = new StringBuilder();
+        if (size() > 1) {
+            sb.append('[');
+        }
+        for (Field field : this) {
+            if (sb.length() > 1) {
+                sb.append(", ");
+            }
+            sb.append(field.tag());
+            if (field.indicator() != null) {
+                sb.append(field.indicator());
+            }
+            if (field.subfieldId() != null) {
+                sb.append(field.subfieldId());
+            }
+        }
+        if (size() > 1) {
+            sb.append(']');
+        }
+        return sb.toString();
+    }*/
 }

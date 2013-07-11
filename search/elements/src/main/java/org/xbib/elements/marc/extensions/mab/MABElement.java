@@ -48,7 +48,7 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 public abstract class MABElement
-        implements Element<FieldCollection, String, MABBuilder>, 
+        implements Element<FieldCollection, String, MABElementBuilder>,
         DublinCoreProperties, 
         DublinCoreTerms, DublinCoreTermsProperties,
         ExtraBibliographicProperties {
@@ -74,7 +74,7 @@ public abstract class MABElement
     }
 
     @Override
-    public MABElement build(MABBuilder builder, FieldCollection key, String value) {
+    public MABElement build(MABElementBuilder builder, FieldCollection key, String value) {
         return this;
     }
 

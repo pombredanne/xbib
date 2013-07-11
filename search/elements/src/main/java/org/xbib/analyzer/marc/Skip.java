@@ -1,6 +1,6 @@
 package org.xbib.analyzer.marc;
 
-import org.xbib.elements.marc.MARCBuilder;
+import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElement;
 import org.xbib.marc.FieldCollection;
 
@@ -16,7 +16,7 @@ public class Skip extends MARCElement {
     }
 
     @Override
-    public Skip build(MARCBuilder b, FieldCollection key, String value) {
+    public Skip build(MARCElementBuilder b, FieldCollection key, String value) {
         return this;
     }
 

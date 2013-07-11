@@ -31,15 +31,15 @@
  */
 package org.xbib.elements.marc.extensions.pica;
 
+import org.xbib.elements.AbstractSpecification;
 import org.xbib.elements.Element;
-import org.xbib.elements.Specification;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PicaSpecification extends Specification {
+public class PicaSpecification extends AbstractSpecification {
 
     private final static Logger logger = LoggerFactory.getLogger(PicaSpecification.class.getName());
 

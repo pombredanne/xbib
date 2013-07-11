@@ -88,9 +88,9 @@ public class ZDBOAIMARCElementsTest {
             }
         };
 
-        MARCBuilderFactory factory = new MARCBuilderFactory() {
-            public MARCBuilder newBuilder() {
-                MARCBuilder builder = new MARCBuilder().addOutput(output);
+        MARCElementBuilderFactory factory = new MARCElementBuilderFactory() {
+            public MARCElementBuilder newBuilder() {
+                MARCElementBuilder builder = new MARCElementBuilder().addOutput(output);
                 return builder;
             }
         };

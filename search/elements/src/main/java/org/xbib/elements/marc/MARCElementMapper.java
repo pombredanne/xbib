@@ -31,7 +31,7 @@
  */
 package org.xbib.elements.marc;
 
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.BasicElementMapper;
 import org.xbib.elements.KeyValuePipeline;
 
 /**
@@ -39,7 +39,7 @@ import org.xbib.elements.KeyValuePipeline;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class MARCElementMapper extends ElementMapper {
+public class MARCElementMapper extends BasicElementMapper {
 
     /**
      * Instantiate a MARC element mapper.
@@ -61,11 +61,11 @@ public class MARCElementMapper extends ElementMapper {
     }
 
     public MARCElementMapper start() {
-        super.start(new MARCBuilderFactory());
+        super.start(new MARCElementBuilderFactory());
         return this;
     }
 
-    public MARCElementMapper start(MARCBuilderFactory factory) {
+    public MARCElementMapper start(MARCElementBuilderFactory factory) {
         super.start(factory);
         return this;
     }

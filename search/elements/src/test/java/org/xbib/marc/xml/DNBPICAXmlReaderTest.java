@@ -46,7 +46,7 @@ public class DNBPICAXmlReaderTest {
     private static final Logger logger = LoggerFactory.getLogger(DNBPICAXmlReaderTest.class.getName());
 
     @Test
-    public void testZDBBIB() throws Exception {
+    public void testZDBBIBFromOAI() throws Exception {
         InputStream in = getClass().getResourceAsStream("zdb-oai-bib.xml");
         InputSource source = new InputSource(new InputStreamReader(in, "UTF-8"));
         DNBPICAXmlReader reader = new DNBPICAXmlReader(source);

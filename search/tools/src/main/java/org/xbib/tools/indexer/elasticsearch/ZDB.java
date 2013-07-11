@@ -45,8 +45,8 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.elements.marc.MARCBuilder;
-import org.xbib.elements.marc.MARCBuilderFactory;
+import org.xbib.elements.marc.MARCElementBuilder;
+import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.analyzer.output.ElementOutput;
@@ -288,9 +288,9 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         return fileCounter;
     }
 
-    final MARCBuilderFactory buildFactory = new MARCBuilderFactory() {
-        public MARCBuilder newBuilder() {
-            MARCBuilder builder = new MARCBuilder()
+    final MARCElementBuilderFactory buildFactory = new MARCElementBuilderFactory() {
+        public MARCElementBuilder newBuilder() {
+            MARCElementBuilder builder = new MARCElementBuilder()
                     .addOutput(new OurElementOutput());
             return builder;
         }

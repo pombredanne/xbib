@@ -33,10 +33,10 @@ package org.xbib.analyzer.dublincore;
 
 import org.xbib.elements.ElementBuilder;
 import org.xbib.elements.ElementBuilderFactory;
-import org.xbib.elements.ElementMapper;
+import org.xbib.elements.BasicElementMapper;
 
 public class DublinCoreElementMapper
-        extends ElementMapper<String, String, DublinCoreElement, DublinCoreContext> {
+        extends BasicElementMapper<String, String, DublinCoreElement, DublinCoreContext> {
 
     public DublinCoreElementMapper(String format) {
         super("/org/xbib/analyzer/", format, new DublinCoreSpecification());

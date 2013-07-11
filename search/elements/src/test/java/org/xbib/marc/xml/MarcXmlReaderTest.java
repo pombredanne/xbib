@@ -46,7 +46,7 @@ public class MarcXmlReaderTest {
     private static final Logger logger = LoggerFactory.getLogger(MarcXmlReaderTest.class.getName());
     
     @Test
-    public void testOAI() throws Exception {
+    public void testMarcXMLFromOAI() throws Exception {
         InputStream in = getClass().getResourceAsStream("zdb-oai-marc.xml");
         if (in == null) {
             throw new IOException("input stream not found");
