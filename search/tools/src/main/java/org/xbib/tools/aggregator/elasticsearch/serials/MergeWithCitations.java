@@ -53,9 +53,9 @@ import org.xbib.tools.aggregator.elasticsearch.zdb.MergeWithLicenses;
 import org.xbib.tools.aggregator.elasticsearch.zdb.entities.Manifestation;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import org.xbib.tools.opt.internal.Strings;
 import org.xbib.tools.util.ExceptionFormatter;
 import org.xbib.tools.util.FormatUtil;
+import org.xbib.util.Strings;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

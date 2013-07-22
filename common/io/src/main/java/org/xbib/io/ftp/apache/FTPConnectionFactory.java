@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
@@ -29,7 +29,6 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-
 package org.xbib.io.ftp.apache;
 
 import org.xbib.io.ConnectionFactory;
@@ -41,12 +40,12 @@ public final class FTPConnectionFactory  implements ConnectionFactory<FTPSession
 
     @Override
     public FTPConnection getConnection(URI uri) throws IOException {
-        return providesScheme(uri.getScheme()) ? new FTPConnection().setURI(uri) : null;
+        return canOpen(uri) ? new FTPConnection().setURI(uri) : null;
     }
 
     @Override
-    public boolean providesScheme(String scheme) {
-        return"ftp".equals(scheme);
+    public boolean canOpen(URI uri) {
+        return"ftp".equals(uri.getScheme());
     }
     
 }

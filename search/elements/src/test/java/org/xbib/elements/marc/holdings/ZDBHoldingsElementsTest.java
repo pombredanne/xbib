@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.keyvalue.KeyValueStreamAdapter;
 import org.xbib.logging.Logger;
@@ -48,6 +48,7 @@ import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedReader;
@@ -129,7 +130,7 @@ public class ZDBHoldingsElementsTest extends Assert {
         }
 
         @Override
-        public void output(ResourceContext context) throws IOException {
+        public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
             if (!context.resource().isEmpty()) {
                 Resource r = context.resource();
                 r.id(IRI.builder()

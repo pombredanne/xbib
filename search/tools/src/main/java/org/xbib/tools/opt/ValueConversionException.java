@@ -39,17 +39,17 @@ public class ValueConversionException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public ValueConversionException( String message ) {
-        this( message, null );
+    public ValueConversionException(String message) {
+        this(message, null);
     }
 
     /**
      * Creates a new exception with the specified detail message and cause.
      *
      * @param message the detail message
-     * @param cause the original exception
+     * @param cause   the original exception
      */
-    public ValueConversionException( String message, Throwable cause ) {
-        super( message, cause );
+    public ValueConversionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

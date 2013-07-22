@@ -83,7 +83,7 @@ public class ZSRUClient extends DefaultSRUClient {
         // connect to Z service
         URI uri = request.getURI();
         Connection<Session> connection = ConnectionService.getInstance()
-                .getConnectionFactory(uri.getScheme())
+                .getFactory(uri)
                 .getConnection(uri);
         ZSession session = (ZSession) connection.createSession();
         ZClient client = session.newZClient();

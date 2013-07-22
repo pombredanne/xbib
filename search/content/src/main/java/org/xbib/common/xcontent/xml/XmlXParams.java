@@ -19,9 +19,6 @@
 
 package org.xbib.common.xcontent.xml;
 
-import org.xbib.xml.XMLNamespaceContext;
-
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 
 /**
@@ -32,29 +29,39 @@ import javax.xml.namespace.QName;
 public class XmlXParams {
 
     private final static QName getDefaultRoot() {
-        return new QName("http://elasticsearch.org/namespaces/", "root", "");
+        return new QName("http://elasticsearch.org/ns/1.0/", "root", "es");
     }
 
-    private final static XmlXParams DEFAULT_PARAMS = new XmlXParams(getDefaultRoot(), XMLNamespaceContext.getInstance());
+    private final static XmlXParams DEFAULT_PARAMS =
+            new XmlXParams(getDefaultRoot(), XmlNamespaceContext.newInstance());
 
-    private QName root;
+    private final QName root;
 
-    private XMLNamespaceContext namespaceContext;
+    private final XmlNamespaceContext namespaceContext;
+
+    public XmlXParams() {
+        this(null, null);
+    }
 
     public XmlXParams(QName root) {
-        this(root, XMLNamespaceContext.getInstance());
+        this(root, null);
     }
 
-    public XmlXParams(QName root, XMLNamespaceContext namespaceContext) {
-        this.root = root;
-        this.namespaceContext = namespaceContext;
+    public XmlXParams(XmlNamespaceContext namespaceContext) {
+        this(null, namespaceContext);
+    }
+
+    public XmlXParams(QName root, XmlNamespaceContext namespaceContext) {
+        this.root = root == null ? DEFAULT_PARAMS.getQName() : root;
+        this.namespaceContext = namespaceContext == null ? DEFAULT_PARAMS.getNamespaceContext() : namespaceContext;
+        this.namespaceContext.addNamespace(getDefaultRoot().getPrefix(), getDefaultRoot().getNamespaceURI());
     }
 
     public QName getQName() {
         return root;
     }
 
-    public XMLNamespaceContext getNamespaceContext() {
+    public XmlNamespaceContext getNamespaceContext() {
         return namespaceContext;
     }
 

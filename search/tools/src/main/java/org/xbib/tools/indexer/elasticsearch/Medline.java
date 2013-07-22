@@ -34,10 +34,10 @@ package org.xbib.tools.indexer.elasticsearch;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -221,7 +221,7 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
                         .query(type)
                         .fragment(id)
                         .build());
-                out.output(resourceContext);
+                out.output(resourceContext, resourceContext.contentBuilder());
                 id = null;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

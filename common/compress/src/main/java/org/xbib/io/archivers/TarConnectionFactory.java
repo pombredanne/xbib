@@ -54,21 +54,19 @@ public final class TarConnectionFactory implements ConnectionFactory<TarSession>
      * @throws java.io.IOException if connection can not be established
      */
     @Override
-    public Connection<TarSession> getConnection(final URI uri) throws IOException {
+    public Connection<TarSession> getConnection(URI uri) throws IOException {
          TarConnection connection = new TarConnection();
          connection.setURI(uri);
          return connection;
     }
 
-    /**
-     * Check if scheme is provided
-     *
-     * @param scheme the scheme to be checked
-     *
-     * @return true if scheme is provided
-     */
     @Override
-    public boolean providesScheme(String scheme) {
-        return scheme.startsWith("tar");
+    public boolean canOpen(URI uri) {
+        return uri.getScheme().startsWith("tar") ||
+                (uri.getScheme().startsWith("file") && (
+                        uri.getSchemeSpecificPart().endsWith(".tar")
+                        || uri.getSchemeSpecificPart().endsWith(".tar.gz")
+                        || uri.getSchemeSpecificPart().endsWith(".tar.bz2")
+                        || uri.getSchemeSpecificPart().endsWith(".tar.xz")));
     }
 }

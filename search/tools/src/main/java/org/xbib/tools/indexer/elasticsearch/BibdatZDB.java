@@ -45,10 +45,10 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.elements.marc.extensions.pica.PicaBuilder;
-import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
-import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.marc.dialects.pica.PicaBuilder;
+import org.xbib.elements.marc.dialects.pica.PicaBuilderFactory;
+import org.xbib.elements.marc.dialects.pica.PicaElementMapper;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -62,6 +62,7 @@ import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
@@ -295,7 +296,7 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         }
     };
 
-    final class OurElementOutput implements ElementOutput<ResourceContext> {
+    final class OurElementOutput implements ElementOutput<ResourceContext, Resource> {
 
         @Override
         public boolean enabled() {
@@ -307,11 +308,11 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
         }
 
         @Override
-        public void output(ResourceContext context) throws IOException {
+        public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
             // set index/type adressing via resource ID
             context.resource().id(IRI.builder().host(index).query(type)
                     .fragment(context.resource().id().getFragment()).build());
-            output.output(context);
+            output.output(context, context.contentBuilder());
             outputCounter.incrementAndGet();
         }
 

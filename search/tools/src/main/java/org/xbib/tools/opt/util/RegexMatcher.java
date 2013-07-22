@@ -25,12 +25,12 @@
 
 package org.xbib.tools.opt.util;
 
-import java.util.regex.Pattern;
-
 import org.xbib.tools.opt.ValueConversionException;
 import org.xbib.tools.opt.ValueConverter;
 
-import static java.util.regex.Pattern.*;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.compile;
 
 /**
  * Ensures that values entirely match a regular expression.
@@ -44,13 +44,14 @@ public class RegexMatcher implements ValueConverter<String> {
      * Creates a matcher that uses the given regular expression, modified by the given flags.
      *
      * @param pattern the regular expression pattern
-     * @param flags modifying regex flags
+     * @param flags   modifying regex flags
      * @throws IllegalArgumentException if bit values other than those corresponding to the defined match flags are
-     * set in {@code flags}
-     * @throws java.util.regex.PatternSyntaxException if the expression's syntax is invalid
+     *                                  set in {@code flags}
+     * @throws java.util.regex.PatternSyntaxException
+     *                                  if the expression's syntax is invalid
      */
-    public RegexMatcher( String pattern, int flags ) {
-        this.pattern = compile( pattern, flags );
+    public RegexMatcher(String pattern, int flags) {
+        this.pattern = compile(pattern, flags);
     }
 
     /**
@@ -58,28 +59,35 @@ public class RegexMatcher implements ValueConverter<String> {
      *
      * @param pattern the regular expression pattern
      * @return the new converter
-     * @throws java.util.regex.PatternSyntaxException if the expression's syntax is invalid
+     * @throws java.util.regex.PatternSyntaxException
+     *          if the expression's syntax is invalid
      */
-    public static ValueConverter<String> regex( String pattern ) {
-        return new RegexMatcher( pattern, 0 );
+    public static ValueConverter<String> regex(String pattern) {
+        return new RegexMatcher(pattern, 0);
     }
 
-    /** {@inheritDoc} */
-    public String convert( String value ) {
-        if ( !pattern.matcher( value ).matches() ) {
+    /**
+     * {@inheritDoc}
+     */
+    public String convert(String value) {
+        if (!pattern.matcher(value).matches()) {
             throw new ValueConversionException(
-                "Value [" + value + "] did not match regex [" + pattern.pattern() + ']' );
+                    "Value [" + value + "] did not match regex [" + pattern.pattern() + ']');
         }
 
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Class<String> valueType() {
         return String.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String valuePattern() {
         return pattern.pattern();
     }

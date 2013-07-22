@@ -25,7 +25,8 @@
 
 package org.xbib.tools.opt;
 
-import static org.xbib.tools.opt.ParserRules.*;
+import static org.xbib.tools.opt.ParserRules.DOUBLE_HYPHEN;
+import static org.xbib.tools.opt.ParserRules.HYPHEN_CHAR;
 
 /**
  * <p>Wrapper for an array of command line arguments.</p>
@@ -36,7 +37,7 @@ class ArgumentList {
     private final String[] arguments;
     private int currentIndex;
 
-    ArgumentList( String... arguments ) {
+    ArgumentList(String... arguments) {
         this.arguments = arguments.clone();
     }
 
@@ -45,15 +46,16 @@ class ArgumentList {
     }
 
     String next() {
-        return arguments[ currentIndex++ ];
+        return arguments[currentIndex++];
     }
 
     String peek() {
-        return arguments[ currentIndex ];
+        return arguments[currentIndex];
     }
 
     void treatNextAsLongOption() {
-        if ( HYPHEN_CHAR != arguments[ currentIndex ].charAt( 0 ) )
-            arguments[ currentIndex ] = DOUBLE_HYPHEN + arguments[ currentIndex ];
+        if (HYPHEN_CHAR != arguments[currentIndex].charAt(0)) {
+            arguments[currentIndex] = DOUBLE_HYPHEN + arguments[currentIndex];
+        }
     }
 }

@@ -31,7 +31,7 @@ import org.xbib.atom.AtomFeedFactory;
  */
 public class ElasticsearchAbderaAdapter extends AbstractAbderaAdapter {
 
-    private final ElasticsearchAtomFeedController controller = new ElasticsearchAtomFeedController();
+    private final ElasticsearchAtomFeedFactory controller = new ElasticsearchAtomFeedFactory();
     
     /**
      * Construct Adapter for Abdera

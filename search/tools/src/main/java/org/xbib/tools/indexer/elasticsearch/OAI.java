@@ -32,10 +32,10 @@
 package org.xbib.tools.indexer.elasticsearch;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -204,7 +204,7 @@ public class OAI {
                         .query(type)
                         .fragment(identifier).build();
                 resourceContext.resource().id(iri);
-                out.output(resourceContext);
+                out.output(resourceContext, resourceContext.contentBuilder());
                 resourceContext.reset();
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);

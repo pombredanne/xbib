@@ -27,9 +27,12 @@ package org.xbib.tools.opt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.*;
 import java.util.List;
-import static org.xbib.tools.opt.internal.Strings.*;
+
+import static java.util.Collections.singletonList;
+import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableCollection;
+import static org.xbib.util.Strings.EMPTY;
 
 /**
  * @param <V> represents the type of the arguments this option accepts
@@ -39,12 +42,12 @@ abstract class AbstractOptionSpec<V> implements OptionSpec<V>, OptionDescriptor 
     private final List<String> options = new ArrayList<String>();
     private final String description;
 
-    protected AbstractOptionSpec( String option ) {
-        this( singletonList( option ), EMPTY );
+    protected AbstractOptionSpec(String option) {
+        this(singletonList(option), EMPTY);
     }
 
-    protected AbstractOptionSpec( Collection<String> options, String description ) {
-        arrangeOptions( options );
+    protected AbstractOptionSpec(Collection<String> options, String description) {
+        arrangeOptions(options);
 
         this.description = description;
     }
@@ -53,53 +56,55 @@ abstract class AbstractOptionSpec<V> implements OptionSpec<V>, OptionDescriptor 
         return unmodifiableCollection(options);
     }
 
-    public final List<V> values( OptionSet detectedOptions ) {
+    public final List<V> values(OptionSet detectedOptions) {
         return detectedOptions.valuesOf(this);
     }
 
-    public final V value( OptionSet detectedOptions ) {
-        return detectedOptions.valueOf( this );
+    public final V value(OptionSet detectedOptions) {
+        return detectedOptions.valueOf(this);
     }
 
     public String description() {
         return description;
     }
 
-    protected abstract V convert( String argument );
+    protected abstract V convert(String argument);
 
-    abstract void handleOption( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions,
-        String detectedArgument );
+    abstract void handleOption(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions,
+                               String detectedArgument);
 
-    private void arrangeOptions( Collection<String> unarranged ) {
-        if ( unarranged.size() == 1 ) {
-            options.addAll( unarranged );
+    private void arrangeOptions(Collection<String> unarranged) {
+        if (unarranged.size() == 1) {
+            options.addAll(unarranged);
             return;
         }
 
         List<String> shortOptions = new ArrayList<String>();
         List<String> longOptions = new ArrayList<String>();
 
-        for ( String each : unarranged ) {
-            if ( each.length() == 1 )
-                shortOptions.add( each );
-            else
-                longOptions.add( each );
+        for (String each : unarranged) {
+            if (each.length() == 1) {
+                shortOptions.add(each);
+            } else {
+                longOptions.add(each);
+            }
         }
 
-        sort( shortOptions );
-        sort( longOptions );
+        sort(shortOptions);
+        sort(longOptions);
 
-        options.addAll( shortOptions );
-        options.addAll( longOptions );
+        options.addAll(shortOptions);
+        options.addAll(longOptions);
     }
 
     @Override
-    public boolean equals( Object that ) {
-        if ( !( that instanceof AbstractOptionSpec<?> ) )
+    public boolean equals(Object that) {
+        if (!(that instanceof AbstractOptionSpec<?>)) {
             return false;
+        }
 
         AbstractOptionSpec<?> other = (AbstractOptionSpec<?>) that;
-        return options.equals( other.options );
+        return options.equals(other.options);
     }
 
     @Override

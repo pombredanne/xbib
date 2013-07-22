@@ -25,7 +25,7 @@
 
 package org.xbib.tools.opt;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 
 /**
  * <p>Thrown when the option parser is asked to recognize an option with illegal
@@ -36,8 +36,8 @@ import static java.util.Collections.*;
 class IllegalOptionSpecificationException extends OptionException {
     private static final long serialVersionUID = -1L;
 
-    IllegalOptionSpecificationException( String option ) {
-        super( singletonList( option ) );
+    IllegalOptionSpecificationException(String option) {
+        super(singletonList(option));
     }
 
     @Override

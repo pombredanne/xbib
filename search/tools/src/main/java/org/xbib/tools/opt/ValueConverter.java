@@ -39,7 +39,7 @@ public interface ValueConverter<V> {
      * @return the converted value
      * @throws ValueConversionException if a problem occurs while converting the value
      */
-    V convert( String value );
+    V convert(String value);
 
     /**
      * Gives the class of the type of values this converter converts to.

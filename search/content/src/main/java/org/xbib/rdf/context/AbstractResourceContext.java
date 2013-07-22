@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
@@ -31,18 +31,20 @@
  */
 package org.xbib.rdf.context;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 
+/**
+ * An abstract resource context.
+ *
+ * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
+ *
+ * @param <R>
+ */
 public abstract class AbstractResourceContext<R extends Resource> implements ResourceContext<R> {
 
-    protected IRINamespaceContext namespaces;
-    protected Map<IRI, R> contexts = new LinkedHashMap();
-    protected IRI identifier;
-    protected R resource;
+    private IRINamespaceContext namespaces;
+
+    private R resource;
 
     public ResourceContext<R> newNamespaceContext() {
         this.namespaces = IRINamespaceContext.newInstance();
@@ -62,13 +64,8 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
     }
 
     @Override
-    public ResourceContext<R> newResource(R resource) {
+    public ResourceContext<R> setResource(R resource) {
         this.resource = resource;
-        if (identifier != null) {
-            if (resource != null) {
-                contexts.put(identifier, resource);
-            }
-        }
         return this;
     }
 
@@ -78,38 +75,14 @@ public abstract class AbstractResourceContext<R extends Resource> implements Res
     }
 
     @Override
-    public ResourceContext<R> id(IRI identifier) {
-        if (identifier != null) {
-            if (resource != null) {
-                contexts.put(identifier, resource);
-            }
-        }
-        this.identifier = identifier;
-        return this;
-    }
-
-    @Override
-    public IRI context() {
-        return identifier;
-    }
-
-    @Override
-    public Map<IRI, R> asMap() {
-        return contexts;
-    }
-
-    @Override
-    public void reset() {
-        contexts.clear();
-        identifier = null;
+    public ResourceContext<R> reset() {
         resource = null;
+        return this;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Resource r : contexts.values()) {
-            sb.append(r.toString()).append("\n");
-        }
+        sb.append(resource.toString()).append("\n");
         return sb.toString();
     }
 }

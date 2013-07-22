@@ -34,10 +34,10 @@ package org.xbib.tools.indexer.elasticsearch;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -149,7 +149,6 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
             logger.info("creating new index ...");
             es.setIndex(index)
                     .setType(type)
-                    .dateDetection(false)
                     .newIndex(true); // true = ignore IndexAlreadyExistsException
             logger.info("... new index created");
 
@@ -236,7 +235,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
         if (uri == null) {
             return;
         }
-        InputStream in = factory.getInputStream(uri);
+        InputStream in = factory.open(uri);
         if (in == null) {
             throw new IOException("unable to open " + uri);
         }
@@ -366,7 +365,7 @@ public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
                     .query(type)
                     .fragment(resourceContext.resource().id().getFragment())
                     .build());
-            out.output(resourceContext);
+            out.output(resourceContext, resourceContext.contentBuilder());
         }
     }
 }

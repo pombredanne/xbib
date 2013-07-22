@@ -24,13 +24,13 @@
 */
 package org.xbib.tools.opt.util;
 
+import org.xbib.tools.opt.ValueConversionException;
+import org.xbib.tools.opt.ValueConverter;
+
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.xbib.tools.opt.ValueConversionException;
-import org.xbib.tools.opt.ValueConverter;
 
 /**
  * Converts values to {@link Date}s using a {@link DateFormat} object.
@@ -46,9 +46,10 @@ public class DateConverter implements ValueConverter<Date> {
      * @param formatter the formatter/parser to use
      * @throws NullPointerException if {@code formatter} is {@code null}
      */
-    public DateConverter( DateFormat formatter ) {
-        if ( formatter == null )
-            throw new NullPointerException( "illegal null formatter" );
+    public DateConverter(DateFormat formatter) {
+        if (formatter == null) {
+            throw new NullPointerException("illegal null formatter");
+        }
 
         this.formatter = formatter;
     }
@@ -59,43 +60,51 @@ public class DateConverter implements ValueConverter<Date> {
      *
      * @param pattern expected date/time pattern
      * @return the new converter
-     * @throws NullPointerException if {@code pattern} is {@code null}
+     * @throws NullPointerException     if {@code pattern} is {@code null}
      * @throws IllegalArgumentException if {@code pattern} is invalid
      */
-    public static DateConverter datePattern( String pattern ) {
-        SimpleDateFormat formatter = new SimpleDateFormat( pattern );
-        formatter.setLenient( false );
+    public static DateConverter datePattern(String pattern) {
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        formatter.setLenient(false);
 
-        return new DateConverter( formatter );
+        return new DateConverter(formatter);
     }
 
-    /** {@inheritDoc} */
-    public Date convert( String value ) {
-        ParsePosition position = new ParsePosition( 0 );
+    /**
+     * {@inheritDoc}
+     */
+    public Date convert(String value) {
+        ParsePosition position = new ParsePosition(0);
 
-        Date date = formatter.parse( value, position );
-        if ( position.getIndex() != value.length() )
-            throw new ValueConversionException( message( value ) );
+        Date date = formatter.parse(value, position);
+        if (position.getIndex() != value.length()) {
+            throw new ValueConversionException(message(value));
+        }
 
         return date;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Class<Date> valueType() {
         return Date.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String valuePattern() {
         return formatter instanceof SimpleDateFormat
-            ? ( (SimpleDateFormat) formatter ).toPattern()
-            : "";
+                ? ((SimpleDateFormat) formatter).toPattern()
+                : "";
     }
 
-    private String message( String value ) {
+    private String message(String value) {
         String message = "Value [" + value + "] does not match date/time pattern";
-        if ( formatter instanceof SimpleDateFormat )
-            message += " [" + ( (SimpleDateFormat) formatter ).toPattern() + ']';
+        if (formatter instanceof SimpleDateFormat) {
+            message += " [" + ((SimpleDateFormat) formatter).toPattern() + ']';
+        }
 
         return message;
     }

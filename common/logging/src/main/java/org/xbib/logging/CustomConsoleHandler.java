@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.

@@ -25,10 +25,11 @@
 
 package org.xbib.tools.opt.internal;
 
+import org.xbib.tools.opt.ValueConverter;
+
 import java.lang.reflect.Constructor;
 
-import org.xbib.tools.opt.ValueConverter;
-import static org.xbib.tools.opt.internal.Reflection.*;
+import static org.xbib.tools.opt.internal.Reflection.instantiate;
 
 /**
  * @param <V> constraint on the type of values being converted to
@@ -37,12 +38,12 @@ import static org.xbib.tools.opt.internal.Reflection.*;
 class ConstructorInvokingValueConverter<V> implements ValueConverter<V> {
     private final Constructor<V> ctor;
 
-    ConstructorInvokingValueConverter( Constructor<V> ctor ) {
+    ConstructorInvokingValueConverter(Constructor<V> ctor) {
         this.ctor = ctor;
     }
 
-    public V convert( String value ) {
-        return instantiate( ctor, value );
+    public V convert(String value) {
+        return instantiate(ctor, value);
     }
 
     public Class<V> valueType() {

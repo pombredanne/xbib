@@ -70,7 +70,7 @@ public abstract class AbstractXmlResourceHandler
     }
 
     /**
-     *  Open a predicate. Create newResource, even if there will be only a single literal.
+     *  Open a predicate. Create new resource, even if there will be only a single literal.
      *  It will be compacted later.
      *
      * @param parent

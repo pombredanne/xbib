@@ -32,6 +32,7 @@
 package org.xbib.io;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
@@ -52,8 +53,9 @@ public final class ConnectionService<F extends ConnectionFactory> {
         return instance;
     }
 
-    public synchronized F getConnectionFactory(String scheme)
+    public synchronized F getFactory(URI uri)
             throws IOException {
+        String scheme = uri.getScheme();
         if (scheme == null) {
             throw new IllegalArgumentException("no connection scheme given");
         }
@@ -62,7 +64,7 @@ public final class ConnectionService<F extends ConnectionFactory> {
         Iterator<ConnectionFactory> it = loader.iterator();
         while (it.hasNext()) {
             factory = it.next();
-            if (scheme != null && factory.providesScheme(scheme)) {
+            if (scheme != null && factory.canOpen(uri)) {
                 return (F) factory;
             }
         }

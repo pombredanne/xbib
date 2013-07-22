@@ -39,11 +39,11 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
 import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -160,7 +160,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             logger.info("parsing initial set of serials...");
 
             for (URI uri : input) {
-                InputStream in = factory.getInputStream(uri);
+                InputStream in = factory.open(uri);
                 serialsdb = new SerialsDBConverter(new InputStreamReader(in, UTF8), "serials" );
                 serials = serialsdb.getMap();
             }
@@ -192,7 +192,6 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             logger.info("creating new index ...");
             es.setIndex(index)
                     .setType(type)
-                    .dateDetection(false)
                     .newIndex(true); // true = ignore IndexAlreadyExistsException
             logger.info("... new index created");
 
@@ -281,13 +280,12 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         if (uri == null) {
             return;
         }
-        InputStream in = factory.getInputStream(uri);
+        InputStream in = factory.open(uri);
         if (in == null) {
             throw new IOException("unable to open " + uri);
         }
 
-        final SimpleResourceContext resourceContext = new SimpleResourceContext();
-        IRINamespaceContext context = IRINamespaceContext.newInstance();
+        final IRINamespaceContext context = IRINamespaceContext.newInstance();
         context.addNamespace(RDF.NS_PREFIX, RDF.NS_URI);
         context.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
         context.addNamespace("dcterms", "http://purl.org/dc/terms/");
@@ -295,6 +293,8 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         context.addNamespace("frbr", "http://purl.org/vocab/frbr/core#");
         context.addNamespace("fabio", "http://purl.org/spar/fabio/");
         context.addNamespace("prism", "http://prismstandard.org/namespaces/basic/2.1/");
+
+        final SimpleResourceContext resourceContext = new SimpleResourceContext();
         resourceContext.newNamespaceContext(context);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, UTF8))) {
@@ -329,7 +329,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                                 .query(indexType)
                                 .fragment(resourceContext.resource().id().getFragment())
                                 .build());
-                        output.output(resourceContext);
+                        output.output(resourceContext, resourceContext.contentBuilder());
                         resourceCounter.incrementAndGet();
                         resource = null;
                         break;

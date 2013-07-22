@@ -40,6 +40,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Stack;
+
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -56,7 +58,6 @@ import org.xbib.rdf.simple.SimpleLiteral;
 import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.rdf.simple.SimpleTriple;
-import org.xbib.xml.XMLNamespaceContext;
 
 /**
  * Turtle - Terse RDF Triple Parser
@@ -116,7 +117,7 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     /**
      * The namespace context
      */
-    private XMLNamespaceContext context;
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
     /**
      * An optional triple listener
      */
@@ -124,12 +125,12 @@ public class TurtleReader<S extends Identifier, P extends Property, O extends No
     private boolean strict = false;
 
     public TurtleReader(IRI baseIRI) {
-        this(baseIRI, XMLNamespaceContext.getInstance());
+        this.baseIRI = baseIRI;
     }
 
-    public TurtleReader(IRI baseIRI, XMLNamespaceContext context) {
-        this.baseIRI = baseIRI;
+    public TurtleReader context(XmlNamespaceContext context) {
         this.context = context;
+        return this;
     }
 
     @Override

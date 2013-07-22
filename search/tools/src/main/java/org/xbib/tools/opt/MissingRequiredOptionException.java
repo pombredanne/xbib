@@ -35,8 +35,8 @@ import java.util.Collection;
 class MissingRequiredOptionException extends OptionException {
     private static final long serialVersionUID = -1L;
 
-    protected MissingRequiredOptionException( Collection<String> options ) {
-        super( options );
+    protected MissingRequiredOptionException(Collection<String> options) {
+        super(options);
     }
 
     @Override

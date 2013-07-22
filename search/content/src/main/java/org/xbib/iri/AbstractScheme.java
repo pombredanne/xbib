@@ -1,4 +1,4 @@
-/*
+/***
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
@@ -17,12 +17,10 @@
  */
 package org.xbib.iri;
 
-import java.io.Serializable;
-
 /**
  * Base implementation for IRI scheme providers
  */
-public abstract class AbstractScheme implements Scheme, Serializable {
+public abstract class AbstractScheme implements Scheme {
 
     protected final String name;
     protected final int port;

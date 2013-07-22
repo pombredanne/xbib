@@ -1,8 +1,8 @@
 package org.xbib.analyzer.mab.hbz.dialect;
 
-import org.xbib.elements.marc.extensions.mab.MABElement;
+import org.xbib.elements.marc.dialects.mab.MABElement;
 
-public class TitleAlternative extends MABElement {
+public class TitleAlternative extends Title {
 
     private final static MABElement element = new TitleAlternative();
 

@@ -25,10 +25,11 @@
 
 package org.xbib.tools.opt.internal;
 
+import org.xbib.tools.opt.ValueConverter;
+
 import java.lang.reflect.Method;
 
-import org.xbib.tools.opt.ValueConverter;
-import static org.xbib.tools.opt.internal.Reflection.*;
+import static org.xbib.tools.opt.internal.Reflection.invoke;
 
 /**
  * @param <V> constraint on the type of values being converted to
@@ -38,13 +39,13 @@ class MethodInvokingValueConverter<V> implements ValueConverter<V> {
     private final Method method;
     private final Class<V> clazz;
 
-    MethodInvokingValueConverter( Method method, Class<V> clazz ) {
+    MethodInvokingValueConverter(Method method, Class<V> clazz) {
         this.method = method;
         this.clazz = clazz;
     }
 
-    public V convert( String value ) {
-        return clazz.cast( invoke( method, value ) );
+    public V convert(String value) {
+        return clazz.cast(invoke(method, value));
     }
 
     public Class<V> valueType() {

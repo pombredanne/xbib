@@ -31,19 +31,18 @@
  */
 package org.xbib.json.transform;
 
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
 import org.xbib.json.JsonXmlReader;
 import org.xbib.json.JsonXmlStreamer;
-import org.xbib.json.JsonXmlValueMode;
-import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.xml.transform.StylesheetTransformer;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,16 +57,25 @@ import java.util.Arrays;
  */
 public class JsonStylesheet {
 
-    private final QName root;
+    private QName root = new QName("root");
+
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
 
     private StylesheetTransformer transformer;
 
     private String[] stylesheets;
 
-    private IRINamespaceContext context;
+    public JsonStylesheet() {
+    }
 
-    public JsonStylesheet(QName root) {
+    public JsonStylesheet root(QName root) {
         this.root = root;
+        return this;
+    }
+
+    public JsonStylesheet context(XmlNamespaceContext context) {
+        this.context = context;
+        return this;
     }
 
     public JsonStylesheet setTransformer(StylesheetTransformer transformer) {
@@ -80,37 +88,24 @@ public class JsonStylesheet {
         return this;
     }
 
-    public JsonStylesheet setNamespaceContext(IRINamespaceContext context) {
-        this.context = context;
-        return this;
-    }
-
     public JsonStylesheet transform(InputStream in, OutputStream out) throws IOException {
         return transform(in, new OutputStreamWriter(out, "UTF-8"));
     }
 
-    public JsonStylesheet transform(InputStream in, Writer writer) throws IOException {
-        if (root == null) {
-            return this;
-        }
-        if (in == null) {
-            return this;
-        }
-        if (writer == null) {
-            return this;
-        }
-        if (transformer == null) {
+    public JsonStylesheet transform(InputStream in, Writer out) throws IOException {
+        if (root == null || context == null || in == null || out == null || transformer == null) {
             return this;
         }
         try {
-            JsonXmlReader reader = new JsonXmlReader(root);
+            JsonXmlReader reader = new JsonXmlReader().root(root).context(context);
             if (stylesheets == null) {
                 transformer.setSource(new SAXSource(reader, new InputSource(in)))
-                        .setResult(writer).transform();
+                        .setResult(out)
+                        .transform();
                 return this;
             } else {
                 transformer.setSource(new SAXSource(reader, new InputSource(in)))
-                    .setResult(writer)
+                    .setResult(out)
                     .transform(Arrays.asList(stylesheets));
             }
             return this;
@@ -123,49 +118,31 @@ public class JsonStylesheet {
         return toXML(in, new OutputStreamWriter(out, "Utf-8"));
     }
 
-    public JsonStylesheet toXML(InputStream in, Writer writer) throws IOException {
-        if (root == null) {
-            return this;
-        }
-        if (in == null) {
-            return this;
-        }
-        if (writer == null) {
+    public JsonStylesheet toXML(InputStream in, Writer out) throws IOException {
+        if (root == null || context == null || in == null || out == null) {
             return this;
         }
         try {
-            JsonXmlStreamer jsonXml = context != null ?
-                    new JsonXmlStreamer(context, JsonXmlValueMode.SKIP_EMPTY_VALUES)
-                    : new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-            XMLEventWriter events = jsonXml.openWriter(writer);
-            jsonXml.toXML(in, events, root);
-            events.flush();
-            events.close();
-            writer.flush();
+            JsonXmlStreamer jsonXml = new JsonXmlStreamer().root(root).context(context);
+            jsonXml.toXML(in, out);
+            out.flush();
         } catch (XMLStreamException e) {
             throw new IOException(e);
         }
         return this;
     }
 
-    public JsonStylesheet stream(InputStream in, XMLEventConsumer out) throws IOException {
-        if (root == null) {
-            return this;
-        }
-        if (in == null) {
-            return this;
-        }
-        if (out == null) {
+    public JsonStylesheet toXML(InputStream in, XMLEventConsumer out) throws IOException {
+        if (root == null || context == null || in == null || out == null) {
             return this;
         }
         try {
-            JsonXmlStreamer jsonXml = context != null ?
-                new JsonXmlStreamer(context, JsonXmlValueMode.SKIP_EMPTY_VALUES)
-                : new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-            jsonXml.toXML(in, out, root);
+            JsonXmlStreamer jsonXml = new JsonXmlStreamer().root(root).context(context);
+            jsonXml.toXML(in, out);
         } catch (XMLStreamException e) {
             throw new IOException(e);
         }
         return this;
     }
+
 }

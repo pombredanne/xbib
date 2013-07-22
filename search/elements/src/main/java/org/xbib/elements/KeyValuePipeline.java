@@ -95,12 +95,12 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
 
     public Boolean call() {
         try {
-            logger.info("key/value pipeline running");
+            logger.info("key/value pipeline {} starting", getClass().getName());
             while(true) {
                 List<KeyValue> e = queue.take();
                 // poison element? then quit
                 if (e.isEmpty()) {
-                    logger.info("end of key/value pipeline");
+                    logger.info("key/value pipeline ending {}", getClass());
                     break;
                 }
                 // only a single marker element in list? then skip
@@ -128,11 +128,11 @@ public class KeyValuePipeline<K,V,E extends Element,C extends ResourceContext>
                     builder.end();
                 }
             }
-        } catch (InterruptedException e1) {
-            logger.warn("key/value pipeline interrupted");
+        } catch (InterruptedException ex) {
+            logger.warn("key/value pipeline {} interrupted", getClass());
             Thread.currentThread().interrupt();
-        } catch (Exception e1) {
-            logger.error("error in key/value pipeline, exiting", e1);
+        } catch (Exception ex) {
+            logger.error("error in key/value pipeline, exiting", ex);
         }
         // nothing special
         return true;

@@ -34,7 +34,7 @@ package org.xbib.elements.marc;
 import org.xbib.elements.AbstractElementBuilder;
 import org.xbib.elements.ResourceContextFactory;
 import org.xbib.analyzer.dublincore.DublinCoreProperties;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.marc.FieldCollection;
 
 /**

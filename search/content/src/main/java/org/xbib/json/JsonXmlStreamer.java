@@ -35,19 +35,26 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Stack;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventConsumer;
-import org.xbib.xml.XMLNamespaceContext;
+
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.xml.ToQName;
 
 /**
  * Write JSON stream to XML stream. This is realized by transforming
@@ -58,28 +65,35 @@ import org.xbib.xml.XMLNamespaceContext;
  */
 public class JsonXmlStreamer {
 
+    private static final Logger logger = LoggerFactory.getLogger(JsonXmlStreamer.class.getName());
+
+    private QName root = new QName("root");
+
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
+
     private final static JsonFactory jsonFactory = new JsonFactory();
 
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
-    private XMLNamespaceContext context;
-
-    private QName root;
-
-    private Stack<QName> elements;
-
-    private JsonXmlValueMode mode;
-
-    public JsonXmlStreamer(JsonXmlValueMode mode) {
-        this(XMLNamespaceContext.getInstance(), mode);
+    static {
+        outputFactory.setProperty("javax.xml.stream.isNamespaceAware", Boolean.TRUE);
     }
-    
-    public JsonXmlStreamer(XMLNamespaceContext context, JsonXmlValueMode mode) {
+
+    private Stack<QName> elements = new Stack();
+
+    public JsonXmlStreamer() {
+    }
+
+    public JsonXmlStreamer root(QName root) {
+        this.root = root;
+        return this;
+    }
+
+    public JsonXmlStreamer context(XmlNamespaceContext context) {
         this.context = context;
-        this.elements = new Stack();
-        this.mode = mode;
+        return this;
     }
 
     public XMLEventWriter openWriter(OutputStream out) throws XMLStreamException {
@@ -88,18 +102,17 @@ public class JsonXmlStreamer {
 
     public XMLEventWriter openWriter(OutputStream out, String encoding)
             throws XMLStreamException {
-        outputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
         return outputFactory.createXMLEventWriter(out, encoding);
     }
 
     public XMLEventWriter openWriter(Writer writer) throws XMLStreamException {
-        outputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
         return outputFactory.createXMLEventWriter(writer);
     }
 
     public void writeXMLProcessingInstruction(XMLEventConsumer consumer, String encoding)
             throws XMLStreamException {
-        consumer.add(eventFactory.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"" + encoding + "\" standalone=\"no\""));
+        // this encoding processing instruction also disables ISO-8859-1 entity generation of the event factory
+        consumer.add(eventFactory.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"" + encoding + "\""));
     }
 
     public void writeStylesheetInstruction(XMLEventConsumer consumer, String stylesheet)
@@ -107,21 +120,31 @@ public class JsonXmlStreamer {
         consumer.add(eventFactory.createProcessingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"" + stylesheet + "\""));
     }
 
-    public void toXML(InputStream in, Writer writer, QName root) throws XMLStreamException, IOException {
-        toXML(in, openWriter(writer), root);
+    public void toXML(InputStream in, Writer writer) throws XMLStreamException, IOException {
+        toXML(in, openWriter(writer));
         writer.flush();
     }
 
-    public void toXML(InputStream in, OutputStream out, QName root)
+    public void toXML(InputStream in, OutputStream out)
             throws XMLStreamException, IOException {
-        toXML(in, openWriter(out), root);
+        toXML(in, openWriter(out));
         out.flush();
     }
 
-    public void toXML(InputStream in, XMLEventConsumer consumer, QName root)
+    public void toXML(Reader in, Writer out)
             throws XMLStreamException, IOException {
-        this.root = root;
-        JsonParser parser = jsonFactory.createParser(new InputStreamReader(in, "UTF-8"));
+        toXML(in, openWriter(out));
+        out.flush();
+    }
+
+    public void toXML(InputStream in, XMLEventConsumer consumer)
+            throws XMLStreamException, IOException {
+        toXML(new InputStreamReader(in, "UTF-8"), consumer);
+    }
+
+    public void toXML(Reader in, XMLEventConsumer consumer)
+            throws XMLStreamException, IOException {
+        JsonParser parser = jsonFactory.createParser(in);
         JsonToken token = parser.nextToken();
         // first token must be a START_OBJECT token
         if (token != JsonToken.START_OBJECT) {
@@ -158,7 +181,7 @@ public class JsonXmlStreamer {
                         qname = elements.pop();
                         break;
                     case FIELD_NAME:
-                        qname = toQName(parser.getCurrentName());
+                        qname = ToQName.toQName(root, context, parser.getCurrentName());
                         break;
                     case VALUE_STRING:
                     case VALUE_NUMBER_INT:
@@ -167,14 +190,11 @@ public class JsonXmlStreamer {
                     case VALUE_TRUE:
                     case VALUE_FALSE:
                         if (parser.getCurrentName() != null) {
-                            qname = toQName(parser.getCurrentName());
+                            qname = ToQName.toQName(root, context, parser.getCurrentName());
                         }
                         String text = parser.getText();
                         int len = text.length();
-                        if (len == 0 && mode == JsonXmlValueMode.ERROR_EMPTY_VALUES) {
-                            throw new IOException("empty JSON value for " + qname);
-                        }
-                        if ((len == 0 && mode == JsonXmlValueMode.ALLOW_EMPTY_VALUES) || (len > 0)) {
+                        if (len > 0) {
                             consumer.add(eventFactory.createStartElement(qname, null, null));
                             consumer.add(eventFactory.createCharacters(text));
                             consumer.add(eventFactory.createEndElement(qname, null));
@@ -187,7 +207,7 @@ public class JsonXmlStreamer {
             }
         } catch (JsonParseException e) {
             // Illegal character ((CTRL-CHAR, code 0)): only regular white space (\r, \n, \t) is allowed between tokens
-            //logger.log(Level.WARNING, e.getMessage());
+            logger.debug(e.getMessage());
         } finally {
             if (consumer instanceof XMLEventWriter) {
                 ((XMLEventWriter)consumer).flush();
@@ -195,23 +215,4 @@ public class JsonXmlStreamer {
         }
     }
 
-    private QName toQName(String name) {
-        String nsPrefix = root.getPrefix();
-        String nsURI = root.getNamespaceURI();
-        // convert all JSON names beginning with an underscore to elements in default namespace
-        if (name.startsWith("_")) {
-            name = name.substring(1);
-        }
-        int pos = name.indexOf(':');
-        if (pos > 0) {
-            // check for configured namespace
-            nsPrefix = name.substring(0, pos);
-            nsURI = context.getNamespaceURI(nsPrefix);
-            if (nsURI == null) {
-                throw new IllegalArgumentException("unknown namespace prefix: " + nsPrefix);
-            }
-            name = name.substring(pos + 1);
-        }
-        return new QName(nsURI, name, nsPrefix);
-    }
 }

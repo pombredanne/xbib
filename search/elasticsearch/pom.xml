@@ -102,7 +102,7 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-atom</artifactId>
+            <artifactId>xbib-opensearch</artifactId>
             <version>${xbib.version}</version>
             <type>jar</type>
         </dependency>

@@ -53,12 +53,12 @@ public interface ConnectionFactory<S extends Session> {
     Connection<S> getConnection(URI uri) throws IOException;
 
     /**
-     * Checks if this connection factory can provide this URI scheme.
+     * Checks if this connection factory can open this URI.
      *
-     * @param scheme the URI scheme to check
+     * @param uri the URI to check
      *
-     * @return true if the scheme can be provided, otherwise false
+     * @return true if the URI can be opened, otherwise false
      */
-    boolean providesScheme(String scheme);
+    boolean canOpen(URI uri);
 
 }

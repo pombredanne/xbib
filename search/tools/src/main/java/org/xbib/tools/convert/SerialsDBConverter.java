@@ -100,11 +100,13 @@ public class SerialsDBConverter {
                 );
                 System.exit(1);
             }
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("input").toString()).getURIs();
+            input = new Finder(options.valueOf("pattern").toString())
+                    .find(options.valueOf("input").toString())
+                    .getURIs();
 
             SerialsDBConverter serialsdb = null;
             for (URI uri : input) {
-                InputStream in = factory.getInputStream(uri);
+                InputStream in = factory.open(uri);
                 String output = (String)options.valueOf("output");
                 serialsdb = new SerialsDBConverter(new InputStreamReader(in, "UTF-8"), output);
                 serialsdb.writeSerials(new FileWriter(output + ".txt"));

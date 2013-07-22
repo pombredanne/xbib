@@ -44,7 +44,6 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -150,7 +149,7 @@ public final class SQLConnectionFactory implements ConnectionFactory<SQLSession>
     }
 
     @Override
-    public boolean providesScheme(String scheme) {
-        return scheme.startsWith("jdbc");
+    public boolean canOpen(URI uri) {
+        return uri.getScheme().startsWith("jdbc");
     }
 }

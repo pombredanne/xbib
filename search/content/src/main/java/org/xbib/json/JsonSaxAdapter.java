@@ -19,7 +19,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.xbib.xml.XMLNamespaceContext;
+
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
+import org.xbib.xml.ToQName;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -65,35 +67,31 @@ public class JsonSaxAdapter {
 
     private static final JsonFactory factory = new JsonFactory();
 
-    private JsonXmlValueMode mode;
-
     private final JsonParser jsonParser;
 
     private final ContentHandler contentHandler;
 
-    private final QName root;
+    private QName root = new QName("root");
 
-    private XMLNamespaceContext context = XMLNamespaceContext.getInstance();
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
 
-    public JsonSaxAdapter(Reader reader, ContentHandler contentHandler, QName root) throws IOException {
-        this(factory.createParser(reader), contentHandler, root);
+    public JsonSaxAdapter(Reader reader, ContentHandler contentHandler) throws IOException {
+        this(factory.createParser(reader), contentHandler);
     }
 
-    public JsonSaxAdapter(JsonParser jsonParser, ContentHandler contentHandler, QName root) {
+    public JsonSaxAdapter(JsonParser jsonParser, ContentHandler contentHandler) {
         this.jsonParser = jsonParser;
         this.contentHandler = contentHandler;
-        this.root = root;
-        this.mode = JsonXmlValueMode.SKIP_EMPTY_VALUES;
         contentHandler.setDocumentLocator(new DocumentLocator());
     }
 
-    public JsonSaxAdapter context(XMLNamespaceContext context) {
-        this.context = context;
+    public JsonSaxAdapter root(QName root) {
+        this.root = root;
         return this;
     }
 
-    public JsonSaxAdapter mode(JsonXmlValueMode mode) {
-        this.mode = mode;
+    public JsonSaxAdapter context(XmlNamespaceContext context) {
+        this.context = context;
         return this;
     }
 
@@ -146,11 +144,9 @@ public class JsonSaxAdapter {
             parseObject();
             endElement(elementName);
         } else if (START_ARRAY.equals(currentToken)) {
-            startElement(elementName);
             parseArray(elementName);
-            endElement(elementName);
         } else if (currentToken.isScalarValue()) {
-            if (mode != JsonXmlValueMode.SKIP_EMPTY_VALUES || !isEmptyValue()) {
+            if (!isEmptyValue()) {
                 startElement(elementName);
                 parseValue();
                 endElement(elementName);
@@ -161,7 +157,6 @@ public class JsonSaxAdapter {
     private boolean isEmptyValue() throws IOException {
         return (jsonParser.getCurrentToken() == VALUE_NULL) || jsonParser.getText().isEmpty();
     }
-
 
     private void parseArray(final String elementName) throws IOException, SAXException {
         while (jsonParser.nextToken() != END_ARRAY && jsonParser.getCurrentToken() != null) {
@@ -177,14 +172,14 @@ public class JsonSaxAdapter {
     }
 
     private void startElement(final String elementName) throws SAXException {
-        QName qname = toQName(elementName);
+        QName qname = ToQName.toQName(root, context, elementName);
         contentHandler.startElement(qname.getNamespaceURI(),
                 qname.getLocalPart(), qname.getPrefix() + ":" + qname.getLocalPart(),
                 EMPTY_ATTRIBUTES);
     }
 
     private void endElement(final String elementName) throws SAXException {
-        QName qname = toQName(elementName);
+        QName qname = ToQName.toQName(root, context, elementName);
         contentHandler.endElement(qname.getNamespaceURI(),
                 qname.getLocalPart(), qname.getPrefix() + ":" + qname.getLocalPart());
     }
@@ -213,7 +208,7 @@ public class JsonSaxAdapter {
         }
     }
 
-    private void writeNamespaceDeclarations(XMLNamespaceContext context) throws SAXException {
+    private void writeNamespaceDeclarations(XmlNamespaceContext context) throws SAXException {
         Set<String> keys = new TreeSet(context.getNamespaces().keySet());
         if (root != null && !keys.contains(root.getPrefix())) {
             contentHandler.startPrefixMapping(root.getPrefix(), root.getNamespaceURI());
@@ -221,32 +216,6 @@ public class JsonSaxAdapter {
         for (String prefix : keys) {
             contentHandler.startPrefixMapping(prefix, context.getNamespaceURI(prefix));
         }
-    }
-
-    private QName toQName(String name) {
-        String nsPrefix;
-        String nsURI;
-        // convert all JSON names beginning with an underscore to elements in default namespace
-        if (name.startsWith("_")) {
-            name = name.substring(1);
-        }
-        int pos = name.indexOf(':');
-        if (pos > 0) {
-            // check for configured namespace
-            nsPrefix = name.substring(0, pos);
-            nsURI = context.getNamespaceURI(nsPrefix);
-            if (nsURI == null) {
-                throw new IllegalArgumentException("unknown namespace prefix: " + nsPrefix);
-            }
-            name = name.substring(pos + 1);
-        } else if (root != null) {
-            nsPrefix = root.getPrefix();
-            nsURI = root.getNamespaceURI();
-        } else {
-            nsPrefix = "";
-            nsURI = "";
-        }
-        return new QName(nsURI, name, nsPrefix);
     }
 
 }

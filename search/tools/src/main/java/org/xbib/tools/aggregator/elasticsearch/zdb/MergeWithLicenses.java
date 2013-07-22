@@ -55,9 +55,9 @@ import org.xbib.tools.aggregator.elasticsearch.zdb.entities.Manifestation;
 import org.xbib.tools.aggregator.elasticsearch.zdb.entities.Work;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import org.xbib.tools.opt.internal.Strings;
 import org.xbib.tools.util.ExceptionFormatter;
 import org.xbib.tools.util.FormatUtil;
+import org.xbib.util.Strings;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -84,6 +84,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -134,12 +135,12 @@ public class MergeWithLicenses {
     private String identifier;
 
     // counters
-    private long countQueries;
-    private long countHits;
-    private long countWrites;
-    private long countManifestations;
-    private long countHoldings;
-    private long countLicenses;
+    private final static AtomicLong countQueries = new AtomicLong(0L);
+    private final static AtomicLong countHits = new AtomicLong(0L);
+    private final static AtomicLong countWrites = new AtomicLong(0L);
+    private final static AtomicLong countManifestations = new AtomicLong(0L);
+    private final static AtomicLong countHoldings = new AtomicLong(0L);
+    private final static AtomicLong countLicenses = new AtomicLong(0L);
 
     private Set<String> docs;
 
@@ -155,7 +156,7 @@ public class MergeWithLicenses {
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(1000);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors() * 4);
                     accepts("pumps").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors() * 4);
-                    accepts("size").withRequiredArg().ofType(Integer.class).defaultsTo(1000);
+                    accepts("size").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("millis").withRequiredArg().ofType(Long.class).defaultsTo(60000L);
                     accepts("id").withOptionalArg().ofType(String.class);
                 }
@@ -196,7 +197,45 @@ public class MergeWithLicenses {
                     .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
                     .newClient(targetURI);
 
-            new MergeWithLicenses(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier).aggregate();
+            long t0 = System.currentTimeMillis();
+
+            new MergeWithLicenses(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier)
+                    .aggregate();
+
+            long t1 = System.currentTimeMillis();
+            long d = countWrites.get(); //number of documents written
+            long bytes = ingest.getVolumeInBytes();
+            double dps = d * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (d + 1.0); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Merging complete. {} docs written, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
+                    d,
+                    t,
+                    (t1-t0),
+                    byteSize,
+                    bytes,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
+
+            double qps = countQueries.get() * 1000.0 / (double)(t1 - t0);
+            logger.info("queries={} qps={} hits={} manifestations={} holdings={} licenses={}",
+                    countQueries.get(),
+                    formatter.format(qps),
+                    countHits.get(),
+                    countManifestations.get(),
+                    countHoldings.get(),
+                    countLicenses.get());
+
+
+            ingest.shutdown();
+            search.shutdown();
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -264,7 +303,7 @@ public class MergeWithLicenses {
     private MergeWithLicenses aggregate() {
         logger.info("starting aggregation");
 
-        long t0 = System.currentTimeMillis();
+        boolean failure = false;
 
         for (int i = 0; i < numPumps; i++) {
             MergePump mergePump = new MergePump(i);
@@ -286,7 +325,7 @@ public class MergeWithLicenses {
             searchRequest.setQuery(queryBuilder);
         }
         SearchResponse searchResponse = searchRequest.execute().actionGet();
-        while (true) {
+        while (!failure) {
             searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
                     .setScroll(TimeValue.timeValueMillis(millis))
                     .execute().actionGet();
@@ -299,6 +338,8 @@ public class MergeWithLicenses {
                     pumpQueue.put(new WrappedSearchHit(hit));
                 } catch (InterruptedException e) {
                     logger.error("interrupted");
+                    Thread.currentThread().interrupt();
+                    failure = true;
                 }
             }
         }
@@ -312,50 +353,16 @@ public class MergeWithLicenses {
             }
         }
 
-        logger.info("waiting for pumps");
+        logger.info("waiting for pumps...");
         try {
             pumpLatch.await();
         } catch (InterruptedException e) {
             logger.error("interrupted");
         }
 
-        logger.info("end of aggregation");
-
-
-        for (MergePump p : pumps) {
-            countQueries += p.getQueryCount();
-            countHits += p.getHitCount();
-            countManifestations += p.getManifestationsCount();
-            countHoldings += p.getHoldingsCount();
-            countLicenses += p.getLicensesCount();
-        }
-
-        long t1 = System.currentTimeMillis();
-        long d = countWrites; //number of documents written
-        long bytes = ingest.getVolumeInBytes();
-        double dps = d * 1000.0 / (double)(t1 - t0);
-        double avg = bytes / (d + 1.0); // avoid div by zero
-        double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-        String t = TimeValue.timeValueMillis(t1 - t0).format();
-        String byteSize = FormatUtil.convertFileSize(bytes);
-        String avgSize = FormatUtil.convertFileSize(avg);
-        NumberFormat formatter = NumberFormat.getNumberInstance();
-        logger.info("Merging complete. {} docs merged, {} docs written, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                docs.size(), d, t, (t1-t0), byteSize, bytes,
-                avgSize,
-                formatter.format(avg),
-                formatter.format(dps),
-                formatter.format(mbps));
-
-        double qps = countQueries * 1000.0 / (double)(t1 - t0);
-        logger.info("queries={} qps={} hits={} manifestations={} holdings={} licenses={}",
-                countQueries, formatter.format(qps),
-                countHits, countManifestations, countHoldings, countLicenses);
+        logger.info("end of aggregation, failure = {}, shutting down...", failure);
 
         pumpService.shutdownNow();
-
-        // Elasticsearch flush and close bulk
-        ingest.shutdown();
 
         return this;
     }
@@ -365,12 +372,6 @@ public class MergeWithLicenses {
         private final Logger logger;
         private final ObjectMapper mapper;
         private final Queue<ClusterBuildContinuation> buildQueue;
-
-        private long countQueries;
-        private long countHits;
-        private long countManifestations;
-        private long countHoldings;
-        private long countLicenses;
 
         private Set<String> visited;
         private Set<Manifestation> cluster;
@@ -383,14 +384,6 @@ public class MergeWithLicenses {
             this.cluster = Collections.synchronizedSet(new HashSet());
         }
 
-        public long getQueryCount() {
-            return countQueries;
-        }
-
-        public long getHitCount() {
-            return countHits;
-        }
-
         public Queue<ClusterBuildContinuation> getBuildQueue() {
             return buildQueue;
         }
@@ -401,19 +394,6 @@ public class MergeWithLicenses {
 
         public Set<Manifestation> getCluster() {
             return cluster;
-        }
-
-
-        public long getManifestationsCount() {
-            return countManifestations;
-        }
-
-        public long getHoldingsCount() {
-            return countHoldings;
-        }
-
-        public long getLicensesCount() {
-            return countLicenses;
         }
 
         @Override
@@ -433,9 +413,13 @@ public class MergeWithLicenses {
                     }
                     count++;
                     if (count % size == 0) {
-                         logger.info("count={} docs={} queries={} hits={} manifestations={} holdings={} licences={}",
-                                count, docs.size(),
-                                countQueries, countHits, countManifestations, countHoldings, countLicenses);
+                         logger.info("count={} queries={} hits={} manifestations={} holdings={} licences={}",
+                                 count,
+                                 countQueries.get(),
+                                 countHits.get(),
+                                 countManifestations.get(),
+                                 countHoldings.get(),
+                                 countLicenses.get());
                     }
                 }
             } catch (InterruptedException e) {
@@ -471,7 +455,7 @@ public class MergeWithLicenses {
             visited.add(docid);
 
             buildCluster(manifestation, visited, cluster);
-            countManifestations += cluster.size();
+            countManifestations.addAndGet(cluster.size());
 
             Set<Work> leaders = electLeaders(cluster);
 
@@ -511,7 +495,7 @@ public class MergeWithLicenses {
                 if (logger.isDebugEnabled()) {
                     logger.debug("work {}: found {} holdings ", work.targetID(), holdings.size());
                 }
-                countHoldings += holdings.size();
+                countHoldings.addAndGet(holdings.size());
                 // search for license documents
                 Set<String> manifestationsTargetIDs = work.allTargetIDs();
                 if (logger.isDebugEnabled()) {
@@ -521,7 +505,7 @@ public class MergeWithLicenses {
                 if (logger.isDebugEnabled()) {
                     logger.debug("work {}: found {} licenses ", work.targetID(), licenses.size());
                 }
-                countLicenses += licenses.size();
+                countLicenses.addAndGet(licenses.size());
                 // output phase, write everything out
                 if (logger.isDebugEnabled()) {
                     logger.debug("writing {} title '{}' with {} expressions", work.targetID(), work.title(), work.getExpressions().size());
@@ -581,7 +565,7 @@ public class MergeWithLicenses {
             searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
                     .setScroll(TimeValue.timeValueMillis(millis))
                    .execute().actionGet();
-            countQueries++;
+            countQueries.incrementAndGet();
             SearchHits hits = searchResponse.getHits();
             if (hits.getHits().length == 0) {
                 return;
@@ -607,7 +591,7 @@ public class MergeWithLicenses {
                 hits = searchResponse.getHits();
                 for (int i = pos; i < hits.getHits().length; i++ ) {
                     SearchHit hit = hits.getAt(i);
-                    countHits++;
+                    countHits.incrementAndGet();
                     Manifestation m = new Manifestation(mapper.readValue(hit.source(), Map.class));
                     // detect collision
                     collided = detectCollisionAndTransfer(m, c, i);
@@ -652,7 +636,7 @@ public class MergeWithLicenses {
                 searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
                         .setScroll(TimeValue.timeValueMillis(millis))
                         .execute().actionGet();
-                countQueries++;
+                countQueries.incrementAndGet();
                 hits = searchResponse.getHits();
             } while (hits.getHits().length > 0);
         }
@@ -703,9 +687,9 @@ public class MergeWithLicenses {
                     if (hits.getHits().length == 0) {
                         break;
                     }
-                    countQueries++;
+                    countQueries.incrementAndGet();
                     for (SearchHit hit : hits) {
-                        countHits++;
+                        countHits.incrementAndGet();
                         Holding holding = new Holding(mapper.readValue(hit.source(), Map.class));
                         holdings.add(holding);
                     }
@@ -743,9 +727,9 @@ public class MergeWithLicenses {
                     if (hits.getHits().length == 0) {
                         break;
                     }
-                    countQueries++;
+                    countQueries.incrementAndGet();
                     for (SearchHit hit : hits) {
-                        countHits++;
+                        countHits.incrementAndGet();
                         License license = new License(mapper.readValue(hit.source(), Map.class));
                         licenses.add(license);
                     }
@@ -1115,7 +1099,7 @@ public class MergeWithLicenses {
                 targetWorksType,
                 work.targetID(),
                 builder.string());
-        countWrites++;
+        countWrites.incrementAndGet();
     }
 
     private void writeExpression(Work work, Expression expression) throws IOException {
@@ -1159,7 +1143,7 @@ public class MergeWithLicenses {
                 targetExpressionsType,
                 expression.targetID(),
                 builder.string());
-        countWrites++;
+        countWrites.incrementAndGet();
     }
 
     private void writeManifestation(Work work, Expression expression, Manifestation manifestation,
@@ -1273,7 +1257,7 @@ public class MergeWithLicenses {
                 targetManifestationsType,
                 id,
                 builder.string());
-        countWrites++;
+        countWrites.incrementAndGet();
     }
 
     public void writeHolding(Holding holding) throws IOException {
@@ -1289,7 +1273,7 @@ public class MergeWithLicenses {
                 targetItemsType,
                 holding.id(),
                 builder.string());
-        countWrites++;
+        countWrites.incrementAndGet();
     }
 
     private Map<String,Object> getTitle(Manifestation manifestation) {

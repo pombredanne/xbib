@@ -54,7 +54,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 
 /**
- * Basic element Mapper
+ * Basic element mapper
  *
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
@@ -121,7 +121,6 @@ public class BasicElementMapper<K, V, E extends Element, C extends ResourceConte
     }
 
     public BasicElementMapper start(ElementBuilderFactory factory) {
-        logger.info("starting {}", this);
         if (numPipelines == 0) {
             numPipelines = 1;
         }
@@ -139,6 +138,7 @@ public class BasicElementMapper<K, V, E extends Element, C extends ResourceConte
             pipelines.add(pipeline);
             service.submit(pipeline);
         }
+        logger.info("starting element mapper with {} pipelines", numPipelines);
         return this;
     }
 
@@ -154,7 +154,7 @@ public class BasicElementMapper<K, V, E extends Element, C extends ResourceConte
             }
         }
         service.shutdownNow();
-        logger.info("closed");
+        logger.info("pipelines closed");
     }
 
     @Override
@@ -197,24 +197,12 @@ public class BasicElementMapper<K, V, E extends Element, C extends ResourceConte
      *
      * @return
      */
-    public String unknownKeys() {
+    public Set<String> unknownKeys() {
         Set<String> unknownKeys = new TreeSet();
         for (KeyValuePipeline p : pipelines()) {
             unknownKeys.addAll(p.unknownKeys);
         }
-        StringBuilder sb = new StringBuilder();
-        String lastKey = "   ";
-        for (String key : unknownKeys) {
-            if (sb.length() > 0) {
-                sb.append(",");
-            }
-            if (!key.startsWith(lastKey.substring(0,3))) {
-                sb.append("\n");
-            }
-            sb.append("\"").append(key).append("\"");
-            lastKey = key;
-        }
-        return sb.toString();
+        return unknownKeys;
     }
 
     public void dump(String format, Writer writer) throws IOException {

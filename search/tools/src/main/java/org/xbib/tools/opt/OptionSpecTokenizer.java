@@ -27,7 +27,8 @@ package org.xbib.tools.opt;
 
 import java.util.NoSuchElementException;
 
-import static org.xbib.tools.opt.ParserRules.*;
+import static org.xbib.tools.opt.ParserRules.RESERVED_FOR_EXTENSIONS;
+import static org.xbib.tools.opt.ParserRules.ensureLegalOption;
 
 /**
  * <p>Tokenizes a short option specification string.</p>
@@ -40,9 +41,10 @@ class OptionSpecTokenizer {
     private String specification;
     private int index;
 
-    OptionSpecTokenizer( String specification ) {
-        if ( specification == null )
-            throw new NullPointerException( "null option specification" );
+    OptionSpecTokenizer(String specification) {
+        if (specification == null) {
+            throw new NullPointerException("null option specification");
+        }
 
         this.specification = specification;
     }
@@ -52,52 +54,57 @@ class OptionSpecTokenizer {
     }
 
     AbstractOptionSpec<?> next() {
-        if ( !hasMore() )
+        if (!hasMore()) {
             throw new NoSuchElementException();
+        }
 
 
-        String optionCandidate = String.valueOf( specification.charAt( index ) );
+        String optionCandidate = String.valueOf(specification.charAt(index));
         index++;
 
         AbstractOptionSpec<?> spec;
-        if ( RESERVED_FOR_EXTENSIONS.equals( optionCandidate ) ) {
+        if (RESERVED_FOR_EXTENSIONS.equals(optionCandidate)) {
             spec = handleReservedForExtensionsToken();
 
-            if ( spec != null )
+            if (spec != null) {
                 return spec;
+            }
         }
 
-        ensureLegalOption( optionCandidate );
+        ensureLegalOption(optionCandidate);
 
-        if ( hasMore() )
-            spec = specification.charAt( index ) == ':'
-                ? handleArgumentAcceptingOption( optionCandidate )
-                : new NoArgumentOptionSpec( optionCandidate );
-        else
-            spec = new NoArgumentOptionSpec( optionCandidate );
+        if (hasMore()) {
+            spec = specification.charAt(index) == ':'
+                    ? handleArgumentAcceptingOption(optionCandidate)
+                    : new NoArgumentOptionSpec(optionCandidate);
+        } else {
+            spec = new NoArgumentOptionSpec(optionCandidate);
+        }
 
         return spec;
     }
 
-    void configure( OptionParser parser ) {
-        adjustForPosixlyCorrect( parser );
+    void configure(OptionParser parser) {
+        adjustForPosixlyCorrect(parser);
 
-        while ( hasMore() )
-            parser.recognize( next() );
+        while (hasMore()) {
+            parser.recognize(next());
+        }
     }
 
-    private void adjustForPosixlyCorrect( OptionParser parser ) {
-        if ( POSIXLY_CORRECT_MARKER == specification.charAt( 0 ) ) {
-            parser.posixlyCorrect( true );
-            specification = specification.substring( 1 );
+    private void adjustForPosixlyCorrect(OptionParser parser) {
+        if (POSIXLY_CORRECT_MARKER == specification.charAt(0)) {
+            parser.posixlyCorrect(true);
+            specification = specification.substring(1);
         }
     }
 
     private AbstractOptionSpec<?> handleReservedForExtensionsToken() {
-        if ( !hasMore() )
-            return new NoArgumentOptionSpec( RESERVED_FOR_EXTENSIONS );
+        if (!hasMore()) {
+            return new NoArgumentOptionSpec(RESERVED_FOR_EXTENSIONS);
+        }
 
-        if ( specification.charAt( index ) == ';' ) {
+        if (specification.charAt(index) == ';') {
             ++index;
             return new AlternativeLongOptionSpec();
         }
@@ -105,14 +112,14 @@ class OptionSpecTokenizer {
         return null;
     }
 
-    private AbstractOptionSpec<?> handleArgumentAcceptingOption( String candidate ) {
+    private AbstractOptionSpec<?> handleArgumentAcceptingOption(String candidate) {
         index++;
 
-        if ( hasMore() && specification.charAt( index ) == ':' ) {
+        if (hasMore() && specification.charAt(index) == ':') {
             index++;
-            return new OptionalArgumentOptionSpec<String>( candidate );
+            return new OptionalArgumentOptionSpec<String>(candidate);
         }
 
-        return new RequiredArgumentOptionSpec<String>( candidate );
+        return new RequiredArgumentOptionSpec<String>(candidate);
     }
 }

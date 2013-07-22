@@ -34,9 +34,10 @@ public class TarSessionTest {
 
     @Test
     public void readFromTar() throws Exception {
+        URI uri = URI.create("tarbz2:src/test/resources/test");
         Connection<Session<ObjectPacket>> c = ConnectionService.getInstance()
-                .getConnectionFactory("tarbz2")
-                .getConnection(URI.create("tarbz2:src/test/resources/test"));
+                .getFactory(uri)
+                .getConnection(uri);
         Session<ObjectPacket> session = c.createSession();
         session.open(Session.Mode.READ);
         ObjectPacket message = session.read();

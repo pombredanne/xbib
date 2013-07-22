@@ -53,11 +53,17 @@ import org.xbib.io.StringPacket;
 public class TextFileSession<P extends StringPacket> implements Session<P> {
 
     private final StreamCodecService factory = StreamCodecService.getInstance();
+
     private URI uri;
+
     private boolean isOpen;
+
     private File file;
+
     private String encoding = System.getProperty("file.encoding");
+
     private Writer writer;
+
     private Reader reader;
 
     public TextFileSession(URI uri) {

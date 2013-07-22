@@ -32,9 +32,10 @@
 package org.xbib.elements.marc;
 
 import org.xbib.elements.items.LiaContext;
-import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.simple.SimpleResource;
+import org.xbib.rdf.xcontent.ContentBuilder;
+import org.xbib.rdf.xcontent.DefaultContentBuilder;
 
 /**
  * A MARC builder builds Elements from MARC field collections. It uses a MARC context.
@@ -43,15 +44,15 @@ import org.xbib.rdf.simple.SimpleResource;
  */
 public class MARCContext extends LiaContext {
 
-    @Override
-    public MARCContext id(IRI id) {
-        super.id(id);
-        return this;
-    }
+    private final ContentBuilder contentBuilder = new DefaultContentBuilder();
 
     @Override
     public Resource newResource() {
         return new SimpleResource();
     }
 
+    @Override
+    public ContentBuilder contentBuilder() {
+        return contentBuilder;
+    }
 }

@@ -58,14 +58,14 @@ public final class TextFileConnectionFactory
     }
 
     @Override
-    public boolean providesScheme(String scheme) {
-        return scheme.startsWith("file");
+    public boolean canOpen(URI uri) {
+        return uri.getScheme().startsWith("file");
     }
 
     @Override
-    public InputStream getInputStream(URI uri) throws IOException {
+    public InputStream open(URI uri) throws IOException {
         String scheme = uri.getScheme();
-        if (!providesScheme(uri.getScheme())) {
+        if (!canOpen(uri)) {
             return null;
         }
         String path = uri.getSchemeSpecificPart();

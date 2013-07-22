@@ -66,8 +66,7 @@ public class TarConnection implements Connection<TarSession> {
     @Override
     public TarSession createSession() throws IOException {
         TarSession session = new TarSession();
-        session.setName(uri.getSchemeSpecificPart());
-        session.setScheme(uri.getScheme());
+        session.setURI(uri);
         sessions.add(session);
         return session;
     }

@@ -45,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -69,23 +70,14 @@ public class TarSession implements Session {
 
     private TarArchiveOutputStream out;
 
-    private String scheme;
-
-    private String part;
+    private URI uri;
 
     protected TarSession() {
     }
 
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
-    }
-
-    public void setName(String name) {
-        this.part = name;
-    }
-
-    public String getName() {
-        return part;
+    public TarSession setURI(URI uri) {
+        this.uri = uri;
+        return this;
     }
 
     @Override
@@ -93,6 +85,8 @@ public class TarSession implements Session {
         if (isOpen) {
             return;
         }
+        String scheme = uri.getScheme();
+        String part = uri.getSchemeSpecificPart();
         switch (mode) {
             case READ:
                 if (scheme.startsWith("targz")) {
@@ -125,7 +119,43 @@ public class TarSession implements Session {
                     } else {
                         throw new FileNotFoundException("check existence or access rights: " + s);
                     }
-                } else {
+                } else if (part.endsWith(".tar.gz")) {
+                    File f = new File(part);
+                    if (f.isFile() && f.canRead()) {
+                        this.fin = new FileInputStream(f);
+                        this.in = new TarArchiveInputStream(codecFactory.getCodec("gz").decode(fin));
+                        this.isOpen = true;
+                    } else {
+                        throw new FileNotFoundException("check existence or access rights: " + part);
+                    }
+                } else if (part.endsWith(".tar.bz2")) {
+                    File f = new File(part);
+                    if (f.isFile() && f.canRead()) {
+                        this.fin = new FileInputStream(f);
+                        this.in = new TarArchiveInputStream(codecFactory.getCodec("bz2").decode(fin));
+                        this.isOpen = true;
+                    } else {
+                        throw new FileNotFoundException("check existence or access rights: " + part);
+                    }
+                } else if (part.endsWith(".tar.xz")) {
+                    File f = new File(part);
+                    if (f.isFile() && f.canRead()) {
+                        this.fin = new FileInputStream(f);
+                        this.in = new TarArchiveInputStream(codecFactory.getCodec("xz").decode(fin));
+                        this.isOpen = true;
+                    } else {
+                        throw new FileNotFoundException("check existence or access rights: " + part);
+                    }
+                } else if (part.endsWith(".tar")) {
+                    File f = new File(part);
+                    if (f.isFile() && f.canRead()) {
+                        this.fin = new FileInputStream(f);
+                        this.in = new TarArchiveInputStream(fin);
+                        this.isOpen = true;
+                    } else {
+                        throw new FileNotFoundException("check existence or access rights: " + part);
+                    }
+                } else if (scheme.equals("tar")) {
                     String s = part + ".tar";
                     File f = new File(s);
                     if (f.isFile() && f.canRead()) {
@@ -153,7 +183,22 @@ public class TarSession implements Session {
                     this.out = new TarArchiveOutputStream(codecFactory.getCodec("xz").encode(fout));
                     out.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
                     this.isOpen = true;
-                } else {
+                } else if (part.endsWith(".tar.gz")) {
+                    createFileOutputStream(".tar.gz");
+                    this.out = new TarArchiveOutputStream(codecFactory.getCodec("gz").encode(fout));
+                    out.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+                    this.isOpen = true;
+                } else if (part.endsWith(".tar.bz2")) {
+                    createFileOutputStream(".tar.bz2");
+                    this.out = new TarArchiveOutputStream(codecFactory.getCodec("bz2").encode(fout));
+                    out.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+                    this.isOpen = true;
+                } else if (part.endsWith(".tar.xz")) {
+                    createFileOutputStream(".tar.xz");
+                    this.out = new TarArchiveOutputStream(codecFactory.getCodec("xz").encode(fout));
+                    out.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+                    this.isOpen = true;
+                } else if (scheme.equals("tar")) {
                     createFileOutputStream(".tar");
                     this.out = new TarArchiveOutputStream(fout);
                     out.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
@@ -203,7 +248,8 @@ public class TarSession implements Session {
      * @throws java.io.IOException
      */
     private synchronized void createFileOutputStream(String suffix) throws IOException {
-        File f = new File(part + (part.endsWith(suffix) ? "" : suffix));
+        File f = new File(uri.getSchemeSpecificPart()
+                + (uri.getSchemeSpecificPart().endsWith(suffix) ? "" : suffix));
         if (!f.getAbsoluteFile().getParentFile().exists()
                 && !f.getAbsoluteFile().getParentFile().mkdirs()) {
             throw new RuntimeException(

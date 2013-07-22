@@ -48,7 +48,7 @@ import org.xbib.rdf.Node;
 import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
-import org.xbib.xml.XMLNamespaceContext;
+import org.xbib.rdf.context.IRINamespaceContext;
 
 /**
  * Write resource to XML stream
@@ -64,7 +64,7 @@ public class XmlResourceWriter<S extends Identifier, P extends Property, O exten
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     public XmlResourceWriter() {
-        this(XMLNamespaceContext.getInstance());
+        this(IRINamespaceContext.getInstance());
     }
 
     public XmlResourceWriter(NamespaceContext context) {

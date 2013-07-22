@@ -49,10 +49,9 @@ public class SubfieldValueMapper {
         return map(subfields, field, true);
     }
 
-    public static Map.Entry<String, Object> map(Map subfields, final Field field,
-                                                boolean trim) {
+    public static Map.Entry<String, Object> map(Map subfields, final Field field, boolean trim) {
         String k = null;
-        Object v = trim ? field.data().trim(): field.data();
+        Object v = field.data() != null && trim ? field.data().trim() : field.data();
         Object subfieldDef = subfields.get(field.subfieldId());
         if (subfieldDef instanceof Map) {
             // key/value mapping

@@ -33,14 +33,16 @@ package org.xbib.elements.marc;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
+import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.OutputKeys;
@@ -85,7 +87,7 @@ public class MARCElementsTest extends Assert {
         InputStream in = getClass().getResourceAsStream("stb-bonn.mrc");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/DE-369.xml"), "UTF-8");
-        final ElementOutput output = new ElementOutput<ResourceContext>() {
+        final ElementOutput output = new ElementOutput<ResourceContext, Resource>() {
             final AtomicLong counter = new AtomicLong();
 
             @Override
@@ -99,7 +101,7 @@ public class MARCElementsTest extends Assert {
             }
 
             @Override
-            public void output(ResourceContext context) throws IOException {
+            public void output(ResourceContext context, ContentBuilder<ResourceContext, Resource> builder) throws IOException {
                 IRI iri = IRI.builder().scheme("http")
                         .host("dummy")
                         .query("dummy")

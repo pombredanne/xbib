@@ -25,7 +25,7 @@
 
 package org.xbib.tools.opt;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 
 /**
  * <p>Thrown when the option parser encounters an unrecognized option.</p>
@@ -35,8 +35,8 @@ import static java.util.Collections.*;
 class UnrecognizedOptionException extends OptionException {
     private static final long serialVersionUID = -1L;
 
-    UnrecognizedOptionException( String option ) {
-        super( singletonList( option ) );
+    UnrecognizedOptionException(String option) {
+        super(singletonList(option));
     }
 
     @Override

@@ -32,10 +32,10 @@
 package org.xbib.tools.convert;
 
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.elements.marc.extensions.pica.PicaBuilder;
-import org.xbib.elements.marc.extensions.pica.PicaBuilderFactory;
-import org.xbib.elements.marc.extensions.pica.PicaElementMapper;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.marc.dialects.pica.PicaBuilder;
+import org.xbib.elements.marc.dialects.pica.PicaBuilderFactory;
+import org.xbib.elements.marc.dialects.pica.PicaElementMapper;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -47,8 +47,10 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.marc.xml.DNBPICAXmlReader;
+import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.ntriple.NTripleWriter;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
@@ -217,7 +219,7 @@ public final class BibdatZDBConverter extends AbstractImporter<Long, AtomicLong>
         return fileCounter;
     }
 
-    static class OurElementOutput implements ElementOutput<ResourceContext> {
+    static class OurElementOutput implements ElementOutput<ResourceContext,Resource> {
 
         File f;
         FileWriter fw;
@@ -242,7 +244,7 @@ public final class BibdatZDBConverter extends AbstractImporter<Long, AtomicLong>
         }
 
         @Override
-        public void output(ResourceContext context) throws IOException {
+        public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
             IRI id = IRI.builder().scheme("http").host("xbib.org").path("/adr")
                     .fragment(context.resource().id().getFragment()).build();
             context.resource().id(id);

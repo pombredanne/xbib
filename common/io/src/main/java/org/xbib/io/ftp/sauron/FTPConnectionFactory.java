@@ -40,12 +40,12 @@ public final class FTPConnectionFactory  implements ConnectionFactory<FTPSession
 
     @Override
     public FTPConnection getConnection(URI uri) throws IOException {
-        return providesScheme(uri.getScheme()) ? new FTPConnection().setURI(uri) : null;
+        return canOpen(uri) ? new FTPConnection().setURI(uri) : null;
     }
 
     @Override
-    public boolean providesScheme(String scheme) {
-        return"ftp".equals(scheme);
+    public boolean canOpen(URI uri) {
+        return"ftp".equals(uri.getScheme());
     }
     
 }

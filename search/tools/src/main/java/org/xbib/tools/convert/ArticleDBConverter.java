@@ -154,7 +154,7 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
             logger.info("parsing initial set of serials...");
 
             for (URI uri : input) {
-                InputStream in = factory.getInputStream(uri);
+                InputStream in = factory.open(uri);
                 serialsdb = new SerialsDBConverter(new InputStreamReader(in, UTF8), "serials" );
                 serials = serialsdb.getMap();
             }
@@ -294,7 +294,7 @@ public class ArticleDBConverter extends AbstractImporter<Long, AtomicLong> {
         if (uri == null) {
             return;
         }
-        InputStream in = factory.getInputStream(uri);
+        InputStream in = factory.open(uri);
         if (in == null) {
             throw new IOException("unable to open " + uri);
         }

@@ -21,6 +21,7 @@ package org.xbib.common.xcontent.xml;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+
 import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.io.FastStringReader;
 import org.xbib.common.xcontent.XContent;
@@ -28,7 +29,11 @@ import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.common.xcontent.XContentGenerator;
 import org.xbib.common.xcontent.XContentParser;
 import org.xbib.common.xcontent.XContentType;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,31 +47,61 @@ import java.io.Writer;
  */
 public class XmlXContent implements XContent {
 
-    public static XContentBuilder contentBuilder() throws IOException {
-        return contentBuilder(XmlXParams.getDefaultParams());
+    private static final Logger logger = LoggerFactory.getLogger(XmlXContent.class.getName());
+
+    private final static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+    private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+
+    static {
+        inputFactory.setProperty("javax.xml.stream.isNamespaceAware", Boolean.TRUE);
+        inputFactory.setProperty("javax.xml.stream.isValidating", Boolean.FALSE);
+        inputFactory.setProperty("javax.xml.stream.isCoalescing", Boolean.TRUE);
+        inputFactory.setProperty("javax.xml.stream.isReplacingEntityReferences", Boolean.FALSE);
+        inputFactory.setProperty("javax.xml.stream.isSupportingExternalEntities", Boolean.FALSE);
+
+        outputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
+
+        xmlFactory = new XmlFactory(inputFactory, outputFactory);
+
+        xmlXContent = new XmlXContent();
     }
 
-    public static XContentBuilder contentBuilder(XmlXParams params) throws IOException {
+
+    public static XContentBuilder contentBuilder() throws IOException {
         XContentBuilder builder = XContentBuilder.builder(xmlXContent);
-        XmlXContentGenerator generator = (XmlXContentGenerator)builder.generator();
-        generator.setParams(params);
+        if (builder.generator() instanceof XmlXContentGenerator) {
+            ((XmlXContentGenerator) builder.generator()).setParams(XmlXParams.getDefaultParams());
+        }
         return builder;
     }
 
-    final static XmlFactory xmlFactory;
-
-    public final static XmlXContent xmlXContent;
-
-    static {
-        xmlFactory = new XmlFactory();
-        xmlXContent = new XmlXContent();
+    public static XContentBuilder contentBuilder(XmlXParams params) throws IOException {
+        XContentBuilder builder = XContentBuilder.builder(xmlXContent, params); // payload
+        if (builder.generator() instanceof XmlXContentGenerator) {
+            ((XmlXContentGenerator) builder.generator()).setParams(params);
+        }
+        return builder;
     }
+
+    private final static XmlFactory xmlFactory;
+
+    private final static XmlXContent xmlXContent;
+
 
     private XmlXContent() {
     }
 
     public XContentType type() {
         return XContentType.XML;
+    }
+
+    public static XmlXContent xmlXContent() {
+        return xmlXContent;
+    }
+
+    protected static XmlFactory xmlFactory() {
+        return xmlFactory;
     }
 
     public byte streamSeparator() {

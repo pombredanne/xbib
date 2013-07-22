@@ -57,8 +57,8 @@ public class InputService {
         Iterator<InputStreamFactory> it = loader.iterator();
         while (it.hasNext()) {
             factory = it.next();
-            if (uri.getScheme() != null && factory.providesScheme(uri.getScheme())) {
-                return factory.getInputStream(uri);
+            if (uri.getScheme() != null && factory.canOpen(uri)) {
+                return factory.open(uri);
             }
         }
         return null;

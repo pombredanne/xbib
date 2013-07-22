@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
@@ -29,7 +29,6 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-
 package org.xbib.io.ftp.sauron;
 
 import java.io.IOException;

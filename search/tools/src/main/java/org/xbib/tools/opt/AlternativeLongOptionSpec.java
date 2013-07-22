@@ -25,8 +25,8 @@
 
 package org.xbib.tools.opt;
 
-import static java.util.Collections.*;
-import static org.xbib.tools.opt.ParserRules.*;
+import static java.util.Collections.singletonList;
+import static org.xbib.tools.opt.ParserRules.RESERVED_FOR_EXTENSIONS;
 
 /**
  * Represents the <kbd>"-W"</kbd> form of long option specification.
@@ -35,15 +35,16 @@ import static org.xbib.tools.opt.ParserRules.*;
  */
 class AlternativeLongOptionSpec extends ArgumentAcceptingOptionSpec<String> {
     AlternativeLongOptionSpec() {
-        super( singletonList( RESERVED_FOR_EXTENSIONS ), true, "Alternative form of long options" );
+        super(singletonList(RESERVED_FOR_EXTENSIONS), true, "Alternative form of long options");
 
-        describedAs( "opt=value" );
+        describedAs("opt=value");
     }
 
     @Override
-    protected void detectOptionArgument( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions ) {
-        if ( !arguments.hasMore() )
-            throw new OptionMissingRequiredArgumentException( options() );
+    protected void detectOptionArgument(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions) {
+        if (!arguments.hasMore()) {
+            throw new OptionMissingRequiredArgumentException(options());
+        }
 
         arguments.treatNextAsLongOption();
     }

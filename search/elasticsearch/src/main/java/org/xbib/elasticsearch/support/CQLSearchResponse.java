@@ -40,10 +40,9 @@ import org.elasticsearch.common.xcontent.json.JsonXContent;
 
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.io.OutputFormat;
-import org.xbib.io.StreamByteBuffer;
+import org.xbib.common.io.stream.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.JsonXmlStreamer;
-import org.xbib.json.JsonXmlValueMode;
 import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.search.NotFoundError;
 import org.xbib.search.SearchError;
@@ -147,10 +146,12 @@ public class CQLSearchResponse {
         jsonBuilder.close();
     }
 
+    private final QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);
+
+
     public void to(XMLEventConsumer consumer) throws IOException, XMLStreamException {
-        QName root = new QName(ES.NS_URI, "root", ES.NS_PREFIX);
-        JsonXmlStreamer streamer = new JsonXmlStreamer(JsonXmlValueMode.SKIP_EMPTY_VALUES);
-        streamer.toXML(read(), consumer, root);
+        JsonXmlStreamer streamer = new JsonXmlStreamer().root(root);
+        streamer.toXML(read(), consumer);
     }
 
     public InputStream read() throws IOException {
@@ -180,12 +181,13 @@ public class CQLSearchResponse {
         if (format == null || format.equals(OutputFormat.JSON)) {
             Streams.copy(new InputStreamReader(in, "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
-            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            // method "JsonStyleSheet"
+            JsonStylesheet js = new JsonStylesheet().root(root);
             js.toXML(in, writer);
         } else {
             // application/xhtml+xml
             // application/mods+xml
-            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            JsonStylesheet js = new JsonStylesheet().root(root);
             js.setTransformer(getTransformer());
             js.setStylesheets(getStylesheets());
             js.transform(in, writer);

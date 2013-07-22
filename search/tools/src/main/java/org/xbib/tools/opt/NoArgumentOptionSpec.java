@@ -26,8 +26,10 @@
 package org.xbib.tools.opt;
 
 import java.util.Collection;
-import static java.util.Collections.*;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * <p>A specification for an option that does not accept arguments.</p>
@@ -35,17 +37,17 @@ import java.util.List;
  * @author <a href="mailto:pholser@alumni.rice.edu">Paul Holser</a>
  */
 class NoArgumentOptionSpec extends AbstractOptionSpec<Void> {
-    NoArgumentOptionSpec( String option ) {
-        this( singletonList( option ), "" );
+    NoArgumentOptionSpec(String option) {
+        this(singletonList(option), "");
     }
 
-    NoArgumentOptionSpec( Collection<String> options, String description ) {
+    NoArgumentOptionSpec(Collection<String> options, String description) {
         super(options, description);
     }
 
     @Override
-    void handleOption( OptionParser parser, ArgumentList arguments,
-        OptionSet detectedOptions, String detectedArgument ) {
+    void handleOption(OptionParser parser, ArgumentList arguments,
+                      OptionSet detectedOptions, String detectedArgument) {
 
         detectedOptions.add(this);
     }
@@ -71,7 +73,7 @@ class NoArgumentOptionSpec extends AbstractOptionSpec<Void> {
     }
 
     @Override
-    protected Void convert( String argument ) {
+    protected Void convert(String argument) {
         return null;
     }
 

@@ -31,7 +31,6 @@
  */
 package org.xbib.elements;
 
-import org.xbib.analyzer.output.ElementOutput;
 import org.xbib.rdf.context.ResourceContext;
 
 /**

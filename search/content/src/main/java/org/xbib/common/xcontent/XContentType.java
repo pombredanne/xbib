@@ -103,7 +103,7 @@ public enum XContentType {
 
         @Override
         public XContent xContent() {
-            return XmlXContent.xmlXContent;
+            return XmlXContent.xmlXContent();
         }
     };
 

@@ -31,10 +31,12 @@
  */
 package org.xbib.rdf.context;
 
+import java.util.Collection;
 import java.util.Map;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.ResourceFactory;
+import org.xbib.rdf.xcontent.ContentBuilder;
 
 /**
  * A Resource context. 
@@ -62,11 +64,11 @@ public interface ResourceContext<R extends Resource> extends ResourceFactory<R> 
 
     /**
      *
-     * Create a new resource in this context.
+     * Set a new resource in this context.
      * @param resource
      * @return the current resource context
      */
-    ResourceContext<R> newResource(R resource);
+    ResourceContext<R> setResource(R resource);
 
     /**
      * Get current resource in this context.
@@ -75,27 +77,16 @@ public interface ResourceContext<R extends Resource> extends ResourceFactory<R> 
     R resource();
 
     /**
-     *  Set context identifier
-     * @param newContext the IRI of the new context
-     * @return  the current resource context
-     */
-    ResourceContext<R> id(IRI newContext);
-
-    /**
-     * Get current context
-     * @return current resource 
-     */
-    IRI context();
-    
-    /**
-     * Return map of resource
-     * @return the map of resources
-     */
-    Map<IRI,R> asMap();
-
-    /**
      * Reset this context so the context becomes empty
      */
-    void reset();
-    
+    ResourceContext<R> reset();
+
+    /**
+     * Prepare the context for output.
+     * @return
+     */
+    ResourceContext<R> prepareForOutput();
+
+    ContentBuilder<ResourceContext, R> contentBuilder();
+
 }

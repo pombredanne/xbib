@@ -18,7 +18,6 @@
 package org.xbib.iri;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +32,7 @@ import org.xbib.text.Normalizer;
 import org.xbib.text.UrlEncoding;
 import org.xbib.text.data.UnicodeCharacterDatabase;
 
-public class IRI implements Serializable, Cloneable, Comparable<IRI> {
+public class IRI implements Cloneable, Comparable<IRI> {
 
     protected Scheme schemeClass;
     private String scheme;
@@ -67,7 +66,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         private String fragment;
 
         private Builder() {
-
         }
 
         public Builder scheme(String scheme) {
@@ -145,9 +143,7 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
 
     }
 
-
-    private IRI() {
-
+    IRI() {
     }
 
     public IRI(IRI iri) {
@@ -178,37 +174,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
         this(Normalizer.normalize(CharUtils.stripBidi(iri), nf).toString());
     }
 
-    /*public IRI(String scheme, String userinfo, String host, int port, String path, String query, String fragment) {
-        this.scheme = scheme;
-        this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
-        this.userinfo = userinfo;
-        this.host = host;
-        this.port = port;
-        this.path = path;
-        this.query = query;
-        this.fragment = fragment;
-        StringBuilder buf = new StringBuilder();
-        buildAuthority(buf, userinfo, host, port);
-        this.authority = (buf.length() != 0) ? buf.toString() : null;
-        build();
-    }*/
-
-/*
-    public IRI(String scheme, String authority, String path, String query, String fragment) {
-        this.scheme = scheme;
-        this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
-        this.authority = authority;
-        this.path = path;
-        this.query = query;
-        this.fragment = fragment;
-        parseAuthority();
-        build();
-    }
-
-    public IRI(String scheme, String host, String path, String fragment) {
-        this(scheme, null, host, -1, path, null, fragment);
-    }
-*/
     IRI(Scheme schemeClass,
             String scheme,
             String authority,
@@ -233,65 +198,6 @@ public class IRI implements Serializable, Cloneable, Comparable<IRI> {
     public static IRI create(String iri) {
         return new IRI(iri);
     }
-
-    /*public IRI scheme(String scheme) {
-        this.scheme = scheme;
-        this.schemeClass = SchemeRegistry.getInstance().getScheme(scheme);
-        return this;
-    }
-
-    public IRI schemeSpecificPart(String schemeSpecificPart) {
-        this.schemeSpecificPart = schemeSpecificPart;
-        return this;
-    }
-
-    public IRI curi(String scheme, String path) {
-        this.scheme = scheme;
-        this.path = path;
-        return this;
-    }
-
-    public IRI curi(String schemeAndPath) {
-        int pos = schemeAndPath.indexOf(':');
-        this.scheme = pos > 0 ? schemeAndPath.substring(0,pos) : null;
-        this.path = pos > 0 ? schemeAndPath.substring(pos+1) : schemeAndPath;
-        return this;
-    }
-
-    public IRI authority(String authority) {
-        this.authority = authority;
-        return this;
-    }
-
-    public IRI userinfo(String userinfo) {
-        this.userinfo = userinfo;
-        return this;
-    }
-
-    public IRI host(String host) {
-        this.host = host;
-        return this;
-    }
-
-    public IRI port(int port) {
-        this.port = port;
-        return this;
-    }
-
-    public IRI path(String path) {
-        this.path = path;
-        return this;
-    }
-
-    public IRI query(String query) {
-        this.query = query;
-        return this;
-    }
-
-    public IRI fragment(String fragment) {
-        this.fragment = fragment;
-        return this;
-    }*/
 
     private IRI build() {
         if (authority == null && (userinfo != null || host != null)) {

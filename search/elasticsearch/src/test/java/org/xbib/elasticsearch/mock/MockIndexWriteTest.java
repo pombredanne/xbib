@@ -57,7 +57,8 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
         final ElasticsearchResourceSink<ResourceContext, Resource> indexer = new ElasticsearchResourceSink(es);
 
         try {
-            indexer.output(createContext());
+            ResourceContext context = createContext();
+            indexer.output(context, context.contentBuilder());
         } finally {
             es.shutdown();
         }
@@ -85,7 +86,7 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
                 .add("property5", "value5")
                 .add("property6", "value6");
         ResourceContext context = new SimpleResourceContext();
-        context.newResource(resource);
+        context.setResource(resource);
         return context;
     }
 }

@@ -2,12 +2,13 @@ package org.xbib.builders.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elements.marc.extensions.mab.MABElementBuilder;
-import org.xbib.elements.marc.extensions.mab.MABElementMapper;
+import org.xbib.elements.marc.dialects.mab.MABElementBuilder;
+import org.xbib.elements.marc.dialects.mab.MABElementBuilderFactory;
+import org.xbib.elements.marc.dialects.mab.MABElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
-import org.xbib.marc.extensions.MABDisketteReader;
+import org.xbib.marc.dialects.MABDisketteReader;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Transformer;
@@ -31,9 +32,13 @@ public class ElasticsearchResourceBuilderTest {
         MockTransportClientIngest es = new MockTransportClientIngest()
                 .setIndex("test")
                 .setType("test");
-        ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
-        MABElementBuilder builder = new MABElementBuilder().addOutput(sink);
-        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
+        final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+        final MABElementBuilderFactory builderFactory = new MABElementBuilderFactory() {
+            public MABElementBuilder newBuilder() {
+                return new MABElementBuilder().addOutput(sink);
+            }
+        };
+        final MABElementMapper mapper = new MABElementMapper("mab").start(builderFactory);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                 .addListener(mapper);
         try {
@@ -59,9 +64,13 @@ public class ElasticsearchResourceBuilderTest {
         MockTransportClientIngest es = new MockTransportClientIngest()
                 .setIndex("test")
                 .setType("test");
-        ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
-        MABElementBuilder builder = new MABElementBuilder().addOutput(sink);
-        MABElementMapper mapper = new MABElementMapper("mab").start(builder);
+        final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+        final MABElementBuilderFactory builderFactory = new MABElementBuilderFactory() {
+            public MABElementBuilder newBuilder() {
+                return new MABElementBuilder().addOutput(sink);
+            }
+        };
+        final MABElementMapper mapper = new MABElementMapper("mab").start(builderFactory);
         MarcXchange2KeyValue kv = new MarcXchange2KeyValue().addListener(mapper);
         try {
             Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);

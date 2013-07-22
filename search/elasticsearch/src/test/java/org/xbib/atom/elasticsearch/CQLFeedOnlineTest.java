@@ -46,13 +46,13 @@ public class CQLFeedOnlineTest {
         p.put(FeedConfiguration.PROP_SUB_URI_NAME,"test");
         p.put(FeedConfiguration.PROP_NAME_ADAPTER_CLASS,"org.xbib.atom.ElasticsearchAbderaAdapter");
         p.put(FeedConfiguration.PROP_FEED_CONFIG_LOCATION_NAME, "");
-        p.put(ElasticsearchAtomFeedController.FEED_URI_PROPERTY_KEY,"sniff://hostname:9300");
+        p.put(ElasticsearchAtomFeedFactory.FEED_URI_PROPERTY_KEY,"sniff://hostname:9300");
         p.put("feed.stylesheet","xsl/es-mods-atom.xsl");
         p.put("feed.author","Jörg Prante");
         p.put("feed.title.pattern","Ihre Suche war : {0}");
         p.put("feed.subtitle.pattern","{0} Treffer in {1} Sekunden");
         p.put("feed.constructiontime.pattern","Feed erzeugt in {0,number} Millisekunden");
-        ElasticsearchAtomFeedController controller = new ElasticsearchAtomFeedController();
+        ElasticsearchAtomFeedFactory controller = new ElasticsearchAtomFeedFactory();
         try {
             Feed feed = controller.createFeed(p, "dc.title = test", 0, 10);
             StringWriter sw = new StringWriter();

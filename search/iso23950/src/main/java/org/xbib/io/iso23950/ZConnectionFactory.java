@@ -58,15 +58,8 @@ public final class ZConnectionFactory implements ConnectionFactory<ZSession> {
         return conn;
     }
 
-    /**
-     * Check is a scheme is supported
-     *
-     * @param scheme the scheme to be checked
-     *
-     * @return true if supported
-     */
     @Override
-    public boolean providesScheme(String scheme) {
-        return scheme.startsWith("z3950");
+    public boolean canOpen(URI uri) {
+        return uri.getScheme().startsWith("z3950");
     }
 }

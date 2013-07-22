@@ -25,7 +25,9 @@
 
 package org.xbib.tools.opt;
 
-import static org.xbib.tools.opt.ParserRules.*;
+import static org.xbib.tools.opt.ParserRules.isLongOptionToken;
+import static org.xbib.tools.opt.ParserRules.isOptionTerminator;
+import static org.xbib.tools.opt.ParserRules.isShortOptionToken;
 
 /**
  * <p>Abstraction of parser state; mostly serves to model how a parser behaves depending
@@ -37,32 +39,33 @@ abstract class OptionParserState {
     static OptionParserState noMoreOptions() {
         return new OptionParserState() {
             @Override
-            protected void handleArgument( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions ) {
-                detectedOptions.addNonOptionArgument( arguments.next() );
+            protected void handleArgument(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions) {
+                detectedOptions.addNonOptionArgument(arguments.next());
             }
         };
     }
 
-    static OptionParserState moreOptions( final boolean posixlyCorrect ) {
+    static OptionParserState moreOptions(final boolean posixlyCorrect) {
         return new OptionParserState() {
             @Override
-            protected void handleArgument( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions ) {
+            protected void handleArgument(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions) {
                 String candidate = arguments.next();
-                if ( isOptionTerminator( candidate ) )
+                if (isOptionTerminator(candidate)) {
                     parser.noMoreOptions();
-                else if ( isLongOptionToken( candidate ) )
-                    parser.handleLongOptionToken( candidate, arguments, detectedOptions );
-                else if ( isShortOptionToken( candidate ) )
-                    parser.handleShortOptionToken( candidate, arguments, detectedOptions );
-                else {
-                    if ( posixlyCorrect )
+                } else if (isLongOptionToken(candidate)) {
+                    parser.handleLongOptionToken(candidate, arguments, detectedOptions);
+                } else if (isShortOptionToken(candidate)) {
+                    parser.handleShortOptionToken(candidate, arguments, detectedOptions);
+                } else {
+                    if (posixlyCorrect) {
                         parser.noMoreOptions();
+                    }
 
-                    detectedOptions.addNonOptionArgument( candidate );
+                    detectedOptions.addNonOptionArgument(candidate);
                 }
             }
         };
     }
 
-    protected abstract void handleArgument( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions );
+    protected abstract void handleArgument(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions);
 }

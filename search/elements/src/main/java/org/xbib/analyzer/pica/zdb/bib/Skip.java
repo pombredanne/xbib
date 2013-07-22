@@ -31,8 +31,8 @@
  */
 package org.xbib.analyzer.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaBuilder;
-import org.xbib.elements.marc.extensions.pica.PicaElement;
+import org.xbib.elements.marc.dialects.pica.PicaBuilder;
+import org.xbib.elements.marc.dialects.pica.PicaElement;
 import org.xbib.marc.FieldCollection;
 
 public class Skip extends PicaElement {

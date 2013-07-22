@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static org.xbib.tools.opt.internal.Objects.ensureNotNull;
+import static org.xbib.util.Objects.ensureNotNull;
 
 /**
  * Representation of a group of detected command line options, their arguments, and non-option arguments.

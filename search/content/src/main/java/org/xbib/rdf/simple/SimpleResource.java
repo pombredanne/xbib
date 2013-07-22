@@ -74,7 +74,7 @@ public class SimpleResource<S extends Identifier, P extends Property, O extends 
     public Resource<S,P,O> newResource(P predicate) {
         IRI blank = new IdentifiableNode().blank().id();
         Resource<S,P,O> r = new SimpleResource().id(blank);
-        context().asMap().put(blank, r);
+        resourceMap.put(blank, (O)r);
         attributes.put(predicate, r);
         return r;
     }

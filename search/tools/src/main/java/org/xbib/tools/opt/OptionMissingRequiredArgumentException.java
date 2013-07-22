@@ -34,10 +34,9 @@ import java.util.Collection;
  * @author <a href="mailto:pholser@alumni.rice.edu">Paul Holser</a>
  */
 class OptionMissingRequiredArgumentException extends OptionException {
-    private static final long serialVersionUID = -1L;
 
-    OptionMissingRequiredArgumentException( Collection<String> options ) {
-        super( options );
+    OptionMissingRequiredArgumentException(Collection<String> options) {
+        super(options);
     }
 
     @Override

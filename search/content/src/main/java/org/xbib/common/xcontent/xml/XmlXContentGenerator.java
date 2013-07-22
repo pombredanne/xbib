@@ -29,14 +29,13 @@ import org.xbib.common.xcontent.XContentParser;
 import org.xbib.common.xcontent.XContentType;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.xml.ToQName;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
 /**
  *
@@ -56,15 +55,16 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     public XmlXContentGenerator(ToXmlGenerator generator) {
         this.generator = generator;
-        if (logger.isDebugEnabled()) {
-            logger.debug("stax writer class in generator = {}", generator.getStaxWriter().getClass());
-        }
+        generator.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, false);
     }
 
     public XmlXContentGenerator setParams(XmlXParams params) {
         this.params = params;
-        setNamespaceContext(params.getNamespaceContext());
-        rootUsed = false;
+        try {
+            generator.getStaxWriter().setDefaultNamespace(params.getQName().getNamespaceURI());
+        } catch(XMLStreamException e) {
+            logger.error(e.getMessage(), e);
+        }
         return this;
     }
 
@@ -72,25 +72,13 @@ public class XmlXContentGenerator implements XContentGenerator {
         return params;
     }
 
-    public XmlXContentGenerator setNamespaceContext(NamespaceContext namespaceContext)  {
-        try {
-            generator.getStaxWriter().setDefaultNamespace(params.getQName().getNamespaceURI());
-            generator.getStaxWriter().setNamespaceContext(namespaceContext);
-            return this;
-        } catch(XMLStreamException e) {
-            logger.error(e.getMessage(), e);
-            return this;
-        }
-    }
-
-    public NamespaceContext getNamespaceContext() {
-        return generator.getStaxWriter().getNamespaceContext();
+    public XmlNamespaceContext getNamespaceContext() {
+        return params.getNamespaceContext();
     }
 
     public XContentType contentType() {
         return XContentType.XML;
     }
-
 
     public void usePrettyPrint() {
         generator.useDefaultPrettyPrinter();
@@ -107,12 +95,20 @@ public class XmlXContentGenerator implements XContentGenerator {
     }
 
     public void writeStartObject() throws IOException {
-        // first object start is using the root element
         if (!rootUsed) {
-            rootUsed = true;
             generator.startWrappedValue(null, getParams().getQName());
         }
         generator.writeStartObject();
+        if (!rootUsed) {
+            try {
+                for (String prefix : getNamespaceContext().getNamespaces().keySet()) {
+                    generator.getStaxWriter().writeNamespace(prefix, getNamespaceContext().getNamespaceURI(prefix));
+                }
+            } catch (XMLStreamException e) {
+                logger.error(e.getMessage(), e);
+            }
+            rootUsed = true;
+        }
     }
 
     public void writeEndObject() throws IOException {
@@ -209,7 +205,7 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     public void writeRawField(String fieldName, InputStream content, OutputStream bos) throws IOException {
         writeFieldNameWithNamespace(fieldName);
-        JsonParser parser = XmlXContent.xmlFactory.createParser(content);
+        JsonParser parser = XmlXContent.xmlFactory().createParser(content);
         try {
             parser.nextToken();
             generator.copyCurrentStructure(parser);
@@ -220,7 +216,7 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     public void writeRawField(String fieldName, byte[] content, OutputStream bos) throws IOException {
         writeFieldNameWithNamespace(fieldName);
-        JsonParser parser = XmlXContent.xmlFactory.createParser(content);
+        JsonParser parser = XmlXContent.xmlFactory().createParser(content);
         try {
             parser.nextToken();
             generator.copyCurrentStructure(parser);
@@ -233,9 +229,9 @@ public class XmlXContentGenerator implements XContentGenerator {
         writeFieldNameWithNamespace(fieldName);
         JsonParser parser;
         if (content.hasArray()) {
-            parser = XmlXContent.xmlFactory.createParser(content.array(), content.arrayOffset(), content.length());
+            parser = XmlXContent.xmlFactory().createParser(content.array(), content.arrayOffset(), content.length());
         } else {
-            parser = XmlXContent.xmlFactory.createParser(content.streamInput());
+            parser = XmlXContent.xmlFactory().createParser(content.streamInput());
         }
         try {
             parser.nextToken();
@@ -247,7 +243,7 @@ public class XmlXContentGenerator implements XContentGenerator {
 
     public void writeRawField(String fieldName, byte[] content, int offset, int length, OutputStream bos) throws IOException {
         writeFieldNameWithNamespace(fieldName);
-        JsonParser parser = XmlXContent.xmlFactory.createParser(content, offset, length);
+        JsonParser parser = XmlXContent.xmlFactory().createParser(content, offset, length);
         try {
             parser.nextToken();
             generator.copyCurrentStructure(parser);
@@ -257,7 +253,6 @@ public class XmlXContentGenerator implements XContentGenerator {
     }
 
     public void copyCurrentStructure(XContentParser parser) throws IOException {
-        // the start of the parser
         if (parser.currentToken() == null) {
             parser.nextToken();
         }
@@ -278,40 +273,9 @@ public class XmlXContentGenerator implements XContentGenerator {
     }
 
     private void writeFieldNameWithNamespace(String name) throws IOException {
-        QName qname = toQName(name);
+        QName qname = ToQName.toQName(params.getQName(), params.getNamespaceContext(), name);
         generator.setNextName(qname);
         generator.writeFieldName(qname.getLocalPart());
     }
 
-    private QName toQName(String name) {
-        String nsPrefix;
-        String nsURI;
-        // convert all JSON names beginning with an underscore to elements in default namespace
-        if (name.startsWith("_")) {
-            name = name.substring(1);
-        }
-        // convert all JSON names beginning with an @ to elements in default namespace
-        if (name.startsWith("@")) {
-            name = name.substring(1);
-        }
-        int pos = name.indexOf(':');
-        if (pos > 0) {
-            // check for configured namespace
-            nsPrefix = name.substring(0, pos);
-            nsURI = params.getNamespaceContext().getNamespaceURI(nsPrefix);
-            if (nsURI == null) {
-                throw new IllegalArgumentException("unknown namespace prefix: " + nsPrefix);
-            }
-            QName qname = new QName(nsURI, name.substring(pos + 1), nsPrefix);
-            return qname;
-        } else  {
-            nsPrefix = params.getQName().getPrefix();
-            nsURI = params.getQName().getNamespaceURI();
-            if (name.startsWith(nsPrefix + ":")) {
-                name = name.substring(nsPrefix.length() + 1);
-            }
-            QName qname = new QName(nsURI, name, nsPrefix);
-            return qname;
-        }
-    }
 }

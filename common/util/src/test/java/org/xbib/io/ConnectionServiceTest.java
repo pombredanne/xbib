@@ -45,22 +45,23 @@ public class ConnectionServiceTest {
 
     public void testNullFile() throws URISyntaxException, IOException {
         ConnectionService.getInstance()
-                .getConnectionFactory("file")
+                .getFactory(URI.create("file:dummy"))
                 .getConnection((URI) null);
-    }
-
-    @Test(expectedExceptions = java.util.ServiceConfigurationError.class)
-    public void testUnkownScheme() throws URISyntaxException, IOException {
-        ConnectionService.getInstance()
-                .getConnectionFactory("unknownscheme")
-                .getConnection(URI.create("unknownscheme://localhost"));
     }
 
     @Test
     public void testFileTmp() throws Exception {
         ConnectionService.getInstance()
-                .getConnectionFactory("file")
+                .getFactory(URI.create("file:dummy"))
                 .getConnection(URI.create("file:///tmp"));
+    }
+
+    @Test(expectedExceptions = java.util.ServiceConfigurationError.class)
+    public void testUnkownScheme() throws URISyntaxException, IOException {
+        URI uri = URI.create("unknownscheme://localhost");
+        ConnectionService.getInstance()
+                .getFactory(uri)
+                .getConnection(uri);
     }
 
 }

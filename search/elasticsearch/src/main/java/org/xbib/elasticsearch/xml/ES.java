@@ -41,5 +41,5 @@ public interface ES {
     String NS_PREFIX = "es";
 
     /** The URI of this namespace */
-    String NS_URI = "http://elasticsearch.org/";
+    String NS_URI = "http://elasticsearch.org/ns/1.0/";
 }

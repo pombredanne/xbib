@@ -48,7 +48,7 @@ import org.xbib.elasticsearch.support.facet.FacetSupport;
 import org.xbib.facet.Facet;
 import org.xbib.facet.FacetListener;
 import org.xbib.io.OutputFormat;
-import org.xbib.io.StreamByteBuffer;
+import org.xbib.common.io.stream.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.logging.Logger;
@@ -69,7 +69,9 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
     private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUResponse.class.getName());
 
     // javax.xml.parsers.DocumentBuilderFactory
-    private DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    private final static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+    private final static QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);
 
     private ElasticsearchSRURequest request;
 
@@ -144,7 +146,7 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
         if (format == null || format.equals(OutputFormat.JSON)) {
             Streams.copy(new InputStreamReader(buffer.getInputStream(), "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
-            JsonStylesheet js = new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX));
+            JsonStylesheet js = new JsonStylesheet().root(root);
             js.toXML(buffer.getInputStream(), writer);
         } else {
             // application/sru+xml
@@ -153,7 +155,8 @@ public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
             SRUVersion version = request != null ?
                     SRUVersion.fromString(request.getVersion()) : SRUVersion.VERSION_2_0;
             String[] stylesheets = getStylesheets(version);
-            new JsonStylesheet(new QName(ES.NS_URI, "result", ES.NS_PREFIX))
+            new JsonStylesheet()
+                    .root(root)
                 .setTransformer(getTransformer())
                 .setStylesheets(stylesheets)
                 .transform(buffer.getInputStream(), writer);

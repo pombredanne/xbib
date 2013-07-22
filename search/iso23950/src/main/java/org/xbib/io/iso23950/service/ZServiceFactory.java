@@ -57,7 +57,7 @@ public class ZServiceFactory {
         }
         URI uri = URI.create(properties.getProperty("uri"));
         Connection<ZSession> connection = ConnectionService.getInstance()
-                .getConnectionFactory(uri.getScheme())
+                .getFactory(uri)
                 .getConnection(uri);
         return connection.createSession().setProperties(properties);
     }

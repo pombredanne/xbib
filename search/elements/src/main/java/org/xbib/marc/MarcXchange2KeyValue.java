@@ -49,10 +49,12 @@ public class MarcXchange2KeyValue implements
 
         String transform(String value);
     }
-    private FieldCollection fields;
-    private List<KeyValueStreamListener<FieldCollection, String>> listeners = new ArrayList();
-    private FieldDataTransformer transformer;
 
+    private FieldCollection fields;
+
+    private List<KeyValueStreamListener<FieldCollection, String>> listeners = new ArrayList();
+
+    private FieldDataTransformer transformer;
 
     public MarcXchange2KeyValue addListener(KeyValueStreamListener<FieldCollection, String> listener) {
         this.listeners.add(listener);
@@ -164,7 +166,7 @@ public class MarcXchange2KeyValue implements
         if (field != null) {
             // remove last field if there is no sub field (it must be a data field)
             if (!fields.isEmpty() && !fields.getLast().isSubField()) {
-                Field f = fields.removeLast();
+                fields.removeLast();
             }            
             // transform field data?
             if (transformer != null && field.data() != null) {

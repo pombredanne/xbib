@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaElement;
+import org.xbib.elements.marc.dialects.pica.PicaElement;
 
 public class LibraryServiceTemplate extends PicaElement {
     private final static LibraryServiceTemplate instance = new LibraryServiceTemplate();

@@ -31,7 +31,7 @@
  */
 package org.xbib.analyzer.pica.zdb.bib;
 
-import org.xbib.elements.marc.extensions.pica.PicaElement;
+import org.xbib.elements.marc.dialects.pica.PicaElement;
 
 public class Identifier extends PicaElement implements LibraryAddressProperties {
     private final static Identifier instance = new Identifier();

@@ -38,8 +38,6 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -55,9 +53,9 @@ import org.xbib.tools.aggregator.elasticsearch.WrappedSearchHit;
 import org.xbib.tools.aggregator.elasticsearch.zdb.entities.Manifestation;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import org.xbib.tools.opt.internal.Strings;
 import org.xbib.tools.util.ExceptionFormatter;
 import org.xbib.tools.util.FormatUtil;
+import org.xbib.util.Strings;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -184,7 +182,12 @@ public class MergeWithCitations {
                     .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
                     .newClient(targetURI);
 
-            new MergeWithCitations(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier).execute();
+            new MergeWithCitations(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier)
+                    .execute();
+
+            search.shutdown();
+
+            ingest.shutdown();
 
         } catch (Exception e) {
             e.printStackTrace();

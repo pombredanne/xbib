@@ -37,10 +37,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.keyvalue.KeyValueReader;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.xcontent.ContentBuilder;
 
 public class DublinCoreBuilderTest extends Assert {
 
@@ -50,7 +52,7 @@ public class DublinCoreBuilderTest extends Assert {
     @Test
     public void testDublinCoreBuilder() throws Exception {
         StringReader sr = new StringReader("100=John Doe\n200=Hello Word\n300=2012\n400=1");
-        ElementOutput<DublinCoreContext> output = new ElementOutput<DublinCoreContext>() {
+        ElementOutput<DublinCoreContext,Resource> output = new ElementOutput<DublinCoreContext, Resource>() {
 
             final AtomicLong counter = new AtomicLong(0L);
 
@@ -63,7 +65,7 @@ public class DublinCoreBuilderTest extends Assert {
                 
             }
             @Override
-            public void output(DublinCoreContext context) throws IOException {
+            public void output(DublinCoreContext context, ContentBuilder builder) throws IOException {
                 logger.info("resource = {}", context.resource());
                 counter.incrementAndGet();
             }

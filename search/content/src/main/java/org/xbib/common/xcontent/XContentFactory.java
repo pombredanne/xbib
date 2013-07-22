@@ -79,7 +79,7 @@ public class XContentFactory {
      * Constructs a new xml builder using XML.
      */
     public static XContentBuilder xmlBuilder() throws IOException {
-        return XmlXContent.contentBuilder(XmlXParams.getDefaultParams());
+        return XmlXContent.contentBuilder();
     }
 
     /**
@@ -93,14 +93,14 @@ public class XContentFactory {
      * Constructs a new xml builder that will output the result into the provided output stream.
      */
     public static XContentBuilder xmlBuilder(OutputStream os) throws IOException {
-        return new XContentBuilder(XmlXContent.xmlXContent, os);
+        return new XContentBuilder(XmlXContent.xmlXContent(), os);
     }
 
     /**
      * Constructs a new xml builder that will output the result into the provided output stream.
      */
     public static XContentBuilder xmlBuilder(OutputStream os, XmlXParams params) throws IOException {
-        return new XContentBuilder(XmlXContent.xmlXContent, os, params);
+        return new XContentBuilder(XmlXContent.xmlXContent(), os, params);
     }
 
     /**

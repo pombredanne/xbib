@@ -37,8 +37,7 @@ import java.net.URI;
 
 public interface InputStreamFactory<I extends InputStream> {
 
-    I getInputStream(URI uri) throws IOException;
-    
-    boolean providesScheme(String scheme);
-    
+    boolean canOpen(URI uri);
+
+    I open(URI uri) throws IOException;
 }

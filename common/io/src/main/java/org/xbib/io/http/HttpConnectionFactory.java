@@ -60,15 +60,8 @@ public final class HttpConnectionFactory implements ConnectionFactory<HttpSessio
         return connection;
     }
 
-    /**
-     * Check for schemes provided
-     *
-     * @param scheme the scheme
-     *
-     * @return true if scheme is provided
-     */
     @Override
-    public boolean providesScheme(String scheme) {
-        return "http".equals(scheme) || "https".equals(scheme);
+    public boolean canOpen(URI uri) {
+        return "http".equals(uri.getScheme()) || "https".equals(uri.getScheme());
     }
 }

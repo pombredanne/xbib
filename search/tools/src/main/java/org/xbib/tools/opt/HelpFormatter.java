@@ -41,5 +41,5 @@ public interface HelpFormatter {
      * @see OptionParser#printHelpOn(java.io.Writer)
      * @see OptionParser#formatHelpWith(HelpFormatter)
      */
-    String format( Map<String, ? extends OptionDescriptor> options );
+    String format(Map<String, ? extends OptionDescriptor> options);
 }

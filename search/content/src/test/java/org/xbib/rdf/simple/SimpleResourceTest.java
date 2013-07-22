@@ -4,6 +4,9 @@ import java.util.Iterator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.iri.IRI;
+import org.xbib.logging.Logger;
+import org.xbib.logging.Loggers;
+import org.xbib.rdf.IdentifiableNode;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Node;
@@ -17,6 +20,9 @@ import org.xbib.rdf.Triple;
  */
 public class SimpleResourceTest<S extends Identifier, P extends Property, O extends Node>
         extends Assert {
+
+    private final Logger logger = Loggers.getLogger(SimpleResourceTest.class.getSimpleName());
+
 
     private final SimpleFactory<S, P, O> simpleFactory = SimpleFactory.getInstance();
 
@@ -182,5 +188,48 @@ public class SimpleResourceTest<S extends Identifier, P extends Property, O exte
             cnt++;
         }
         assertEquals(cnt, 2);
+    }
+
+
+    @Test
+    public void testAddingResources() throws Exception {
+        Resource<S, P, O> r = new SimpleResource<>();
+        r.id(IRI.create("urn:r"))
+                .add("urn:value", "Hello R");
+
+        // named ID
+        Resource<S, P, O> s = new SimpleResource<>();
+        s.id(IRI.create("urn:s"))
+                .add("urn:value", "Hello S");
+
+        // another named ID
+        Resource<S, P, O> t = new SimpleResource<>();
+        t.id(IRI.create("urn:t"))
+                .add("urn:value", "Hello T");
+
+        // a blank node resource ID
+        IRI blank1 = new IdentifiableNode().blank().id();
+        Resource<S, P, O> u = new SimpleResource<>();
+        u.id(blank1).add("urn:value", "Hello U");
+
+        // another blank node resource ID
+        IRI blank2 = new IdentifiableNode().blank().id();
+        Resource<S, P, O> v = new SimpleResource<>();
+        v.id(blank2).add("urn:value", "Hello V");
+
+        P predicate = simpleFactory.asPredicate("dc:subject");
+        r.add(predicate, s);
+        r.add(predicate, t);
+        r.add(predicate, u);
+        r.add(predicate, v);
+
+        int cnt = 0;
+        Iterator<Triple<S,P,O>> it = r.iterator();
+        while (it.hasNext()) {
+            Triple stmt = it.next();
+            logger.info("{}", stmt);
+            cnt++;
+        }
+        assertEquals(cnt, 9);
     }
 }

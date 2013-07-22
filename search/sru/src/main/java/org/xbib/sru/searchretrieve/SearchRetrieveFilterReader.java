@@ -34,6 +34,7 @@ package org.xbib.sru.searchretrieve;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -41,8 +42,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
 import org.xbib.sru.SRUConstants;
-import org.xbib.xml.XMLNamespaceContext;
 import org.xbib.xml.XMLFilterReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -56,7 +57,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
 
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
-    private final XMLNamespaceContext namespaceContext = XMLNamespaceContext.newInstance();
+    private final XmlNamespaceContext namespaceContext = XmlNamespaceContext.newInstance();
 
     private final SearchRetrieveRequest request;
 
@@ -283,15 +284,14 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
         return list.listIterator();
     }
 
-    private ListIterator<Namespace> getNamespaces(XMLNamespaceContext namespaceContext) {
+    private ListIterator<Namespace> getNamespaces(XmlNamespaceContext namespaceContext) {
         List<Namespace> namespaces = new LinkedList();
         String defaultNamespaceUri = namespaceContext.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
         if (defaultNamespaceUri != null && defaultNamespaceUri.length() > 0) {
             namespaces.add(eventFactory.createNamespace(defaultNamespaceUri));
         }
-        for (String prefix : namespaceContext.getNamespacePrefixes()) {
-            String namespaceUri = namespaceContext.getNamespaceURI(prefix);
-            namespaces.add(eventFactory.createNamespace(prefix, namespaceUri));
+        for (Map.Entry<String,String> me : namespaceContext.getNamespaces().entrySet()) {
+            namespaces.add(eventFactory.createNamespace(me.getKey(), me.getValue()));
         }
         return namespaces.listIterator();
     }

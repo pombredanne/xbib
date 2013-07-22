@@ -1,4 +1,4 @@
-/*
+/***
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
@@ -21,10 +21,6 @@ public class DefaultScheme extends AbstractScheme {
 
     public DefaultScheme(String name) {
         super(name, -1);
-    }
-
-    public DefaultScheme(String name, int port) {
-        super(name, port);
     }
 
 }

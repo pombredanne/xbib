@@ -20,6 +20,9 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.namespace.QName;
+
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -45,7 +48,9 @@ import org.xml.sax.XMLReader;
  */
 public class JsonXmlReader implements XMLReader {
 
-    private final QName root;
+    private QName root = new QName("root");
+
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
 
     private Map<String,Boolean> map = new HashMap();
 
@@ -57,8 +62,17 @@ public class JsonXmlReader implements XMLReader {
 
     private ErrorHandler errorHandler;
 
-    public JsonXmlReader(QName root) {
+    public JsonXmlReader() {
+    }
+
+    public JsonXmlReader root(QName root) {
         this.root = root;
+        return this;
+    }
+
+    public JsonXmlReader context(XmlNamespaceContext context) {
+        this.context = context;
+        return this;
     }
 
     @Override
@@ -125,11 +139,16 @@ public class JsonXmlReader implements XMLReader {
     @Override
     public void parse(InputSource input) throws IOException, SAXException {
         if (input.getCharacterStream() != null) {
-            new JsonSaxAdapter(input.getCharacterStream(), contentHandler, root).parse();
-        }
-        if (input.getByteStream() != null) {
+            new JsonSaxAdapter(input.getCharacterStream(), contentHandler)
+                    .root(root)
+                    .context(context)
+                    .parse();
+        } else if (input.getByteStream() != null) {
             String encoding = input.getEncoding() != null? input.getEncoding() : System.getProperty("file.encoding");
-            new JsonSaxAdapter(new InputStreamReader(input.getByteStream(), encoding), contentHandler, root).parse();
+            new JsonSaxAdapter(new InputStreamReader(input.getByteStream(), encoding), contentHandler)
+                    .root(root)
+                    .context(context)
+                    .parse();
         }
     }
 

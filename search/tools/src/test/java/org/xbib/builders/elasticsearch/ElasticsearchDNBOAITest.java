@@ -124,7 +124,7 @@ public class ElasticsearchDNBOAITest {
                     handler.endDocument();
                     try {
                         StringWriter sw = new StringWriter();
-                        TurtleWriter t = new TurtleWriter()
+                        new TurtleWriter()
                                 .output(sw)
                                 .write(getResource());
                         logger.info(sw.toString());

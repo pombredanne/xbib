@@ -44,7 +44,7 @@ import javax.xml.namespace.QName;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -158,7 +158,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                     .waitForHealthyCluster()
                     .deleteIndex(overwrite)
                     .dateDetection(false)
-                    .newIndex();
+                    .newIndex(false);
 
             final ElasticsearchResourceSink<ResourceContext, Resource> sink =
                     new ElasticsearchResourceSink(es);
@@ -271,7 +271,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
         @Override
         public void closeResource() {
             try { 
-                out.output(resourceContext);
+                out.output(resourceContext, resourceContext.contentBuilder());
             } catch (IOException e ) {
                 logger.error(e.getMessage(), e);
             }

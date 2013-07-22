@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.xbib.analyzer.output.ElementOutput;
-import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.context.ResourceContext;
@@ -67,9 +65,7 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
     @Override
     public void begin() {
         C context = contextFactory().newContext();
-        // set a random resource identifier to make this context valid for resources
-        context.id(IRI.builder().host("element").build());
-        context.newResource(context.newResource());
+        context.setResource(context.newResource());
         contexts.set(context);
     }
 
@@ -80,10 +76,12 @@ public abstract class AbstractElementBuilder<K, V, E extends Element, C extends 
 
     @Override
     public void end(Object info) {
+        C context = contexts.get();
+        context.prepareForOutput();
         for (ElementOutput output : outputs) {
             if (output.enabled()) {
                 try {
-                   output.output(contexts.get());
+                   output.output(context, context.contentBuilder() );
                 } catch (IOException e) {
                     logger.error("output failed: " + e.getMessage(), e);
                     output.enabled(false);

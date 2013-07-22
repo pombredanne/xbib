@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
@@ -34,10 +34,12 @@ package org.xbib.rdf.context;
 import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.xbib.iri.IRI;
-import org.xbib.xml.XMLNamespaceContext;
 
-public final class IRINamespaceContext extends XMLNamespaceContext {
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
+import org.xbib.iri.IRI;
+import org.xbib.iri.CompactingNamespaceContext;
+
+public final class IRINamespaceContext extends XmlNamespaceContext implements CompactingNamespaceContext {
 
     private static IRINamespaceContext instance;
 
@@ -67,49 +69,34 @@ public final class IRINamespaceContext extends XMLNamespaceContext {
     public static IRINamespaceContext newInstance() {
         return new IRINamespaceContext();
     }
-
     /**
-     * Compact an IRI with a full namespace URI to a short form URI with help of
+     * Abbreviate an URI with a full namespace URI to a short form URI with help of
      * the prefix in this namespace context.
      *
-     * @param uri the long IRI
-     * @return a compact short URI, or the original URI if there is no prefix in
+     * @param uri the long URI
+     * @return a compact short URI or the original URI if there is no prefix in
      * this context
      */
     @Override
     public String compact(IRI uri) {
-        return compact(uri, ':', false);
+        return compact(uri, false);
     }
 
-    public String compact(IRI uri, char delimiter, boolean dropfragment) {
-        // drop fragment (useful for resource counters in fragments)        
+    public String compact(IRI uri, boolean dropfragment) {
+        // drop fragment (useful for resource counters in fragments)
         final String s = dropfragment
                 ? new IRI(uri.getScheme(), uri.getSchemeSpecificPart(), null).toString() : uri.toString();
-        // TODO better prefix search... we assume we have a rather short set of name spaces (~ 10-20)
-        // otherwise, a binary search in an ordered key set would be more efficient, or a suffix tree
-        for (final String ns : getPrefixes().keySet()) {
+        // we assume we have a rather short set of name spaces (~ 10-20)
+        // otherwise, a binary search in an ordered key set would be more efficient.
+        for (final String ns : getNamespaces().values()) {
             if (s.startsWith(ns)) {
-                return new StringBuilder().append(getPrefix(ns)).append(delimiter).append(s.substring(ns.length())).toString();
+                return new StringBuilder().append(getPrefix(ns)).append(':').append(s.substring(ns.length())).toString();
             }
         }
         return s;
     }
 
-    public String[] inContext(IRI uri) {
-        if (uri == null) {
-            return null;
-        }
-        String scheme = uri.getScheme();
-        if (scheme != null && getNamespaces().containsKey(scheme)) {
-            return new String[]{scheme, getNamespaces().get(scheme)};
-        }
-        final String s = uri.toString();
-        for (final String ns : getPrefixes().keySet()) {
-            if (s.startsWith(ns)) {
-                return new String[]{getPrefix(ns), ns};
-            }
-        }
-        return null;
+    public String getPrefix(IRI uri) {
+        return getNamespaceURI(uri.getScheme()) != null ? uri.getScheme() : getPrefix(uri.toString());
     }
-
 }

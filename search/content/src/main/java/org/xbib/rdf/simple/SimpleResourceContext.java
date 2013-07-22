@@ -31,25 +31,32 @@
  */
 package org.xbib.rdf.simple;
 
-import org.xbib.iri.IRI;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.AbstractResourceContext;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.xcontent.ContentBuilder;
+import org.xbib.rdf.xcontent.DefaultContentBuilder;
 
 public class SimpleResourceContext 
     extends AbstractResourceContext<Resource>
     implements ResourceContext<Resource> {
 
+    private final ContentBuilder contentBuilder = new DefaultContentBuilder();
+
     @Override
-    public SimpleResourceContext id(IRI identifier) {
-        super.id(identifier);
+    public ResourceContext<Resource> prepareForOutput() {
         return this;
     }
 
     @Override
+    public ContentBuilder<ResourceContext, Resource> contentBuilder() {
+        return contentBuilder;
+    }
+
+    @Override
     public Resource newResource() {
-        this.resource = new SimpleResource();
-        return resource;
+        super.setResource(new SimpleResource());
+        return super.resource();
     }
 
 }

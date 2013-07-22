@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,8 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
     private final Logger logger = LoggerFactory.getLogger(AbstractResource.class.getName());
 
     protected Multimap<P, Node> attributes = LinkedHashMultimap.create();
+
+    protected Map<IRI, O> resourceMap = new LinkedHashMap();
 
     private S subject;
 
@@ -95,7 +98,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         if (triple.subject().id() == null || triple.subject().id().equals(id())) {
             add(triple.predicate(), triple.object());
         } else {
-            Resource<S, P, O> r = findResource(context(), triple);
+            Resource<S, P, O> r =  (Resource<S, P, O>)resourceMap.get(triple.subject().id());
             if (r == null) {
                 logger.warn("ignoring triple: {}, no resource in {}", triple, this);
                 return this;
@@ -105,26 +108,11 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
         return this;
     }
 
-    private Resource<S, P, O> findResource(ResourceContext context, Triple<S,P,O> triple) {
-        if (context.asMap().containsKey(triple.subject().id())) {
-            return (Resource<S, P, O>)context.asMap().get(triple.subject().id());
-        } else {
-            Collection<Resource> c = (Collection<Resource>)context.asMap().values();
-            for (Resource<S, P, O> r : c) {
-                Resource<S,P,O> found = findResource(r.context(), triple);
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public Resource<S, P, O> add(P predicate, O object) {
         attributes.put(predicate, object);
         if (object instanceof IdentifiableNode) {
-            context().asMap().put(((IdentifiableNode) object).id(), object);
+            resourceMap.put(((IdentifiableNode) object).id(), object);
         }
         return this;
     }
@@ -153,8 +141,7 @@ public abstract class AbstractResource<S extends Identifier, P extends Property,
             Resource<S, P, O> r = newResource(predicate);
             Iterator<Triple<S,P,O>> it = resource.iterator();
             while (it.hasNext()) {
-                Triple stmt = it.next();
-                r.add(stmt);
+                r.add(it.next());
             }
         } else {
             attributes.put(predicate, resource);

@@ -109,7 +109,7 @@ public class ZServlet extends HttpServlet {
 
         URI uri = URI.create(address);
         Connection<Session> connection = ConnectionService.getInstance()
-                .getConnectionFactory(uri.getScheme())
+                .getFactory(uri)
                 .getConnection(uri);
         ZSession session = (ZSession) connection.createSession();
         ZClient client = session.newZClient();

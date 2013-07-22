@@ -11,7 +11,6 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.JsonLdContext;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.simple.SimpleResource;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -33,7 +32,8 @@ public class BulkIndexerTest extends Assert {
                     .setType("test");
 
             es.deleteIndex();
-            new ElasticsearchResourceSink(es).output(createContext());
+            ResourceContext context = createContext();
+            new ElasticsearchResourceSink(es).output(context, context.contentBuilder());
             es.flush();
             Thread.sleep(2000);
             Logger queryLogger = LoggerFactory.getLogger("test", BulkIndexerTest.class.getName());
@@ -57,7 +57,6 @@ public class BulkIndexerTest extends Assert {
 
     private ResourceContext createContext() {
         ResourceContext context = new JsonLdContext()
-                .id(IRI.create("http://test?test#1"))
                 .newNamespaceContext();
         context.namespaceContext().addNamespace(ES.NS_PREFIX, ES.NS_URI);
         context.namespaceContext().addNamespace("urn", "http://urn");
@@ -82,7 +81,7 @@ public class BulkIndexerTest extends Assert {
         resource.newResource("urn:res1")
                 .add("property5", "value5")
                 .add("property6", "value6");
-        context.newResource(resource);
+        context.setResource(resource);
         return context;
     }
 }

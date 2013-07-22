@@ -1,4 +1,4 @@
 /**
- * Basic Input/Output for Structured Query Language (SQL)
+ *  JDBC client
  */
 package org.xbib.io.jdbc;

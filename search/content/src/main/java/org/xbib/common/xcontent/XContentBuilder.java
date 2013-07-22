@@ -35,6 +35,8 @@ import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.io.BytesStream;
 import org.xbib.common.io.FastByteArrayOutputStream;
 import org.xbib.common.xcontent.support.XContentMapConverter;
+import org.xbib.common.xcontent.xml.XmlXContentGenerator;
+import org.xbib.common.xcontent.xml.XmlXParams;
 
 /**
  *

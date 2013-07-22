@@ -32,15 +32,14 @@
 package org.xbib.elasticsearch;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.xbib.elasticsearch.support.ingest.ClientIngest;
-import org.xbib.analyzer.output.ElementOutput;
-import org.xbib.iri.IRI;
+import org.xbib.elements.ElementOutput;
+import org.xbib.elasticsearch.support.ClientIngest;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.xcontent.Builder;
+import org.xbib.rdf.xcontent.ContentBuilder;
+import org.xbib.rdf.xcontent.DefaultContentBuilder;
 
 /**
  * Index RDF resources into Elasticsearch
@@ -51,7 +50,7 @@ import org.xbib.rdf.xcontent.Builder;
  * @param <R>
  */
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
-        implements ElementOutput<C> {
+        implements ElementOutput<C, R> {
 
     private final ClientIngest ingester;
 
@@ -116,20 +115,8 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     };
 
     @Override
-    public void output(C context) throws IOException {
-        // we have either a single resource or a context of resources
-        Builder<C, R> builder = new Builder();
-        Map<IRI,R> map = context.asMap();
-        if (map.isEmpty()) {
-            output(context, builder, (R)context.resource());
-        } else {
-            for (R resource : map.values()) {
-                output(context, builder, resource);
-            }
-        }
-    }
-
-    private void output(C context, Builder<C, R> builder, R resource) throws IOException{
+    public void output(C context, ContentBuilder<C, R> contentBuilder) throws IOException {
+        R resource = (R)context.resource();
         if (resource.id() == null) {
             return;
         }
@@ -139,7 +126,7 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
         if (resource.isDeleted()) {
             resourceIndexer.delete(resource);
         } else {
-            resourceIndexer.index(resource, builder.build(context, resource));
+            resourceIndexer.index(resource, contentBuilder.build(context, resource));
         }
         resourceCounter.incrementAndGet();
     }

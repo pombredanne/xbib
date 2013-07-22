@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import static java.util.Collections.*;
 
-import static org.xbib.tools.opt.internal.Strings.*;
+import static java.util.Collections.unmodifiableCollection;
+import static org.xbib.util.Strings.SINGLE_QUOTE;
 
 /**
  * Thrown when a problem occurs during option parsing.
@@ -43,14 +43,14 @@ public abstract class OptionException extends RuntimeException {
 
     private final List<String> options = new ArrayList<String>();
 
-    protected OptionException( Collection<String> options ) {
-        this.options.addAll( options );
+    protected OptionException(Collection<String> options) {
+        this.options.addAll(options);
     }
 
-    protected OptionException( Collection<String> options, Throwable cause ) {
-        super( cause );
+    protected OptionException(Collection<String> options, Throwable cause) {
+        super(cause);
 
-        this.options.addAll( options );
+        this.options.addAll(options);
     }
 
     /**
@@ -59,32 +59,33 @@ public abstract class OptionException extends RuntimeException {
      * @return the option being considered when the exception was created
      */
     public Collection<String> options() {
-        return unmodifiableCollection( options );
+        return unmodifiableCollection(options);
     }
 
     protected final String singleOptionMessage() {
-        return singleOptionMessage( options.get( 0 ) );
+        return singleOptionMessage(options.get(0));
     }
 
-    protected final String singleOptionMessage( String option ) {
+    protected final String singleOptionMessage(String option) {
         return SINGLE_QUOTE + option + SINGLE_QUOTE;
     }
 
     protected final String multipleOptionMessage() {
-        StringBuilder buffer = new StringBuilder( "[" );
+        StringBuilder buffer = new StringBuilder("[");
 
-        for ( Iterator<String> iter = options.iterator(); iter.hasNext(); ) {
-            buffer.append( singleOptionMessage( iter.next() ) );
-            if ( iter.hasNext() )
-                buffer.append( ", " );
+        for (Iterator<String> iter = options.iterator(); iter.hasNext(); ) {
+            buffer.append(singleOptionMessage(iter.next()));
+            if (iter.hasNext()) {
+                buffer.append(", ");
+            }
         }
 
-        buffer.append( ']' );
+        buffer.append(']');
 
         return buffer.toString();
     }
 
-    static OptionException unrecognizedOption( String option ) {
-        return new UnrecognizedOptionException( option );
+    static OptionException unrecognizedOption(String option) {
+        return new UnrecognizedOptionException(option);
     }
 }

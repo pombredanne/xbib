@@ -39,10 +39,10 @@ class OptionArgumentConversionException extends OptionException {
     private final String argument;
     private final Class<?> valueType;
 
-    OptionArgumentConversionException( Collection<String> options, String argument, Class<?> valueType,
-        Throwable cause ) {
+    OptionArgumentConversionException(Collection<String> options, String argument, Class<?> valueType,
+                                      Throwable cause) {
 
-        super( options, cause );
+        super(options, cause);
 
         this.argument = argument;
         this.valueType = valueType;

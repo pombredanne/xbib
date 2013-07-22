@@ -29,26 +29,26 @@ import java.util.Collection;
 
 /**
  * Allows callers to specify whether a given option accepts arguments (required or optional).
- *
+ * <p/>
  * <p>Instances are returned from {@link OptionParser#accepts(String)} to allow the formation of parser directives as
  * sentences in a "fluent interface" language.  For example:</p>
- *
+ * <p/>
  * <pre><code>
  *   OptionParser parser = new OptionParser();
  *   parser.accepts( "c" ).<strong>withRequiredArg()</strong>.ofType( Integer.class );
  * </code></pre>
- *
+ * <p/>
  * <p>If no methods are invoked on an instance of this class, then that instance's option will accept no argument.</p>
- *
+ * <p/>
  * <p>Note that you should not use the fluent interface clauses in a way that would defeat the typing of option
  * arguments:</p>
- *
+ * <p/>
  * <pre><code>
  *   OptionParser parser = new OptionParser();
  *   ArgumentAcceptingOptionSpec&lt;String&gt; optionC =
  *       parser.accepts( "c" ).withRequiredArg();
  *   <strong>optionC.ofType( Integer.class );  // DON'T THROW AWAY THE TYPE!</strong>
- *
+ * <p/>
  *   String value = parser.parse( "-c", "2" ).valueOf( optionC );  // ClassCastException
  * </code></pre>
  *
@@ -57,15 +57,15 @@ import java.util.Collection;
 public class OptionSpecBuilder extends NoArgumentOptionSpec {
     private final OptionParser parser;
 
-    OptionSpecBuilder( OptionParser parser, Collection<String> options, String description ) {
-        super( options, description );
+    OptionSpecBuilder(OptionParser parser, Collection<String> options, String description) {
+        super(options, description);
 
         this.parser = parser;
         attachToParser();
     }
 
     private void attachToParser() {
-        parser.recognize( this );
+        parser.recognize(this);
     }
 
     /**
@@ -75,8 +75,8 @@ public class OptionSpecBuilder extends NoArgumentOptionSpec {
      */
     public ArgumentAcceptingOptionSpec<String> withRequiredArg() {
         ArgumentAcceptingOptionSpec<String> newSpec =
-            new RequiredArgumentOptionSpec<String>( options(), description() );
-        parser.recognize( newSpec );
+                new RequiredArgumentOptionSpec<String>(options(), description());
+        parser.recognize(newSpec);
 
         return newSpec;
     }
@@ -88,8 +88,8 @@ public class OptionSpecBuilder extends NoArgumentOptionSpec {
      */
     public ArgumentAcceptingOptionSpec<String> withOptionalArg() {
         ArgumentAcceptingOptionSpec<String> newSpec =
-            new OptionalArgumentOptionSpec<String>( options(), description() );
-        parser.recognize( newSpec );
+                new OptionalArgumentOptionSpec<String>(options(), description());
+        parser.recognize(newSpec);
 
         return newSpec;
     }

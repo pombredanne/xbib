@@ -45,9 +45,13 @@ import java.util.concurrent.TimeUnit;
 public class ImportService<T, R> {
 
     private ExecutorService executorService;
+
     private Collection<Callable<T>> tasks;
+
     private ImporterFactory<T, R> factory;
+
     private int threadnum = 1;
+
     private Map<Long, T> results = new HashMap();
 
     public ImportService() {

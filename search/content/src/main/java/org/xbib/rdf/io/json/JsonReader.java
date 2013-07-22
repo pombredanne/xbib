@@ -96,7 +96,8 @@ public class JsonReader<S extends Resource<S, P, O>, P extends Property, O exten
             if (listener != null) {
                 handler.setListener(listener);
             }
-            JsonSaxAdapter adapter = new JsonSaxAdapter(reader, handler, root)
+            JsonSaxAdapter adapter = new JsonSaxAdapter(reader, handler)
+                    .root(root)
                     .context(handler.resourceContext().namespaceContext());
             try {
                 adapter.parse();

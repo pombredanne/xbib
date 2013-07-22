@@ -42,14 +42,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.elasticsearch.common.unit.TimeValue;
+import org.xbib.elasticsearch.support.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -63,6 +63,7 @@ import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
@@ -180,10 +181,9 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                             .waitForHealthyCluster()
                             .setIndex(index)
                             .setType(type)
-                            .setting("index.number_of_shards", shards)
-                            .setting("index.number_of_replicas", "0")
-                            .dateDetection(false)
-                            .newIndex()
+                            .shards(Integer.parseInt(shards))
+                            .replica(0)
+                            .newIndex(false)
                             .startBulkMode();
 
             // we write RDF resources to Elasticsearch
@@ -227,7 +227,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         System.exit(0);
     }
 
-    public ZDB(ElementOutput output) {
+    private ZDB(ElementOutput output) {
         this.output = output;
         this.done = false;
     }
@@ -296,7 +296,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         }
     };
 
-    final class OurElementOutput implements ElementOutput<ResourceContext> {
+    final class OurElementOutput implements ElementOutput<ResourceContext, Resource> {
 
         @Override
         public boolean enabled() {
@@ -308,14 +308,14 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         }
 
         @Override
-        public void output(ResourceContext context) throws IOException {
+        public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
             if (!context.resource().isEmpty()) {
                 IRI id = IRI.builder().scheme("http")
                         .host(index)
                         .query(type)
                         .fragment(Long.toString(outputCounter.incrementAndGet())).build();
                 context.resource().id(id);
-                output.output(context);
+                output.output(context, contentBuilder);
             }
         }
 

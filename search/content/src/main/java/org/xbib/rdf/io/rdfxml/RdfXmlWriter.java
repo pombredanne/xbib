@@ -37,6 +37,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.xbib.common.xcontent.xml.XmlNamespaceContext;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Identifier;
 import org.xbib.rdf.Literal;
@@ -44,7 +46,6 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.RDF;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
-import org.xbib.xml.XMLNamespaceContext;
 import org.xbib.xml.XMLUtil;
 
 /**
@@ -61,21 +62,29 @@ public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O ext
         implements RDF {
 
     private Writer writer;
-    private boolean writingStarted;
-    private boolean headerWritten;
-    private S lastWrittenSubject;
-    private XMLNamespaceContext context;
 
-    public void write(Resource resource, OutputStream out, XMLNamespaceContext context) throws IOException {
-        write(resource, new OutputStreamWriter(out, "UTF-8"), context);
+    private boolean writingStarted;
+
+    private boolean headerWritten;
+
+    private S lastWrittenSubject;
+
+    private XmlNamespaceContext context = XmlNamespaceContext.getDefaultInstance();
+
+    public RdfXmlWriter context(XmlNamespaceContext context) {
+        this.context = context;
+        return this;
     }
 
-    public void write(Resource resource, Writer writer, XMLNamespaceContext context) throws IOException {
+    public void write(Resource resource, OutputStream out) throws IOException {
+        write(resource, new OutputStreamWriter(out, "UTF-8"));
+    }
+
+    public void write(Resource resource, Writer writer) throws IOException {
         this.writer = writer;
         this.writingStarted = false;
         this.headerWritten = false;
         this.lastWrittenSubject = null;
-        this.context = context == null ? XMLNamespaceContext.getInstance() : context;
         // make RDF name spaces
         for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             handleNamespace(entry.getKey(), entry.getValue());

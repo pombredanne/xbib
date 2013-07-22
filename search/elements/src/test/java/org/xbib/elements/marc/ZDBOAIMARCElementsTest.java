@@ -39,7 +39,7 @@ import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.testng.annotations.Test;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -48,6 +48,7 @@ import org.xbib.marc.MarcXchange2KeyValue;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.io.turtle.TurtleWriter;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xml.sax.InputSource;
 
 public class ZDBOAIMARCElementsTest {
@@ -59,7 +60,7 @@ public class ZDBOAIMARCElementsTest {
 
         final AtomicLong counter = new AtomicLong();
 
-        final ElementOutput output = new ElementOutput<ResourceContext>() {
+        final ElementOutput output = new ElementOutput<ResourceContext, Resource>() {
             @Override
             public boolean enabled() {
                 return true;
@@ -70,7 +71,7 @@ public class ZDBOAIMARCElementsTest {
             }
 
             @Override
-            public void output(ResourceContext context) throws IOException {
+            public void output(ResourceContext context, ContentBuilder<ResourceContext, Resource> builder) throws IOException {
                 if (!context.resource().isEmpty()) {
                     Resource r = context.resource();
                     r.id(IRI.builder().host("myindex").query("mytype").fragment(counter.toString()).build());

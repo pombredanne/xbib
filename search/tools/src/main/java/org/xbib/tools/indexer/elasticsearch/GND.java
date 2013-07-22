@@ -32,7 +32,7 @@
 package org.xbib.tools.indexer.elasticsearch;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
+import org.xbib.elasticsearch.support.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
 import org.xbib.io.InputService;
 import org.xbib.iri.IRI;
@@ -163,7 +163,7 @@ public class GND {
 
         private void flush() {
             try {
-                sink.output(context);
+                sink.output(context, context.contentBuilder());
             } catch (IOException e) {
                 logger.error("flush failed: {}", e.getMessage(), e);
             }

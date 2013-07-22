@@ -60,7 +60,8 @@ public class ItemLibraryIdentifier extends MARCElement {
     }
 
     private void createISIL(MARCElementBuilder b, String isil, String provider) {
-        b.context().getResource(b.context().resource(), IDENTIFIER).add(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
+        b.context().resource().newResource(IDENTIFIER)
+                .add(XBIB_IDENTIFIER_AUTHORITY_ISIL, isil);
         if (provider == null) {
             provider = defaultProvider;
         }
@@ -73,8 +74,8 @@ public class ItemLibraryIdentifier extends MARCElement {
 
     private void createItemService(MARCElementBuilder b, String itemStatus) {
         LiaContext lia = b.context();
-        String format = "marc"; //b.context().getFormat();
-        boolean continuing = true; //b.context().getContinuing();
+        String format = "marc";
+        boolean continuing = true;
         if (itemStatus == null) {
             // default service
             lia.getAccess().service(Service.INTER_LIBRARY_LOAN);

@@ -76,7 +76,7 @@ public class ZClientFactory implements ZConstants {
         try {
             URI uri = URI.create(properties.getProperty(ADDRESS_PROPERTY));
             Connection<ZSession> connection = ConnectionService.getInstance()
-                    .getConnectionFactory(uri.getScheme())
+                    .getFactory(uri)
                     .getConnection(uri);
             ZSession session = connection.createSession();
             return session.newZClient(properties);

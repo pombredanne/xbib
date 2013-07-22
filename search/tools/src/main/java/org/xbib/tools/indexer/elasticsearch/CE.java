@@ -41,9 +41,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngest;
+import org.xbib.elasticsearch.support.TransportClientIngest;
 import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.analyzer.output.ElementOutput;
+import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -183,7 +183,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
         if (uri == null) {
             return;
         }
-        InputStream in = factory.getInputStream(uri);
+        InputStream in = factory.open(uri);
         if (in == null) {
             throw new IOException("unable to open " + uri);
         }
@@ -221,7 +221,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                         .newResource("dc:description")
                         .add("dcterms:tableOfContents", sb.toString());
 
-                out.output(ctx);
+                out.output(ctx, ctx.contentBuilder());
             }
         }
     }

@@ -31,37 +31,32 @@
  */
 package org.xbib.analyzer.dublincore;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.AbstractResourceContext;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
+import org.xbib.rdf.xcontent.ContentBuilder;
+import org.xbib.rdf.xcontent.DefaultContentBuilder;
 
 public class DublinCoreContext
-        extends AbstractResourceContext
-        implements ResourceContext, DublinCoreElements {
+        extends AbstractResourceContext<Resource>
+        implements ResourceContext<Resource>, DublinCoreElements {
 
-    private final static AtomicLong counter = new AtomicLong(0L);
+    private final ContentBuilder contentBuilder = new DefaultContentBuilder();
 
-    private final Map<String,Resource> resources = new HashMap();
+    @Override
+    public ContentBuilder contentBuilder() {
+        return contentBuilder;
+    }
 
     @Override
     public Resource newResource() {
         return new SimpleResource();
     }
 
-    public Resource getResource(Resource resource, String name) {
-        if (!resources.containsKey(name)) {
-            resources.put(name, resource.newResource(name));
-        }
-        return resources.get(name);
-    }
-
-    public long increment() {
-        return counter.incrementAndGet();
+    @Override
+    public ResourceContext<Resource> prepareForOutput() {
+        return this;
     }
 
 }

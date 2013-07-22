@@ -1,12 +1,12 @@
 package org.xbib.analyzer.mab.hbz.dialect;
 
-import org.xbib.elements.marc.extensions.mab.MABElement;
+import org.xbib.elements.marc.dialects.mab.MABElement;
 
-public class IdentifierIssn extends MABElement {
+public class IdentifierISSN extends MABElement {
     
-    private final static MABElement element = new IdentifierIssn();
+    private final static MABElement element = new IdentifierISSN();
     
-    private IdentifierIssn() {
+    private IdentifierISSN() {
     }
     
     public static MABElement getInstance() {

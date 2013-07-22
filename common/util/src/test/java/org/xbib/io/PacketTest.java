@@ -46,10 +46,10 @@ public class PacketTest extends Assert {
 
     @Test
     public void testPacketWrite() throws Exception {
-        String uri = "filegz:target/packetdemo";
+        URI uri = URI.create("filegz:target/packetdemo");
         Connection<Session<StringPacket>> c = ConnectionService.getInstance()
-                .getConnectionFactory("file")
-                .getConnection(URI.create(uri));
+                .getFactory(uri)
+                .getConnection(uri);
         Session<StringPacket> session = c.createSession();
         session.open(Session.Mode.APPEND);
         StringPacket data = session.newPacket();

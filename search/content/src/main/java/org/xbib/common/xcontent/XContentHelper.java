@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import org.xbib.common.bytes.BytesArray;
 import org.xbib.common.bytes.BytesReference;
 import org.xbib.common.Pair;
+import org.xbib.common.xcontent.xml.XmlXParams;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -141,16 +142,24 @@ public class XContentHelper {
     }
 
     public static String convertToXml(byte[] data, int offset, int length) throws IOException {
-        return convertToJson(data, offset, length, false);
+        return convertToXml(XmlXParams.getDefaultParams(), data, offset, length, false);
     }
 
-    public static String convertToXml(byte[] data, int offset, int length, boolean prettyPrint) throws IOException {
+    public static String convertToXml(byte[] data, int offset, int length, boolean prettyprint) throws IOException {
+        return convertToXml(XmlXParams.getDefaultParams(), data, offset, length, prettyprint);
+    }
+
+    public static String convertToXml(XmlXParams params, byte[] data, int offset, int length) throws IOException {
+        return convertToXml(params, data, offset, length, false);
+    }
+
+    public static String convertToXml(XmlXParams params, byte[] data, int offset, int length, boolean prettyPrint) throws IOException {
         XContentType xContentType = XContentFactory.xContentType(data, offset, length);
         XContentParser parser = null;
         try {
             parser = XContentFactory.xContent(xContentType).createParser(data, offset, length);
             parser.nextToken();
-            XContentBuilder builder = XContentFactory.xmlBuilder();
+            XContentBuilder builder = XContentFactory.xmlBuilder(params);
             if (prettyPrint) {
                 builder.prettyPrint();
             }

@@ -73,7 +73,7 @@ public class MARCPipeline
         if (fields == null) {
             return;
         }
-        String key = fields.toMarcSpec();
+        String key = fields.toSpec();
         MARCElement element = null;
         try {
             element = (MARCElement) specification.getElement(key, map());
@@ -214,7 +214,7 @@ public class MARCPipeline
                 // add child resource
                 resource.add(predicate, newResource);
                 // switch back to old resource
-                builder().context().newResource(resource);
+                builder().context().setResource(resource);
             }
         } else {
             if (detectUnknownKeys) {
