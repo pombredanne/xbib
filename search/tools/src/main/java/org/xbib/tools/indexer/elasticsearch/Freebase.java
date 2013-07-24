@@ -33,11 +33,11 @@ package org.xbib.tools.indexer.elasticsearch;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
+
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.TransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
 import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -47,68 +47,72 @@ import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
+import org.xbib.rdf.Resource;
+import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.ResourceContext;
-import org.xbib.rdf.io.xml.AbstractXmlHandler;
-import org.xbib.rdf.io.xml.AbstractXmlResourceHandler;
-import org.xbib.rdf.io.xml.XmlReader;
+import org.xbib.rdf.io.TripleListener;
+import org.xbib.rdf.io.turtle.TurtleReader;
 import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
+import org.xbib.tools.util.FormatUtil;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.text.NumberFormat;
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Elasticsearch indexer tool for Medline XML files
+ * Elasticsearch Freebase indexer
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public final class Medline extends AbstractImporter<Long, AtomicLong> {
+public class Freebase extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(Medline.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Freebase.class.getName());
 
     private final static String lf = System.getProperty("line.separator");
 
     private final static AtomicLong fileCounter = new AtomicLong(0L);
 
+    private final static AtomicLong docCounter = new AtomicLong(0L);
+
+    private final static AtomicLong charCounter = new AtomicLong(0L);
+
     private static Queue<URI> input;
 
     private static OptionSet options;
 
-    private final SimpleResourceContext resourceContext = new SimpleResourceContext();
+    private static ElasticsearchResourceSink sink;
 
-    private ElementOutput out;
+    private static IRI base;
 
     private boolean done = false;
 
-    private static String index;
-
-    private static String type;
-
     public static void main(String[] args) {
+
         try {
             OptionParser parser = new OptionParser() {
-
                 {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
-                    accepts("index").withRequiredArg().ofType(String.class).required().defaultsTo("medline");
-                    accepts("type").withRequiredArg().ofType(String.class).required().defaultsTo("medline");
+                    accepts("index").withRequiredArg().ofType(String.class).required();
+                    accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("medline13*.xml.gz");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
+                    accepts("path").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("*.rdf.gz");
+                    accepts("base").withRequiredArg().ofType(String.class).required().defaultsTo("http://freebase.com/");
+                    accepts("help");
                 }
             };
             options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + Medline.class.getCanonicalName() + lf
+                System.err.println("Help for " + EZB.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
@@ -116,8 +120,9 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
                         + " --maxbulkactions <n>   the number of bulk actions per request (optional, default: 100)"
                         + " --maxconcurrentbulkrequests <n>the number of concurrent bulk requests (optional, default: 10)"
                         + " --path <path>          a file path from where the input files are recursively collected (required)" + lf
-                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.json)" + lf
+                        + " --pattern <pattern>    a regex for selecting matching file names for input (default: *.rdf.gz)" + lf
                         + " --threads <n>          the number of threads (optional, default: <num-of=cpus)"
+                        + " --base <IRI>           a base IRI for Turtle to resolve against (required, default: http://freebase.com/)" + lf
                 );
                 System.exit(1);
             }
@@ -129,9 +134,10 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
             logger.info("input = {},  threads = {}", input, threads);
 
-            URI esURI = URI.create((String)options.valueOf("elasticsearch"));
-            index = (String)options.valueOf("index");
-            type = (String)options.valueOf("type");
+            final String elasticsearch = (String) options.valueOf("elasticsearch");
+            final String index = (String) options.valueOf("index");
+            final String type = (String) options.valueOf("type");
+            final URI esURI = URI.create(elasticsearch);
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean mock = (Boolean)options.valueOf("mock");
@@ -142,32 +148,57 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
+                    .setIndex(index)
+                    .setType(type)
                     .newClient(esURI)
                     .waitForHealthyCluster(ClusterHealthStatus.GREEN, TimeValue.timeValueSeconds(30));
 
-            final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
+            sink = new ElasticsearchResourceSink(es);
 
+            base = IRI.create((String)options.valueOf("base"));
+
+            long t0 = System.currentTimeMillis();
             ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
-
                         @Override
                         public Importer newImporter() {
-                            return new Medline(sink);
+                            return new Freebase();
                         }
                     }).execute();
-            logger.info("files indexed = {}, resources indexed = {}", fileCounter, sink.getCounter());
+            long t1 = System.currentTimeMillis();
+            long docs = docCounter.get();
+            long bytes = charCounter.get();
+            double dps = docs * 1000.0 / (double)(t1 - t0);
+            double avg = bytes / (docs + 1); // avoid div by zero
+            double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = FormatUtil.formatMillis(t1 - t0);
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            logger.info("Converting complete. {} files, {} docs, {} = {} ms, {} = {} chars, {} = {} avg size, {} dps, {} MB/s",
+                    fileCounter,
+                    docs,
+                    t,
+                    (t1-t0),
+                    bytes,
+                    byteSize,
+                    avgSize,
+                    formatter.format(avg),
+                    formatter.format(dps),
+                    formatter.format(mbps));
 
             service.shutdown();
 
-        } catch (IOException | InterruptedException | ExecutionException e) {
+            es.shutdown();
+
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
         System.exit(0);
     }
 
-    public Medline(ElementOutput out) {
-        this.out = out;
+    private Freebase() {
     }
 
     @Override
@@ -182,74 +213,73 @@ public final class Medline extends AbstractImporter<Long, AtomicLong> {
 
     @Override
     public AtomicLong next() {
-        URI uri = input.isEmpty() ? null : input.poll();
-        done = (uri == null);
+        URI uri = input.poll();
+        done = uri == null;
         if (done) {
             return fileCounter;
         }
         try {
-            AbstractXmlHandler handler = new Handler(resourceContext)
-                    .setDefaultNamespace("ml", "http://www.nlm.nih.gov/medline");
             InputStream in = InputService.getInputStream(uri);
-            new XmlReader()
-                    .setNamespaces(false)
-                    .setHandler(handler)
+            ElasticBuilder builder = new ElasticBuilder(sink);
+            new TurtleReader(base)
+                    .setTripleListener(builder)
                     .parse(in);
             in.close();
             fileCounter.incrementAndGet();
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("error while parsing from stream: " + ex.getMessage(), ex);
         }
         return fileCounter;
     }
 
-    class Handler extends AbstractXmlResourceHandler {
+    private class ElasticBuilder implements TripleListener {
 
-        private String id = null;
+        private final ElasticsearchResourceSink sink;
 
-        public Handler(ResourceContext ctx) {
-            super(ctx);
+        private final ResourceContext context = new SimpleResourceContext();
+
+        private Resource resource;
+
+        ElasticBuilder(ElasticsearchResourceSink sink) throws IOException {
+            this.sink = sink;
+            resource = context.newResource();
+        }
+
+        public void close() throws IOException {
+            flush();
+            sink.flush();
         }
 
         @Override
-        public void closeResource() {
-            super.closeResource();
+        public TripleListener startPrefixMapping(String prefix, String uri) {
+            return this;
+        }
+
+        @Override
+        public TripleListener endPrefixMapping(String prefix) {
+            return this;
+        }
+
+        @Override
+        public ElasticBuilder newIdentifier(IRI uri) {
+            flush();
+            resource.id(uri);
+            return this;
+        }
+
+        @Override
+        public ElasticBuilder triple(Triple triple) {
+            resource.add(triple);
+            return this;
+        }
+
+        private void flush() {
             try {
-                resourceContext.resource().id(IRI.builder()
-                        .scheme("http")
-                        .host(index)
-                        .query(type)
-                        .fragment(id)
-                        .build());
-                out.output(resourceContext, resourceContext.contentBuilder());
-                id = null;
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                sink.output(context, context.contentBuilder());
+            } catch (IOException e) {
+                logger.error("flush failed: {}", e.getMessage(), e);
             }
         }
 
-        @Override
-        public boolean isResourceDelimiter(QName name) {
-            return "MedlineCitation".equals(name.getLocalPart());
-        }
-
-        @Override
-        public void identify(QName name, String value, IRI identifier) {
-            // important: there are many occurances of PMID. We must only take the first occurance for the ID.
-            if (id == null && "PMID".equals(name.getLocalPart())) {
-                this.id = value;
-            }
-        }
-
-        @Override
-        public boolean skip(QName name) {
-            boolean skipped = "MedlineCitationSet".equals(name.getLocalPart())
-                    || "MedlineCitation".equals(name.getLocalPart())
-                    // gives ES "unknown property" error
-                    || "@Label".equals(name.getLocalPart())
-                    || "@NlmCategory".equals(name.getLocalPart());
-            return skipped;
-        }
     }
-
 }

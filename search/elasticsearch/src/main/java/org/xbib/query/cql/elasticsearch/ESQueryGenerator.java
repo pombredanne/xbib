@@ -31,6 +31,7 @@
  */
 package org.xbib.query.cql.elasticsearch;
 
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.xbib.date.DateUtil;
 import org.xbib.query.cql.*;
 import org.xbib.query.cql.Visitor;
@@ -47,7 +48,7 @@ import java.util.Stack;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ESGenerator implements Visitor {
+public class ESQueryGenerator implements Visitor {
 
     /**
      * the default resource bundle
@@ -61,18 +62,26 @@ public class ESGenerator implements Visitor {
 
     private Stack<Node> stack;
 
-    private SourceGenerator sourceGen;
-
-    private QueryGenerator queryGen;
-
     private int from;
 
     private int size;
 
+    private SourceGenerator sourceGen;
+
+    private QueryGenerator queryGen;
+
+    private SortGenerator sortGen;
+
+    private FilterGenerator filterGen;
+
+    private XContentBuilder filter;
+
+    private XContentBuilder facets;
+
     /**
      * Default constructor
      */
-    public ESGenerator() {
+    public ESQueryGenerator() {
         this(DEFAULT_BUNDLE);
     }
 
@@ -81,12 +90,12 @@ public class ESGenerator implements Visitor {
      *
      * @param bundle
      */
-    public ESGenerator(ResourceBundle bundle) {
+    public ESQueryGenerator(ResourceBundle bundle) {
         this.bundle = bundle;
         reset();
     }
 
-    public final ESGenerator reset() {
+    public final ESQueryGenerator reset() {
         this.model = new QueryModel(bundle);
         this.stack = new Stack();
         try {
@@ -102,7 +111,7 @@ public class ESGenerator implements Visitor {
         return model;
     }
 
-    public ESGenerator setFrom(String from) {
+    public ESQueryGenerator setFrom(String from) {
         try {
             if (from != null && from.length() > 0) {
                 int n = Integer.parseInt(from);
@@ -115,16 +124,12 @@ public class ESGenerator implements Visitor {
         return this;
     }
 
-    public ESGenerator setFrom(int from) {
+    public ESQueryGenerator setFrom(int from) {
         this.from = from;
         return this;
     }
     
-    public int getFrom() {
-        return from;
-    }
-    
-    public ESGenerator setSize(String size) {
+    public ESQueryGenerator setSize(String size) {
         try {
             if (size != null && size.length() > 0) {
                 int n = Integer.parseInt(size);
@@ -137,16 +142,20 @@ public class ESGenerator implements Visitor {
         return this;
     }
 
-    public ESGenerator setSize(int size) {
+    public ESQueryGenerator setSize(int size) {
         this.size = size;
         return this;
     }
 
-    public int getSize() {
-        return size;
+    public ESQueryGenerator setFilter(XContentBuilder filter) {
+        this.filter = filter;
+        return this;
     }
 
-
+    public ESQueryGenerator setFacets(XContentBuilder facets) {
+        this.facets = facets;
+        return this;
+    }
 
     /**
      * Return only Elasticsearch query string
@@ -155,10 +164,10 @@ public class ESGenerator implements Visitor {
      * @throws IOException
      */
     public String getQueryResult() throws IOException {
-        return queryGen.getResult();
+        return queryGen.getResult().string();
     }
 
-    public String getRequestResult() throws IOException {
+    public String getSourceResult() throws IOException {
         return sourceGen.getResult();
     }
 
@@ -172,7 +181,7 @@ public class ESGenerator implements Visitor {
             queryGen.start();
             node.getQuery().accept(this);
             // check for a filter after query node was being accepted
-            ESExpression filternode = model.getFilter();
+            ESExpression filternode = model.getFilterExpression();
             if (filternode != null) {
                 queryGen.startFiltered();
             }
@@ -182,9 +191,10 @@ public class ESGenerator implements Visitor {
             }
             queryGen.visit((ESExpression) querynode);
             // filter must precede sort
+            filterGen = null;
             if (filternode != null) {
                 queryGen.end();
-                FilterGenerator filterGen = new FilterGenerator(queryGen);
+                filterGen = new FilterGenerator(queryGen.getResult());
                 filterGen.startFilter();
                 filterGen.visit(filternode);
                 filterGen.endFilter();
@@ -193,15 +203,19 @@ public class ESGenerator implements Visitor {
             queryGen.end();
             // important, add optional sort after filter
             ESExpression sortnode = model.getSort();
+            sortGen = null;
             if (sortnode != null) {
-                SortGenerator sortGen = new SortGenerator();
+                sortGen = new SortGenerator();
                 sortGen.start();
                 sortGen.visit(sortnode);
                 sortGen.end();
-                sourceGen.build(queryGen, sortGen, from,size);
-            } else {
-                sourceGen.build(queryGen, from, size);
             }
+            sourceGen.build(queryGen,
+                    from,
+                    size,
+                    sortGen != null ? sortGen.getResult() : null,
+                    filter,
+                    facets);
         } catch (IOException e) {
             throw new SyntaxException("unable to build a valid query from " + node + " , reason: " + e.getMessage(), e);
         }

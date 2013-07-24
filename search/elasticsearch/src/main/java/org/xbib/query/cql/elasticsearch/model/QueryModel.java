@@ -200,7 +200,7 @@ public final class QueryModel {
      *
      * @return a single filter expression or null if there are no filter terms
      */
-    public ESExpression getFilter() {
+    public ESExpression getFilterExpression() {
         ESExpression conjunctiveclause = null;
         if (!conjunctivefilters.isEmpty()) {
             conjunctiveclause = new ESExpression(Operator.AND,
@@ -214,8 +214,7 @@ public final class QueryModel {
         if (conjunctiveclause == null && disjunctiveclause == null) {
             return null;
         }
-        return new ESExpression(Operator.FILTER,
-                new ESExpression(Operator.OR, conjunctiveclause, disjunctiveclause));
+        return new ESExpression(Operator.OR, conjunctiveclause, disjunctiveclause);
     }
     
     /**

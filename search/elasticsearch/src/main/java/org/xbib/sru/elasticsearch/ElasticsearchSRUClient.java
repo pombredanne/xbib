@@ -56,7 +56,7 @@ import java.util.Map;
 public class ElasticsearchSRUClient implements
         SRUClient<ElasticsearchSRURequest,ElasticsearchSRUResponse> {
 
-    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUService.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUClient.class.getName());
 
     private final static Map<URI,CQLSearchSupport> support = new HashMap();
 
@@ -160,22 +160,18 @@ public class ElasticsearchSRUClient implements
             if (size < 0) {
                 size = 0;
             }
+            // creating CQL from SearchRetrieve request
             CQLSearchRequest cqlRequest  = support.get(service.getURI()).newSearchRequest()
                     .index(getIndex(request))
                     .type(getType(request))
                     .from(from)
                     .size(size)
-                    .cql(getQuery(request))
+                    .cql(locationFromIndexType(request))
+                    .cqlFilter(request.getFilter())
+                    .cqlFacetFilter(request.getFilter())
                     .facet(request.getFacetLimit(), request.getFacetSort(), null);
-
-            logger.info("query = {}", cqlRequest);
-
-            Logger logger = LoggerFactory.getLogger(ElasticsearchSRUService.class.getName());
-
             CQLSearchResponse cqlResponse = cqlRequest.executeSearch(logger);
-
             response.setBuffer(cqlResponse.bytes());
-
             response.setFacets(cqlResponse.getSearchResponse().getFacets());
 
         } catch (SyntaxException e) {
@@ -246,7 +242,7 @@ public class ElasticsearchSRUClient implements
         return path.split("/");
     }
 
-    private String getQuery(SearchRetrieveRequest request) {
+    private String locationFromIndexType(SearchRetrieveRequest request) {
         String location = null;
         String path = request.getPath();
         path = path != null && path.startsWith("/sru") ? path.substring(4) : path;

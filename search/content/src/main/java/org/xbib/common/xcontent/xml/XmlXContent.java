@@ -47,8 +47,6 @@ import java.io.Writer;
  */
 public class XmlXContent implements XContent {
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlXContent.class.getName());
-
     private final static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
     private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();

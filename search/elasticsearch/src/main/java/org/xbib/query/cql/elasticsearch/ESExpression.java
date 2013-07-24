@@ -39,8 +39,11 @@ package org.xbib.query.cql.elasticsearch;
 public class ESExpression implements Node {
 
     private Operator op;
+
     private Node[] args;
+
     private TokenType type;
+
     private boolean visible;
 
     /**
@@ -63,7 +66,7 @@ public class ESExpression implements Node {
         for (Node node : args) {
             if (node instanceof ESName) {
                 this.visible = visible && node.isVisible();
-                this.type = ((ESName) node).getType();
+                this.type = node.getType();
             }
         }
     }

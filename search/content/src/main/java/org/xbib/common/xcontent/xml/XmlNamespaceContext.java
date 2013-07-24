@@ -44,8 +44,6 @@ public class XmlNamespaceContext implements NamespaceContext {
 
     private static final String DEFAULT_RESOURCE = "xml-namespaces";
 
-    private static XmlNamespaceContext instance;
-
     private final SortedMap<String, String> namespaces = new TreeMap();
 
     private final SortedMap<String, Set<String>> prefixes = new TreeMap();
@@ -82,10 +80,10 @@ public class XmlNamespaceContext implements NamespaceContext {
 
     public static XmlNamespaceContext newInstance(String bundleName) {
         try {
-            return instance = new XmlNamespaceContext(ResourceBundle.getBundle(bundleName));
+            return new XmlNamespaceContext(ResourceBundle.getBundle(bundleName));
         } catch (MissingResourceException e) {
             logger.warn("bundle name {} not found, namespace will be empty", bundleName);
-            return instance = new XmlNamespaceContext();
+            return new XmlNamespaceContext();
         }
     }
 

@@ -44,7 +44,9 @@ import org.xbib.elasticsearch.action.search.support.BasicRequest;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
-import org.xbib.query.cql.elasticsearch.ESGenerator;
+import org.xbib.query.cql.elasticsearch.ESFilterGenerator;
+import org.xbib.query.cql.elasticsearch.ESQueryGenerator;
+import org.xbib.util.Strings;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -57,23 +59,31 @@ public class CQLSearchRequest extends BasicRequest {
 
     private static final Logger logger = LoggerFactory.getLogger(CQLSearchRequest.class.getName());
 
-    private ESGenerator generator;
-
     private String[] index;
 
     private String[] type;
 
     private String id;
 
-    private String originalQuery;
+    private String cqlQuery;
+
+    private String cqlFilter;
+
+    private String cqlFacetFilter;
 
     private String query;
 
-    private String facets;
+    private ESQueryGenerator generator;
+
+    private XContentBuilder filter;
+
+    private XContentBuilder facets;
+
+    private XContentBuilder facetfilter;
 
     public CQLSearchRequest newSearchRequest(SearchRequestBuilder searchRequestBuilder) {
         super.newSearchRequest(searchRequestBuilder);
-        this.generator = new ESGenerator();
+        this.generator = new ESQueryGenerator();
         return this;
     }
 
@@ -139,13 +149,6 @@ public class CQLSearchRequest extends BasicRequest {
         return this;
     }
 
-    public CQLSearchRequest filter(String filter) {
-        if (searchRequestBuilder() != null) {
-            searchRequestBuilder().setFilter(filter);
-        }
-        return this;
-    }
-
     /**
      * Translate SearchRetrieve facets to Elasticsearch
      * @param limit
@@ -162,10 +165,10 @@ public class CQLSearchRequest extends BasicRequest {
         if (searchRequestBuilder() == null) {
             return this;
         }
-        Map<String,Integer> facets = parseFacet(limit);
+        Map<String,Integer> facetMap = parseFacet(limit);
         String[] sortSpec = sort != null ? sort.split(",") : new String[] { "recordCount", "descending" };
         // all facets disabled?
-        Integer globalSize = facets.get("*");
+        Integer globalSize = facetMap.get("*");
         if (globalSize == 0 ) {
             return this;
         }
@@ -181,29 +184,28 @@ public class CQLSearchRequest extends BasicRequest {
             }
         }
         try {
-            XContentBuilder builder = jsonBuilder();
-            builder.startObject();
-            int n = 1;
-            for (String index : facets.keySet()) {
+            facets = jsonBuilder();
+            facets.startObject();
+            for (String index : facetMap.keySet()) {
                 if ("*".equals(index)) {
                     continue;
                 }
                 String facetType = facetTypes != null && facetTypes.containsKey(index) ?
                         facetTypes.get(index) : "terms";
-                Integer size = facets.get(index);
-                builder.field(index)
+                Integer size = facetMap.get(index);
+                facets.field(index)
                         .startObject()
                         .field(facetType).startObject()
                         .field("field", generator.getModel().getFieldOfIndex(index))
                         .field("size", size > 0 ? size : globalSize > 0 ? globalSize : Integer.MAX_VALUE)
                         .field("order", order)
-                        .endObject()
                         .endObject();
-                n++;
+                if (facetfilter != null) {
+                    facets.rawField("facet_filter", facetfilter.bytes());
+                }
+                facets.endObject();
             }
-            builder.endObject();
-            searchRequestBuilder().setFacets(builder);
-            this.facets = builder.string();
+            facets.endObject();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             return this;
@@ -221,8 +223,15 @@ public class CQLSearchRequest extends BasicRequest {
 
 
     public CQLSearchRequest query(String query) {
-        this.originalQuery = this.query;
         this.query = query == null || query.trim().length() == 0 ? "{\"query\":{\"match_all\":{}}}" : query;
+        return this;
+    }
+
+    public CQLSearchRequest filter(XContentBuilder filter) {
+        if (filter == null) {
+            return this;
+        }
+        this.filter = filter;
         return this;
     }
 
@@ -231,19 +240,45 @@ public class CQLSearchRequest extends BasicRequest {
             from(0).size(10).query(null);
             return this;
         }
-        this.originalQuery = query;
-        CQLParser parser = new CQLParser(new StringReader(query));
-        parser.parse();
-        parser.getCQLQuery().accept(generator);
-        this.query = generator.getRequestResult();
+        this.cqlQuery = query;
         return this;
     }
+
+    public CQLSearchRequest cqlFilter(String filter) throws IOException {
+        if (filter == null || filter.trim().length() == 0) {
+            return this;
+        }
+        this.cqlFilter = filter;
+        CQLParser parser = new CQLParser(new StringReader(filter));
+        parser.parse();
+        ESFilterGenerator filterGenerator = new ESFilterGenerator();
+        parser.getCQLQuery().accept(filterGenerator);
+        this.filter = filterGenerator.getResult();
+        return this;
+    }
+
+    public CQLSearchRequest cqlFacetFilter(String filter) throws IOException {
+        if (filter == null) {
+            return this;
+        }
+        this.cqlFacetFilter = filter;
+        CQLParser parser = new CQLParser(new StringReader(filter));
+        parser.parse();
+        ESFilterGenerator filterGenerator = new ESFilterGenerator();
+        parser.getCQLQuery().accept(filterGenerator);
+        this.facetfilter = filterGenerator.getResult();
+        return this;
+    }
+
 
     public CQLSearchResponse executeSearch(Logger queryLogger)
             throws IOException {
         CQLSearchResponse response = new CQLSearchResponse();
         if (searchRequestBuilder() == null) {
             return response;
+        }
+        if (query == null) {
+            query = createQuerySource();
         }
         if (query == null) {
             return response;
@@ -260,8 +295,10 @@ public class CQLSearchRequest extends BasicRequest {
                 .execute().actionGet());
         long t1 = System.currentTimeMillis();
         if (queryLogger != null) {
-            queryLogger.info(" [{}] [{}ms] [{}ms] [{}] [{}] [{}]",
-                    formatIndexType(), t1 - t0, response.tookInMillis(), response.totalHits(), originalQuery, query);
+            queryLogger.info(" [{}] [{}ms] [{}ms] [hits={}] [cql={}] [cql={}] [cqlfilter={}] [cqlfacetfilter={}] [{}] [{}] [{}]",
+                    formatIndexType(), t1 - t0, response.tookInMillis(), response.totalHits(),
+                    cqlQuery, cqlFilter, cqlFacetFilter,
+                    query, filter, facetfilter);
         }
         return response;
     }
@@ -276,6 +313,27 @@ public class CQLSearchRequest extends BasicRequest {
                     index, type, getRequestBuilder().request().id(), (t1 - t0), response.exists());
         }
         return response;
+    }
+
+    private String createQuerySource()  {
+        if (filter != null) {
+            generator.setFilter(filter);
+        }
+        if (facets != null) {
+            generator.setFacets(facets);
+        }
+        if (cqlQuery != null) {
+            // all filters and facets are set, generate query at last
+            try {
+                CQLParser parser = new CQLParser(new StringReader(cqlQuery));
+                parser.parse();
+                parser.getCQLQuery().accept(generator);
+                return generator.getSourceResult();
+            } catch (IOException e) {
+                //
+            }
+        }
+        return null;
     }
 
     private boolean hasIndex(String[] s) {
@@ -383,11 +441,7 @@ public class CQLSearchRequest extends BasicRequest {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[original=").append(originalQuery)
-                .append("],[query=").append(query).append("]")
-                .append(",[facets=").append(facets).append("]");
-        return sb.toString();
+        return createQuerySource();
     }
 
 }

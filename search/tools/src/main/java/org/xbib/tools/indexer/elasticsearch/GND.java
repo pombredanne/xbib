@@ -70,6 +70,9 @@ public class GND {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
+                    accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
+                    accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(4 * Runtime.getRuntime().availableProcessors());
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("gndfile").withRequiredArg().ofType(String.class).required();
                     accepts("help");
                 }
@@ -85,10 +88,11 @@ public class GND {
                 );
                 System.exit(1);
             }
-            final String uriStr = (String) options.valueOf("gndfile");
             final String elasticsearch = (String) options.valueOf("elasticsearch");
             final String index = (String) options.valueOf("index");
             final String type = (String) options.valueOf("type");
+
+            final String uriStr = (String) options.valueOf("gndfile");
             URI uri = URI.create(uriStr);
             InputStream in = InputService.getInputStream(uri);
             if (in == null) {

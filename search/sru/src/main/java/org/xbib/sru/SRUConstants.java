@@ -63,6 +63,11 @@ public interface SRUConstants {
      * Contains a query expressed in CQL to be processed by the server.
      */
     String QUERY_PARAMETER = "query";
+
+    /**
+     * Contains a query for filtering query results, in CQL.
+     */
+    String FILTER_PARAMETER = "filter";
     
     /**
      * The position within the sequence of matched records of the first 

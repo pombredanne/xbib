@@ -66,6 +66,7 @@ public class ElasticsearchSRUTest {
         ElasticsearchSRURequest request = client.newSearchRetrieveRequest();
         request.setVersion("2.0")
             .setQuery("dc.creator = \"John\"")
+                //.setFilter("")
             .setFacetLimit("100:dc.language")
             .setStartRecord(1)
             .setMaximumRecords(10)

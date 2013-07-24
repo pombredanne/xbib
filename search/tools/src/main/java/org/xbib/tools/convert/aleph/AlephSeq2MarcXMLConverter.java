@@ -76,17 +76,29 @@ import org.xml.sax.SAXNotSupportedException;
 public class AlephSeq2MarcXMLConverter extends AbstractImporter<Long, AtomicLong> {
 
     private final static Logger logger = LoggerFactory.getLogger(AlephSeq2MarcXMLConverter.class.getName());
+
     private final static AtomicLong fileCounter = new AtomicLong(0L);
+
     private final int BUFFER_SIZE = 8192;
+
     private final String INPUT_ENCODING = "UTF-8";
+
     private final String OUTPUT_ENCODING = "UTF-8";
+
     private final BytesProgressWatcher watcher;
+
     private boolean done = false;
+
     private static String output;
+
     private static String basename;
+
     private long splitsize = 1000000L;
+
     private String linkformat = "http://index.hbz-nrw.de/query/services/document/xhtml/hbz/title/%s";
+
     private Queue<URI> input;
+
     private List<Integer> enable;
 
     public static void main(String[] args) {
@@ -146,8 +158,7 @@ public class AlephSeq2MarcXMLConverter extends AbstractImporter<Long, AtomicLong
 
                         @Override
                         public Importer newImporter() {
-                            AlephSeq2MarcXMLConverter importer = new AlephSeq2MarcXMLConverter().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
-                            return importer;
+                            return new AlephSeq2MarcXMLConverter().setInput(input).setEnable(enable).setLinkPattern(linkformat).setSplitSize(splitsize);
                         }
                     }).execute();
         } catch (IOException | InterruptedException | ExecutionException e) {
@@ -159,10 +170,6 @@ public class AlephSeq2MarcXMLConverter extends AbstractImporter<Long, AtomicLong
 
     public AlephSeq2MarcXMLConverter() {
         this.watcher = new BytesProgressWatcher(BUFFER_SIZE);
-    }
-
-    public AlephSeq2MarcXMLConverter setURI(URI uri) {
-        return this;
     }
 
     public AlephSeq2MarcXMLConverter setInput(Queue<URI> list) {

@@ -61,9 +61,9 @@ public class SortGenerator implements Visitor {
         builder.endArray();
     }
 
-    public String getResult() throws IOException {
+    public XContentBuilder getResult() throws IOException {
         builder.close();
-        return builder.string();
+        return builder;
     }
 
     @Override
@@ -110,12 +110,12 @@ public class SortGenerator implements Visitor {
 
     @Override
     public void visit(ESExpression node) {
-            Operator op = node.getOperator();
-            if (op == Operator.SORT) {
-                for (Node arg : node.getArgs()) {
-                    arg.accept(this);
-                }
+        Operator op = node.getOperator();
+        if (op == Operator.SORT) {
+            for (Node arg : node.getArgs()) {
+                arg.accept(this);
             }
+        }
     }
 
 }

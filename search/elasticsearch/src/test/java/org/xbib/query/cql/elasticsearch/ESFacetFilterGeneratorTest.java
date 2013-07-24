@@ -31,59 +31,47 @@
  */
 package org.xbib.query.cql.elasticsearch;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.xbib.elasticsearch.support.CQLSearchRequest;
+import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.query.cql.CQLParser;
+
+import java.io.StringReader;
+
 /**
- * ElasticSearch operators
- *
+ *  Elasticsearch filter generation
+
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public enum Operator implements Node {
-    EQUALS(2),
-    NOT_EQUALS(2),
-    RANGE_LESS_THAN(2),
-    RANGE_LESS_OR_EQUALS(2),
-    RANGE_GREATER_THAN(2),
-    RANGE_GREATER_OR_EQUAL(2),
-    RANGE_WITHIN(2),
-    AND(2),
-    ANDNOT(2),
-    OR(2),
-    PROX(2),
-    ALL(2),
-    ANY(2),
-    PHRASE(2),
-    TERM_FILTER(2),
-    QUERY_FILTER(2),
-    SORT(0)
-    ;
-    
-    private final int arity;
-    
-    Operator(int arity) {
-        this.arity = arity;
-    }
+public class ESFacetFilterGeneratorTest extends Assert {
 
-    @Override
-    public boolean isVisible() {
-        return true;
-    }
+    private final static Logger logger = LoggerFactory.getLogger(ESFacetFilterGeneratorTest.class.getName());
 
-    @Override
-    public TokenType getType() {
-        return TokenType.OPERATOR;
-    }
-    
-    public int getArity() {
-        return arity;
-    }
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+    @Test
+    public void testFacetFilter() throws Exception {
 
-    @Override
-    public String toString() {
-        return this.name();
+        CQLSearchSupport support = new CQLSearchSupport().newClient();
+        String cql = "Köln";
+        String cqlFilter = "dc.format = online and dc.date = 2012";
+
+        // creating CQL from SearchRetrieve request
+        CQLSearchRequest cqlRequest  = support.newSearchRequest()
+                .index("*")
+                .type("*")
+                .from(0)
+                .size(10)
+                .cql(cql)
+                .cqlFilter(cqlFilter)
+                .cqlFacetFilter(cqlFilter)
+                .facet("10:dc.format", null, null)
+                ;
+
+        logger.info("CQL query = {}", cqlRequest);
+
     }
 
 }

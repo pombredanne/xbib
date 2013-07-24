@@ -35,7 +35,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 
-import com.google.common.io.LineProcessor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.logging.Logger;
@@ -47,9 +46,9 @@ import org.xbib.query.cql.CQLParser;
 
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ESGeneratorTest extends Assert {
+public class ESQueryGeneratorTest extends Assert {
 
-    private final static Logger logger = LoggerFactory.getLogger(ESGeneratorTest.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(ESQueryGeneratorTest.class.getName());
        
     @Test
     public void testValid() throws Exception {
@@ -61,10 +60,10 @@ public class ESGeneratorTest extends Assert {
                 String[] s = line.split("\\|");
                 CQLParser parser = new CQLParser(new StringReader(s[0]));
                 parser.parse();
-                ESGenerator generator = new ESGenerator();
+                ESQueryGenerator generator = new ESQueryGenerator();
                 parser.getCQLQuery().accept(generator);
                 String q = generator.getQueryResult();
-                //logger.info("{} --> {} --> {}", s[0], q, generator.getRequestResult() );
+                //logger.info("{} --> {} --> {}", s[0], q, generator.getSourceResult() );
                 //String pq = QueryParserService.parseQuery(q);
                 //logger.log(Level.INFO, "ES PARSER: " + pq );
                 //if (s.length > 1) {

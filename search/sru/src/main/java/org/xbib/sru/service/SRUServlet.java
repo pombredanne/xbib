@@ -97,7 +97,8 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
                     .setURI(getBaseURI(request))
                     .setPath(request.getPathInfo())
                     .setVersion(request.getParameter(VERSION_PARAMETER))
-                    .setQuery(request.getParameter(QUERY_PARAMETER));
+                    .setQuery(request.getParameter(QUERY_PARAMETER))
+                    .setFilter(request.getParameter(FILTER_PARAMETER));
                 int startRecord = Integer.parseInt(
                         request.getParameter(START_RECORD_PARAMETER) != null
                         ? request.getParameter(START_RECORD_PARAMETER) : "1");

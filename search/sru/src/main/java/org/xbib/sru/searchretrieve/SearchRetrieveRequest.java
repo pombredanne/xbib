@@ -40,13 +40,18 @@ import java.util.List;
 
 public class SearchRetrieveRequest extends DefaultSRURequest implements SRURequest {
 
-    private String version = "1.2";
+    private String version;
 
     private String recordPacking;
 
     private String recordSchema;
 
     private String query;
+
+    /**
+     * private extension, a query for filtering query results
+     */
+    private String filter;
 
     private int recordNum;
 
@@ -112,6 +117,15 @@ public class SearchRetrieveRequest extends DefaultSRURequest implements SRUReque
 
     public String getQuery() {
         return query;
+    }
+
+    public SearchRetrieveRequest setFilter(String filter) {
+        this.filter = filter;
+        return this;
+    }
+
+    public String getFilter() {
+        return filter;
     }
 
     public SearchRetrieveRequest setStartRecord(int recordNum) {

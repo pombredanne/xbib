@@ -31,34 +31,38 @@
  */
 package org.xbib.elasticsearch;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.xbib.elements.ElementOutput;
-import org.xbib.elasticsearch.support.ClientIngest;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.xcontent.ContentBuilder;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
- * Index RDF resources into Elasticsearch
+ * Write RDF resources as Elasticsearch bulk format
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  *
  * @param <C>
  * @param <R>
  */
-public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
+public class ElasticsearchBulkFormatSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C, R> {
 
-    private final ClientIngest ingester;
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchBulkFormatSink.class.getName());
 
     private final AtomicInteger resourceCounter = new AtomicInteger(0);
 
+    private Writer writer;
+
     private boolean enabled;
 
-    public ElasticsearchResourceSink(final ClientIngest ingester) {
-        this.ingester = ingester;
+    public ElasticsearchBulkFormatSink(Writer writer) {
+        this.writer = writer;
     }
 
     @Override
@@ -92,7 +96,14 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
             if (id == null) {
                 throw new IOException("id must not be null, no fragment set in IRI?");
             }
-            ingester.indexDocument(index, type, id, source);
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\"index\":{\"_index\":\"")
+                    .append(index).append("\",\"_type\":\"")
+                    .append(type).append("\",\"_id\":\"")
+                    .append(id).append("\"}}\n")
+                    .append(source)
+                    .append("\n");
+            writer.write(sb.toString());
         }
 
         @Override
@@ -109,7 +120,11 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
             if (id == null) {
                 throw new IOException("id must not be null, no fragment set in IRI?");
             }
-            ingester.deleteDocument(index, type, id);
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\"delete\":{\"_index\":\"")
+                    .append(index).append("\",\"_type\":\"")
+                    .append(type).append("\",\"_id\":\"")
+                    .append(id).append("\"}}\n");
         }
     };
 
@@ -131,7 +146,11 @@ public class ElasticsearchResourceSink<C extends ResourceContext, R extends Reso
     }
 
     public void flush() {
-        ingester.flush();
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     /**

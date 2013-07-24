@@ -64,7 +64,6 @@ import org.xbib.oai.set.ListSetsResponse;
 import org.xbib.oai.util.ResumptionToken;
 import org.xbib.oai.exceptions.OAIException;
 import org.xbib.query.cql.SyntaxException;
-import org.xbib.strings.encode.QuotedStringTokenizer;
 
 /**
  * Elasticsearch OAI service
@@ -73,7 +72,7 @@ import org.xbib.strings.encode.QuotedStringTokenizer;
  */
 public class ElasticsearchOAIService implements OAIService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIService.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIService.class.getName());
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
 
@@ -114,10 +113,8 @@ public class ElasticsearchOAIService implements OAIService {
 
     @Override
     public void listRecords(final ListRecordsServerRequest request, final ListRecordsResponse response) throws OAIException {
-        String mediaType = "application/x-mods";
-        String query = getQuery(request);        
+        String query = getQuery(request);
         try {
-            Logger logger = LoggerFactory.getLogger(mediaType, ElasticsearchOAIService.class.getName());
             InputStream in = es.newSearchRequest()
                     .index(getIndex(request))
                     .type(getType(request))
@@ -219,17 +216,8 @@ public class ElasticsearchOAIService implements OAIService {
     }
 
     private String getQuery(ListRecordsServerRequest request) throws OAIException {
-        String location = null;
         String path = request.getPath();
         path = path != null && path.startsWith("/oai") ? path.substring(4) : path;
-        if (path != null) {
-            String[] spec = path.split("/");
-            if (spec.length > 1) {
-                if (!"*".equals(spec[spec.length - 1])) {
-                    location = spec[spec.length - 1];
-                }
-            }
-        }
         ResumptionToken resumptionToken = request.getResumptionToken();
         Date dateFrom = request.getFrom();
         Date dateUntil = request.getUntil();
@@ -239,20 +227,6 @@ public class ElasticsearchOAIService implements OAIService {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"from\":").append(resumptionToken.getPosition()).append(",\"size\":").append(resumptionToken.getInterval()).append(",\"query\":{\"range\":{\"xbib:timestamp\":{\"from\":\"").append(DateUtil.formatDateISO(dateFrom)).append("\",\"to\":\"").append(DateUtil.formatDateISO(dateUntil)).append("\",\"include_lower\":true,\"include_upper\":true}}}}");
         String query = sb.toString();
-            if (location != null) {
-                StringBuilder qb = new StringBuilder().append("{\"filtered\":").append(query).append(",\"filter\":{\"or\":[");
-                QuotedStringTokenizer t = new QuotedStringTokenizer(location);
-                sb = new StringBuilder();
-                while (t.hasMoreTokens()) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append("{\"term\":{\"dc:identifier.xbib:identifierAuthorityISIL\":\"").append(location).append("\"}}");
-                }
-                qb.append(sb);
-                qb.append("]}}");
-                query = qb.toString();
-            }
         return query;
     }
  

@@ -63,13 +63,8 @@ public class QueryGenerator implements Visitor {
         builder.startObject("filtered").startObject("query");
     }
 
-    public XContentBuilder getBuilder() throws IOException {
+    public XContentBuilder getResult() throws IOException {
         return builder;
-    }
-
-    public String getResult() throws IOException {
-        builder.close();
-        return builder.string();
     }
 
     @Override
@@ -132,18 +127,6 @@ public class QueryGenerator implements Visitor {
         try {
             Operator op = node.getOperator();
             switch (op.getArity()) {
-                case 0: {
-                    // operators with infinite arity
-                    switch (op) {
-                        case FILTER: {
-                            for (Node arg : node.getArgs()) {
-                                arg.accept(this);
-                            }
-                            break;
-                        }
-                    }
-                    break;
-                }
                 case 1: {
                     // unary operators
                     break;
@@ -332,28 +315,41 @@ public class QueryGenerator implements Visitor {
                         case RANGE_GREATER_THAN: {
                             String field = arg1.toString();
                             String value = arg2.toString();
-                            builder.startObject("range").startObject(field).field("from", value).field("include_lower", false).endObject().endObject();
+                            builder.startObject("range").startObject(field)
+                                    .field("from", value)
+                                    .field("include_lower", false)
+                                    .endObject().endObject();
                             break;
                         }
                         case RANGE_GREATER_OR_EQUAL: {
                             String field = arg1.toString();
                             String value = arg2.toString();
-                            builder.startObject("range").startObject(field).field("from", value).field("include_lower", true).endObject().endObject();
+                            builder.startObject("range").startObject(field)
+                                    .field("from", value)
+                                    .field("include_lower", true)
+                                    .endObject().endObject();
                             break;
                         }
                         case RANGE_LESS_THAN: {
                             String field = arg1.toString();
                             String value = arg2.toString();
-                            builder.startObject("range").startObject(field).field("to", value).field("include_upper", false).endObject().endObject();
+                            builder.startObject("range").startObject(field)
+                                    .field("to", value)
+                                    .field("include_upper", false)
+                                    .endObject().endObject();
                             break;
                         }
                         case RANGE_LESS_OR_EQUALS: {
                             String field = arg1.toString();
                             String value = arg2.toString();
-                            builder.startObject("range").startObject(field).field("to", value).field("include_upper", true).endObject().endObject();
+                            builder.startObject("range").startObject(field)
+                                    .field("to", value)
+                                    .field("include_upper", true)
+                                    .endObject().endObject();
                             break;
                         }
                         case RANGE_WITHIN: {
+                            // borders are inclusive
                             String field = arg1.toString();
                             String value = arg2.toString();
                             String from;
@@ -366,7 +362,12 @@ public class QueryGenerator implements Visitor {
                             }
                             from = tok2.getStringList().get(0);
                             to = tok2.getStringList().get(1);
-                            builder.startObject("range").startObject(field).field("from", from).field("to", to).field("include_lower", true).field("include_upper", false).endObject().endObject();
+                            builder.startObject("range").startObject(field)
+                                    .field("from", from)
+                                    .field("to", to)
+                                    .field("include_lower", true)
+                                    .field("include_upper", true)
+                                    .endObject().endObject();
                             break;
                         }
                         case AND: {

@@ -45,17 +45,26 @@ public class SourceGenerator {
 
     public void build(QueryGenerator query,
             int from, int size) throws IOException {
-        build(query, null, from, size);
+        build(query, from, size,  null, null, null);
     }
 
-    public void build(QueryGenerator query, SortGenerator sort,
-            int from, int size) throws IOException {
+    public void build(QueryGenerator query, int from, int size,
+                      XContentBuilder sort,
+                      XContentBuilder filter,
+                      XContentBuilder facets
+            ) throws IOException {
         builder.startObject();
         builder.field("from", from);
         builder.field("size", size);
-        builder.rawField("query", query.getResult().getBytes());
+        builder.rawField("query", query.getResult().bytes());
+        if (filter != null) {
+            builder.rawField("filter", filter.bytes() );
+        }
         if (sort != null) {
-            builder.rawField("sort", sort.getResult().getBytes());
+            builder.rawField("sort", sort.bytes());
+        }
+        if (facets != null) {
+            builder.rawField("facets", facets.bytes() );
         }
         builder.endObject();
         builder.close();

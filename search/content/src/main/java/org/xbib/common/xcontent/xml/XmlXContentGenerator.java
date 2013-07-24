@@ -267,7 +267,6 @@ public class XmlXContentGenerator implements XContentGenerator {
         generator.flush();
     }
 
-
     public void close() throws IOException {
         generator.close();
     }
