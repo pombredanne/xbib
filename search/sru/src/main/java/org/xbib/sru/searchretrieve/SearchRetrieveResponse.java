@@ -59,7 +59,7 @@ import org.xml.sax.InputSource;
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SearchRetrieveResponse extends DefaultSRUResponse
-        implements SRUResponse, SearchRetrieveResponseListener, HttpResponseListener {
+        implements SRUResponse, SearchRetrieveListener, HttpResponseListener {
 
     private final Logger logger = LoggerFactory.getLogger(SearchRetrieveResponse.class.getName());
 
@@ -71,118 +71,122 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
     private HttpResponse httpResponse;
 
+    boolean isEmpty;
+
     public SearchRetrieveResponse(SearchRetrieveRequest request) {
         this.request = request;
     }
 
-    public SearchRetrieveRequest getRequest() {
-        return request;
-    }
-
+    @Override
     public void receivedResponse(HttpResponse response) {
         this.httpResponse = response;
     }
 
+    public int httpStatus() {
+        //return httpResponse != null ? httpResponse.getStatusCode() : 200;
+        return httpResponse.getStatusCode();
+    }
+
     @Override
     public void onConnect(Request request) throws IOException {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.onConnect(request);
         }
     }
 
     @Override
     public void onDisconnect(Request request) throws IOException {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.onDisconnect(request);
         }
     }
 
     @Override
     public void onError(Request request, CharSequence errorMessage) throws IOException {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.onError(request, errorMessage);
         }
     }
 
     @Override
     public void onReceive(Request request, CharSequence message) throws IOException {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.onReceive(request, message);
         }
     }
 
     @Override
     public void version(String version) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.version(version);
         }
     }
 
     @Override
     public void numberOfRecords(long numberOfRecords) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.numberOfRecords(numberOfRecords);
         }
     }
     
     @Override
     public void beginRecord() {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.beginRecord();
         }
     }
 
     @Override
     public void recordSchema(String recordSchema) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.recordSchema(recordSchema);
         }
     }
 
     @Override
     public void recordPacking(String recordPacking) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.recordPacking(recordPacking);
         }
     }
 
     @Override
     public void recordIdentifier(String recordIdentifier) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.recordIdentifier(recordIdentifier);
         }
     }
     @Override
     public void recordPosition(int recordPosition) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.recordPosition(recordPosition);
         }
     }
 
     @Override
     public void recordData(Collection<XMLEvent> record) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.recordData(record);
         }
     }
 
     @Override
     public void facetedResults(Collection<XMLEvent> record) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.facetedResults(record);
         }
     }
 
     @Override
     public void extraRecordData(Collection<XMLEvent> record) {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.extraRecordData(record);
         }
     }
 
     @Override
     public void endRecord() {
-        for (SearchRetrieveResponseListener listener : this.request.getListeners()) {
+        for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.endRecord();
         }
     }
@@ -194,6 +198,10 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
     public URI getOrigin() {
         return origin;
+    }
+
+    public boolean isEmpty() {
+        return httpResponse != null && httpResponse.notfound();
     }
     
     public void setEvents(Collection<XMLEvent> events) {

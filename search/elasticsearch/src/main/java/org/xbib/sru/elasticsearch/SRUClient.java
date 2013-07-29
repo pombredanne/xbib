@@ -39,34 +39,29 @@ import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
+import org.xbib.search.NotFoundError;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * SearchRetrieve by URL for Elasticseach
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ElasticsearchSRUClient implements
-        SRUClient<ElasticsearchSRURequest,ElasticsearchSRUResponse> {
+public class SRUClient implements
+        org.xbib.sru.client.SRUClient {
 
-    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUClient.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SRUClient.class.getName());
 
-    private final static Map<URI,CQLSearchSupport> support = new HashMap();
+    private final CQLSearchSupport support;
 
     private final ElasticsearchSRUService service;
 
-    public ElasticsearchSRUClient(ElasticsearchSRUService service) {
+    public SRUClient(ElasticsearchSRUService service, CQLSearchSupport support) {
         this.service = service;
-        if (!support.containsKey(service.getURI())) {
-            support.put(service.getURI(), new CQLSearchSupport().newClient());
-        }
+        this.support = support;
     }
 
     @Override
@@ -90,8 +85,8 @@ public class ElasticsearchSRUClient implements
     }
 
     @Override
-    public void close() throws IOException {
-        // nothing to do for closing client after a request
+    public void shutdown() throws IOException {
+        support.shutdown();
     }
 
     @Override
@@ -117,9 +112,6 @@ public class ElasticsearchSRUClient implements
         } catch (SyntaxException e) {
             logger.error("CQL syntax error", e);
             throw new Diagnostics(10, e.getMessage());
-        } catch (IOException e) {
-            logger.error("SRU is unresponsive", e);
-            throw new Diagnostics(1, e.getMessage());
         }
         return response;
     }
@@ -161,12 +153,11 @@ public class ElasticsearchSRUClient implements
                 size = 0;
             }
             // creating CQL from SearchRetrieve request
-            CQLSearchRequest cqlRequest  = support.get(service.getURI()).newSearchRequest()
+            CQLSearchRequest cqlRequest = support.newSearchRequest()
                     .index(getIndex(request))
-                    .type(getType(request))
                     .from(from)
                     .size(size)
-                    .cql(locationFromIndexType(request))
+                    .cql(request.getQuery())
                     .cqlFilter(request.getFilter())
                     .cqlFacetFilter(request.getFilter())
                     .facet(request.getFacetLimit(), request.getFacetSort(), null);
@@ -183,6 +174,9 @@ public class ElasticsearchSRUClient implements
         } catch (IndexMissingException e) {
             logger.error("SRU " + service.getURI() + ": database does not exist", e);
             throw new Diagnostics(1, e.getMessage());
+        } catch (NotFoundError e) {
+            logger.error("SRU " + service.getURI() + ": nothing found for query " + request.getQuery(), e);
+            // no diagnostics!
         } catch (IOException e) {
             logger.error("SRU " + service.getURI() + ": database is unresponsive", e);
             throw new Diagnostics(1, e.getMessage());
@@ -202,26 +196,11 @@ public class ElasticsearchSRUClient implements
                 // both index and type are there
                 index = spec[spec.length - 2];
             } else if (spec.length == 1) {
-                index = spec[spec.length - 1];
+                index = spec[0];
             }
         }
         logger.debug("path = {} got index = {}", request.getPath(), index);
         return index;
-    }
-
-    private String getType(SearchRetrieveRequest request) {
-        String type = null;
-        String[] spec = extractPathInfo(request.getPath());
-        if (spec != null) {
-            if (spec.length > 1) {
-                // both index and type are there
-                type = spec[spec.length - 1];
-            } else if (spec.length == 1) {
-                type = null;
-            }
-        }
-        logger.debug("path = {} got type = {}", request.getPath(), type);
-        return type;
     }
 
     private String[] extractPathInfo(String path) {
@@ -242,18 +221,4 @@ public class ElasticsearchSRUClient implements
         return path.split("/");
     }
 
-    private String locationFromIndexType(SearchRetrieveRequest request) {
-        String location = null;
-        String path = request.getPath();
-        path = path != null && path.startsWith("/sru") ? path.substring(4) : path;
-        if (path != null) {
-            String[] spec = path.split("/");
-            if (spec.length > 1) {
-                if (!"*".equals(spec[spec.length - 1])) {
-                    location = spec[spec.length - 1];
-                }
-            }
-        }
-        return (location != null ? "filter.location any \"" + location + "\" and " : "") + request.getQuery();
-    }
 }

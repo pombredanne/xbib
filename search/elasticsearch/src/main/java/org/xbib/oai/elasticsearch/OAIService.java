@@ -52,7 +52,6 @@ import org.xbib.oai.identify.ListIdentifiersResponse;
 import org.xbib.oai.metadata.ListMetadataFormatsResponse;
 import org.xbib.oai.record.GetRecordResponse;
 import org.xbib.oai.record.ListRecordsResponse;
-import org.xbib.oai.service.OAIService;
 import org.xbib.oai.record.GetRecordRequest;
 import org.xbib.oai.identify.IdentifyResponse;
 import org.xbib.oai.identify.ListIdentifiersRequest;
@@ -70,19 +69,17 @@ import org.xbib.query.cql.SyntaxException;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ElasticsearchOAIService implements OAIService {
+public class OAIService implements org.xbib.oai.service.OAIService {
 
-    private final Logger logger = LoggerFactory.getLogger(ElasticsearchOAIService.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(OAIService.class.getName());
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
-
-    private static final URI serviceURI = URI.create(bundle.getString("uri"));
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.oai.elasticsearch");
 
     private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     @Override
-    public URI getURI() {
-        return getURI();
+    public URI getSerivceIdentifier() {
+        return URI.create(bundle.getString("uri"));
     }
 
     @Override
@@ -125,16 +122,16 @@ public class ElasticsearchOAIService implements OAIService {
                     .read();
             response.setReader(new InputStreamReader(in, "UTF-8"));
         } catch (NoNodeAvailableException e) {
-            logger.error("SRU " + serviceURI + ": unresponsive", e);
+            logger.error("OAI " + getSerivceIdentifier() + ": unresponsive", e);
             throw new OAIException(e.getMessage());
         } catch (IndexMissingException e) {
-            logger.error("SRU " + serviceURI + ": database does not exist", e);
+            logger.error("OAI " + getSerivceIdentifier() + ": database does not exist", e);
             throw new OAIException(e.getMessage());
         } catch (SyntaxException e) {
-            logger.error("SRU " + serviceURI + ": database does not exist", e);
+            logger.error("OAI " + getSerivceIdentifier() + ": syntax error", e);
             throw new OAIException(e.getMessage());
         } catch (IOException e) {
-            logger.error("SRU " + serviceURI + ": database is unresponsive", e);
+            logger.error("OAI " + getSerivceIdentifier() + ": database is unresponsive", e);
             throw new OAIException(e.getMessage());
         } finally {
             logger.info("SRU completed: query = {}", query);

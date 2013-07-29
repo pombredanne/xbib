@@ -31,22 +31,16 @@
  */
 package org.xbib.sru;
 
-import org.xbib.io.OutputFormat;
-import org.xbib.xml.transform.StylesheetTransformer;
+import org.xbib.io.http.HttpSession;
+import org.xbib.io.http.netty.DefaultHttpSession;
 
 import java.io.IOException;
-import java.io.Writer;
 
-/**
- * The SRU response
- */
-public interface SRUResponse {
+public interface SRUSession extends HttpSession {
 
-    SRUResponse setOutputFormat(OutputFormat format);
+    DefaultHttpSession getSession();
 
-    SRUResponse setStylesheetTransformer(StylesheetTransformer transformer);
+    SRUSession setProxy(String host, int port);
 
-    SRUResponse setStylesheets(SRUVersion version, String... stylesheets);
-
-    SRUResponse to(Writer writer) throws IOException;
+    void close() throws IOException;
 }

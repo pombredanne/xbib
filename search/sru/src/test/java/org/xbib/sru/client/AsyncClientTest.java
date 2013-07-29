@@ -42,9 +42,9 @@ import org.xbib.io.Request;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
-import org.xbib.sru.searchretrieve.SearchRetrieveResponseListener;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class AsyncClientTest {
@@ -66,7 +66,7 @@ public class AsyncClientTest {
             FileOutputStream out = new FileOutputStream("target/sru-async-" + request.getURI().getHost() + ".xml");
             Writer writer = new OutputStreamWriter(out, "UTF-8");
 
-            SearchRetrieveResponseListener listener = new SearchRetrieveResponseAdapter() {
+            SearchRetrieveListener listener = new SearchRetrieveResponseAdapter() {
 
                 @Override
                 public void onConnect(Request request) {

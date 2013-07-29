@@ -106,7 +106,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
                     recordSchema = null;
                     recordIdentifier = null;
                     recordPosition = 0;
-                    for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                    for (SearchRetrieveListener listener : request.getListeners()) {
                         listener.beginRecord();
                     }
                     break;
@@ -166,13 +166,13 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
                 recordSchema = content;
             } else if ("recordData".equals(localname)) {
                 recordData.add(eventFactory.createEndDocument());
-                for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                for (SearchRetrieveListener listener : request.getListeners()) {
                     listener.recordData(recordData);
                 }
                 recordData = new LinkedList();
             } else if ("extraRecordData".equals(localname)) {
                 extraRecordData.add(eventFactory.createEndDocument());
-                for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                for (SearchRetrieveListener listener : request.getListeners()) {
                     listener.extraRecordData(extraRecordData);
                 }
                 extraRecordData = new LinkedList();
@@ -181,7 +181,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
             } else if ("recordIdentifier".equals(localname)) {
                 recordIdentifier = content;
             } else if ("record".equals(localname)) {
-                for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                for (SearchRetrieveListener listener : request.getListeners()) {
                     listener.recordSchema(recordSchema);
                     listener.recordPacking(recordPacking);
                     listener.recordIdentifier(recordIdentifier);
@@ -191,7 +191,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
             } else if ("echoedSearchRetrieveRequest".equals(localname)) {
                 echo = false;
             } else if ("version".equals(localname) && !echo) {
-                for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                for (SearchRetrieveListener listener : request.getListeners()) {
                     listener.version(content);
                 }
             } else if ("numberOfRecords".equals(localname)) {
@@ -201,7 +201,7 @@ public class SearchRetrieveFilterReader extends XMLFilterReader {
                 } catch (NumberFormatException e) {
                     // drop                    
                 }
-                for (SearchRetrieveResponseListener listener : request.getListeners()) {
+                for (SearchRetrieveListener listener : request.getListeners()) {
                     listener.numberOfRecords(n);
                 }
             }

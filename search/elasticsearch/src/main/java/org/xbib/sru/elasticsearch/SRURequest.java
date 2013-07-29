@@ -33,5 +33,5 @@ package org.xbib.sru.elasticsearch;
 
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
-public class ElasticsearchSRURequest extends SearchRetrieveRequest {
+public class SRURequest extends SearchRetrieveRequest {
 }

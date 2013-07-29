@@ -31,25 +31,36 @@
  */
 package org.xbib.sru.client;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.net.URI;
 
+import org.xbib.sru.SRUConstants;
 import org.xbib.sru.SRUProfile;
+import org.xbib.sru.SRURequest;
+import org.xbib.sru.SRUResponse;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
-import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 
 /**
  * SRU client
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- * @param <Request>
- * @param <Response>
  */
-public interface SRUClient<Request extends SearchRetrieveRequest, Response extends SearchRetrieveResponse> extends SRUProfile {
+public interface SRUClient
+        extends SRUProfile, SRUConstants, Closeable {
 
-    Request newSearchRetrieveRequest();
+    URI getClientIdentifier();
 
-    Response execute(Request request) throws IOException;
+    SearchRetrieveRequest newSearchRetrieveRequest();
 
-    void close() throws IOException;
+    /**
+     * Execute searchRetrieve request.
+     *
+     * @param request request
+     * @return
+     * @throws IOException
+     */
+    void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener) throws IOException;
 
 }

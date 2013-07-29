@@ -31,9 +31,10 @@
  */
 package org.xbib.sru.service;
 
-import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.SRUSession;
 import org.xbib.sru.SRUProfile;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 
@@ -41,14 +42,13 @@ import java.net.URI;
  *  SRU service
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- * @param <Client>
  */
-public interface SRUService<Client extends SRUClient> extends SRUProfile {
+public interface SRUService extends SRUProfile, Closeable {
 
     URI getURI();
 
-    Client newClient();
+    SRUSession newSession() throws IOException;
 
-    void close(Client client) throws IOException;
+    void disposeSession(SRUSession session) throws IOException;
 
 }

@@ -41,7 +41,7 @@ import org.xbib.io.http.HttpResponse;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SearchRetrieveResponseAdapter implements SearchRetrieveResponseListener {
+public class SearchRetrieveResponseAdapter implements SearchRetrieveListener {
 
     @Override
     public void onConnect(Request request) {

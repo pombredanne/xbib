@@ -32,21 +32,22 @@
 package org.xbib.sru.client;
 
 import org.xbib.io.Session;
-import org.xbib.io.http.netty.DefaultHttpResponseListener;
+import org.xbib.io.http.HttpSession;
 import org.xbib.io.http.netty.DefaultHttpSession;
 import org.xbib.io.http.HttpRequest;
-import org.xbib.io.http.HttpResponse;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUConstants;
+import org.xbib.sru.SRURequest;
+import org.xbib.sru.SRUResponse;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
-import org.xbib.sru.service.SRUService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -56,22 +57,31 @@ import java.util.concurrent.TimeoutException;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class DefaultSRUClient implements SRUClient {
+public class DefaultSRUClient implements SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultSRUClient.class.getName());
 
-    private SRUService service;
+    private final HttpSession session;
 
-    private String username;
+    private final URI uri;
 
-    private String password;
-
-    public DefaultSRUClient(SRUService service) {
-        this.service = service;
+    public DefaultSRUClient() throws IOException {
+        this(null);
     }
 
-    protected SRUService getService() {
-        return service;
+    public DefaultSRUClient(URI uri) throws IOException {
+        this.session = new DefaultHttpSession();
+        session.open(Session.Mode.READ);
+        this.uri = uri;
+    }
+
+    @Override
+    public void close() throws IOException {
+        session.close();
+    }
+
+    public URI getClientIdentifier() {
+        return uri;
     }
 
     @Override
@@ -103,7 +113,7 @@ public class DefaultSRUClient implements SRUClient {
     }
 
     @Override
-    public SearchRetrieveResponse execute(SearchRetrieveRequest request)
+    public SearchRetrieveResponse execute(String operation, SearchRetrieveRequest request)
             throws IOException {
         if (request == null) {
             throw new IOException("request not set");
@@ -112,12 +122,6 @@ public class DefaultSRUClient implements SRUClient {
             throw new IOException("request URI not set");
         }
         SearchRetrieveResponse response = null;
-        if (request.getRecordSchema() != null && !service.getRecordSchema().equals(request.getRecordSchema())) {
-            throw new Diagnostics(66, request.getRecordSchema() + " != " + service.getRecordSchema());
-        }
-        if (request.getRecordPacking() != null && !service.getRecordPacking().equals(request.getRecordPacking())) {
-            throw new Diagnostics(6, request.getRecordPacking() + " != " + service.getRecordPacking());
-        }
         try {
             response = searchRetrieve(request);
         } catch (SyntaxException e) {
@@ -130,20 +134,13 @@ public class DefaultSRUClient implements SRUClient {
         return response;
     }
 
-    @Override
-    public void close() throws IOException {
-    }
-
     protected SearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
             throws IOException, InterruptedException, ExecutionException, TimeoutException {
         final SearchRetrieveResponse response = new SearchRetrieveResponse(request);
-        DefaultHttpSession session = new DefaultHttpSession();
-        session.open(Session.Mode.READ);
+
         HttpRequest req = session.newRequest()
                 .setMethod("GET")
                 .setURL(request.getURI())
-                .setUser(username)
-                .setPassword(password)
                 .addParameter(SRUConstants.OPERATION_PARAMETER, "searchRetrieve")
                 .addParameter(SRUConstants.VERSION_PARAMETER, request.getVersion())
                 .addParameter(SRUConstants.QUERY_PARAMETER, URIUtil.encode(request.getQuery(), Charset.forName("UTF-8")))
@@ -155,21 +152,14 @@ public class DefaultSRUClient implements SRUClient {
         if (request.getRecordSchema() != null && !request.getRecordSchema().isEmpty()) {
             req.addParameter(SRUConstants.RECORD_SCHEMA_PARAMETER, request.getRecordSchema());
         }
-        req.prepare().execute(new DefaultHttpResponseListener() {
-            @Override
-            public void receivedResponse(HttpResponse result) {
-                response.receivedResponse(result);
-            }
-        }).waitFor();
+        req.prepare().execute(response).waitFor();
         return response;
     }
 
     /*
     public ExplainResponse explain(Explain explain)
             throws IOException, SyntaxException {
-        HttpSession session = new HttpSession();
-        session.open(Session.Mode.READ);
-        HttpRequest req = new HttpRequest("GET")
+        HttpRequest req = session.newRequest("GET")
                 .setURI(explain.getURI())
                 .addParameter(SRU.OPERATION_PARAMETER, "explain");
         session.add(req);

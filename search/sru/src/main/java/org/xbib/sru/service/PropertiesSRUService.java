@@ -31,9 +31,11 @@
  */
 package org.xbib.sru.service;
 
+import org.xbib.sru.SRUSession;
 import org.xbib.sru.client.PropertiesSRUClient;
 import org.xbib.sru.client.SRUClient;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -42,7 +44,7 @@ import java.util.Properties;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class PropertiesSRUService extends DefaultSRUService {
+public class PropertiesSRUService implements SRUService {
 
     private Properties properties;
 
@@ -76,7 +78,12 @@ public class PropertiesSRUService extends DefaultSRUService {
     }
 
     @Override
-    public SRUClient newClient() {
-        return new PropertiesSRUClient(this, properties);
+    public SRUSession connect() throws IOException {
+        return null;
     }
+
+    @Override
+    public void disconnect(SRUSession session) throws IOException {
+    }
+
 }

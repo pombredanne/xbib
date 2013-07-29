@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.sru.service;
+package org.xbib.sru.client;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,26 +42,27 @@ import org.testng.annotations.Test;
 import org.xbib.io.Request;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
-import org.xbib.sru.searchretrieve.SearchRetrieveResponseListener;
 
-public class SRUServiceTest {
+public class SRUClientTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SRUServiceTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SRUClientTest.class.getName());
 
     @Test
     public void testServiceSearchRetrieve() throws IOException {
-        for (String adapterName : Arrays.asList("Gent", "Lund", "Bielefeld")) {
+        for (String clientName : Arrays.asList("Gent", "Lund", "Bielefeld")) {
             String query = "title = linux";
             int from = 1;
             int size = 10;
-            final SRUService service = PropertiesSRUServiceFactory.getInstance().getService(adapterName);
-            FileOutputStream out = new FileOutputStream("target/sru-service-" + service.getURI().getHost() + ".xml");
+            final SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> client
+                    = SRUClientFactory.newClient(clientName);
+            FileOutputStream out = new FileOutputStream("target/sru-service-"
+                    + clientName + ".xml");
             try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
-                SearchRetrieveResponseListener listener = new SearchRetrieveResponseAdapter() {
+                SearchRetrieveListener listener = new SearchRetrieveResponseAdapter() {
 
                     @Override
                     public void onConnect(Request request) {
@@ -121,15 +122,17 @@ public class SRUServiceTest {
                     }
                 };
                 try {
-                    SRUClient client = service.newClient();
                     SearchRetrieveRequest request = client.newSearchRetrieveRequest()
                             .addListener(listener)
                             .setQuery(query)
                             .setStartRecord(from)
                             .setMaximumRecords(size);
                     SearchRetrieveResponse response = client.execute(request).to(w);
+                    logger.info("http status = {}", response.httpStatus());
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
+                } finally {
+                    client.close();
                 }
             }
         }

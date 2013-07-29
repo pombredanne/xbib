@@ -29,63 +29,81 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.sru.elasticsearch;
+package org.xbib.sru.searchretrieve;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ResourceBundle;
-
-import org.xbib.sru.SRUConstants;
-import org.xbib.sru.client.SRUClient;
-import org.xbib.sru.service.SRUService;
+import java.util.Collection;
+import javax.xml.stream.events.XMLEvent;
+import org.xbib.sru.SRUResponseListener;
 
 /**
- * Elasticseach SRU service
+ * Listener for SearchRetrieve responses
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ElasticsearchSRUService implements SRUService {
+public interface SearchRetrieveListener extends SRUResponseListener {
+       
+    /**
+     * Get the SRU version
+     * @param version 
+     */
+    void version(String version);
+    
+    /**
+     * Get the SRU number of records
+     * @param numberOfRecords 
+     */
+    void numberOfRecords(long numberOfRecords);
+    
+    /**
+     * Begin SRU record
+     */
+    void beginRecord();
+    
+    /**
+     * SRU record schema
+     * @param recordSchema
+     */
+    void recordSchema(String recordSchema);
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
+    /**
+     * SRU record packing
+     * @param recordPacking
+     */
+    void recordPacking(String recordPacking);
 
-    private final String recordPacking = bundle.getString(SRUConstants.RECORDPACKING_PROPERTY);
+    /**
+     * SRU record identifier
+     * @param recordIdentifier
+     */
+    void recordIdentifier(String recordIdentifier);
 
-    private final String recordSchema = bundle.getString(SRUConstants.RECORDSCHEMA_PROPERTY);
+    /**
+     * SRU record position
+     * @param recordPosition
+     */
+    void recordPosition(int recordPosition);
 
-    private final String version = bundle.getString(SRUConstants.VERSION_PROPERTY);
+    /**
+     * SRU record data
+     * @param record 
+     */
+    void recordData(Collection<XMLEvent> record);
+    
+    /**
+     * SRU extra record data
+     * @param extra
+     */
+    void extraRecordData(Collection<XMLEvent> extra);
 
-    @Override
-    public URI getURI() {
-        return URI.create(bundle.getString("uri"));
-    }
+    /**
+     * SRU facets
+     * @param facets
+     */
+    void facetedResults(Collection<XMLEvent> facets);
 
-    @Override
-    public void close(SRUClient client) throws IOException {
-        client.close();
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public String getRecordPacking() {
-        return recordPacking;
-    }
-
-    @Override
-    public String getRecordSchema() {
-        return recordSchema;
-    }
-
-    @Override
-    public String getEncoding() {
-        return "UTF-8"; // always UTF-8
-    }
-
-    public SRUClient newClient() {
-        return new ElasticsearchSRUClient(this);
-    }
-
+    /**
+     * End SRU record
+     */
+    void endRecord();
+    
 }

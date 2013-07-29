@@ -31,38 +31,93 @@
  */
 package org.xbib.sru.client;
 
-import org.xbib.sru.service.PropertiesSRUService;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
+import java.util.WeakHashMap;
 
 /**
  *  A factory for SRU clients
  *
  *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SRUClientFactory {
+public final class SRUClientFactory {
 
     private final static SRUClientFactory instance = new SRUClientFactory();
-    
+
+    private final static Logger logger = LoggerFactory.getLogger(SRUClientFactory.class.getName());
+
+    private final static Map<URI, SRUClient> clients = new WeakHashMap();
+
     private SRUClientFactory() {
-    }
-    
-    public static SRUClient newClient(String name) {
-        Properties properties = new Properties();
-        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/client/" + name + ".properties");        
-        if (in != null) {
-            try {
-                properties.load(in);
-            } catch (IOException ex) {
+        ServiceLoader<SRUClient> loader = ServiceLoader.load(SRUClient.class);
+        Iterator<SRUClient> iterator = loader.iterator();
+        while (iterator.hasNext()) {
+            SRUClient client = iterator.next();
+            if (!clients.containsKey(client.getClientIdentifier())) {
+                clients.put(client.getClientIdentifier(), client);
             }
         }
-        if (in == null || properties.isEmpty()) {
-            throw new IllegalArgumentException("service " + name + " not found");
-        }
-        PropertiesSRUService service = new PropertiesSRUService(properties);
-        return service.newClient();
     }
-    
+
+    public static SRUClientFactory getInstance() {
+        return instance;
+    }
+
+    public static SRUClient getDefaultClient() {
+        return clients.isEmpty() ? null : clients.entrySet().iterator().next().getValue();
+    }
+
+    public static SRUClient newClient(URI uri) {
+        if (clients.containsKey(uri)) {
+            return clients.get(uri);
+        } else {
+            try {
+                SRUClient client = new DefaultSRUClient(uri);
+                clients.put(uri, client);
+                return client;
+            } catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+                return null;
+            }
+        }
+    }
+
+    public static SRUClient newClient(String name) {
+        try {
+            Properties properties = new Properties();
+            InputStream in = instance.getClass().getResourceAsStream("/org/xbib/sru/client/" + name + ".properties");
+            if (in != null) {
+                properties.load(in);
+            }
+            if (in == null || properties.isEmpty()) {
+                throw new IllegalArgumentException("SRU client " + name + " properties not found");
+            }
+            PropertiesSRUClient client = new PropertiesSRUClient(properties);
+            clients.put(client.getClientIdentifier(), client);
+            return client;
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    public static void shutdown() {
+        for (SRUClient client : clients.values()) {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+    }
+
 }

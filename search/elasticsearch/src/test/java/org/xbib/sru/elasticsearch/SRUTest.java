@@ -40,30 +40,20 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUVersion;
+import org.xbib.sru.service.DefaultSRUServiceFactory;
 import org.xbib.sru.service.SRUService;
-import org.xbib.sru.service.SRUServiceFactory;
 import org.xbib.xml.transform.StylesheetTransformer;
 
-public class ElasticsearchSRUTest {
+public class SRUTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUTest.class.getName());
-
-    SRUService<ElasticsearchSRUClient> service = SRUServiceFactory.getInstance().getDefaultService();
-
-    @Test
-    public void testService() throws Exception {
-        if (service != null) {
-            service.newClient();
-        } else {
-            logger.error("service not found");
-        }
-    }
+    private static final Logger logger = LoggerFactory.getLogger(SRUTest.class.getName());
 
     @Test
     public void testElasticsearchSearchRetrieve() throws Exception {
         OutputFormat format = OutputFormat.MODS;
-        ElasticsearchSRUClient client = service.newClient();
-        ElasticsearchSRURequest request = client.newSearchRetrieveRequest();
+        SRUService<SRUClient> service = DefaultSRUServiceFactory.getInstance().getDefaultService();
+        SRUClient client = service.newClient();
+        SRURequest request = client.newSearchRetrieveRequest();
         request.setVersion("2.0")
             .setQuery("dc.creator = \"John\"")
                 //.setFilter("")
@@ -75,7 +65,7 @@ public class ElasticsearchSRUTest {
             .setPath("/sru/hbz/*");
         FileWriter w = new FileWriter("target/es." + format.suffix());
         try {
-            ElasticsearchSRUResponse response = client.execute(request);
+            SRUResponse response = client.execute(request);
             StylesheetTransformer transformer = new StylesheetTransformer(
                     "src/test/resources",
                     "src/test/resources/xsl");
@@ -89,7 +79,7 @@ public class ElasticsearchSRUTest {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            client.close();
+            service.shutdown();
         }
     }
 }

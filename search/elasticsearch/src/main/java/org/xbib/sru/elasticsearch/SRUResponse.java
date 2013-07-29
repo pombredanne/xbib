@@ -64,38 +64,38 @@ import org.xml.sax.SAXException;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class ElasticsearchSRUResponse extends SearchRetrieveResponse {
+public class SRUResponse extends SearchRetrieveResponse {
 
-    private final Logger logger = LoggerFactory.getLogger(ElasticsearchSRUResponse.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SRUResponse.class.getName());
 
     // javax.xml.parsers.DocumentBuilderFactory
     private final static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     private final static QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);
 
-    private ElasticsearchSRURequest request;
+    private SRURequest request;
 
     private StreamByteBuffer buffer;
 
     private Facets facets;
 
-    public ElasticsearchSRUResponse(ElasticsearchSRURequest request) {
+    public SRUResponse(SRURequest request) {
         super(request);
         this.request = request;
     }
 
-    public ElasticsearchSRUResponse setBuffer(StreamByteBuffer buffer) {
+    public SRUResponse setBuffer(StreamByteBuffer buffer) {
         this.buffer = buffer;
         return this;
     }
 
-    public ElasticsearchSRUResponse setFacets(Facets facets) {
+    public SRUResponse setFacets(Facets facets) {
         this.facets = facets;
         return this;
     }
 
     @Override
-    public ElasticsearchSRUResponse to(Writer writer) throws IOException {
+    public SRUResponse to(Writer writer) throws IOException {
 
         if (facets != null) {
             final FacetedResult facetedResult = new FacetedResult();

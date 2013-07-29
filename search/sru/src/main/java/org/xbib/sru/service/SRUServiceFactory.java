@@ -31,21 +31,28 @@
  */
 package org.xbib.sru.service;
 
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.WeakHashMap;
 
 /**
- * Factory for SRU service
+ * A SRU service factory.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- * @param <S>
+ *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SRUServiceFactory<S extends SRUService> {
+public final class SRUServiceFactory {
 
-    private final Map<URI, S> services = new HashMap();
+    private final static Logger logger = LoggerFactory.getLogger(SRUServiceFactory.class.getName());
+
+    private final static Map<URI, SRUService> services = new WeakHashMap();
 
     private final static SRUServiceFactory instance = new SRUServiceFactory();
 
@@ -55,7 +62,7 @@ public class SRUServiceFactory<S extends SRUService> {
         while (iterator.hasNext()) {
             SRUService service = iterator.next();
             if (!services.containsKey(service.getURI())) {
-                services.put(service.getURI(), (S)service);
+                services.put(service.getURI(), service);
             }
         }
     }
@@ -64,29 +71,30 @@ public class SRUServiceFactory<S extends SRUService> {
         return instance;
     }
 
-    public S getDefaultService() {
-        if (services.isEmpty()) {
-            throw new IllegalArgumentException("No default SRU service found");
-        }
-        Iterator<S> it = services.values().iterator();
-        if (it.hasNext()) {
-            return it.next();
-        } else {
-            throw new IllegalArgumentException("No default SRU service found");
-        }
+    public static SRUService getDefaultService() {
+        return services.isEmpty() ? null : services.entrySet().iterator().next().getValue();
     }
 
-    public S getService(URI uri) {
+    public static SRUService getService(URI uri) {
         if (services.containsKey(uri)) {
             return services.get(uri);
         }
-        throw new IllegalArgumentException("SRU service " + uri + " not found in " + services);
+        throw new IllegalArgumentException("OAI service " + uri + " not found in " + services);
     }
 
-    public S getService(String className)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class<?> cls = Class.forName(className);
-        return (S)cls.newInstance();
+    public static SRUService getService(String name) {
+        Properties properties = new Properties();
+        InputStream in = instance.getClass().getResourceAsStream("/org/xbib/oai/service/" + name + ".properties");
+        if (in != null) {
+            try {
+                properties.load(in);
+            } catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        } else {
+            throw new IllegalArgumentException("service " + name + " not found");
+        }
+        return new PropertiesSRUService(properties);
     }
 
 }

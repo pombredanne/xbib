@@ -29,52 +29,68 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.sru.service;
-
-import org.xbib.sru.client.DefaultSRUClient;
-import org.xbib.sru.client.SRUClient;
+package org.xbib.sru.elasticsearch;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ResourceBundle;
+
+import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.sru.SRUConstants;
+import org.xbib.sru.service.SRUService;
 
 /**
- * A default SRU service
+ * Elasticseach SRU service
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class DefaultSRUService implements SRUService {
+public class SRUService implements org.xbib.sru.service.SRUService {
+
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
+
+    private final String recordPacking = bundle.getString(SRUConstants.RECORDPACKING_PROPERTY);
+
+    private final String recordSchema = bundle.getString(SRUConstants.RECORDSCHEMA_PROPERTY);
+
+    private final String version = bundle.getString(SRUConstants.VERSION_PROPERTY);
+
+    private final CQLSearchSupport support = new CQLSearchSupport();
 
     @Override
-    public String getRecordSchema() {
-        return "mods";
+    public URI getURI() {
+        return URI.create(bundle.getString("uri"));
     }
 
     @Override
-    public String getRecordPacking() {
-        return "xml";
-    }
-
-    @Override
-    public String getEncoding() {
-        return "UTF-8";
+    public void close(org.xbib.sru.client.SRUClient client) throws IOException {
+        client.shutdown();
     }
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return version;
     }
 
     @Override
-    public URI getURI() {
-        return URI.create("http://localhost");
+    public String getRecordPacking() {
+        return recordPacking;
     }
 
-    public SRUClient newClient() {
-        return new DefaultSRUClient(this);
+    @Override
+    public String getRecordSchema() {
+        return recordSchema;
     }
 
-    public void close(SRUClient client) throws IOException {
-        client.close();
+    @Override
+    public String getEncoding() {
+        return "UTF-8"; // always UTF-8
     }
 
+    public org.xbib.sru.client.SRUClient newClient() {
+        return new SRUClient(this, support.newClient());
+    }
+
+    public org.xbib.sru.client.SRUClient newClient(URI uri) {
+        return new SRUClient(this, support.newClient(uri));
+    }
 }

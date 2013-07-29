@@ -33,8 +33,8 @@ package org.xbib.sru.client;
 
 import org.xbib.sru.SRUConstants;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
-import org.xbib.sru.service.SRUService;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -47,8 +47,8 @@ public class PropertiesSRUClient extends DefaultSRUClient implements SRUConstant
 
     private Properties properties;
 
-    public PropertiesSRUClient(SRUService service, Properties properties) {
-        super(service);
+    public PropertiesSRUClient(Properties properties) throws IOException {
+        super();
         this.properties = properties;
     }
 

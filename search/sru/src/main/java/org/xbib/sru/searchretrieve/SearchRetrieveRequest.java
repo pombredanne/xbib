@@ -38,7 +38,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchRetrieveRequest extends DefaultSRURequest implements SRURequest {
+public class SearchRetrieveRequest
+        extends DefaultSRURequest
+        implements SRURequest {
 
     private String version;
 
@@ -75,7 +77,7 @@ public class SearchRetrieveRequest extends DefaultSRURequest implements SRUReque
 
     private String path;
 
-    private List<SearchRetrieveResponseListener> listeners = new ArrayList();
+    private List<SearchRetrieveListener> listeners = new ArrayList();
 
     protected SearchRetrieveRequest() {
     }
@@ -237,12 +239,12 @@ public class SearchRetrieveRequest extends DefaultSRURequest implements SRUReque
         return data;
     }
 
-    public SearchRetrieveRequest addListener(SearchRetrieveResponseListener listener) {
+    public SearchRetrieveRequest addListener(SearchRetrieveListener listener) {
         listeners.add(listener);
         return this;
     }
 
-    public List<SearchRetrieveResponseListener> getListeners() {
+    public List<SearchRetrieveListener> getListeners() {
         return listeners;
     }
 

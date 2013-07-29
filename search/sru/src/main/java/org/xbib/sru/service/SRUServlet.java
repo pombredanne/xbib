@@ -47,9 +47,11 @@ import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
+import org.xbib.sru.SRUSession;
 import org.xbib.sru.SRUVersion;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.SRUConstants;
+import org.xbib.sru.client.SRUClientFactory;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.sru.util.SRUContentTypeNegotiator;
@@ -71,10 +73,30 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
 
     private ServletConfig config;
 
+    private SRUService service;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.config = config;
+        String serviceName = config.getInitParameter("name");
+        String serviceURI = config.getInitParameter("uri");
+        this.service = serviceName != null ?
+                SRUServiceFactory.getService(serviceName) :
+                serviceURI != null ?
+                        SRUServiceFactory.getInstance().getService(serviceURI) :
+                        SRUServiceFactory.getInstance().getDefaultService();
+    }
+
+    @Override
+    public void destroy() {
+        if (service != null) {
+            try {
+                service.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
     }
 
     @Override
@@ -88,57 +110,36 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
             // a better method is adding a filter for HTTP request dumping
             logger.info(requestDumper.toString(request));
         }
-        SRUService service = createService(request);
-        SRUClient client = service.newClient();
+        // we us a pluggable client here
+        SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> client =
+                SRUClientFactory.getDefaultClient();
         try {
             String operation = request.getParameter(OPERATION_PARAMETER);
             if (SEARCH_RETRIEVE_COMMAND.equals(operation)) {
-                SearchRetrieveRequest sruRequest = client.newSearchRetrieveRequest()
-                    .setURI(getBaseURI(request))
-                    .setPath(request.getPathInfo())
-                    .setVersion(request.getParameter(VERSION_PARAMETER))
-                    .setQuery(request.getParameter(QUERY_PARAMETER))
-                    .setFilter(request.getParameter(FILTER_PARAMETER));
-                int startRecord = Integer.parseInt(
-                        request.getParameter(START_RECORD_PARAMETER) != null
-                        ? request.getParameter(START_RECORD_PARAMETER) : "1");
-                sruRequest.setStartRecord(startRecord);
-                int maxRecords = Integer.parseInt(
-                        request.getParameter(MAXIMUM_RECORDS_PARAMETER) != null
-                        ? request.getParameter(MAXIMUM_RECORDS_PARAMETER) : "10");
-                sruRequest.setMaximumRecords(maxRecords);
-                String recordPacking = request.getParameter(RECORD_PACKING_PARAMETER) != null
-                        ? request.getParameter(RECORD_PACKING_PARAMETER) : "xml";
-                sruRequest.setRecordPacking(recordPacking);
-                String recordSchema = request.getParameter(RECORD_SCHEMA_PARAMETER) != null
-                        ? request.getParameter(RECORD_SCHEMA_PARAMETER) : "mods";
-                sruRequest.setRecordSchema(recordSchema);
-                int ttl = Integer.parseInt(
-                        request.getParameter(RESULT_SET_TTL_PARAMETER) != null
-                        ? request.getParameter(RESULT_SET_TTL_PARAMETER) : "0");
-                sruRequest.setResultSetTTL(ttl);
-                sruRequest.setSortKeys(request.getParameter(SORT_KEYS_PARAMETER));
-
-                sruRequest.setFacetLimit(request.getParameter(FACET_LIMIT_PARAMETER));
-                sruRequest.setFacetCount(request.getParameter(FACET_COUNT_PARAMETER));
-                sruRequest.setFacetStart(request.getParameter(FACET_START_PARAMETER));
-                sruRequest.setFacetSort(request.getParameter(FACET_SORT_PARAMETER));
-
-                sruRequest.setExtraRequestData(request.getParameter(EXTRA_REQUEST_DATA_PARAMETER));
+                SearchRetrieveRequest sruRequest = createRequest(client, request);
 
                 SRUVersion version = SRUVersion.fromString(sruRequest.getVersion());
 
-                SearchRetrieveResponse sruResponse = client.execute(sruRequest);
+                // validate SRU parameters against our SRU service
+                if (sruRequest.getRecordSchema() != null && !service.getRecordSchema().equals(sruRequest.getRecordSchema())) {
+                    throw new Diagnostics(66, sruRequest.getRecordSchema() + " != " + service.getRecordSchema());
+                }
+                if (sruRequest.getRecordPacking() != null && !service.getRecordPacking().equals(sruRequest.getRecordPacking())) {
+                    throw new Diagnostics(6, sruRequest.getRecordPacking() + " != " + service.getRecordPacking());
+                }
+
+                SearchRetrieveResponse sruResponse = client.execute(request.getParameter(OPERATION_PARAMETER), sruRequest);
 
                 String contentType = version.equals(SRUVersion.VERSION_2_0) ?
                         OutputFormat.SRU.mimeType() : OutputFormat.XML.mimeType();
 
-                response.setStatus(200);
+                response.setStatus(sruResponse.isEmpty() ? 404 : 200);
                 response.setContentType(contentType);
                 response.setCharacterEncoding("UTF-8");
                 response.addHeader("X-SRU-origin",
                         sruRequest.getURI() != null ? sruRequest.getURI().toASCIIString() : "undefined");
 
+                // get stylesheets for version
                 String s = config.getInitParameter(version.name().toLowerCase());
                 String[] stylesheets = s != null ? s.split(",") : null;
 
@@ -148,9 +149,6 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
                         .to(response.getWriter());
                 logger.debug("SRU servlet response sent");
 
-            } else {
-                throw new Diagnostics(1, "operation " + operation + " currently not supported :(");
-            }
         } catch (Diagnostics diag) {
             logger.warn(diag.getMessage(), diag);
             //response.setStatus(500); SRU does not use 500 HTTP errors :(
@@ -161,8 +159,6 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             response.setStatus(500);
-        } finally {
-            service.close(client);
         }
     }
 
@@ -170,6 +166,43 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    private SearchRetrieveRequest createRequest(SRUClient client, HttpServletRequest request) {
+        SearchRetrieveRequest sruRequest =
+                client.newSearchRetrieveRequest()
+                        .setURI(getBaseURI(request))
+                        .setPath(request.getPathInfo())
+                        .setVersion(request.getParameter(VERSION_PARAMETER))
+                        .setQuery(request.getParameter(QUERY_PARAMETER))
+                        .setFilter(request.getParameter(FILTER_PARAMETER));
+        int startRecord = Integer.parseInt(
+                request.getParameter(START_RECORD_PARAMETER) != null
+                        ? request.getParameter(START_RECORD_PARAMETER) : "1");
+        sruRequest.setStartRecord(startRecord);
+        int maxRecords = Integer.parseInt(
+                request.getParameter(MAXIMUM_RECORDS_PARAMETER) != null
+                        ? request.getParameter(MAXIMUM_RECORDS_PARAMETER) : "10");
+        sruRequest.setMaximumRecords(maxRecords);
+        String recordPacking = request.getParameter(RECORD_PACKING_PARAMETER) != null
+                ? request.getParameter(RECORD_PACKING_PARAMETER) : "xml";
+        sruRequest.setRecordPacking(recordPacking);
+        String recordSchema = request.getParameter(RECORD_SCHEMA_PARAMETER) != null
+                ? request.getParameter(RECORD_SCHEMA_PARAMETER) : "mods";
+        sruRequest.setRecordSchema(recordSchema);
+        int ttl = Integer.parseInt(
+                request.getParameter(RESULT_SET_TTL_PARAMETER) != null
+                        ? request.getParameter(RESULT_SET_TTL_PARAMETER) : "0");
+        sruRequest.setResultSetTTL(ttl);
+        sruRequest.setSortKeys(request.getParameter(SORT_KEYS_PARAMETER));
+
+        sruRequest.setFacetLimit(request.getParameter(FACET_LIMIT_PARAMETER));
+        sruRequest.setFacetCount(request.getParameter(FACET_COUNT_PARAMETER));
+        sruRequest.setFacetStart(request.getParameter(FACET_START_PARAMETER));
+        sruRequest.setFacetSort(request.getParameter(FACET_SORT_PARAMETER));
+
+        sruRequest.setExtraRequestData(request.getParameter(EXTRA_REQUEST_DATA_PARAMETER));
+        return sruRequest;
     }
 
     private final Map<String, String> mediaTypes = new HashMap();
@@ -197,48 +230,6 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         }
         logger.debug("mimeType = {} -> mediaType = {}", mimeType, mediaType);
         return mediaType;
-    }
-
-    private final static Map<String, SRUService> services = new HashMap();
-
-    private synchronized SRUService createService(HttpServletRequest request)
-            throws ServletException, IOException {
-        SRUService service = null;
-        String[] reqPath = request.getRequestURI().split("/");
-        // last part of URI component is the name of the service
-        String name = reqPath[reqPath.length - 1];
-        try {
-            if (!services.containsKey(name)) {
-                service = PropertiesSRUServiceFactory.getInstance().getService(name);
-                services.put(name, service);
-                logger.debug("new SRU service {}", name);
-            } else {
-                service = services.get(name);
-            }
-        } catch (IllegalArgumentException e) {
-            // skip
-        }
-        if (service == null) {
-            try {
-                // class name in web.xml?
-                name = config.getInitParameter("name");
-                if (!services.containsKey(name)) {
-                    service = SRUServiceFactory.getInstance().getService(name);
-                    services.put(name, service);
-                    logger.debug("new SRU service {}", name);
-                } else {
-                    service = services.get(name);
-                }
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-                // skip
-            }
-        }
-        if (service == null) {
-            throw new ServletException("can't create SRUService from service name = "
-                    + config.getInitParameter("name")
-                    + " or request URI = " + request.getRequestURI());
-        }
-        return service;
     }
 
     private URI getBaseURI(HttpServletRequest request) {
