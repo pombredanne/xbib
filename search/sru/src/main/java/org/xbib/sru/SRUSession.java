@@ -38,8 +38,6 @@ import java.io.IOException;
 
 public interface SRUSession extends HttpSession {
 
-    DefaultHttpSession getSession();
-
     SRUSession setProxy(String host, int port);
 
     void close() throws IOException;

@@ -47,11 +47,9 @@ import org.xbib.io.negotiate.MediaRangeSpec;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
-import org.xbib.sru.SRUSession;
 import org.xbib.sru.SRUVersion;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.SRUConstants;
-import org.xbib.sru.client.SRUClientFactory;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.sru.util.SRUContentTypeNegotiator;
@@ -75,6 +73,8 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
 
     private SRUService service;
 
+    private SRUClient client;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -84,12 +84,24 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         this.service = serviceName != null ?
                 SRUServiceFactory.getService(serviceName) :
                 serviceURI != null ?
-                        SRUServiceFactory.getInstance().getService(serviceURI) :
-                        SRUServiceFactory.getInstance().getDefaultService();
+                        SRUServiceFactory.getService(serviceURI) :
+                        SRUServiceFactory.getDefaultService();
+        try {
+            this.client = service.newClient();
+        } catch (IOException e) {
+            throw new ServletException(e.getMessage(), e);
+        }
     }
 
     @Override
     public void destroy() {
+        if (client != null) {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
         if (service != null) {
             try {
                 service.close();
@@ -110,9 +122,6 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
             // a better method is adding a filter for HTTP request dumping
             logger.info(requestDumper.toString(request));
         }
-        // we us a pluggable client here
-        SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> client =
-                SRUClientFactory.getDefaultClient();
         try {
             String operation = request.getParameter(OPERATION_PARAMETER);
             if (SEARCH_RETRIEVE_COMMAND.equals(operation)) {
@@ -127,8 +136,8 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
                 if (sruRequest.getRecordPacking() != null && !service.getRecordPacking().equals(sruRequest.getRecordPacking())) {
                     throw new Diagnostics(6, sruRequest.getRecordPacking() + " != " + service.getRecordPacking());
                 }
-
-                SearchRetrieveResponse sruResponse = client.execute(request.getParameter(OPERATION_PARAMETER), sruRequest);
+                SearchRetrieveResponse sruResponse = new SearchRetrieveResponse(sruRequest);
+                service.searchRetrieve(sruRequest, sruResponse);
 
                 String contentType = version.equals(SRUVersion.VERSION_2_0) ?
                         OutputFormat.SRU.mimeType() : OutputFormat.XML.mimeType();
@@ -148,7 +157,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
                         .setStylesheets(version, stylesheets)
                         .to(response.getWriter());
                 logger.debug("SRU servlet response sent");
-
+            }
         } catch (Diagnostics diag) {
             logger.warn(diag.getMessage(), diag);
             //response.setStatus(500); SRU does not use 500 HTTP errors :(

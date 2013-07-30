@@ -63,10 +63,18 @@ public class ZSRUServiceFactory {
     }
 
     public static ZSRUService getService(String name) {
-        return new ZSRUService(getProperties(name));
+        try {
+            return new ZSRUService(getProperties(name));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public static ZSRUService getService(Properties properties) {
-        return new ZSRUService(properties);
+        try {
+            return new ZSRUService(properties);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

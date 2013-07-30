@@ -35,6 +35,7 @@ import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.iso23950.service.ZSRUService;
 import org.xbib.sru.iso23950.service.ZSRUServiceFactory;
 
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -49,12 +50,12 @@ public class ZSRUClientFactory {
     private ZSRUClientFactory() {
     }
 
-    public static SRUClient newClient(String name) {
+    public static SRUClient newClient(String name) throws IOException {
         ZSRUService service = ZSRUServiceFactory.getService(name);
         return new ZSRUClient(service);
     }
 
-    public static SRUClient newClient(Properties properties) {
+    public static SRUClient newClient(Properties properties) throws IOException {
         ZSRUService service = ZSRUServiceFactory.getService(properties);
         return new ZSRUClient(service);
     }

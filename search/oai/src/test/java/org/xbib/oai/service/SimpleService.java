@@ -95,14 +95,14 @@ public class SimpleService implements OAIService {
     }
 
     @Override
-    public OAISession connect() {
+    public OAISession newSession() {
         this.client = new DefaultOAIClient()
                 .setURL(getURI());
         return client;
     }
 
     @Override
-    public void disconnect(OAISession session) throws IOException {
+    public void disposeSession(OAISession session) throws IOException {
         client.close();
     }
 

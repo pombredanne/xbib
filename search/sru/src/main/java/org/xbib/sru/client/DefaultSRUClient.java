@@ -57,7 +57,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class DefaultSRUClient implements SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> {
+public class DefaultSRUClient implements SRUClient {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultSRUClient.class.getName());
 
@@ -112,30 +112,14 @@ public class DefaultSRUClient implements SRUClient<SearchRetrieveRequest,SearchR
                 .setRecordSchema(getRecordSchema());
     }
 
-    @Override
-    public SearchRetrieveResponse execute(String operation, SearchRetrieveRequest request)
-            throws IOException {
+    public SearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
+            throws SyntaxException, IOException, InterruptedException, ExecutionException, TimeoutException {
         if (request == null) {
             throw new IOException("request not set");
         }
         if (request.getURI() == null) {
             throw new IOException("request URI not set");
         }
-        SearchRetrieveResponse response = null;
-        try {
-            response = searchRetrieve(request);
-        } catch (SyntaxException e) {
-            logger.error("CQL syntax error", e);
-            throw new Diagnostics(10, e.getMessage());
-        } catch (Exception e) {
-            logger.error("SRU is unresponsive", e);
-            throw new Diagnostics(1, e.getMessage());
-        }
-        return response;
-    }
-
-    protected SearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
-            throws IOException, InterruptedException, ExecutionException, TimeoutException {
         final SearchRetrieveResponse response = new SearchRetrieveResponse(request);
 
         HttpRequest req = session.newRequest()

@@ -148,7 +148,6 @@ public class CQLSearchResponse {
 
     private final QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);
 
-
     public void to(XMLEventConsumer consumer) throws IOException, XMLStreamException {
         JsonXmlStreamer streamer = new JsonXmlStreamer().root(root);
         streamer.toXML(read(), consumer);
@@ -182,15 +181,15 @@ public class CQLSearchResponse {
             Streams.copy(new InputStreamReader(in, "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
             // method "JsonStyleSheet"
-            JsonStylesheet js = new JsonStylesheet().root(root);
-            js.toXML(in, writer);
+            new JsonStylesheet().root(root)
+                .toXML(in, writer);
         } else {
             // application/xhtml+xml
             // application/mods+xml
-            JsonStylesheet js = new JsonStylesheet().root(root);
-            js.setTransformer(getTransformer());
-            js.setStylesheets(getStylesheets());
-            js.transform(in, writer);
+            new JsonStylesheet().root(root)
+                .setTransformer(getTransformer())
+                .setStylesheets(getStylesheets())
+                .transform(in, writer);
         }
         writer.flush();
     }
@@ -207,9 +206,6 @@ public class CQLSearchResponse {
             }
             throw new SearchError(sb.toString());
         }
-        final boolean empty = searchResponse.getHits().getTotalHits() == 0L;
-        if (empty) {
-            throw new NotFoundError();
-        }
     }
+
 }

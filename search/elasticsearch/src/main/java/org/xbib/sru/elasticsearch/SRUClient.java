@@ -44,24 +44,39 @@ import org.xbib.sru.Diagnostics;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * SearchRetrieve by URL for Elasticseach
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class SRUClient implements
-        org.xbib.sru.client.SRUClient {
+public class SRUClient implements org.xbib.sru.client.SRUClient {
 
     private final Logger logger = LoggerFactory.getLogger(SRUClient.class.getName());
 
+    private final SRUService service;
+
     private final CQLSearchSupport support;
 
-    private final ElasticsearchSRUService service;
 
-    public SRUClient(ElasticsearchSRUService service, CQLSearchSupport support) {
+    public SRUClient(SRUService service, CQLSearchSupport support) {
         this.service = service;
         this.support = support;
+    }
+
+    public void close() throws IOException {
+        if (support != null && support.client() != null) {
+            support.client().close();
+            support.shutdown();
+        }
+        if (service != null) {
+            service.close();
+        }
+    }
+
+    public URI getClientIdentifier() {
+        return service.getURI();
     }
 
     @Override
@@ -85,39 +100,15 @@ public class SRUClient implements
     }
 
     @Override
-    public void shutdown() throws IOException {
-        support.shutdown();
+    public SRURequest newSearchRetrieveRequest() {
+        return new SRURequest();
     }
 
-    @Override
-    public ElasticsearchSRURequest newSearchRetrieveRequest() {
-        return new ElasticsearchSRURequest();
-    }
-
-    @Override
-    public ElasticsearchSRUResponse execute(ElasticsearchSRURequest request)
-            throws IOException {
+    public SRUResponse searchRetrieve(SearchRetrieveRequest request) throws IOException {
         if (request == null) {
             throw new IOException("request not set");
         }
-        ElasticsearchSRUResponse response = new ElasticsearchSRUResponse(request);
-        if (request.getRecordSchema() != null && !service.getRecordSchema().equals(request.getRecordSchema())) {
-            throw new Diagnostics(66, request.getRecordSchema());
-        }
-        if (request.getRecordPacking() != null && !service.getRecordPacking().equals(request.getRecordPacking())) {
-            throw new Diagnostics(6, request.getRecordPacking());
-        }
-        try {
-            searchRetrieve(request, response);
-        } catch (SyntaxException e) {
-            logger.error("CQL syntax error", e);
-            throw new Diagnostics(10, e.getMessage());
-        }
-        return response;
-    }
-
-    protected void searchRetrieve(final ElasticsearchSRURequest request,
-                                  final ElasticsearchSRUResponse response) throws IOException {
+        SRUResponse response = new SRUResponse(request);
         // allow only our versions
         boolean versionfound = false;
         String[] versions = getVersion().split(",");
@@ -186,6 +177,7 @@ public class SRUClient implements
         } finally {
             logger.info("SRU completed: query = {}", request.getQuery());
         }
+        return response;
     }
 
     private String getIndex(SearchRetrieveRequest request) {

@@ -31,13 +31,26 @@
  */
 package org.xbib.sru.service;
 
+import org.xbib.io.Session;
+import org.xbib.io.http.HttpRequest;
+import org.xbib.io.http.HttpSession;
+import org.xbib.io.http.netty.DefaultHttpSession;
+import org.xbib.io.util.URIUtil;
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
+import org.xbib.sru.SRUConstants;
 import org.xbib.sru.SRUSession;
 import org.xbib.sru.client.PropertiesSRUClient;
 import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *  A properties-based SRU service
@@ -46,10 +59,16 @@ import java.util.Properties;
  */
 public class PropertiesSRUService implements SRUService {
 
+    private final Logger logger = LoggerFactory.getLogger(PropertiesSRUService.class.getName());
+
     private Properties properties;
 
-    public PropertiesSRUService(Properties properties) {
+    private final HttpSession session;
+
+    public PropertiesSRUService(Properties properties) throws IOException {
         this.properties = properties;
+        this.session = new DefaultHttpSession();
+        session.open(Session.Mode.READ);
     }
     
     @Override
@@ -78,12 +97,48 @@ public class PropertiesSRUService implements SRUService {
     }
 
     @Override
-    public SRUSession connect() throws IOException {
+    public SRUSession newSession() throws IOException {
         return null;
     }
 
     @Override
-    public void disconnect(SRUSession session) throws IOException {
+    public SRUClient newClient() throws IOException {
+        return null;
+    }
+
+    @Override
+    public void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener)
+            throws IOException {
+        HttpRequest req = session.newRequest()
+                .setMethod("GET")
+                .setURL(request.getURI())
+                .addParameter(SRUConstants.OPERATION_PARAMETER, "searchRetrieve")
+                .addParameter(SRUConstants.VERSION_PARAMETER, request.getVersion())
+                .addParameter(SRUConstants.QUERY_PARAMETER, URIUtil.encode(request.getQuery(), Charset.forName("UTF-8")))
+                .addParameter(SRUConstants.START_RECORD_PARAMETER, Integer.toString(request.getStartRecord()))
+                .addParameter(SRUConstants.MAXIMUM_RECORDS_PARAMETER, Integer.toString(request.getMaximumRecords()));
+        if (request.getRecordPacking() != null && !request.getRecordPacking().isEmpty()) {
+            req.addParameter(SRUConstants.RECORD_PACKING_PARAMETER, request.getRecordPacking());
+        }
+        if (request.getRecordSchema() != null && !request.getRecordSchema().isEmpty()) {
+            req.addParameter(SRUConstants.RECORD_SCHEMA_PARAMETER, request.getRecordSchema());
+        }
+        try {
+            req.prepare().execute(listener).waitFor();
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+            throw new IOException(e);
+        } catch (ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            throw new IOException(e);
+        } catch (TimeoutException e) {
+            logger.error(e.getMessage(), e);
+            throw new IOException(e);
+        }
+    }
+
+    public void close() throws IOException {
+        session.close();
     }
 
 }

@@ -40,10 +40,10 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.client.SRUClient;
-import org.xbib.sru.service.PropertiesSRUServiceFactory;
 import org.xbib.sru.service.SRUService;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
+import org.xbib.sru.service.SRUServiceFactory;
 
 public class SRUAction extends AbstractAction {
 
@@ -61,10 +61,10 @@ public class SRUAction extends AbstractAction {
         final String name = get(params, "name", "default");
         final int from = get(params, "from", 1);
         final int size = get(params, "size", 10);
-        final SRUService service = PropertiesSRUServiceFactory.getInstance().getService(name);
-        SRUClient client = service.newClient();
-        SearchRetrieveRequest request = client.newSearchRetrieveRequest();
+        final SRUService service = SRUServiceFactory.getService(name);
         try {
+            SRUClient client = service.newClient();
+            SearchRetrieveRequest request = client.newSearchRetrieveRequest();
             request.setQuery(query)
                     .setStartRecord(from)
                     .setMaximumRecords(size);
@@ -193,8 +193,8 @@ public class SRUAction extends AbstractAction {
                 }
             };
             request.addListener(listener);
-            client.execute(request);
-            service.close(client);
+            client.searchRetrieve(request);
+            client.close();
         } catch (Exception e) {
             logger.error(service.getURI().getHost() + " failure: " + e.getMessage(), e);
         }

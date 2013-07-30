@@ -129,7 +129,7 @@ public class AsyncClientTest {
             };
             request.addListener(listener);
             SRUResponse response = client
-                    .execute(request)
+                    .searchRetrieve(request)
                     .setStylesheetTransformer(new StylesheetTransformer("src/test/resources/xsl"))
                     .to(writer);
 

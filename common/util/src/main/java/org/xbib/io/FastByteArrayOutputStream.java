@@ -19,9 +19,6 @@
 
 package org.xbib.io;
 
-import org.xbib.common.bytes.BytesArray;
-import org.xbib.common.bytes.BytesReference;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;

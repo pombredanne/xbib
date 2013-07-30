@@ -57,7 +57,7 @@ public class DNBClientTest {
 
     @Test
     public void testIdentify() throws Exception {
-        logger.info("trying to connect to DNB for Identify request");
+        logger.info("trying to newSession to DNB for Identify request");
         OAIClient client = OAIClientFactory.newClient("http://services.dnb.de/oai/repository");
         IdentifyRequest request = client.newIdentifyRequest();
         request.prepare().execute(new IdentifyResponseListener() {}).waitFor();
@@ -65,7 +65,7 @@ public class DNBClientTest {
 
     @Test
     public void testListRecordsDNB() throws Exception {
-        logger.info("trying to connect to DNB");
+        logger.info("trying to newSession to DNB");
 
         OAIClient client = OAIClientFactory.newClient("http://services.dnb.de/oai/repository");
 

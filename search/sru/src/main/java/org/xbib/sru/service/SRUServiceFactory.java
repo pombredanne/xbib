@@ -37,8 +37,7 @@ import org.xbib.logging.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
@@ -52,15 +51,13 @@ public final class SRUServiceFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(SRUServiceFactory.class.getName());
 
-    private final static Map<URI, SRUService> services = new WeakHashMap();
+    private final static HashMap<URI, SRUService> services = new HashMap<URI, SRUService>();
 
     private final static SRUServiceFactory instance = new SRUServiceFactory();
 
     private SRUServiceFactory() {
         ServiceLoader<SRUService> loader = ServiceLoader.load(SRUService.class);
-        Iterator<SRUService> iterator = loader.iterator();
-        while (iterator.hasNext()) {
-            SRUService service = iterator.next();
+        for (SRUService service : loader) {
             if (!services.containsKey(service.getURI())) {
                 services.put(service.getURI(), service);
             }
@@ -88,13 +85,12 @@ public final class SRUServiceFactory {
         if (in != null) {
             try {
                 properties.load(in);
+                return new PropertiesSRUService(properties);
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
-        } else {
-            throw new IllegalArgumentException("service " + name + " not found");
         }
-        return new PropertiesSRUService(properties);
+        throw new IllegalArgumentException("service " + name + " not found");
     }
 
 }

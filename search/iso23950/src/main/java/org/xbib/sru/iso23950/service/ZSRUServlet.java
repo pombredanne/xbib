@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -127,7 +129,7 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
                 response.setHeader("Server", "Java");
                 response.setHeader("X-Powered-By", getClass().getName());
 
-                client.execute(searchRetrieveRequest)
+                client.searchRetrieve(searchRetrieveRequest)
                     .setStylesheetTransformer(new StylesheetTransformer("/xsl"))
                     .setStylesheets(version, stylesheets)
                     .to(response.getWriter());
@@ -140,6 +142,18 @@ public class ZSRUServlet extends HttpServlet implements SRUConstants {
             logger.warn(diag.getMessage(), diag);
             response.setStatus(500);
             response.getOutputStream().write(diag.getXML().getBytes(responseEncoding));
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(500);
+            response.getOutputStream().write(e.getMessage().getBytes(responseEncoding));
+        } catch (ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(500);
+            response.getOutputStream().write(e.getMessage().getBytes(responseEncoding));
+        } catch (TimeoutException e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(500);
+            response.getOutputStream().write(e.getMessage().getBytes(responseEncoding));
         }
     }
 

@@ -60,9 +60,9 @@ public interface OAIService {
 
     URI getURI();
 
-    OAISession connect();
+    OAISession newSession();
 
-    void disconnect(OAISession session) throws IOException;
+    void disposeSession(OAISession session) throws IOException;
 
     /**
      * This verb is used to retrieve information about a repository. 

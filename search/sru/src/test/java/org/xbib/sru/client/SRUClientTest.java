@@ -52,12 +52,12 @@ public class SRUClientTest {
     private static final Logger logger = LoggerFactory.getLogger(SRUClientTest.class.getName());
 
     @Test
-    public void testServiceSearchRetrieve() throws IOException {
+    public void testServiceSearchRetrieve() throws Exception {
         for (String clientName : Arrays.asList("Gent", "Lund", "Bielefeld")) {
             String query = "title = linux";
             int from = 1;
             int size = 10;
-            final SRUClient<SearchRetrieveRequest,SearchRetrieveResponse> client
+            final SRUClient client
                     = SRUClientFactory.newClient(clientName);
             FileOutputStream out = new FileOutputStream("target/sru-service-"
                     + clientName + ".xml");
@@ -127,9 +127,9 @@ public class SRUClientTest {
                             .setQuery(query)
                             .setStartRecord(from)
                             .setMaximumRecords(size);
-                    SearchRetrieveResponse response = client.execute(request).to(w);
+                    SearchRetrieveResponse response = client.searchRetrieve(request).to(w);
                     logger.info("http status = {}", response.httpStatus());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 } finally {
                     client.close();

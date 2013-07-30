@@ -34,13 +34,17 @@ package org.xbib.sru.client;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
+import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.SRUConstants;
 import org.xbib.sru.SRUProfile;
 import org.xbib.sru.SRURequest;
 import org.xbib.sru.SRUResponse;
 import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 
 /**
  * SRU client
@@ -54,13 +58,7 @@ public interface SRUClient
 
     SearchRetrieveRequest newSearchRetrieveRequest();
 
-    /**
-     * Execute searchRetrieve request.
-     *
-     * @param request request
-     * @return
-     * @throws IOException
-     */
-    void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener) throws IOException;
+    SearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
+            throws SyntaxException, IOException, InterruptedException, ExecutionException, TimeoutException;
 
 }

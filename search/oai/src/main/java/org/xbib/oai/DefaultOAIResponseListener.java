@@ -98,12 +98,12 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
 
     @Override
     public void onConnect(Request request) throws IOException {
-        // ignore connect
+        // ignore newSession
     }
 
     @Override
     public void onDisconnect(Request request) throws IOException {
-         // ignore disconnect
+         // ignore disposeSession
     }
 
     @Override

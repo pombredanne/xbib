@@ -71,8 +71,6 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
     private HttpResponse httpResponse;
 
-    boolean isEmpty;
-
     public SearchRetrieveResponse(SearchRetrieveRequest request) {
         this.request = request;
     }

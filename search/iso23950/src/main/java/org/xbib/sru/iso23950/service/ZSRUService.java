@@ -62,7 +62,7 @@ public class ZSRUService extends PropertiesSRUService implements ZService, ZCons
 
     private final Properties properties;
 
-    public ZSRUService(Properties properties) {
+    public ZSRUService(Properties properties) throws IOException {
         super(properties);
         this.properties = properties;
     }
@@ -73,7 +73,7 @@ public class ZSRUService extends PropertiesSRUService implements ZService, ZCons
     }
 
     @Override
-    public SRUClient newClient() {
+    public SRUClient newClient() throws IOException {
         return ZSRUClientFactory.newClient(properties);
     }
 

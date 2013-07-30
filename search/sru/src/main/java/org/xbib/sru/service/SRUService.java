@@ -33,6 +33,9 @@ package org.xbib.sru.service;
 
 import org.xbib.sru.SRUSession;
 import org.xbib.sru.SRUProfile;
+import org.xbib.sru.client.SRUClient;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -49,6 +52,15 @@ public interface SRUService extends SRUProfile, Closeable {
 
     SRUSession newSession() throws IOException;
 
-    void disposeSession(SRUSession session) throws IOException;
+    SRUClient newClient() throws IOException;
+
+    /**
+     * Execute searchRetrieve request.
+     *
+     * @param request request
+     * @return
+     * @throws IOException
+     */
+    void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener) throws IOException;
 
 }

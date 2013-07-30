@@ -98,7 +98,7 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
             service = createAdapter(request);
         }
         logger.info(requestDumper.toString(request));
-        OAISession session = service.connect();
+        OAISession session = service.newSession();
         try {
             String verb = request.getParameter(VERB_PARAMETER);
             Writer writer = new OutputStreamWriter(response.getOutputStream(), responseEncoding);
@@ -139,7 +139,7 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
             response.setStatus(500);
         } finally {
             out.flush();
-            service.disconnect(session);
+            service.disposeSession(session);
         }
     }
 

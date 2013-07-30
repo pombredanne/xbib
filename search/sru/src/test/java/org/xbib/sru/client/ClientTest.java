@@ -123,7 +123,7 @@ public class ClientTest {
                 }
             };
             request.addListener(listener);
-            client.execute(request)
+            client.searchRetrieve(request)
                     .setStylesheetTransformer(new StylesheetTransformer("src/test/resources/xsl"))
                     .to(writer);
             client.close();
