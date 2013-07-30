@@ -90,19 +90,19 @@ public class SimpleService implements OAIService {
     }
 
     @Override
-    public URI getURI() {
+    public URI getServiceIdentifier() {
         return URI.create("http://localhost:8080/oai");
     }
 
     @Override
-    public OAISession connect() {
+    public OAISession newSession() {
         this.client = new DefaultOAIClient()
-                .setURL(getURI());
+                .setURL(getServiceIdentifier());
         return client;
     }
 
     @Override
-    public void disconnect(OAISession session) throws IOException {
+    public void disposeSession(OAISession session) throws IOException {
         client.close();
     }
 
@@ -119,7 +119,7 @@ public class SimpleService implements OAIService {
     @Override
     public URL getBaseURL() {
         try {
-            return getURI().toURL();
+            return getServiceIdentifier().toURL();
         } catch (MalformedURLException ex) {
             return null;
         }

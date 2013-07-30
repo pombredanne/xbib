@@ -31,7 +31,7 @@
  */
 package org.xbib.elasticsearch.support;
 
-import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 
 import java.net.URI;
 
@@ -40,7 +40,7 @@ import java.net.URI;
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public class CQLSearchSupport extends TransportClientSearchSupport {
+public class CQLSearchSupport extends SearchClientSupport {
 
     @Override
     public CQLSearchSupport newClient() {

@@ -33,7 +33,7 @@ package org.xbib.elasticsearch.mock;
 
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.iri.IRI;
 import org.xbib.rdf.Literal;
 import org.xbib.rdf.Property;
@@ -52,7 +52,7 @@ public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property,
     @Test
     public void testWrite() throws Exception {
 
-        final MockTransportClientIngest es = new MockTransportClientIngest().setIndex("test").setType("test");
+        final MockIngestClient es = new MockIngestClient().setIndex("test").setType("test");
 
         final ElasticsearchResourceSink<ResourceContext, Resource> indexer = new ElasticsearchResourceSink(es);
 

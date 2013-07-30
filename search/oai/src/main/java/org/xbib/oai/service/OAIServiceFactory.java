@@ -60,8 +60,8 @@ public class OAIServiceFactory {
         Iterator<OAIService> iterator = loader.iterator();
         while (iterator.hasNext()) {
             OAIService adapter = iterator.next();
-            if (!services.containsKey(adapter.getURI())) {
-                services.put(adapter.getURI(), adapter);
+            if (!services.containsKey(adapter.getServiceIdentifier())) {
+                services.put(adapter.getServiceIdentifier(), adapter);
             }
         }
     }
@@ -70,11 +70,11 @@ public class OAIServiceFactory {
         return instance;
     }
 
-    public OAIService getDefaultService() {
+    public static OAIService getDefaultService() {
         return services.isEmpty() ? null : services.entrySet().iterator().next().getValue();
     }
 
-    public OAIService getService(URI uri) {
+    public static OAIService getService(URI uri) {
         if (services.containsKey(uri)) {
             return services.get(uri);
         }

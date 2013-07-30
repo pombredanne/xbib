@@ -80,25 +80,28 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
 
     private final String responseEncoding = "UTF-8";
 
-    private OAIService service;
+    private final String contentType = "text/xml";
 
-    private String serviceName;
+    private OAIService service;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.serviceName = config.getInitParameter("name");
+        String serviceName = config.getInitParameter("name");
+        String serviceURI = config.getInitParameter("uri");
+        this.service = serviceName != null ?
+                OAIServiceFactory.getService(serviceName) :
+                serviceURI != null ?
+                        OAIServiceFactory.getService(serviceURI) :
+                        OAIServiceFactory.getDefaultService();
     }
 
     @Override
     public void doGet(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/xml");
+        response.setContentType(contentType);
         final OutputStream out = response.getOutputStream();
-        if (service == null) {
-            service = createAdapter(request);
-        }
         logger.info(requestDumper.toString(request));
-        OAISession session = service.connect();
+        OAISession session = service.newSession();
         try {
             String verb = request.getParameter(VERB_PARAMETER);
             Writer writer = new OutputStreamWriter(response.getOutputStream(), responseEncoding);
@@ -108,8 +111,7 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
                 oaiRequest.setURL(service.getBaseURL().toURI());
                 service.identify(oaiRequest, oaiResponse);
                 oaiResponse.to(writer);
-            }
-            if (LIST_METADATA_FORMATS.equals(verb)) {
+            } else if (LIST_METADATA_FORMATS.equals(verb)) {
                 ServerListMetadataFormatsRequest oaiRequest = new ServerListMetadataFormatsRequest(session, request);
                 ListMetadataFormatsResponse oaiResponse = new ListMetadataFormatsResponse(oaiRequest);
                 oaiRequest.setURL(service.getBaseURL().toURI());
@@ -139,36 +141,13 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
             response.setStatus(500);
         } finally {
             out.flush();
-            service.disconnect(session);
+            service.disposeSession(session);
         }
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
-    }
-
-    private OAIService createAdapter(HttpServletRequest request)
-            throws ServletException, IOException {
-        String[] reqPath = request.getRequestURI().split("/");
-        String name = reqPath[reqPath.length - 1];
-        try {
-            this.service = OAIServiceFactory.getService(name);
-        } catch (IllegalArgumentException e) {
-            // skip
-        }
-        if (service == null) {
-            try {
-                this.service = OAIServiceFactory.getService(serviceName);
-            } catch (IllegalArgumentException e) {
-                // skip
-            }
-        }
-        if (service == null) {
-            throw new ServletException("can't get service from serviceName = " + serviceName
-                    + " or request URI = " + request.getRequestURI());
-        }
-        return service;
     }
 
     private URI getBaseURI(HttpServletRequest request) {

@@ -48,7 +48,7 @@ import org.xbib.elasticsearch.support.facet.FacetSupport;
 import org.xbib.facet.Facet;
 import org.xbib.facet.FacetListener;
 import org.xbib.io.OutputFormat;
-import org.xbib.common.io.stream.StreamByteBuffer;
+import org.xbib.io.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.logging.Logger;

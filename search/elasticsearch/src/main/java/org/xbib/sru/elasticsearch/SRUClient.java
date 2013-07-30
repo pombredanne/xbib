@@ -57,9 +57,9 @@ public class SRUClient implements
 
     private final CQLSearchSupport support;
 
-    private final ElasticsearchSRUService service;
+    private final SRUService service;
 
-    public SRUClient(ElasticsearchSRUService service, CQLSearchSupport support) {
+    public SRUClient(SRUService service, CQLSearchSupport support) {
         this.service = service;
         this.support = support;
     }
@@ -85,22 +85,22 @@ public class SRUClient implements
     }
 
     @Override
-    public void shutdown() throws IOException {
+    public void close() throws IOException {
         support.shutdown();
     }
 
     @Override
-    public ElasticsearchSRURequest newSearchRetrieveRequest() {
-        return new ElasticsearchSRURequest();
+    public SRURequest newSearchRetrieveRequest() {
+        return new SRURequest();
     }
 
     @Override
-    public ElasticsearchSRUResponse execute(ElasticsearchSRURequest request)
+    public SRUResponse execute(SRURequest request)
             throws IOException {
         if (request == null) {
             throw new IOException("request not set");
         }
-        ElasticsearchSRUResponse response = new ElasticsearchSRUResponse(request);
+        SRUResponse response = new SRUResponse(request);
         if (request.getRecordSchema() != null && !service.getRecordSchema().equals(request.getRecordSchema())) {
             throw new Diagnostics(66, request.getRecordSchema());
         }
@@ -116,8 +116,8 @@ public class SRUClient implements
         return response;
     }
 
-    protected void searchRetrieve(final ElasticsearchSRURequest request,
-                                  final ElasticsearchSRUResponse response) throws IOException {
+    protected void searchRetrieve(final SRURequest request,
+                                  final SRUResponse response) throws IOException {
         // allow only our versions
         boolean versionfound = false;
         String[] versions = getVersion().split(",");

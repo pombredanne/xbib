@@ -20,10 +20,6 @@
 package org.xbib.io;
 
 
-import org.joda.time.DateTime;
-import org.xbib.io.BytesArray;
-import org.xbib.io.BytesReference;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -290,8 +286,8 @@ public abstract class StreamInput extends InputStream {
                 return readByte();
             case 12:
                 return new Date(readLong());
-            case 13:
-                return new DateTime(readLong());
+            //case 13:
+            //    return new DateTime(readLong());
             case 14:
                 return readBytesReference();
             default:

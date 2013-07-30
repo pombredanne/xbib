@@ -40,7 +40,7 @@ import org.elasticsearch.common.xcontent.json.JsonXContent;
 
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.io.OutputFormat;
-import org.xbib.common.io.stream.StreamByteBuffer;
+import org.xbib.io.StreamByteBuffer;
 import org.xbib.io.Streams;
 import org.xbib.json.JsonXmlStreamer;
 import org.xbib.json.transform.JsonStylesheet;

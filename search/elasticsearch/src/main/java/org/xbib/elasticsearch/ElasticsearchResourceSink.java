@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.xbib.elements.ElementOutput;
-import org.xbib.elasticsearch.support.ClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.xcontent.ContentBuilder;
@@ -51,13 +51,13 @@ import org.xbib.rdf.xcontent.ContentBuilder;
 public class ElasticsearchResourceSink<C extends ResourceContext, R extends Resource>
         implements ElementOutput<C, R> {
 
-    private final ClientIngest ingester;
+    private final IngestClient ingester;
 
     private final AtomicInteger resourceCounter = new AtomicInteger(0);
 
     private boolean enabled;
 
-    public ElasticsearchResourceSink(final ClientIngest ingester) {
+    public ElasticsearchResourceSink(final IngestClient ingester) {
         this.ingester = ingester;
     }
 

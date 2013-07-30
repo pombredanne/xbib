@@ -39,7 +39,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.stream.events.XMLEvent;
+
 import org.testng.annotations.Test;
+
 import org.xbib.io.Request;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -47,10 +49,9 @@ import org.xbib.sru.Diagnostics;
 import org.xbib.sru.client.SRUClient;
 import org.xbib.sru.iso23950.service.ZSRUService;
 import org.xbib.sru.iso23950.service.ZSRUServiceFactory;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponseAdapter;
-import org.xbib.sru.searchretrieve.SearchRetrieveResponseListener;
-import org.xbib.sru.service.SRUService;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SRUServiceTest {
@@ -66,7 +67,7 @@ public class SRUServiceTest {
             try (Writer w = new OutputStreamWriter(out, "UTF-8")) {
                 try {
                     SRUClient client = service.newClient();
-                    SearchRetrieveResponseListener listener = new SearchRetrieveResponseAdapter() {
+                    SearchRetrieveListener listener = new SearchRetrieveResponseAdapter() {
                         @Override
                         public void onConnect(Request request) {
                             logger.info("connect, request = " + request);

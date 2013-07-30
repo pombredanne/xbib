@@ -19,10 +19,6 @@
 
 package org.xbib.io;
 
-import org.xbib.io.BytesArray;
-import org.xbib.io.BytesReference;
-import org.xbib.io.BytesStream;
-
 import java.io.IOException;
 import java.util.Arrays;
 

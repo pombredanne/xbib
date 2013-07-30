@@ -20,9 +20,6 @@
 package org.xbib.io;
 
 
-import org.xbib.io.BytesArray;
-import org.xbib.io.BytesReference;
-
 import java.io.EOFException;
 import java.io.IOException;
 

@@ -20,8 +20,6 @@
 package org.xbib.io;
 
 
-import org.xbib.common.bytes.BytesReference;
-
 public interface BytesStream {
 
     BytesReference bytes();

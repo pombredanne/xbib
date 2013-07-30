@@ -20,6 +20,7 @@
 package org.xbib.settings;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 /**

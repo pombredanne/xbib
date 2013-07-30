@@ -19,8 +19,11 @@
 
 package org.xbib.settings;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import org.xbib.io.StreamInput;
+import org.xbib.io.StreamOutput;
+import org.xbib.settings.loader.SettingsLoader;
+import org.xbib.settings.loader.SettingsLoaderFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,21 +31,18 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.util.*;
-
-import org.xbib.common.Booleans;
-import org.xbib.common.io.stream.StreamInput;
-import org.xbib.common.io.stream.StreamOutput;
-import org.xbib.common.property.PropertyPlaceholder;
-import org.xbib.common.settings.loader.SettingsLoader;
-import org.xbib.common.settings.loader.SettingsLoaderFactory;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * An immutable implementation of {@link Settings}.
  */
 public class ImmutableSettings implements Settings {
 
-    private ImmutableMap<String, String> settings;
+    private Map<String, String> settings;
 
     private ImmutableSettings(Map<String, String> settings) {
         this.settings = ImmutableMap.copyOf(settings);

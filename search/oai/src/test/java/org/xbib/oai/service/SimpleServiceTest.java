@@ -50,15 +50,16 @@ public class SimpleServiceTest {
     @Test
     public void testIdentifyService() throws Exception {
         OAIService service = OAIServiceFactory.getInstance().getDefaultService();
-        OAISession session = service.connect();
+        OAISession session = service.newSession();
         StringWriter sw = new StringWriter();
         MyIdentifyRequest request = new MyIdentifyRequest(session);
         IdentifyResponse response = new IdentifyResponse(request);
         service.identify(request, response);
         response.to(sw);
-        service.disconnect(session);
+        service.disposeSession(session);
     }
-    
+
+    // TODO this is not what we like!
     class MyIdentifyRequest extends IdentifyServerRequest {
 
         protected MyIdentifyRequest(OAISession session) {

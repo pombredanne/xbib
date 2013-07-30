@@ -58,11 +58,13 @@ import org.xbib.oai.set.ListSetsResponse;
  */
 public interface OAIService {
 
-    URI getURI();
+    URI getServiceIdentifier();
 
-    OAISession connect();
+    URL getBaseURL();
 
-    void disconnect(OAISession session) throws IOException;
+    OAISession newSession();
+
+    void disposeSession(OAISession session) throws IOException;
 
     /**
      * This verb is used to retrieve information about a repository. 
@@ -140,8 +142,6 @@ public interface OAIService {
     
     String getRepositoryName();
     
-    URL getBaseURL();
-
     String getProtocolVersion();
 
     String getAdminEmail();

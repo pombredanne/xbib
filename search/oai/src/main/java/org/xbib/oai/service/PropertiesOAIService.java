@@ -83,7 +83,7 @@ public class PropertiesOAIService implements OAIService {
     }
 
     @Override
-    public URI getURI() {
+    public URI getServiceIdentifier() {
         return URI.create(properties.getProperty(ADAPTER_URI).trim());
     }
 
@@ -131,12 +131,12 @@ public class PropertiesOAIService implements OAIService {
     }
 
     @Override
-    public OAISession connect() {
+    public OAISession newSession() {
         return null;
     }
 
     @Override
-    public void disconnect(OAISession session) {
+    public void disposeSession(OAISession session) {
 
     }
 

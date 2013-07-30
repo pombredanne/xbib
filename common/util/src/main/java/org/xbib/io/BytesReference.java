@@ -20,8 +20,6 @@
 package org.xbib.io;
 
 
-import org.xbib.common.io.stream.StreamInput;
-
 import java.io.IOException;
 import java.io.OutputStream;
 

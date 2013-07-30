@@ -46,7 +46,6 @@ import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.CQLParser;
 import org.xbib.query.cql.elasticsearch.ESFilterGenerator;
 import org.xbib.query.cql.elasticsearch.ESQueryGenerator;
-import org.xbib.util.Strings;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 

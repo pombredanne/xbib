@@ -19,19 +19,17 @@
 
 package org.xbib.settings.loader;
 
-import com.google.common.io.Closeables;
-import org.xbib.common.io.FastByteArrayInputStream;
-import org.xbib.common.io.FastStringReader;
+import org.xbib.io.FastByteArrayInputStream;
+import org.xbib.io.FastStringReader;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Settings loader that loads (parses) the settings in a properties format.
- *
  *
  */
 public class PropertiesSettingsLoader implements SettingsLoader {
@@ -42,13 +40,13 @@ public class PropertiesSettingsLoader implements SettingsLoader {
         FastStringReader reader = new FastStringReader(source);
         try {
             props.load(reader);
-            Map<String, String> result = newHashMap();
+            Map<String, String> result = new HashMap();
             for (Map.Entry entry : props.entrySet()) {
                 result.put((String) entry.getKey(), (String) entry.getValue());
             }
             return result;
         } finally {
-            Closeables.closeQuietly(reader);
+            reader.close();
         }
     }
 
@@ -58,13 +56,13 @@ public class PropertiesSettingsLoader implements SettingsLoader {
         FastByteArrayInputStream stream = new FastByteArrayInputStream(source);
         try {
             props.load(stream);
-            Map<String, String> result = newHashMap();
+            Map<String, String> result = new HashMap();
             for (Map.Entry entry : props.entrySet()) {
                 result.put((String) entry.getKey(), (String) entry.getValue());
             }
             return result;
         } finally {
-            Closeables.closeQuietly(stream);
+            stream.close();
         }
     }
 }

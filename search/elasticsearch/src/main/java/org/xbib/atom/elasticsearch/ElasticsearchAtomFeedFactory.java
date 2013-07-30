@@ -141,12 +141,7 @@ public class ElasticsearchAtomFeedFactory implements AtomFeedFactory {
         }
         String uriStr = properties.getProperty(FEED_URI_PROPERTY_KEY, "es://localhost:9300?es.cluster.name=joerg");
         URI uri = URI.create(uriStr);
-        if (!support.isConnected()) {
-            support.newClient(uri);
-            if (!support.isConnected()) {
-                throw new IOException("elasticsearch client not connected");
-            }
-        }
+        support.newClient(uri);
         String index = properties.getProperty(FEED_INDEX);
         String type =  properties.getProperty(FEED_TYPE);
         try {
