@@ -50,11 +50,6 @@ public class SearchRetrieveRequest
 
     private String query;
 
-    /**
-     * private extension, a query for filtering query results
-     */
-    private String filter;
-
     private int recordNum;
 
     private int maxRecords;
@@ -78,6 +73,11 @@ public class SearchRetrieveRequest
     private String path;
 
     private List<SearchRetrieveListener> listeners = new ArrayList();
+
+    /**
+     * private extension, a query for filtering query results
+     */
+    private String filter;
 
     protected SearchRetrieveRequest() {
     }

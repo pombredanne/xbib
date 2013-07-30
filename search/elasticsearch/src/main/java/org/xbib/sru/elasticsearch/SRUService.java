@@ -37,7 +37,9 @@ import java.util.ResourceBundle;
 
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.sru.SRUConstants;
-import org.xbib.sru.service.SRUService;
+import org.xbib.sru.SRUSession;
+import org.xbib.sru.searchretrieve.SearchRetrieveListener;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 /**
  * Elasticseach SRU service
@@ -48,12 +50,6 @@ public class SRUService implements org.xbib.sru.service.SRUService {
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("org.xbib.sru.elasticsearch");
 
-    private final String recordPacking = bundle.getString(SRUConstants.RECORDPACKING_PROPERTY);
-
-    private final String recordSchema = bundle.getString(SRUConstants.RECORDSCHEMA_PROPERTY);
-
-    private final String version = bundle.getString(SRUConstants.VERSION_PROPERTY);
-
     private final CQLSearchSupport support = new CQLSearchSupport();
 
     @Override
@@ -62,23 +58,32 @@ public class SRUService implements org.xbib.sru.service.SRUService {
     }
 
     @Override
-    public void close(org.xbib.sru.client.SRUClient client) throws IOException {
-        client.shutdown();
+    public SRUSession newSession() throws IOException {
+        return null;
+    }
+
+    @Override
+    public SRUClient newClient() throws IOException {
+        return new SRUClient(this, support.newClient());
+    }
+
+    @Override
+    public void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener) throws IOException {
     }
 
     @Override
     public String getVersion() {
-        return version;
+        return bundle.getString(SRUConstants.VERSION_PROPERTY);
     }
 
     @Override
     public String getRecordPacking() {
-        return recordPacking;
+        return bundle.getString(SRUConstants.RECORDPACKING_PROPERTY);
     }
 
     @Override
     public String getRecordSchema() {
-        return recordSchema;
+        return bundle.getString(SRUConstants.RECORDSCHEMA_PROPERTY);
     }
 
     @Override
@@ -86,11 +91,10 @@ public class SRUService implements org.xbib.sru.service.SRUService {
         return "UTF-8"; // always UTF-8
     }
 
-    public org.xbib.sru.client.SRUClient newClient() {
-        return new SRUClient(this, support.newClient());
-    }
-
-    public org.xbib.sru.client.SRUClient newClient(URI uri) {
-        return new SRUClient(this, support.newClient(uri));
+    @Override
+    public void close() throws IOException {
+        if (support != null) {
+            support.shutdown();
+        }
     }
 }

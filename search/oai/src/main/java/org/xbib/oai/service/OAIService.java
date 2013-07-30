@@ -58,9 +58,7 @@ import org.xbib.oai.set.ListSetsResponse;
  */
 public interface OAIService {
 
-    URI getServiceIdentifier();
-
-    URL getBaseURL();
+    URI getURI();
 
     OAISession newSession();
 
@@ -142,6 +140,8 @@ public interface OAIService {
     
     String getRepositoryName();
     
+    URL getBaseURL();
+
     String getProtocolVersion();
 
     String getAdminEmail();

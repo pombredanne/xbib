@@ -40,8 +40,10 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUVersion;
-import org.xbib.sru.service.DefaultSRUServiceFactory;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
+import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xbib.sru.service.SRUService;
+import org.xbib.sru.service.SRUServiceFactory;
 import org.xbib.xml.transform.StylesheetTransformer;
 
 public class SRUTest {
@@ -51,9 +53,9 @@ public class SRUTest {
     @Test
     public void testElasticsearchSearchRetrieve() throws Exception {
         OutputFormat format = OutputFormat.MODS;
-        SRUService<SRUClient> service = DefaultSRUServiceFactory.getInstance().getDefaultService();
-        SRUClient client = service.newClient();
-        SRURequest request = client.newSearchRetrieveRequest();
+        SRUService service = SRUServiceFactory.getDefaultService();
+        org.xbib.sru.client.SRUClient client = service.newClient();
+        SearchRetrieveRequest request = client.newSearchRetrieveRequest();
         request.setVersion("2.0")
             .setQuery("dc.creator = \"John\"")
                 //.setFilter("")
@@ -65,7 +67,7 @@ public class SRUTest {
             .setPath("/sru/hbz/*");
         FileWriter w = new FileWriter("target/es." + format.suffix());
         try {
-            SRUResponse response = client.execute(request);
+            SearchRetrieveResponse response = client.searchRetrieve(request);
             StylesheetTransformer transformer = new StylesheetTransformer(
                     "src/test/resources",
                     "src/test/resources/xsl");
@@ -79,7 +81,8 @@ public class SRUTest {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } finally {
-            service.shutdown();
+            client.close();
+            service.close();
         }
     }
 }

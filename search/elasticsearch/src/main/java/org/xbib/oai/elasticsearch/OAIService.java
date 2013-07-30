@@ -78,7 +78,7 @@ public class OAIService implements org.xbib.oai.service.OAIService {
     private CQLSearchSupport es = new CQLSearchSupport().newClient();
 
     @Override
-    public URI getServiceIdentifier() {
+    public URI getURI() {
         return URI.create(bundle.getString("uri"));
     }
 
@@ -122,16 +122,16 @@ public class OAIService implements org.xbib.oai.service.OAIService {
                     .read();
             response.setReader(new InputStreamReader(in, "UTF-8"));
         } catch (NoNodeAvailableException e) {
-            logger.error("OAI " + getServiceIdentifier() + ": unresponsive", e);
+            logger.error("OAI " + getURI() + ": unresponsive", e);
             throw new OAIException(e.getMessage());
         } catch (IndexMissingException e) {
-            logger.error("OAI " + getServiceIdentifier() + ": database does not exist", e);
+            logger.error("OAI " + getURI() + ": database does not exist", e);
             throw new OAIException(e.getMessage());
         } catch (SyntaxException e) {
-            logger.error("OAI " + getServiceIdentifier() + ": syntax error", e);
+            logger.error("OAI " + getURI() + ": syntax error", e);
             throw new OAIException(e.getMessage());
         } catch (IOException e) {
-            logger.error("OAI " + getServiceIdentifier() + ": database is unresponsive", e);
+            logger.error("OAI " + getURI() + ": database is unresponsive", e);
             throw new OAIException(e.getMessage());
         } finally {
             logger.info("SRU completed: query = {}", query);

@@ -294,8 +294,11 @@ public class CQLSearchRequest extends BasicRequest {
                 .execute().actionGet());
         long t1 = System.currentTimeMillis();
         if (queryLogger != null) {
-            queryLogger.info(" [{}] [{}ms] [{}ms] [hits={}] [cql={}] [cql={}] [cqlfilter={}] [cqlfacetfilter={}] [{}] [{}] [{}]",
-                    formatIndexType(), t1 - t0, response.tookInMillis(), response.totalHits(),
+            queryLogger.info(" [{}] [total={}ms] [took={}ms] [hits={}] [cql={}] [cqlfilter={}] [cqlfacetfilter={}] [query={}] [filter={}] [facetfilter={}]",
+                    formatIndexType(),
+                    t1 - t0,
+                    response.tookInMillis(),
+                    response.totalHits(),
                     cqlQuery, cqlFilter, cqlFacetFilter,
                     query, filter, facetfilter);
         }

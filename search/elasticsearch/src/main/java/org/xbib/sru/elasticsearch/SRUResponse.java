@@ -55,6 +55,7 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUVersion;
 import org.xbib.sru.facet.FacetedResult;
+import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -73,13 +74,13 @@ public class SRUResponse extends SearchRetrieveResponse {
 
     private final static QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);
 
-    private SRURequest request;
+    private SearchRetrieveRequest request;
 
     private StreamByteBuffer buffer;
 
     private Facets facets;
 
-    public SRUResponse(SRURequest request) {
+    public SRUResponse(SearchRetrieveRequest request) {
         super(request);
         this.request = request;
     }
@@ -155,6 +156,15 @@ public class SRUResponse extends SearchRetrieveResponse {
             SRUVersion version = request != null ?
                     SRUVersion.fromString(request.getVersion()) : SRUVersion.VERSION_2_0;
             String[] stylesheets = getStylesheets(version);
+            if (buffer == null) {
+                new JsonStylesheet()
+                        .root(root)
+                        .setTransformer(getTransformer())
+                        .setStylesheets(stylesheets)
+                        .transform(buffer.getInputStream(), writer);
+
+            }
+
             new JsonStylesheet()
                     .root(root)
                 .setTransformer(getTransformer())

@@ -34,7 +34,7 @@ public class PrivateSRUServiceTest {
                     request.setQuery(query)
                             .setStartRecord(from)
                             .setMaximumRecords(size);
-                    client.execute(request).to(writer);
+                    client.searchRetrieve(request).to(writer);
                 }
             } catch (Exception e) {
                 logger.warn(e.getMessage());

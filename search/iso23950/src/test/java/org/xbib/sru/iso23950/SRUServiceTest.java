@@ -142,7 +142,7 @@ public class SRUServiceTest {
                             .setStartRecord(from)
                             .setMaximumRecords(size);
                     StylesheetTransformer transformer = new StylesheetTransformer("src/main/resources/xsl");
-                    client.execute(request)
+                    client.searchRetrieve(request)
                             .setStylesheetTransformer(transformer)
                             .to(w);
                 } catch (Diagnostics d) {

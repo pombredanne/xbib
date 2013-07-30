@@ -56,8 +56,8 @@ public class ZSRUClient extends DefaultSRUClient {
 
     private final ZSRUService service;
 
-    protected ZSRUClient(ZSRUService service) {
-        super(service);
+    protected ZSRUClient(ZSRUService service) throws IOException {
+        super(service.getURI());
         this.service = service;
     }
 
@@ -78,7 +78,7 @@ public class ZSRUClient extends DefaultSRUClient {
     }
 
     @Override
-    protected ZSearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
+    public ZSearchRetrieveResponse searchRetrieve(SearchRetrieveRequest request)
             throws IOException, InterruptedException, ExecutionException, TimeoutException {
         // connect to Z service
         URI uri = request.getURI();
