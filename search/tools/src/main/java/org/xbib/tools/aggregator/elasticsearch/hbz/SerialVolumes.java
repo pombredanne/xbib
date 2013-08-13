@@ -39,7 +39,8 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.tools.opt.OptionParser;
@@ -58,11 +59,11 @@ public class SerialVolumes {
     private final static Logger logger = LoggerFactory.getLogger(SerialVolumes.class.getName());
     private static OptionSet options;
     private final static String lf = System.getProperty("line.separator");
-    private TransportClientSearchSupport support;
+    private SearchClientSupport support;
     private String index;
     private String type;
 
-    public SerialVolumes(TransportClientSearchSupport support, String index, String type) {
+    public SerialVolumes(SearchClientSupport support, String index, String type) {
         this.support = support;
         this.index = index;
         this.type = type;
@@ -154,7 +155,7 @@ public class SerialVolumes {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
 
 
-            TransportClientSearchSupport es = new TransportClientSearchSupport()
+            SearchClientSupport es = new SearchClientSupport()
                     .newClient(esURI);
 
             new SerialVolumes(es, index, type);

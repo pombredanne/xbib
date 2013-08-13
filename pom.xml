@@ -145,12 +145,27 @@
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.7</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>de.jflex</groupId>
+                             <artifactId>jflex</artifactId>
+                             <version>1.4.3</version>
+                             <scope>compile</scope>
+                        </dependency>
+                        <dependency>
+                             <groupId>org.xbib</groupId>
+                             <artifactId>jacc</artifactId>
+                            <version>${project.version}</version>
+                             <scope>compile</scope>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.8</version>
                 </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -180,82 +195,82 @@
         <dependencies>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-charset</artifactId>
+                <artifactId>charset</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-content</artifactId>
+                <artifactId>content</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-atom</artifactId>
+                <artifactId>opensearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-elasticsearch</artifactId>
+                <artifactId>elasticsearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-sru</artifactId>
+                <artifactId>sru</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-logging</artifactId>
+                <artifactId>sru-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-elements</artifactId>
+                <artifactId>logging</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-io</artifactId>
+                <artifactId>elements</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-iso23950</artifactId>
+                <artifactId>io</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-jacc</artifactId>
+                <artifactId>iso23950</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-compress</artifactId>
+                <artifactId>jacc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-oai</artifactId>
+                <artifactId>compress</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-query</artifactId>
+                <artifactId>oai</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-berkeleydb</artifactId>
+                <artifactId>query</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-util</artifactId>
+                <artifactId>util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>xbib-grouping</artifactId>
+                <artifactId>grouping</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -420,6 +435,11 @@
                 <artifactId>mimepull</artifactId>
                 <version>1.6</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.7.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -455,6 +475,7 @@
         <module>search/query</module>
         <module>search/elasticsearch</module>
         <module>search/sru</module>
+        <module>search/sru-test</module>
         <module>search/oai</module>
         <module>search/iso23950</module>
         <module>search/opensearch</module>

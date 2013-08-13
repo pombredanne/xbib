@@ -1,7 +1,7 @@
 package org.xbib.builders.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.marc.dialects.mab.MABElementBuilder;
 import org.xbib.elements.marc.dialects.mab.MABElementBuilderFactory;
 import org.xbib.elements.marc.dialects.mab.MABElementMapper;
@@ -29,7 +29,7 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = getClass().getResourceAsStream("/test/mgl.txt");
         MABDisketteReader br = new MABDisketteReader(new BufferedReader(new InputStreamReader(in, "cp850")));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/mgl2.xml"), "UTF-8");
-        MockTransportClientIngest es = new MockTransportClientIngest()
+        MockIngestClient es = new MockIngestClient()
                 .setIndex("test")
                 .setType("test");
         final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);
@@ -61,7 +61,7 @@ public class ElasticsearchResourceBuilderTest {
         InputStream in = new FileInputStream(System.getProperty("user.home") + "/Daten/zdb/1211zdbtit.dat");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "x-MAB"));
         Writer w = new OutputStreamWriter(new FileOutputStream("target/2012-11-zdb.xml"), "UTF-8");
-        MockTransportClientIngest es = new MockTransportClientIngest()
+        MockIngestClient es = new MockIngestClient()
                 .setIndex("test")
                 .setType("test");
         final ElasticsearchResourceSink sink = new ElasticsearchResourceSink(es);

@@ -7,10 +7,12 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-iso23950</artifactId>
-    <name>xbib-iso23950</name>
-    <description>xbib - ISO 23950 information retrieval</description>
+
+    <artifactId>iso23950</artifactId>
+    <name>iso23950</name>
+    <description>ISO 23950 information retrieval</description>
     <packaging>jar</packaging>
+
     <build>
         <plugins>
             <plugin>
@@ -22,20 +24,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>de.jflex</groupId>
-                        <artifactId>jflex</artifactId>
-                        <version>1.4.3</version>
-                        <scope>compile</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.xbib</groupId>
-                        <artifactId>xbib-jacc</artifactId>
-                        <version>${project.version}</version>
-                        <scope>compile</scope>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -64,7 +52,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -85,27 +72,27 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-elements</artifactId>
+            <artifactId>elements</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-query</artifactId>
+            <artifactId>query</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-sru</artifactId>
+            <artifactId>sru</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
+            <artifactId>logging</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-charset</artifactId>
+            <artifactId>charset</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>

@@ -7,19 +7,21 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-grouping</artifactId>
-    <name>xbib-grouping</name>
-    <description>xbib - Grouping Algorithms</description>
+
+    <artifactId>grouping</artifactId>
+    <name>grouping</name>
+    <description>Grouping Algorithms</description>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
+            <artifactId>logging</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-util</artifactId>
+            <artifactId>util</artifactId>
             <type>jar</type>
         </dependency>
     </dependencies>

@@ -58,7 +58,6 @@ import org.xbib.rdf.simple.SimpleResourceContext;
 import org.xbib.text.InvalidCharacterException;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
-import org.xbib.util.CompactHashMap;
 import org.xbib.util.Entities;
 import org.xbib.xml.XMLUtil;
 
@@ -71,7 +70,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;

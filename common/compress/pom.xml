@@ -7,15 +7,16 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-compress</artifactId>
-    <name>xbib-compress</name>
-    <description>xbib - Compression codecs</description>
+
+    <artifactId>compress</artifactId>
+    <name>compress</name>
+    <description>Compression codecs</description>
     <packaging>jar</packaging>
 
    <dependencies>
        <dependency>
            <groupId>org.xbib</groupId>
-           <artifactId>xbib-logging</artifactId>
+           <artifactId>logging</artifactId>
            <type>jar</type>
            <scope>test</scope>
        </dependency>

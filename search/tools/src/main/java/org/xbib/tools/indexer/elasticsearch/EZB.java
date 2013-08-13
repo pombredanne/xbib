@@ -43,7 +43,8 @@ import javax.xml.namespace.QName;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -147,16 +148,14 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean overwrite = (Boolean) options.valueOf("overwrite");
 
-            final TransportClientBulkSupport es = new TransportClientBulkSupport();
-
-            // we always delete index first, and we disable date detection
-            es.maxBulkActions(maxbulkactions)
+            final IngestClient es = new IngestClient()
+                    .maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
                     .setIndex(index)
                     .setType(type)
-                    .waitForHealthyCluster()
-                    .deleteIndex(overwrite)
+                    .waitForCluster();
+            es.deleteIndex(overwrite)
                     .dateDetection(false)
                     .newIndex(false);
 

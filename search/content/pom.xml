@@ -7,10 +7,12 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-content</artifactId>
-    <name>xbib-content</name>
-    <description>xbib - Content framework (Linked data, JSON, XML)</description>
+
+    <artifactId>content</artifactId>
+    <name>content</name>
+    <description>Content framework (Linked data, JSON, XML)</description>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -69,7 +71,7 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
+            <artifactId>logging</artifactId>
             <type>jar</type>
             <optional>true</optional>
         </dependency>

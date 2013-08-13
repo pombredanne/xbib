@@ -37,11 +37,11 @@ import org.xbib.logging.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.WeakHashMap;
 
 /**
  *
@@ -51,17 +51,15 @@ public class OAIServiceFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(OAIServiceFactory.class.getName());
 
-    private final static Map<URI, OAIService> services = new WeakHashMap();
+    private final static Map<URI, OAIService> services = new HashMap();
 
     private final static OAIServiceFactory instance = new OAIServiceFactory();
 
     private OAIServiceFactory() {
         ServiceLoader<OAIService> loader = ServiceLoader.load(OAIService.class);
-        Iterator<OAIService> iterator = loader.iterator();
-        while (iterator.hasNext()) {
-            OAIService adapter = iterator.next();
-            if (!services.containsKey(adapter.getServiceIdentifier())) {
-                services.put(adapter.getServiceIdentifier(), adapter);
+        for (OAIService service : loader) {
+            if (!services.containsKey(service.getURI())) {
+                services.put(service.getURI(), service);
             }
         }
     }

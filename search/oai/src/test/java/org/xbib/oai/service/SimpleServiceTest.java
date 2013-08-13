@@ -49,14 +49,14 @@ public class SimpleServiceTest {
 
     @Test
     public void testIdentifyService() throws Exception {
-        OAIService service = OAIServiceFactory.getInstance().getDefaultService();
+        OAIService service = OAIServiceFactory.getDefaultService();
         OAISession session = service.newSession();
         StringWriter sw = new StringWriter();
         MyIdentifyRequest request = new MyIdentifyRequest(session);
         IdentifyResponse response = new IdentifyResponse(request);
         service.identify(request, response);
         response.to(sw);
-        service.disposeSession(session);
+        session.close();
     }
 
     // TODO this is not what we like!

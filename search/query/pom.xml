@@ -7,24 +7,26 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-query</artifactId>
-    <name>xbib-query</name>
-    <description>xbib - Contextual Query Language</description>
+
+    <artifactId>query</artifactId>
+    <name>query</name>
+    <description>Contextual Query Language</description>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-content</artifactId>
+            <artifactId>content</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-grouping</artifactId>
+            <artifactId>grouping</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>            
+            <artifactId>logging</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>

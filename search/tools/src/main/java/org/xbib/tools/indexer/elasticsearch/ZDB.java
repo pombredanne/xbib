@@ -42,9 +42,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.elasticsearch.support.TransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
@@ -172,13 +171,13 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             buffersize = (Integer)options.valueOf("buffersize");
             detect = (Boolean)options.valueOf("detect");
 
-            final TransportClientIngest es = mock ?
-                    new MockTransportClientIngest() :
-                    new TransportClientIngestSupport()
+            final IngestClient es = mock ?
+                    new MockIngestClient() :
+                    new IngestClient()
                             .maxBulkActions(maxbulkactions)
                             .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                             .newClient(esURI)
-                            .waitForHealthyCluster()
+                            .waitForCluster()
                             .setIndex(index)
                             .setType(type)
                             .shards(Integer.parseInt(shards))

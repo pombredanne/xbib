@@ -7,10 +7,12 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
-    <artifactId>xbib-logging</artifactId>
-    <name>xbib-logging</name>
-    <description>xbib - Logging</description>
+
+    <artifactId>logging</artifactId>
+    <name>logging</name>
+    <description>Logging</description>
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

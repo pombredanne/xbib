@@ -42,8 +42,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.date.DateUtil;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.io.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -112,7 +112,7 @@ public class MergeWithLicenses {
     private Set<MergePump> pumps;
 
     private Client client;
-    private TransportClientIngestSupport ingest;
+    private IngestClient ingest;
 
     // Elasticsearch source index/types
     private String sourceTitleIndex;
@@ -189,10 +189,10 @@ public class MergeWithLicenses {
             Long millis = (Long) options.valueOf("millis");
             String identifier = (String) options.valueOf("id");
 
-            TransportClientSearchSupport search = new TransportClientSearchSupport()
+            SearchClientSupport search = new SearchClientSupport()
                     .newClient(sourceURI);
 
-            TransportClientIngestSupport ingest = new TransportClientIngestSupport()
+            IngestClient ingest = new IngestClient()
                     .maxBulkActions(maxBulkActions)
                     .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
                     .newClient(targetURI);
@@ -244,7 +244,7 @@ public class MergeWithLicenses {
         System.exit(0);
     }
 
-    private MergeWithLicenses(TransportClientSearchSupport search, TransportClientIngestSupport ingest,
+    private MergeWithLicenses(SearchClientSupport search, IngestClient ingest,
                              URI sourceURI, URI targetURI,
                              int numPumps, int size, long millis, String identifier)
             throws UnsupportedEncodingException {

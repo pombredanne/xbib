@@ -32,8 +32,8 @@
 package org.xbib.tools.indexer.elasticsearch;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.TransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.io.InputService;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -124,7 +124,7 @@ public class GND {
         private Resource resource;
 
         ElasticBuilder(String esURI, String index, String type) throws IOException {
-            TransportClientIngest es = new TransportClientIngestSupport()
+            IngestClient es = new IngestClient()
                     .newClient(URI.create(esURI))
                     .setIndex(index)
                     .setType(type);

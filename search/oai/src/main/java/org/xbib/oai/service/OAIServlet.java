@@ -84,6 +84,8 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
 
     private OAIService service;
 
+    private OAISession session;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -101,7 +103,9 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
         response.setContentType(contentType);
         final OutputStream out = response.getOutputStream();
         logger.info(requestDumper.toString(request));
-        OAISession session = service.newSession();
+        if (session == null) {
+            session = service.newSession();
+        }
         try {
             String verb = request.getParameter(VERB_PARAMETER);
             Writer writer = new OutputStreamWriter(response.getOutputStream(), responseEncoding);
@@ -141,7 +145,6 @@ public class OAIServlet extends HttpServlet implements OAIConstants {
             response.setStatus(500);
         } finally {
             out.flush();
-            service.disposeSession(session);
         }
     }
 

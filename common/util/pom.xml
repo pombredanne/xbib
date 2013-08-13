@@ -8,9 +8,9 @@
         <relativePath>../..</relativePath>
     </parent>
 
-    <artifactId>xbib-util</artifactId>
-    <name>xbib-util</name>
-    <description>xbib - Utilities</description>
+    <artifactId>util</artifactId>
+    <name>util</name>
+    <description>Utilities</description>
 
     <packaging>jar</packaging>
 
@@ -29,19 +29,19 @@
     <dependencies>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
+            <artifactId>logging</artifactId>
             <type>jar</type>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-charset</artifactId>
+            <artifactId>charset</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-compress</artifactId>
+            <artifactId>compress</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>

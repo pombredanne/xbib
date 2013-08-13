@@ -35,9 +35,8 @@ package org.xbib.tools.indexer.elasticsearch;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elements.ElementOutput;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.TransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.marc.dialects.mab.MABElementBuilder;
 import org.xbib.elements.marc.dialects.mab.MABElementBuilderFactory;
 import org.xbib.elements.marc.dialects.mab.MABElementMapper;
@@ -156,9 +155,9 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
             elements = options.valueOf("elements").toString();
             detect = (Boolean)options.valueOf("detect");
 
-            final TransportClientIngest es = mock ?
-                    new MockTransportClientIngest() :
-                    new TransportClientIngestSupport()
+            final IngestClient es = mock ?
+                    new MockIngestClient() :
+                    new IngestClient()
                             .maxBulkActions(maxbulkactions)
                             .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                             .shards(Integer.parseInt(shards))
@@ -166,7 +165,7 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
                             .setIndex(index)
                             .setType(type)
                             .newClient(esURI)
-                            .waitForHealthyCluster()
+                            .waitForCluster()
                             .newIndex()
                             .startBulkMode();
 

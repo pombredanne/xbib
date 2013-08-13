@@ -43,8 +43,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.marc.dialects.pica.PicaBuilder;
 import org.xbib.elements.marc.dialects.pica.PicaBuilderFactory;
 import org.xbib.elements.marc.dialects.pica.PicaElementMapper;
@@ -146,14 +146,14 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             pipelines = (Integer)options.valueOf("pipelines");
             mock = (Boolean)options.valueOf("mock");
 
-            final TransportClientIngestSupport es = mock ?
-                    new MockTransportClientIngest() :
-                    new TransportClientIngestSupport();
+            final IngestClient es = mock ?
+                    new MockIngestClient() :
+                    new IngestClient();
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
-                    .waitForHealthyCluster();
+                    .waitForCluster();
 
             logger.info("creating new index ...");
             es.setIndex(index)

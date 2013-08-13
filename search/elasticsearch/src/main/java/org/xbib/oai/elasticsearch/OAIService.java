@@ -65,7 +65,7 @@ import org.xbib.oai.exceptions.OAIException;
 import org.xbib.query.cql.SyntaxException;
 
 /**
- * Elasticsearch OAI service
+ * Elasticsearch OAI service. Not yet complete.
  *
  * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
@@ -85,11 +85,6 @@ public class OAIService implements org.xbib.oai.service.OAIService {
     @Override
     public OAISession newSession() {
         return new DefaultOAIClient();
-    }
-
-    @Override
-    public void disposeSession(OAISession session) throws IOException {
-
     }
 
     @Override
@@ -116,7 +111,7 @@ public class OAIService implements org.xbib.oai.service.OAIService {
                     .index(getIndex(request))
                     .type(getType(request))
                     .from(request.getResumptionToken().getPosition())
-                    .size(1000)
+                    .size(1000) // TODO configure in the bundle?
                     .query(query)
                     .executeSearch(logger)
                     .read();

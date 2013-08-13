@@ -39,10 +39,9 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.TransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
-import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.elements.ElementOutput;
 import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
 import org.xbib.importer.AbstractImporter;
@@ -177,16 +176,16 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean mock = (Boolean)options.valueOf("mock");
 
-            final TransportClientBulk es = mock ?
-                    new MockTransportClientBulk() :
-                    new TransportClientBulkSupport();
+            final IngestClient es = mock ?
+                    new MockIngestClient() :
+                    new IngestClient();
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
-                    .waitForHealthyCluster(ClusterHealthStatus.YELLOW, TimeValue.timeValueSeconds(30));
+                    .waitForCluster(ClusterHealthStatus.YELLOW, TimeValue.timeValueSeconds(30));
 
-            final TransportClientSearchSupport search = new TransportClientSearchSupport()
+            final SearchClientSupport search = new SearchClientSupport()
                     .newClient(esURI);
 
             logger.info("creating new index ...");
@@ -205,7 +204,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                             new ImporterFactory() {
                                 @Override
                                 public Importer newImporter() {
-                                    return new ArticleDB(sink, search);
+                                    return new ArticleDB(sink);
                                 }
                             }).execute().shutdown();
 
@@ -237,7 +236,7 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
         System.exit(exitcode);
     }
 
-    private ArticleDB(ElementOutput output, TransportClientSearchSupport searchSupport) {
+    private ArticleDB(ElementOutput output) {
         this.output = output;
     }
 

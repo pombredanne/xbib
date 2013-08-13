@@ -9,9 +9,9 @@
         <relativePath>../..</relativePath>
     </parent>
 
-    <artifactId>xbib-elasticsearch</artifactId>
-    <name>xbib-elasticsearch</name>
-    <description>xbib - Elasticsearch</description>
+    <artifactId>elasticsearch</artifactId>
+    <name>elasticsearch</name>
+    <description>Elasticsearch</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -42,99 +42,6 @@
                     </filesets>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.xbib</groupId>
-                                    <artifactId>xbib-sru</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>sru.war</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}/war</outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <skip>false</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>selenium-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start-server</goal>
-                        </goals>
-                        <configuration>
-                            <background>true</background>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.0.4.v20130625</version>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run-war</goal>
-                        </goals>
-                        <configuration>
-                            <contextPath>sample-web</contextPath>
-                            <daemon>true</daemon>
-                            <webApp>
-                                ${project.build.directory}/war/sru.war
-                            </webApp>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <stopPort>9991</stopPort>
-                    <stopKey>test</stopKey>
-                </configuration>
-            </plugin>
         </plugins>
     </build>    
 
@@ -147,68 +54,48 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-util</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>util</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-io</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>io</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-content</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>content</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-elements</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>elements</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-logging</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>logging</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-query</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>query</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-sru</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>sru</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-oai</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>oai</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
-            <artifactId>xbib-opensearch</artifactId>
-            <version>${xbib.version}</version>
+            <artifactId>opensearch</artifactId>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-            <artifactId>selenium-java-client-driver</artifactId>
-            <version>1.0.2</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

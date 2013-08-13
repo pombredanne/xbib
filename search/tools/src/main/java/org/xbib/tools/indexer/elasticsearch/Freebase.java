@@ -35,9 +35,8 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.TransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.MockTransportClientBulk;
-import org.xbib.elasticsearch.support.bulk.transport.TransportClientBulkSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -142,16 +141,16 @@ public class Freebase extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean mock = (Boolean)options.valueOf("mock");
 
-            final TransportClientBulk es = mock ?
-                    new MockTransportClientBulk() :
-                    new TransportClientBulkSupport();
+            final IngestClient es = mock ?
+                    new MockIngestClient() :
+                    new IngestClient();
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .setIndex(index)
                     .setType(type)
                     .newClient(esURI)
-                    .waitForHealthyCluster(ClusterHealthStatus.GREEN, TimeValue.timeValueSeconds(30));
+                    .waitForCluster(ClusterHealthStatus.GREEN, TimeValue.timeValueSeconds(30));
 
             sink = new ElasticsearchResourceSink(es);
 

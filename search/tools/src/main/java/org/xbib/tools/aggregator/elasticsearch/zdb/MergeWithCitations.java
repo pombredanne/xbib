@@ -43,8 +43,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 
 import org.xbib.common.xcontent.XContentBuilder;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
-import org.xbib.elasticsearch.support.search.transport.TransportClientSearchSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.io.util.URIUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -103,7 +103,7 @@ public class MergeWithCitations {
     private Set<MergePump> pumps;
 
     private Client client;
-    private TransportClientIngestSupport ingest;
+    private IngestClient ingest;
 
     private static AtomicLong counter = new AtomicLong(0L);
 
@@ -174,10 +174,10 @@ public class MergeWithCitations {
             Long millis = (Long) options.valueOf("millis");
             String identifier = (String) options.valueOf("id");
 
-            TransportClientSearchSupport search = new TransportClientSearchSupport()
+            SearchClientSupport search = new SearchClientSupport()
                     .newClient(sourceURI);
 
-            TransportClientIngestSupport ingest = new TransportClientIngestSupport()
+            IngestClient ingest = new IngestClient()
                     .maxBulkActions(maxBulkActions)
                     .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
                     .newClient(targetURI);
@@ -196,7 +196,7 @@ public class MergeWithCitations {
         System.exit(0);
     }
 
-    private MergeWithCitations(TransportClientSearchSupport search, TransportClientIngestSupport ingest,
+    private MergeWithCitations(SearchClientSupport search, IngestClient ingest,
                              URI sourceURI, URI targetURI,
                              int numPumps, int size, long millis, String identifier)
             throws UnsupportedEncodingException {

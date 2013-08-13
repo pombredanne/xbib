@@ -41,8 +41,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.TransportClientIngest;
-import org.xbib.elasticsearch.support.ingest.transport.TransportClientIngestSupport;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
@@ -107,8 +107,8 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
             final Integer threads = (Integer) options.valueOf("threads");
 
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final TransportClientIngest es = new TransportClientIngestSupport();
-            es.newClient(uri)
+            final IngestClient es = new IngestClient()
+                    .newClient(uri)
                     .setIndex(options.valueOf("index").toString())
                     .setType(options.valueOf("type").toString())
                     .maxBulkActions((Integer) options.valueOf("bulksize"))

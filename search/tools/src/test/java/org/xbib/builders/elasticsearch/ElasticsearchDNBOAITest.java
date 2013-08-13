@@ -36,7 +36,8 @@ import java.io.StringWriter;
 
 import org.testng.annotations.Test;
 import org.xbib.date.DateUtil;
-import org.xbib.elasticsearch.support.ingest.transport.MockTransportClientIngest;
+import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -72,7 +73,7 @@ public class ElasticsearchDNBOAITest {
     @Test
     public void testDNBOAI() throws Exception {
 
-        final MockTransportClientIngest es = new MockTransportClientIngest()
+        final MockIngestClient es = new MockIngestClient()
                 .setIndex("test")
                 .setType("test");
 

@@ -62,8 +62,6 @@ public interface OAIService {
 
     OAISession newSession();
 
-    void disposeSession(OAISession session) throws IOException;
-
     /**
      * This verb is used to retrieve information about a repository. 
      * Some of the information returned is required as part of the OAI-PMH.
