@@ -475,7 +475,6 @@
         <module>search/query</module>
         <module>search/elasticsearch</module>
         <module>search/sru</module>
-        <module>search/sru-test</module>
         <module>search/oai</module>
         <module>search/iso23950</module>
         <module>search/opensearch</module>
