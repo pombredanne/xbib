@@ -34,8 +34,8 @@ package org.xbib.tools.indexer.elasticsearch;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elements.ElementOutput;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -111,9 +111,9 @@ public class OAI {
         int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
         boolean mock = (Boolean)options.valueOf("mock");
 
-        final IngestClient es = mock ?
-                new MockIngestClient() :
-                new IngestClient();
+        final BulkClient es = mock ?
+                new MockBulkClient() :
+                new BulkClient();
 
         es.maxBulkActions(maxbulkactions)
                 .maxConcurrentBulkRequests(maxconcurrentbulkrequests)

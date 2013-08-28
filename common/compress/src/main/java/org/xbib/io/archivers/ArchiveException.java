@@ -23,9 +23,6 @@ package org.xbib.io.archivers;
  */
 public class ArchiveException extends Exception {
 
-    /** Serial */
-    private static final long serialVersionUID = 2772690708123267100L;
-
     /**
      * Constructs a new exception with the specified detail message. The cause
      * is not initialized.

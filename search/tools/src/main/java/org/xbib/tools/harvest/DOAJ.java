@@ -185,6 +185,12 @@ public class DOAJ {
             super(context);
         }
 
+        /**
+         * Map properties in DOAJ
+         *
+         * @param property
+         * @return
+         */
         @Override
         public Property toProperty(Property property) {
             if ("issn".equals(property.id().getSchemeSpecificPart())) {
@@ -196,6 +202,13 @@ public class DOAJ {
             return property;
         }
 
+        /**
+         * Convert values in DOAJ
+         *
+         * @param name
+         * @param content
+         * @return
+         */
         @Override
         public Object toObject(QName name, String content) {
             switch (name.getLocalPart()) {

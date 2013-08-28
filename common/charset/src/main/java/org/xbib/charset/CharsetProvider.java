@@ -35,8 +35,6 @@ import java.lang.ref.SoftReference;
 
 /**
  * Extra bibliographic character sets.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CharsetProvider extends AbstractCharsetProvider {
 

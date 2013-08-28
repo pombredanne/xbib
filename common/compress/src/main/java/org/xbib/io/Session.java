@@ -39,7 +39,6 @@ import java.io.Serializable;
  * operations, and being closed. Sessions must be opened before the first
  * operation and closed after the last operation.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Session<P extends Packet> extends Serializable {
 

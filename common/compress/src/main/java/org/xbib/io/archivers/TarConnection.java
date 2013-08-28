@@ -41,7 +41,6 @@ import java.util.List;
 /**
  * A TAR connection
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TarConnection implements Connection<TarSession> {
 

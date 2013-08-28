@@ -97,7 +97,6 @@ public abstract class ArchiveInputStream extends InputStream {
      * Doesn't increment if the EOF has been hit (read == -1)
      * 
      * @param read the number of bytes read
-     * @since 1.1
      */
     protected void count(long read) {
         if (read != -1) {
@@ -109,7 +108,6 @@ public abstract class ArchiveInputStream extends InputStream {
      * Decrements the counter of already read bytes.
      * 
      * @param pushedBack the number of bytes pushed back.
-     * @since 1.1
      */
     protected void pushedBackBytes(long pushedBack) {
         bytesRead -= pushedBack;
@@ -129,7 +127,6 @@ public abstract class ArchiveInputStream extends InputStream {
     /**
      * Returns the current number of bytes read from this stream.
      * @return the number of read bytes
-     * @since 1.1
      */
     public long getBytesRead() {
         return bytesRead;
@@ -142,8 +139,6 @@ public abstract class ArchiveInputStream extends InputStream {
      * not supported (yet).</p>
      *
      * <p>This implementation always returns true.
-     *
-     * @since 1.1
      */
     public boolean canReadEntryData(ArchiveEntry ae) {
         return true;

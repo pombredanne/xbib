@@ -1,83 +1,79 @@
+
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor 
+ * Licensed to Jörg Prante and xbib under one or more contributor
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
  *
  * Copyright (C) 2012 Jörg Prante and xbib
- * 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation; either version 3 of the License, or 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License 
- * along with this program; if not, see http://www.gnu.org/licenses 
- * or write to the Free Software Foundation, Inc., 51 Franklin Street, 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
  * Fifth Floor, Boston, MA 02110-1301 USA.
- * 
- * The interactive user interfaces in modified source and object code 
- * versions of this program must display Appropriate Legal Notices, 
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
  * as required under Section 5 of the GNU Affero General Public License.
- * 
- * In accordance with Section 7(b) of the GNU Affero General Public 
- * License, these Appropriate Legal Notices must retain the display of the 
- * "Powered by xbib" logo. If the display of the logo is not reasonably 
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
 package org.xbib.tools.indexer.elasticsearch;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.text.Normalizer;
-import java.text.NumberFormat;
-import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
+import org.xbib.elements.ElementOutput;
+import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
-import org.xbib.elements.marc.MARCElementBuilder;
-import org.xbib.elements.marc.MARCElementBuilderFactory;
-import org.xbib.elements.marc.MARCElementMapper;
-import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elements.ElementOutput;
+import org.xbib.elements.marc.dialects.mab.MABElementBuilder;
+import org.xbib.elements.marc.dialects.mab.MABElementBuilderFactory;
+import org.xbib.elements.marc.dialects.mab.MABElementMapper;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
-import org.xbib.io.InputService;
 import org.xbib.io.file.Finder;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.marc.Iso2709Reader;
 import org.xbib.marc.MarcXchange2KeyValue;
+import org.xbib.marc.dialects.MarcXmlTarReader;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.FormatUtil;
-import org.xml.sax.InputSource;
+
+import java.io.IOException;
+import java.net.URI;
+import java.text.NumberFormat;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Elasticsearch indexer tool for Zeitschriftendatenbank (ZDB) MARC ISO2709 files
+ * Elasticsearch indexer tool for Hochschulbibliothekszentrum (HBZ) MAB data in MarcXml TAR clobs
  *
  * @author Jörg Prante <joergprante@gmail.com>
  */
-public final class ZDB extends AbstractImporter<Long, AtomicLong> {
+public final class HBZFromMarcXmlTar extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(ZDB.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(HBZFromMarcXmlTar.class.getSimpleName());
 
     private final static String lf = System.getProperty("line.separator");
 
@@ -95,17 +91,11 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
     private static int pipelines;
 
-    private static int buffersize;
-
     private static boolean detect;
 
     private ElementOutput output;
 
     private boolean done;
-
-    private final Charset UTF8 = Charset.forName("UTF-8");
-
-    private final Charset ISO88591 = Charset.forName("ISO-8859-1");
 
     public static void main(String[] args) {
         try {
@@ -116,21 +106,20 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("1208zdblokutf8.mrc");
+                    accepts("pattern").withRequiredArg().ofType(String.class).required();
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("marc");
+                    accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("mab/hbz/dialect");
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
-                    accepts("buffersize").withRequiredArg().ofType(Integer.class).defaultsTo(8192);
                     accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                 }
             };
             OptionSet options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + ZDB.class.getCanonicalName() + lf
+                System.err.println("Help for " + HBZFromMarcXmlTar.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
@@ -144,7 +133,6 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                         + " --elements <name>      element set (optional, default: marc)"
                         + " --mock <bool>          dry run of indexing (optional, default: false)"
                         + " --pipelines <n>        number of pipelines (optional, default: number of cpu cores)"
-                        + " --buffersize <n>       buffer size in chars for reads (optional, default: 8192)"
                         + " --detect <bool>        detect unknown keys (optional, default: false)"
                 );
                 System.exit(1);
@@ -155,7 +143,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     .getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
-            logger.info("input = {}, threads = {}", input, threads);
+            logger.info("number of input files = {}, worker threads = {}", input.size(), threads);
 
             URI esURI = URI.create(options.valueOf("elasticsearch").toString());
             index = options.valueOf("index").toString();
@@ -163,11 +151,11 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
             String shards = options.valueOf("shards").toString();
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
+            Boolean mock = (Boolean)options.valueOf("mock");
+            // configure element processing
+            pipelines = (Integer)options.valueOf("pipelines");
             elements = options.valueOf("elements").toString();
-            boolean mock = (Boolean) options.valueOf("mock");
-            pipelines = (Integer) options.valueOf("pipelines");
-            buffersize = (Integer) options.valueOf("buffersize");
-            detect = (Boolean) options.valueOf("detect");
+            detect = (Boolean)options.valueOf("detect");
 
             final BulkClient es = mock ?
                     new MockBulkClient() :
@@ -175,50 +163,52 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
             es.maxBulkActions(maxbulkactions)
                             .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
-                            .newClient(esURI)
-                            .waitForCluster()
-                            .setIndex(index)
-                            .setType(type)
                             .shards(Integer.parseInt(shards))
                             .replica(0)
-                            .newIndex(false)
+                            .setIndex(index)
+                            .setType(type)
+                            .newClient(esURI)
+                            .waitForCluster()
+                            .newIndex()
                             .startBulkMode();
 
-            // we write RDF resources to Elasticsearch
+            // write RDF resources to Elasticsearch
             final ElasticsearchResourceSink<ResourceContext, Resource> sink =
                     new ElasticsearchResourceSink(es);
 
-            // do the import
             long t0 = System.currentTimeMillis();
 
             ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
-                            return new ZDB(sink);
+                            return new HBZFromMarcXmlTar(sink);
                         }
                     }).execute();
 
             long t1 = System.currentTimeMillis();
+
             long docs = outputCounter.get();
             long bytes = es.getVolumeInBytes();
             double dps = docs * 1000.0 / (double)(t1 - t0);
             double avg = bytes / (docs + 1.0); // avoid div by zero
             double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
-            String t = TimeValue.timeValueMillis(t1 - t0).format();
-            String byteSize = FormatUtil.convertFileSize(bytes);
-            String avgSize = FormatUtil.convertFileSize(avg);
             NumberFormat formatter = NumberFormat.getNumberInstance();
             logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
-                    avgSize,
+                    fileCounter,
+                    docs,
+                    TimeValue.timeValueMillis(t1 - t0).format(),
+                    (t1-t0),
+                    FormatUtil.convertFileSize(bytes),
+                    bytes,
+                    FormatUtil.convertFileSize(avg),
                     formatter.format(avg),
                     formatter.format(dps),
                     formatter.format(mbps));
 
             service.shutdown();
-
             es.shutdown();
+
         } catch (IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
             System.exit(1);
@@ -226,7 +216,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
         System.exit(0);
     }
 
-    private ZDB(ElementOutput output) {
+    private HBZFromMarcXmlTar(ElementOutput output) {
         this.output = output;
         this.done = false;
     }
@@ -243,55 +233,79 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
     @Override
     public AtomicLong next() {
-        URI uri = input.poll();
+        final URI uri = input.poll();
         done = uri == null;
         if (done) {
             return fileCounter;
         }
         try {
-            final MARCElementMapper mapper = new MARCElementMapper(elements)
+            logger.info("starting {} elements '{}'", uri, elements);
+            final MABElementMapper mapper = new MABElementMapper(elements)
                     .pipelines(pipelines)
                     .detectUnknownKeys(detect)
                     .start(buildFactory);
-
-            logger.info("mapper map size={}", mapper.map().size());
-
             final MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                     .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
                         @Override
                         public String transform(String value) {
-                            return Normalizer.normalize(new String(value.getBytes(ISO88591), UTF8),
-                                    Normalizer.Form.NFKC);
+                            return value;
                         }
                     })
                     .addListener(mapper);
-            final Iso2709Reader reader = new Iso2709Reader()
-                    .setMarcXchangeListener(kv);
-            reader.setProperty(Iso2709Reader.FORMAT, "MARC");
-            if ("marc/holdings".equals(elements)) {
-                reader.setProperty(Iso2709Reader.TYPE, "Holdings");
+                    /*.addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
+                        @Override
+                        public void begin() {
+                            logger.debug("begin object");
+                        }
+
+                        @Override
+                        public void keyValue(FieldCollection key, String value) {
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("begin");
+                                for (Field f : key) {
+                                    logger.debug("tag={} ind={} subf={} data={}",
+                                            f.tag(), f.indicator(), f.subfieldId(), f.data());
+                                }
+                                logger.debug("end");
+                            }
+                        }
+
+                        @Override
+                        public void end() {
+                            logger.debug("end object");
+                        }
+
+                        @Override
+                        public void end(Object info) {
+                            logger.info("end object (info={})", info);
+                        }
+                    });*/
+
+            // set up TAR reader
+            final MarcXmlTarReader reader = new MarcXmlTarReader()
+                            .setURI(uri)
+                            .setListener(kv);
+            while (reader.hasNext()) {
+                reader.next();
             }
-            reader.setProperty(Iso2709Reader.FATAL_ERRORS, false);
-            reader.setProperty(Iso2709Reader.SILENT_ERRORS, true);
-            reader.setProperty(Iso2709Reader.BUFFER_SIZE, buffersize);
-            InputStreamReader r = new InputStreamReader(InputService.getInputStream(uri), ISO88591);
-            InputSource source = new InputSource(r);
-            reader.parse(source);
-            r.close();
+            reader.close();
             fileCounter.incrementAndGet();
-            logger.info("unknown keys={}", mapper.unknownKeys());
+            // output of mapper analysis
+            if (detect) {
+                logger.info("unknown keys={}", mapper.unknownKeys());
+            }
             mapper.close();
         } catch (Exception ex) {
             logger.error("error while getting next document: " + ex.getMessage(), ex);
+            done = true;
         }
         return fileCounter;
     }
 
-    final MARCElementBuilderFactory buildFactory = new MARCElementBuilderFactory() {
-        public MARCElementBuilder newBuilder() {
-            MARCElementBuilder builder = new MARCElementBuilder()
+    final MABElementBuilderFactory buildFactory = new MABElementBuilderFactory() {
+        public MABElementBuilder newBuilder() {
+            return new MABElementBuilder()
                     .addOutput(new OurElementOutput());
-            return builder;
         }
     };
 
@@ -308,13 +322,16 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
-            if (!context.resource().isEmpty()) {
+            if (context.resource().id() != null) {
                 IRI id = IRI.builder().scheme("http")
-                        .host(index)
-                        .query(type)
-                        .fragment(Long.toString(outputCounter.incrementAndGet())).build();
+                    .host(index)
+                    .query(type)
+                    .fragment(context.resource().id().getFragment()).build();
                 context.resource().id(id);
                 output.output(context, contentBuilder);
+                outputCounter.incrementAndGet();
+            } else {
+                logger.warn("no resource ID found");
             }
         }
 

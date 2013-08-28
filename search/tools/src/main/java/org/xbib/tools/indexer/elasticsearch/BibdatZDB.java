@@ -43,8 +43,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elements.marc.dialects.pica.PicaBuilder;
 import org.xbib.elements.marc.dialects.pica.PicaBuilderFactory;
 import org.xbib.elements.marc.dialects.pica.PicaElementMapper;
@@ -133,7 +133,9 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
                 System.exit(1);
             }
 
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            input = new Finder((String)options.valueOf("pattern")).
+                    find((String)options.valueOf("path"))
+                    .getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
             logger.info("input = {}, threads = {}", input, threads);
@@ -146,9 +148,9 @@ public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
             pipelines = (Integer)options.valueOf("pipelines");
             mock = (Boolean)options.valueOf("mock");
 
-            final IngestClient es = mock ?
-                    new MockIngestClient() :
-                    new IngestClient();
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)

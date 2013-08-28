@@ -38,7 +38,6 @@ import java.net.URI;
  *  A Connection is an access to a resource via a scheme or a protocol.
  *  Each connection can serve multiple sessions in parallel.
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Connection<S extends Session> {
 
@@ -62,7 +61,6 @@ public interface Connection<S extends Session> {
      * Create a new session on this connection
      *
      * @return the session
-     *
      * @throws java.io.IOException if the session can not be created
      */
     S createSession() throws IOException;

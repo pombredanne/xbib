@@ -89,6 +89,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         try {
             this.client = service.newClient();
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
     }
@@ -125,7 +126,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         try {
             String operation = request.getParameter(OPERATION_PARAMETER);
             if (SEARCH_RETRIEVE_COMMAND.equals(operation)) {
-                SearchRetrieveRequest sruRequest = createRequest(client, request);
+                SearchRetrieveRequest sruRequest = createRequest(request);
 
                 SRUVersion version = SRUVersion.fromString(sruRequest.getVersion());
 
@@ -136,8 +137,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
                 if (sruRequest.getRecordPacking() != null && !service.getRecordPacking().equals(sruRequest.getRecordPacking())) {
                     throw new Diagnostics(6, sruRequest.getRecordPacking() + " != " + service.getRecordPacking());
                 }
-                SearchRetrieveResponse sruResponse = new SearchRetrieveResponse(sruRequest);
-                service.searchRetrieve(sruRequest, sruResponse);
+                SearchRetrieveResponse sruResponse = client.searchRetrieve(sruRequest);
 
                 String contentType = version.equals(SRUVersion.VERSION_2_0) ?
                         OutputFormat.SRU.mimeType() : OutputFormat.XML.mimeType();
@@ -177,7 +177,7 @@ public class SRUServlet extends HttpServlet implements SRUConstants {
         doGet(request, response);
     }
 
-    private SearchRetrieveRequest createRequest(SRUClient client, HttpServletRequest request) {
+    private SearchRetrieveRequest createRequest(HttpServletRequest request) {
         SearchRetrieveRequest sruRequest =
                 client.newSearchRetrieveRequest()
                         .setURI(getBaseURI(request))

@@ -40,8 +40,6 @@ import java.util.TreeMap;
 
 /**
  * All character sets provided share this common parent class.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class AbstractCharsetProvider extends CharsetProvider {
 

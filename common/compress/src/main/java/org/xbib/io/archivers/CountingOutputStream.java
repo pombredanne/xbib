@@ -24,8 +24,6 @@ import java.io.OutputStream;
 
 /**
  * Stream that tracks the number of bytes read.
- * @since 1.3
- * @NotThreadSafe
  */
 public class CountingOutputStream extends FilterOutputStream {
     private long bytesWritten = 0;

@@ -56,9 +56,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.xbib.tools.opt.util.DateConverter.datePattern;
 
-public class NatLizOAI {
+public class MacsOAI {
 
-    private final static Logger logger = LoggerFactory.getLogger(NatLizOAI.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(MacsOAI.class.getName());
 
     private static OptionSet options;
 
@@ -80,7 +80,8 @@ public class NatLizOAI {
                     accepts("until").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd'T'hh:mm:ss'Z'")).defaultsTo(new Date());
                     accepts("fromDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd"));
                     accepts("untilDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd")).defaultsTo(new Date());
-                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("oai.ttl");
+                    accepts("key").withOptionalArg().ofType(String.class);
+                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("macs.xml");
                 }
             };
             options = parser.parse(args);
@@ -103,7 +104,7 @@ public class NatLizOAI {
                     .setFrom(from)
                     .setUntil(until);
 
-            new NatLizOAI(client, output).execute(request).close();
+            new MacsOAI(client, output).execute(request).close();
 
             logger.info("harvested {} documents", counter.get());
 
@@ -114,7 +115,7 @@ public class NatLizOAI {
         System.exit(exitcode);
     }
 
-    private NatLizOAI(OAIClient client, String output) throws Exception {
+    private MacsOAI(OAIClient client, String output) throws Exception {
         this.client = client;
         TarConnectionFactory factory = new TarConnectionFactory();
         Connection<TarSession> connection = factory.getConnection(URI.create("targz:" + output));
@@ -122,7 +123,7 @@ public class NatLizOAI {
         session.open(Session.Mode.WRITE);
     }
 
-    private NatLizOAI execute(ListRecordsRequest request) throws Exception {
+    private MacsOAI execute(ListRecordsRequest request) throws Exception {
         final XmlMetadataHandler metadataHandler = new PacketHandler()
                 .setWriter(new StringWriter());
         try {

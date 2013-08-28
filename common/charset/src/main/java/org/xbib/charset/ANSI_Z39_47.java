@@ -45,8 +45,6 @@ import java.util.HashMap;
 /**
  * ANSI Z39.47/Ansel charset decoder
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  */
 public class ANSI_Z39_47 extends Charset {
 
@@ -70,7 +68,6 @@ public class ANSI_Z39_47 extends Charset {
                 encodeMap.put(Character.valueOf(code[i]), Character.valueOf(c));
                 decodeMap.put(Character.valueOf(c), Character.valueOf(code[i]));
             }
-
             i++;
         }
     }

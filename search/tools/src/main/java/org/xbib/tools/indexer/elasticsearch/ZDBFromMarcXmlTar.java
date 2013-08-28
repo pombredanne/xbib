@@ -1,45 +1,46 @@
-
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor
+ * Licensed to Jörg Prante and xbib under one or more contributor 
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
  *
  * Copyright (C) 2012 Jörg Prante and xbib
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation; either version 3 of the License, or
+ * 
+ * This program is free software; you can redistribute it and/or modify 
+ * it under the terms of the GNU Affero General Public License as published 
+ * by the Free Software Foundation; either version 3 of the License, or 
  * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program; if not, see http://www.gnu.org/licenses
- * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see http://www.gnu.org/licenses 
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street, 
  * Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * The interactive user interfaces in modified source and object code
- * versions of this program must display Appropriate Legal Notices,
+ * 
+ * The interactive user interfaces in modified source and object code 
+ * versions of this program must display Appropriate Legal Notices, 
  * as required under Section 5 of the GNU Affero General Public License.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public
- * License, these Appropriate Legal Notices must retain the display of the
- * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public 
+ * License, these Appropriate Legal Notices must retain the display of the 
+ * "Powered by xbib" logo. If the display of the logo is not reasonably 
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
 package org.xbib.tools.indexer.elasticsearch;
 
 import org.elasticsearch.common.unit.TimeValue;
-import org.xbib.elements.ElementOutput;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
-import org.xbib.elements.marc.dialects.mab.MABElementBuilder;
-import org.xbib.elements.marc.dialects.mab.MABElementBuilderFactory;
-import org.xbib.elements.marc.dialects.mab.MABElementMapper;
+//import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+//import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
+import org.xbib.elements.ElementOutput;
+import org.xbib.elements.marc.MARCElementBuilder;
+import org.xbib.elements.marc.MARCElementBuilderFactory;
+import org.xbib.elements.marc.MARCElementMapper;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;
 import org.xbib.importer.Importer;
@@ -59,19 +60,19 @@ import org.xbib.tools.util.FormatUtil;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Elasticsearch indexer tool for Hochschulbibliothekszentrum (HBZ) MAB data in MarcXml TAR clobs
- *
- * @author Jörg Prante <joergprante@gmail.com>
+ * Elasticsearch indexer for Zeitschriftendatenbank (ZDB) MARC-XML tar archive files
  */
-public final class HBZ extends AbstractImporter<Long, AtomicLong> {
+public final class ZDBFromMarcXmlTar extends AbstractImporter<Long, AtomicLong> {
 
-    private final static Logger logger = LoggerFactory.getLogger(HBZ.class.getSimpleName());
+    private final static Logger logger = LoggerFactory.getLogger(ZDBFromMarcXmlTar.class.getName());
 
     private final static String lf = System.getProperty("line.separator");
 
@@ -95,6 +96,10 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
 
     private boolean done;
 
+    private final Charset UTF8 = Charset.forName("UTF-8");
+
+    private final Charset ISO88591 = Charset.forName("ISO-8859-1");
+
     public static void main(String[] args) {
         try {
             OptionParser parser = new OptionParser() {
@@ -104,12 +109,12 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
                     accepts("type").withRequiredArg().ofType(String.class).required();
                     accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("path").withRequiredArg().ofType(String.class).required();
-                    accepts("pattern").withRequiredArg().ofType(String.class).required();
+                    accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("1208zdblokutf8.mrc");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
-                    accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("mab/hbz/dialect");
+                    accepts("elements").withRequiredArg().ofType(String.class).required().defaultsTo("marc");
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("pipelines").withRequiredArg().ofType(Integer.class).defaultsTo(Runtime.getRuntime().availableProcessors());
                     accepts("detect").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
@@ -117,7 +122,7 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
             };
             OptionSet options = parser.parse(args);
             if (options.hasArgument("help")) {
-                System.err.println("Help for " + HBZ.class.getCanonicalName() + lf
+                System.err.println("Help for " + ZDBFromMarcXmlTar.class.getCanonicalName() + lf
                         + " --help                 print this help message" + lf
                         + " --elasticsearch <uri>  Elasticesearch URI" + lf
                         + " --index <index>        Elasticsearch index name" + lf
@@ -136,12 +141,14 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
                 System.exit(1);
             }
 
+            // the harvested files must be sorted by path name
             input = new Finder(options.valueOf("pattern").toString())
                     .find(options.valueOf("path").toString())
+                    .pathSorted()
                     .getURIs();
             final Integer threads = (Integer) options.valueOf("threads");
 
-            logger.info("number of input files = {}, worker threads = {}", input.size(), threads);
+            logger.info("input = {}, threads = {}", input, threads);
 
             URI esURI = URI.create(options.valueOf("elasticsearch").toString());
             index = options.valueOf("index").toString();
@@ -149,37 +156,35 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
             String shards = options.valueOf("shards").toString();
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
-            Boolean mock = (Boolean)options.valueOf("mock");
-            // configure element processing
-            pipelines = (Integer)options.valueOf("pipelines");
             elements = options.valueOf("elements").toString();
-            detect = (Boolean)options.valueOf("detect");
+            boolean mock = (Boolean) options.valueOf("mock");
+            pipelines = (Integer) options.valueOf("pipelines");
+            detect = (Boolean) options.valueOf("detect");
 
-            final IngestClient es = mock ?
-                    new MockIngestClient() :
-                    new IngestClient()
-                            .maxBulkActions(maxbulkactions)
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
+
+
+            es.maxBulkActions(maxbulkactions)
                             .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
-                            .shards(Integer.parseInt(shards))
-                            .replica(0)
-                            .setIndex(index)
-                            .setType(type)
                             .newClient(esURI)
                             .waitForCluster()
-                            .newIndex()
+                            .setIndex(index)
+                            .setType(type)
+                            .shards(Integer.parseInt(shards))
+                            .replica(0)
+                            .newIndex(false)
                             .startBulkMode();
 
-            // write RDF resources to Elasticsearch
-            final ElasticsearchResourceSink<ResourceContext, Resource> sink =
-                    new ElasticsearchResourceSink(es);
+            final ElasticsearchResourceSink<ResourceContext, Resource> sink = new ElasticsearchResourceSink(es);
 
             long t0 = System.currentTimeMillis();
-
             ImportService service = new ImportService().threads(threads).factory(
                     new ImporterFactory() {
                         @Override
                         public Importer newImporter() {
-                            return new HBZ(sink);
+                            return new ZDBFromMarcXmlTar(sink);
                         }
                     }).execute();
 
@@ -190,15 +195,13 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
             double dps = docs * 1000.0 / (double)(t1 - t0);
             double avg = bytes / (docs + 1.0); // avoid div by zero
             double mbps = (bytes * 1000.0 / (double)(t1 - t0)) / (1024.0 * 1024.0) ;
+            String t = TimeValue.timeValueMillis(t1 - t0).format();
+            String byteSize = FormatUtil.convertFileSize(bytes);
+            String avgSize = FormatUtil.convertFileSize(avg);
             NumberFormat formatter = NumberFormat.getNumberInstance();
             logger.info("Indexing complete. {} files, {} docs, {} = {} ms, {} = {} bytes, {} = {} avg size, {} dps, {} MB/s",
-                    fileCounter,
-                    docs,
-                    TimeValue.timeValueMillis(t1 - t0).format(),
-                    (t1-t0),
-                    FormatUtil.convertFileSize(bytes),
-                    bytes,
-                    FormatUtil.convertFileSize(avg),
+                    fileCounter, docs, t, (t1-t0), byteSize, bytes,
+                    avgSize,
                     formatter.format(avg),
                     formatter.format(dps),
                     formatter.format(mbps));
@@ -213,7 +216,7 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
         System.exit(0);
     }
 
-    private HBZ(ElementOutput output) {
+    private ZDBFromMarcXmlTar(ElementOutput output) {
         this.output = output;
         this.done = false;
     }
@@ -230,79 +233,46 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
 
     @Override
     public AtomicLong next() {
-        final URI uri = input.poll();
+        URI uri = input.poll();
         done = uri == null;
         if (done) {
             return fileCounter;
         }
         try {
-            logger.info("starting {} elements '{}'", uri, elements);
-            final MABElementMapper mapper = new MABElementMapper(elements)
+            final MARCElementMapper mapper = new MARCElementMapper(elements)
                     .pipelines(pipelines)
                     .detectUnknownKeys(detect)
                     .start(buildFactory);
+
             final MarcXchange2KeyValue kv = new MarcXchange2KeyValue()
                     .transformer(new MarcXchange2KeyValue.FieldDataTransformer() {
                         @Override
                         public String transform(String value) {
-                            return value;
+                            return Normalizer.normalize(value, Normalizer.Form.NFC);
                         }
                     })
                     .addListener(mapper);
-                    /*.addListener(new KeyValueStreamAdapter<FieldCollection, String>() {
-                        @Override
-                        public void begin() {
-                            logger.debug("begin object");
-                        }
 
-                        @Override
-                        public void keyValue(FieldCollection key, String value) {
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("begin");
-                                for (Field f : key) {
-                                    logger.debug("tag={} ind={} subf={} data={}",
-                                            f.tag(), f.indicator(), f.subfieldId(), f.data());
-                                }
-                                logger.debug("end");
-                            }
-                        }
-
-                        @Override
-                        public void end() {
-                            logger.debug("end object");
-                        }
-
-                        @Override
-                        public void end(Object info) {
-                            logger.info("end object (info={})", info);
-                        }
-                    });*/
-
-            // set up TAR reader
             final MarcXmlTarReader reader = new MarcXmlTarReader()
-                            .setURI(uri)
-                            .setListener(kv);
+                    .setURI(uri)
+                    .setListener(kv);
             while (reader.hasNext()) {
                 reader.next();
             }
             reader.close();
             fileCounter.incrementAndGet();
-            // output of mapper analysis
-            if (detect) {
-                logger.info("unknown keys={}", mapper.unknownKeys());
-            }
             mapper.close();
         } catch (Exception ex) {
             logger.error("error while getting next document: " + ex.getMessage(), ex);
-            done = true;
         }
         return fileCounter;
     }
 
-    final MABElementBuilderFactory buildFactory = new MABElementBuilderFactory() {
-        public MABElementBuilder newBuilder() {
-            return new MABElementBuilder()
+    final MARCElementBuilderFactory buildFactory = new MARCElementBuilderFactory() {
+        public MARCElementBuilder newBuilder() {
+            MARCElementBuilder builder = new MARCElementBuilder()
                     .addOutput(new OurElementOutput());
+            return builder;
         }
     };
 
@@ -319,16 +289,13 @@ public final class HBZ extends AbstractImporter<Long, AtomicLong> {
 
         @Override
         public void output(ResourceContext context, ContentBuilder contentBuilder) throws IOException {
-            if (context.resource().id() != null) {
+            if (!context.resource().isEmpty()) {
                 IRI id = IRI.builder().scheme("http")
-                    .host(index)
-                    .query(type)
-                    .fragment(context.resource().id().getFragment()).build();
+                        .host(index)
+                        .query(type)
+                        .fragment(Long.toString(outputCounter.incrementAndGet())).build();
                 context.resource().id(id);
                 output.output(context, contentBuilder);
-                outputCounter.incrementAndGet();
-            } else {
-                logger.warn("no resource ID found");
             }
         }
 

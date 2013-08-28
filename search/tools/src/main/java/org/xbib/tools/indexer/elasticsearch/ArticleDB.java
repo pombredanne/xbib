@@ -39,8 +39,8 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.elements.ElementOutput;
 import org.xbib.grouping.bibliographic.endeavor.WorkAuthor;
@@ -154,7 +154,9 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
                 );
                 System.exit(1);
             }
-            input = new Finder(options.valueOf("serials").toString()).find(options.valueOf("path").toString()).getURIs();
+            input = new Finder((String)options.valueOf("serials"))
+                    .find((String)options.valueOf("path"))
+                    .getURIs();
 
             logger.info("parsing initial set of serials...");
 
@@ -176,9 +178,9 @@ public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean mock = (Boolean)options.valueOf("mock");
 
-            final IngestClient es = mock ?
-                    new MockIngestClient() :
-                    new IngestClient();
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
 
             es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)

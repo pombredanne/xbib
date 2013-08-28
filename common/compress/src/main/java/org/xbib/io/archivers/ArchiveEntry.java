@@ -39,8 +39,6 @@ public interface ArchiveEntry {
 
     /**
      * The last modified date of the entry.
-     * 
-     * @since 1.1
      */
     public Date getLastModifiedDate();
 }

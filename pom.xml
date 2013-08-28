@@ -10,13 +10,6 @@
 
     <packaging>pom</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-    </properties>
-
     <scm>
         <connection>scm:git:git@github.com:xbib/xbib.git</connection>
         <developerConnection>scm:git:git@github.com:xbib/xbib.git</developerConnection>
@@ -44,6 +37,13 @@
             <url>https://github.com/xbib/maven-repo/raw/master/snapshots</url>
         </repository>
     </repositories>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    </properties>
 
     <build>
 

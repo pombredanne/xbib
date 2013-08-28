@@ -43,6 +43,8 @@ import javax.xml.namespace.QName;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.ElementOutput;
@@ -113,6 +115,7 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(100);
                     accepts("maxconcurrentbulkrequests").withRequiredArg().ofType(Integer.class).defaultsTo(10);
                     accepts("overwrite").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                 }
             };
             options = parser.parse(args);
@@ -147,9 +150,13 @@ public final class EZB extends AbstractImporter<Long, AtomicLong> {
             int maxbulkactions = (Integer) options.valueOf("maxbulkactions");
             int maxconcurrentbulkrequests = (Integer) options.valueOf("maxconcurrentbulkrequests");
             boolean overwrite = (Boolean) options.valueOf("overwrite");
+            boolean mock = (Boolean)options.valueOf("mock");
 
-            final IngestClient es = new IngestClient()
-                    .maxBulkActions(maxbulkactions)
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
+
+            es.maxBulkActions(maxbulkactions)
                     .maxConcurrentBulkRequests(maxconcurrentbulkrequests)
                     .newClient(esURI)
                     .setIndex(index)

@@ -1,3 +1,34 @@
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
+ *
+ * Copyright (C) 2012 Jörg Prante and xbib
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
+ */
 package org.xbib.io.compress.gzip;
 
 import java.io.IOException;
@@ -11,7 +42,7 @@ import org.xbib.io.compress.DataHandler;
 import org.xbib.io.compress.Uncompressor;
 
 /**
- * {@link com.ning.compress.Uncompressor} implementation for uncompressing GZIP
+ * {@link org.xbib.io.compress.Uncompressor} implementation for uncompressing GZIP
  * encoded data in "push" mode, in which input is not read using
  * {@link java.io.InputStream} but rather pushed to uncompressor in variable
  * length chunks.
@@ -98,11 +129,7 @@ public class GZIPUncompressor extends Uncompressor {
      * <code>_inputBuffer</code>.
      */
     protected byte[] _decodeBuffer;
-    /*
-     ///////////////////////////////////////////////////////////////////////
-     // Decoder state
-     ///////////////////////////////////////////////////////////////////////
-     */
+
     /**
      * Current decoding state, which determines meaning of following byte(s).
      */
@@ -129,11 +156,6 @@ public class GZIPUncompressor extends Uncompressor {
      */
     protected int _trailerCount;
 
-    /*
-     ///////////////////////////////////////////////////////////////////////
-     // Instance creation
-     ///////////////////////////////////////////////////////////////////////
-     */
     public GZIPUncompressor(DataHandler h) {
         this(h, DEFAULT_CHUNK_SIZE);
     }
@@ -148,11 +170,6 @@ public class GZIPUncompressor extends Uncompressor {
         _crc = new CRC32();
     }
 
-    /*
-     ///////////////////////////////////////////////////////////////////////
-     // Uncompressor API implementation
-     ///////////////////////////////////////////////////////////////////////
-     */
     @Override
     public void feedCompressedData(byte[] comp, int offset, int len) throws IOException {
         final int end = offset + len;

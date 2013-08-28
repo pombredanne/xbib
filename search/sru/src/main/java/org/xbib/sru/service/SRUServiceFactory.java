@@ -38,9 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.WeakHashMap;
 
 /**
  * A SRU service factory.
@@ -51,7 +51,7 @@ public final class SRUServiceFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(SRUServiceFactory.class.getName());
 
-    private final static HashMap<URI, SRUService> services = new HashMap<URI, SRUService>();
+    private final static Map<URI, SRUService> services = new HashMap();
 
     private final static SRUServiceFactory instance = new SRUServiceFactory();
 

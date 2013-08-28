@@ -3,7 +3,7 @@ package org.xbib.elasticsearch;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -26,7 +26,7 @@ public class BulkIndexerTest extends Assert {
     @Test
     public void testBulkIndexerWithSingleResourceAndCQLSearch() throws Exception {
         try {
-            final IngestClient es = new IngestClient()
+            final BulkClient es = new BulkClient()
                     .newClient(URI.create("es://localhost:9300?es.cluster.name=test"))
                     .setIndex("document")
                     .setType("test");

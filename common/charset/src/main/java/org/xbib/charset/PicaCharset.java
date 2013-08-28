@@ -41,7 +41,6 @@ import java.util.Map;
  * <p> A Charset for the OCLC|PICA-character-encoding (x-PICA). It decodes
  * x-PICA to Unicode and encodes Unicode to x-PICA. </p>
  *
- * @author kett
  */
 public class PicaCharset extends Charset {
 

@@ -44,7 +44,6 @@ public abstract class SingleByteDecoder extends CharsetDecoder {
 
     /**
      * @return Returns the composeCharactersAfterConversion.
-     * @since 09.07.2008
      */
     public boolean isComposeCharactersAfterConversion() {
         return this.composeCharactersAfterConversion;
@@ -53,7 +52,6 @@ public abstract class SingleByteDecoder extends CharsetDecoder {
     /**
      * @param composeCharactersAfterConversion
      *            The composeCharactersAfterConversion to set.
-     * @since 09.07.2008
      */
     public void setComposeCharactersAfterConversion(
             boolean composeCharactersAfterConversion) {

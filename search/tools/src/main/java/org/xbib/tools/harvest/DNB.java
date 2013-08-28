@@ -32,6 +32,7 @@
 package org.xbib.tools.harvest;
 
 import org.xbib.io.Connection;
+import org.xbib.io.NullWriter;
 import org.xbib.io.Packet;
 import org.xbib.io.Session;
 import org.xbib.io.archivers.TarConnectionFactory;
@@ -50,15 +51,19 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.xbib.tools.opt.util.DateConverter.datePattern;
 
-public class BibdatZDB {
+/**
+ * Harvest from DNB OAI. Write records to tar archive.
+ */
+public class DNB {
 
-    private final static Logger logger = LoggerFactory.getLogger(BibdatZDB.class.getSimpleName());
+    private final static Logger logger = LoggerFactory.getLogger(DNB.class.getSimpleName());
 
     private static OptionSet options;
 
@@ -80,7 +85,7 @@ public class BibdatZDB {
                     accepts("until").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd'T'hh:mm:ss'Z'")).defaultsTo(new Date());
                     accepts("fromDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd"));
                     accepts("untilDate").withRequiredArg().withValuesConvertedBy(datePattern("yyyy-MM-dd")).defaultsTo(new Date());
-                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("bibdat.xml");
+                    accepts("output").withOptionalArg().ofType(String.class).defaultsTo("dnb.xml");
                 }
             };
             options = parser.parse(args);
@@ -102,7 +107,7 @@ public class BibdatZDB {
                     .setFrom(from)
                     .setUntil(until);
 
-            new BibdatZDB(client, output).execute(request).close();
+            new DNB(client, output).execute(request).close();
 
             logger.info("harvested {} documents", counter.get());
 
@@ -113,7 +118,7 @@ public class BibdatZDB {
         System.exit(exitcode);
     }
 
-    private BibdatZDB(OAIClient client, String output) throws Exception {
+    private DNB(OAIClient client, String output) throws Exception {
         this.client = client;
         TarConnectionFactory factory = new TarConnectionFactory();
         Connection<TarSession> connection = factory.getConnection(URI.create("targz:" + output));
@@ -121,7 +126,7 @@ public class BibdatZDB {
         session.open(Session.Mode.WRITE);
     }
 
-    private BibdatZDB execute(ListRecordsRequest request) throws Exception {
+    private DNB execute(ListRecordsRequest request) throws Exception {
         final XmlMetadataHandler metadataHandler = new PacketHandler()
                 .setWriter(new StringWriter());
         try {
@@ -130,9 +135,8 @@ public class BibdatZDB {
                         .register(metadataHandler);
                 request.prepare().execute(listener).waitFor();
                 if (listener.getResponse() != null) {
-                    StringWriter sw = new StringWriter();
-                    listener.getResponse().to(sw);
-                    //logger.info("response from OAI = {}", sw);
+                    NullWriter w = new NullWriter();
+                    listener.getResponse().to(w);
                 }
                 request = listener.isFailure() ? null :
                         client.resume(request, listener.getResumptionToken());
@@ -156,7 +160,9 @@ public class BibdatZDB {
             try {
                 Packet p = session.newPacket();
                 p.name(getIdentifier());
-                p.packet(getWriter().toString());
+                String s = getWriter().toString();
+                s = Normalizer.normalize(s, Normalizer.Form.NFC);
+                p.packet(s);
                 session.write(p);
                 counter.incrementAndGet();
             } catch (IOException e) {

@@ -54,7 +54,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Tar Session
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TarSession implements Session {
 
@@ -314,14 +313,12 @@ public class TarSession implements Session {
             sb.append(name);
         } else {
             Long number = packet.number();
-            if (number != null) {
-                // distribute numbered entries over 12-digit directories (10.000 per directory)
-                String d = nf.format(counter.incrementAndGet());
-                sb.append("/").append(d.substring(0, 4))
+            // distribute numbered entries over 12-digit directories (10.000 per directory)
+            String d = nf.format(counter.incrementAndGet());
+            sb.append("/").append(d.substring(0, 4))
                     .append("/").append(d.substring(4, 8))
                     .append("/").append(d.substring(8, 12))
                     .append("/").append(number);
-            }
         }
         return sb.toString();
     }

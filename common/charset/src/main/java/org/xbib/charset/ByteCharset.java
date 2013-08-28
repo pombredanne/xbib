@@ -82,8 +82,6 @@ import java.nio.charset.CoderResult;
  * A generic encoding framework for single-byte encodings, utilizing a look-up
  * table. This replaces the gnu.java.io.EncoderEightBitLookup class, created by
  * Aron Renn.
- * 
- * @author Sven de Marothy
  */
 abstract class ByteCharset extends Charset {
 

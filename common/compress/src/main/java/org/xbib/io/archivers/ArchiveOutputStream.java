@@ -128,7 +128,6 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * Doesn't increment if the EOF has been hit (read == -1)
      * 
      * @param written the number of bytes written
-     * @since 1.1
      */
     protected void count(long written) {
         if (written != -1) {
@@ -139,18 +138,6 @@ public abstract class ArchiveOutputStream extends OutputStream {
     /**
      * Returns the current number of bytes written to this stream.
      * @return the number of written bytes
-     * @deprecated this method may yield wrong results for large
-     * archives, use #getBytesWritten instead
-     */
-    @Deprecated
-    public int getCount() {
-        return (int) bytesWritten;
-    }
-
-    /**
-     * Returns the current number of bytes written to this stream.
-     * @return the number of written bytes
-     * @since 1.1
      */
     public long getBytesWritten() {
         return bytesWritten;
@@ -163,7 +150,6 @@ public abstract class ArchiveOutputStream extends OutputStream {
      * not supported (yet).</p>
      *
      * <p>This implementation always returns true.
-     * @since 1.1
      */
     public boolean canWriteEntryData(ArchiveEntry ae) {
         return true;

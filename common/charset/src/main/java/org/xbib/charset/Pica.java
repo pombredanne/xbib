@@ -50,7 +50,6 @@ import java.util.Map;
  * A description can be found at
  * <a href="http://www.pica.nl/ne/docu/dn010/html/t07.shtml">the Pica website.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Pica extends Charset {
 

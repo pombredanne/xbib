@@ -32,6 +32,8 @@
 package org.xbib.tools.indexer.elasticsearch;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.io.InputService;
@@ -91,6 +93,7 @@ public class GND {
             final String elasticsearch = (String) options.valueOf("elasticsearch");
             final String index = (String) options.valueOf("index");
             final String type = (String) options.valueOf("type");
+            boolean mock = (Boolean)options.valueOf("mock");
 
             final String uriStr = (String) options.valueOf("gndfile");
             URI uri = URI.create(uriStr);
@@ -98,7 +101,7 @@ public class GND {
             if (in == null) {
                 throw new IOException("file not found: " + uriStr);
             }
-            final ElasticBuilder builder = new ElasticBuilder(elasticsearch, index, type);
+            final ElasticBuilder builder = new ElasticBuilder(elasticsearch, index, type, mock);
 
             IRI id = IRI.builder().scheme("http").host("d-nb.info").path("/gnd/").build();
             TurtleReader reader = new TurtleReader(id);
@@ -123,9 +126,11 @@ public class GND {
 
         private Resource resource;
 
-        ElasticBuilder(String esURI, String index, String type) throws IOException {
-            IngestClient es = new IngestClient()
-                    .newClient(URI.create(esURI))
+        ElasticBuilder(String esURI, String index, String type, boolean mock) throws IOException {
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
+            es.newClient(URI.create(esURI))
                     .setIndex(index)
                     .setType(type);
             sink = new ElasticsearchResourceSink(es);

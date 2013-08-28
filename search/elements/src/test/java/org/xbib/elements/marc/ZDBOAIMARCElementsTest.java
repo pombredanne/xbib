@@ -100,6 +100,7 @@ public class ZDBOAIMARCElementsTest {
         InputStream in = getClass().getResourceAsStream("/org/xbib/marc/xml/zdb-oai-marc.xml");
         BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         InputSource source = new InputSource(br);
+
         Iso2709Reader reader = new Iso2709Reader().setMarcXchangeListener(kv);
         reader.parse(source);
         br.close();

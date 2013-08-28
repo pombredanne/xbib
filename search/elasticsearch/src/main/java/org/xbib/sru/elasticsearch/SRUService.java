@@ -37,9 +37,6 @@ import java.util.ResourceBundle;
 
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.sru.SRUConstants;
-import org.xbib.sru.SRUSession;
-import org.xbib.sru.searchretrieve.SearchRetrieveListener;
-import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 
 /**
  * Elasticseach SRU service
@@ -58,17 +55,8 @@ public class SRUService implements org.xbib.sru.service.SRUService {
     }
 
     @Override
-    public SRUSession newSession() throws IOException {
-        return null;
-    }
-
-    @Override
     public SRUClient newClient() throws IOException {
         return new SRUClient(this, support.newClient());
-    }
-
-    @Override
-    public void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener) throws IOException {
     }
 
     @Override

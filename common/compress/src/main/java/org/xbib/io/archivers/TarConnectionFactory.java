@@ -40,7 +40,6 @@ import java.net.URI;
 /**
  * Tar connection factory
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class TarConnectionFactory implements ConnectionFactory<TarSession> {
 
@@ -48,9 +47,7 @@ public final class TarConnectionFactory implements ConnectionFactory<TarSession>
      * Get connection
      *
      * @param uri the connection URI
-     *
      * @return a new connection
-     *
      * @throws java.io.IOException if connection can not be established
      */
     @Override

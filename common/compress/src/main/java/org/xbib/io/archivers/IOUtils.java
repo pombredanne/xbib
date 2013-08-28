@@ -24,7 +24,6 @@ import java.io.OutputStream;
 
 /**
  * Utility functions
- * @Immutable
  */
 public final class IOUtils {
 

@@ -52,9 +52,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A finde for subdirectories
+ * A finder for traversing PathFiles
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Finder extends SimpleFileVisitor<Path> {
 
@@ -102,11 +101,8 @@ public class Finder extends SimpleFileVisitor<Path> {
     }
 
     public Queue<URI> getURIs() {
-        if (comparator != null) {
-            Collections.sort(input, comparator);
-        }
-        Queue<URI> uris = new ConcurrentLinkedQueue<>();
-        for (PathFile p : input) {
+        Queue<URI> uris = new ConcurrentLinkedQueue<URI>();
+        for (PathFile p : getPathFiles()) {
             uris.add(p.getPath().toAbsolutePath().toUri());
         }
         return uris;

@@ -97,17 +97,11 @@ public class PropertiesSRUService implements SRUService {
     }
 
     @Override
-    public SRUSession newSession() throws IOException {
-        return null;
-    }
-
-    @Override
     public SRUClient newClient() throws IOException {
         return null;
     }
 
-    @Override
-    public void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener)
+    /*public void searchRetrieve(SearchRetrieveRequest request, SearchRetrieveListener listener)
             throws IOException {
         HttpRequest req = session.newRequest()
                 .setMethod("GET")
@@ -135,7 +129,7 @@ public class PropertiesSRUService implements SRUService {
             logger.error(e.getMessage(), e);
             throw new IOException(e);
         }
-    }
+    }*/
 
     public void close() throws IOException {
         session.close();

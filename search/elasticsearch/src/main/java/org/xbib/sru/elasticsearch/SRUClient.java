@@ -59,7 +59,6 @@ public class SRUClient implements org.xbib.sru.client.SRUClient {
 
     private final CQLSearchSupport support;
 
-
     public SRUClient(SRUService service, CQLSearchSupport support) {
         this.service = service;
         this.support = support;

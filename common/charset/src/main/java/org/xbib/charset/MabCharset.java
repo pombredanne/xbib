@@ -55,10 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * einige triviale Ergänzungen in den Blöcken A-D
- * von <a href="mailto:joergprante@gmail.com">Jörg Prante</a>
- *
- * @author kett
+ * mit einigen trivialen Ergänzungen in den Blöcken A-D
  */
 public class MabCharset extends Charset {
 

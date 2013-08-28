@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 /**
  * <p>Factory to create Archive[In|Out]putStreams from names or the first bytes of
  * the InputStream. In order add other implementations you should extend
@@ -70,7 +69,6 @@ import java.io.OutputStream;
  * in.close();
  * </pre>
  * 
- * @Immutable
  */
 public class ArchiveStreamFactory {
 

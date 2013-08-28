@@ -41,6 +41,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.ElementOutput;
@@ -85,6 +87,7 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);
                     accepts("bulksize").withRequiredArg().ofType(Integer.class).defaultsTo(1000);
                     accepts("bulks").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+                    accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("help");
                 }
             };
@@ -102,13 +105,19 @@ public class CE extends AbstractImporter<Long, AtomicLong> {
                 System.exit(1);
             }
 
-            input = new Finder(options.valueOf("pattern").toString()).find(options.valueOf("path").toString()).getURIs();
+            input = new Finder((String)options.valueOf("pattern"))
+                    .find((String)options.valueOf("path"))
+                    .getURIs();
             logger.info("found {} input files", input.size());
             final Integer threads = (Integer) options.valueOf("threads");
-
             URI uri = URI.create(options.valueOf("elasticsearch").toString());
-            final IngestClient es = new IngestClient()
-                    .newClient(uri)
+            boolean mock = (Boolean)options.valueOf("mock");
+
+            final BulkClient es = mock ?
+                    new MockBulkClient() :
+                    new BulkClient();
+
+            es.newClient(uri)
                     .setIndex(options.valueOf("index").toString())
                     .setType(options.valueOf("type").toString())
                     .maxBulkActions((Integer) options.valueOf("bulksize"))

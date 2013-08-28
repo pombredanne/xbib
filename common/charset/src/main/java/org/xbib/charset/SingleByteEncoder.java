@@ -44,7 +44,6 @@ public abstract class SingleByteEncoder extends CharsetEncoder {
 
     /**
      * @return Returns the decomposeCharactersBeforeConversion.
-     * @since 09.07.2008
      */
     public boolean isDecomposeCharactersBeforeConversion() {
         return this.decomposeCharactersBeforeConversion;
@@ -53,7 +52,6 @@ public abstract class SingleByteEncoder extends CharsetEncoder {
     /**
      * @param decomposeCharactersBeforeConversion
      *            The decomposeCharactersBeforeConversion to set.
-     * @since 09.07.2008
      */
     public void setDecomposeCharactersBeforeConversion(
             boolean decomposeCharactersBeforeConversion) {
@@ -64,11 +62,6 @@ public abstract class SingleByteEncoder extends CharsetEncoder {
         super(cs, 1.0f, 1.0f);
     }
 
-    /**
-     * @see java.nio.charset.CharsetEncoder#encodeLoop(java.nio.CharBuffer,
-     *      java.nio.ByteBuffer)
-     * @since 07.07.2008
-     */
     @Override
     protected CoderResult encodeLoop(CharBuffer in, ByteBuffer out) {
         CharBuffer inputBuffer = CharBuffer.allocate(30);

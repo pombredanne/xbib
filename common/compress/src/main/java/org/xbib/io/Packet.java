@@ -34,7 +34,6 @@ package org.xbib.io;
 /**
  * A packet for transporting data chunks in sessions
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Packet<P> {
 
