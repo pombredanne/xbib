@@ -35,7 +35,6 @@ import org.xbib.io.archivers.CountingOutputStream;
  * The TarOutputStream writes a UNIX tar archive as an OutputStream.
  * Methods are provided to put entries, and then write their contents
  * by writing to this stream using write().
- * @NotThreadSafe
  */
 public class TarArchiveOutputStream extends ArchiveOutputStream {
     /** Fail if a long file name is required in the archive. */
@@ -97,7 +96,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
      * Constructor for TarInputStream.
      * @param os the output stream to use
      * @param encoding name of the encoding to use for file names
-     * @since Commons Compress 1.4
      */
     public TarArchiveOutputStream(OutputStream os, String encoding) {
         this(os, TarBuffer.DEFAULT_BLKSIZE, TarBuffer.DEFAULT_RCDSIZE, encoding);
@@ -117,7 +115,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
      * @param os the output stream to use
      * @param blockSize the block size to use
      * @param encoding name of the encoding to use for file names
-     * @since Commons Compress 1.4
      */
     public TarArchiveOutputStream(OutputStream os, int blockSize,
                                   String encoding) {
@@ -140,7 +137,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
      * @param blockSize the block size to use
      * @param recordSize the record size to use
      * @param encoding name of the encoding to use for file names
-     * @since Commons Compress 1.4
      */
     public TarArchiveOutputStream(OutputStream os, int blockSize,
                                   int recordSize, String encoding) {
@@ -170,7 +166,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
      * This specifies the treatment of big files (sizes &gt; TarConstants.MAXSIZE) and other numeric values to big to fit into a traditional tar header.
      * Default is BIGNUMBER_ERROR.
      * @param bigNumberMode the mode to use
-     * @since 1.4
      */
     public void setBigNumberMode(int bigNumberMode) {
         this.bigNumberMode = bigNumberMode;
@@ -178,16 +173,9 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
 
     /**
      * Whether to add a PAX extension header for non-ASCII file names.
-     * @since 1.4
      */
     public void setAddPaxHeadersForNonAsciiNames(boolean b) {
         addPaxHeadersForNonAsciiNames = b;
-    }
-
-    @Deprecated
-    @Override
-    public int getCount() {
-        return (int) getBytesWritten();
     }
 
     @Override
@@ -447,7 +435,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
 
     /**
      * Writes a PAX extended header with the given map as contents.
-     * @since 1.4
      */
     void writePaxHeaders(String entryName,
                          Map<String, String> headers) throws IOException {
