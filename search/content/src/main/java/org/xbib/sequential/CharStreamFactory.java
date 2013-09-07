@@ -36,7 +36,6 @@ import java.io.Reader;
 /**
  * A char stream factory
  *
- * @author <a href="mailto:joergprante@gmail.coml;rg Prante</a>
  */
 public final class CharStreamFactory {
 

@@ -69,7 +69,6 @@ import static org.xbib.tools.opt.util.DateConverter.datePattern;
  *
  * A generic OAI indexer for Elasticsearch
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public class OAI {
 

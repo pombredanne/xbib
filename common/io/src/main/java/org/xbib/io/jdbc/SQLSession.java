@@ -55,12 +55,9 @@ import java.util.Map;
 /**
  * SQL Session
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SQLSession implements Session {
 
-    /** the logger */
-    //private static final Logger logger = Logger.getLogger(SQLSession.class.getName());
     /** default encoding */
     public static final String DEFAULT_ENCODING = System.getProperty("file.encoding");
     /** connection */

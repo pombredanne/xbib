@@ -41,7 +41,6 @@ import java.util.Map;
 /**
  * A pageable query
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PageableQuery extends Query {
     

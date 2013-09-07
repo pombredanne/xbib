@@ -49,9 +49,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
-/**
- * @author G. Todd Miller 
- */
 public class Sax2Dom implements XMLNS, ContentHandler, LexicalHandler {
 
     private static final String XMLNS_PREFIX = NS_PREFIX;

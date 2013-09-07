@@ -49,7 +49,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Abstract XML handler
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractXmlHandler extends DefaultHandler implements XmlHandler {
 

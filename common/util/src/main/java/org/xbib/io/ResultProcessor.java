@@ -36,7 +36,6 @@ import java.io.IOException;
 /**
  * An interface for result processors
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ResultProcessor<R> {
 

@@ -21,8 +21,6 @@ package it.sauronsoftware.ftp4j;
 /**
  * Static property keys used by the library.
  * 
- * @author Carlo Pelliccia
- * @since 1.3
  */
 interface FTPKeys {
 

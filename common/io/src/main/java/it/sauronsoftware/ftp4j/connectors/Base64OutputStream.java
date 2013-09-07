@@ -31,7 +31,6 @@ import java.io.OutputStream;
  * data into the underlying stream.
  * </p>
  * 
- * @author Carlo Pelliccia
  */
 class Base64OutputStream extends OutputStream {
 

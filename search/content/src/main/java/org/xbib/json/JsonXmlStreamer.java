@@ -61,7 +61,6 @@ import org.xbib.xml.ToQName;
  * Jackson stream events to StaX events. You need a root element to wrap
  * the JSON stream into.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class JsonXmlStreamer {
 

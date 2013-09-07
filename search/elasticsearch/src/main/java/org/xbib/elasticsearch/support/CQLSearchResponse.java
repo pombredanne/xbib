@@ -60,7 +60,6 @@ import java.io.Writer;
 /**
  * Response for a CQL search
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CQLSearchResponse {
 

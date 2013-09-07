@@ -36,7 +36,6 @@ import java.io.IOException;
 /**
  * Filter char stream
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class FilterCharStream extends SequentialCharStream {
 

@@ -21,7 +21,6 @@ import org.apache.commons.net.ftp.FTPFileEntryParser;
 
 /**
  * The interface describes a factory for creating FTPFileEntryParsers.
- * @since 1.2
  */
 public interface FTPFileEntryParserFactory
 {

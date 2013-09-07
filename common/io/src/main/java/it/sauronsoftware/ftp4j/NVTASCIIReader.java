@@ -26,8 +26,6 @@ import java.io.Reader;
 /**
  * This is an NVT-ASCII character stream reader.
  * 
- * @author Carlo Pelliccia
- * @version 1.1
  */
 class NVTASCIIReader extends Reader {
 

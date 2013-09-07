@@ -38,8 +38,6 @@ import java.io.Serializable;
 
 /**
  *  A literal is a value with a type and/or a language
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Literal<O> extends Serializable, Node, XSD {
 

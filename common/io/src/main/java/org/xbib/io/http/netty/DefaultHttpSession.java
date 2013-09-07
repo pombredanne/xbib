@@ -45,7 +45,6 @@ import java.io.IOException;
 /**
  * Default HTTP Session
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultHttpSession implements HttpSession {
 

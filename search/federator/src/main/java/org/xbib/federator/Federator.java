@@ -52,7 +52,6 @@ import org.xbib.federator.action.SRUAction;
 public class Federator {
 
     private final static Federator instance = new Federator();
-    //private String stylesheetPath;
     private ExecutorService executorService;
     private String base;
 
@@ -79,11 +78,6 @@ public class Federator {
         this.base = base;
         return this;
     }
-
-    /*public Federator setStylesheetPath(String path) {
-        this.stylesheetPath = path;
-        return this;
-    }*/
 
     public void shutdown(long millisToWait) throws InterruptedException {
         if (executorService != null) {

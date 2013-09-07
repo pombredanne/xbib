@@ -126,15 +126,12 @@ import com.google.common.collect.Ordering;
  * functionality, ordered traversals via its iterators, and faster overall
  * running time.
  * 
- * @author Zhenya Leonov
- * @param <E>
- *            the type of elements held in this queue
+ * @param <E> the type of elements held in this queue
  * @see TreeDeque
  */
 public class TreeQueue<E> extends AbstractQueue<E> implements
-		SortedCollection<E>, Cloneable, Serializable {
+		SortedCollection<E>, Cloneable {
 
-	private static final long serialVersionUID = 1L;
 	transient int size = 0;
 	transient Node nil = new Node();
 	transient Node min = nil;

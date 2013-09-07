@@ -43,7 +43,6 @@ import java.util.Map;
 /**
  * A default HTTP response
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultHttpResponse extends HttpPacket implements HttpResponse {
 

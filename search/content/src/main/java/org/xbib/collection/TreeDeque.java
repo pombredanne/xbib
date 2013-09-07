@@ -123,13 +123,10 @@ import com.google.common.collect.Ordering;
  * at both ends, ordered traversals via its iterators, and faster overall
  * running time.
  * 
- * @author Zhenya Leonov
- * @param <E>
- *            the type of elements held in this deque
+ * @param <E> the type of elements held in this deque
  */
 public class TreeDeque<E> extends TreeQueue<E> implements Deque<E> {
 
-	private static final long serialVersionUID = 1L;
 	transient Node max = nil;
 
     public TreeDeque() {

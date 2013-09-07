@@ -62,7 +62,6 @@ import org.xbib.rdf.simple.SimpleResource;
  *
  * Warning, many bugs ahead.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TurtleWriter<S extends Identifier, P extends Property, O extends Node>
     implements ResourceSerializer<S,P,O>, TripleListener<S,P,O> {

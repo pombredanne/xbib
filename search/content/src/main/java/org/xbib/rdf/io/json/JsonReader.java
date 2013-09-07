@@ -42,7 +42,6 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.io.Triplifier;
-import org.xbib.rdf.io.xml.AbstractXmlHandler;
 import org.xbib.rdf.io.xml.XmlHandler;
 import org.xml.sax.SAXException;
 
@@ -51,7 +50,6 @@ import javax.xml.namespace.QName;
 /**
  * A triplifier for JSON (not JSON-LD)
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class JsonReader<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>>
         implements Triplifier<S, P, O> {

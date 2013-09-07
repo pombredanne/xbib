@@ -48,7 +48,6 @@ import java.net.URISyntaxException;
 /**
  *  A default HTTP request
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultHttpRequest extends HttpPacket implements HttpRequest {
 

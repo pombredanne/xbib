@@ -65,7 +65,6 @@ import org.xbib.rdf.simple.SimpleTriple;
  * @see <a href="http://www.w3.org/TeamSubmission/turtle/">Turtle - Terse RDF
  * Triple Language</a>
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TurtleReader<S extends Identifier, P extends Property, O extends Node>
         implements Triplifier<S, P, O> {

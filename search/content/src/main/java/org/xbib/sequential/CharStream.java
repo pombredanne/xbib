@@ -75,7 +75,6 @@ import java.io.Reader;
  * and DOCUMENT TERMINATOR (DT), respectively and may be used to reset
  * presentation attributes to the default state."
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface CharStream extends Closeable {
 

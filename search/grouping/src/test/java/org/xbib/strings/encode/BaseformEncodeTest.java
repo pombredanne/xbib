@@ -2,7 +2,7 @@ package org.xbib.strings.encode;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 
 import java.nio.charset.Charset;
 

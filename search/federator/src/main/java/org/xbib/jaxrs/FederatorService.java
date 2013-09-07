@@ -17,9 +17,8 @@ import javax.ws.rs.core.StreamingOutput;
 import org.xbib.federator.Federator;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.xml.transform.StylesheetTransformer;
 
-@Path("/")
+@Path("/federator")
 public class FederatorService {
 
     private final static Logger logger = LoggerFactory.getLogger(FederatorService.class.getName());
@@ -80,7 +79,7 @@ public class FederatorService {
                 try {
                     final String base = servletConfig.getInitParameter("federator.base");
                     final int threads = Integer.parseInt(servletConfig.getInitParameter("federator.threads"));
-                    final String stylesheet = servletConfig.getInitParameter(mediaType); 
+                    //final String stylesheet = servletConfig.getInitParameter(mediaType);
                     if (federator == null) {
                         federator = Federator.getInstance()
                                 .setBase(base)

@@ -30,8 +30,6 @@ import javax.net.ssl.SSLSocketFactory;
 /**
  * This class is used to represent a communication channel with a FTP server.
  * 
- * @author Carlo Pelliccia
- * @version 1.1
  */
 public class FTPCommunicationChannel {
 

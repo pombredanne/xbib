@@ -37,7 +37,6 @@ import java.net.URI;
 /**
  *  A connection factory interface
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ConnectionFactory<S extends Session> {
 

@@ -39,9 +39,7 @@ import java.util.Comparator;
  * of Java's constructor recommendations, reflecting the new developments of
  * Java 5.
  * 
- * @author Zhenya Leonov
- * @param <E>
- *            the type of elements held in this collection
+ * @param <E> the type of elements held in this collection
  */
 public interface SortedCollection<E> extends Collection<E> {
 

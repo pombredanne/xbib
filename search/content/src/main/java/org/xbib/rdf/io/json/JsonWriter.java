@@ -43,6 +43,7 @@ import org.xbib.rdf.Triple;
 import org.xbib.rdf.context.IRINamespaceContext;
 import org.xbib.rdf.io.TripleListener;
 import org.xbib.rdf.simple.SimpleResource;
+import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.rdf.xcontent.DefaultContentBuilder;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class JsonWriter<S extends Identifier, P extends Property, O extends Node
 
     private boolean nsWritten;
 
-    private DefaultContentBuilder defaultContentBuilder;
+    private ContentBuilder contentBuilder;
 
     private StringBuilder sb;
 
@@ -73,13 +74,18 @@ public class JsonWriter<S extends Identifier, P extends Property, O extends Node
         this.context = IRINamespaceContext.newInstance();
         this.nsWritten = false;
         this.resource = new SimpleResource();
-        this.defaultContentBuilder = new DefaultContentBuilder();
+        this.contentBuilder = new DefaultContentBuilder();
         this.sb = new StringBuilder();
         this.translatePicaSortMarker = null;
     }
 
     public JsonWriter translatePicaSortMarker(String marker) {
         this.translatePicaSortMarker = marker;
+        return this;
+    }
+
+    public JsonWriter contentBuilder(ContentBuilder contentBuilder) {
+        this.contentBuilder = contentBuilder;
         return this;
     }
 
@@ -90,7 +96,7 @@ public class JsonWriter<S extends Identifier, P extends Property, O extends Node
                 if (!nsWritten) {
                     writeNamespaces();
                 }
-                defaultContentBuilder.build(resource.context(), resource);
+                contentBuilder.build(resource.context(), resource);
                 idCounter++;
                 resource = new SimpleResource();
             } catch (IOException e) {

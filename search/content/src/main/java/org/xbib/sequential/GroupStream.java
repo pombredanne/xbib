@@ -38,7 +38,6 @@ import java.util.Iterator;
 /**
  * Group stream
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class GroupStream extends SequentialCharStream {
 

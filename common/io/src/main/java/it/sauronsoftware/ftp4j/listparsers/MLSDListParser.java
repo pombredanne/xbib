@@ -34,8 +34,6 @@ import java.util.StringTokenizer;
 /**
  * This parser can handle the standard MLST/MLSD responses (RFC 3659).
  * 
- * @author Carlo Pelliccia
- * @since 1.5
  */
 public class MLSDListParser implements FTPListParser {
 

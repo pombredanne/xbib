@@ -50,7 +50,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * An XML reader for parsing XML into triples
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * @param <S>
  * @param <P>
  * @param <O>

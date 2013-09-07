@@ -96,7 +96,7 @@ public class FederatorRequest {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public FederatorResult execute() throws InterruptedException, ExecutionException {
+    public FederatorResponse execute() throws InterruptedException, ExecutionException {
         long count = 0L;
         LinkedList<XMLEvent> events = new LinkedList();
         for (Future<Action> f : service.invokeAll(actions)) {
@@ -109,6 +109,6 @@ public class FederatorRequest {
                 listener.onResponse(action);
             }
         }
-        return new FederatorResult(count, events);
+        return new FederatorResponse(count, events);
     }
 }

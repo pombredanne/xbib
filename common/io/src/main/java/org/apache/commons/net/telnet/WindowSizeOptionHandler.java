@@ -20,9 +20,6 @@ package org.apache.commons.net.telnet;
 /***
  * Implements the telnet window size option RFC 1073.
  * <p>
- * @author Yuval Kashtan
- * @version $Id: WindowSizeOptionHandler.java 1299238 2012-03-10 17:12:28Z sebb $
- * @since 2.0
  ***/
 public class WindowSizeOptionHandler extends TelnetOptionHandler
 {

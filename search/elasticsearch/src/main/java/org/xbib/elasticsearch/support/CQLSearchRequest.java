@@ -52,7 +52,6 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 /**
  * Common Query Language request for Elasticsearch
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CQLSearchRequest extends BasicRequest {
 

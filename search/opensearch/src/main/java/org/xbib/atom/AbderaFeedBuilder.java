@@ -65,7 +65,6 @@ import org.xbib.logging.LoggerFactory;
 /**
  * The Abdera feed builder for atom feeds is an XML event consumer
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class AbderaFeedBuilder implements XMLEventConsumer {
 

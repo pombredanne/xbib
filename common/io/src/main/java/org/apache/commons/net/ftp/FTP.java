@@ -86,12 +86,9 @@ import org.apache.commons.net.io.CRLFLineReader;
  * attempts to be as lenient as possible.
  * <p>
  * <p>
- * @author Rory Winston
- * @author Joseph Hindsley
  * @see FTPClient
  * @see FTPConnectionClosedException
  * @see org.apache.commons.net.MalformedServerReplyException
- * @version $Id: FTP.java 1299238 2012-03-10 17:12:28Z sebb $
  ***/
 
 public class FTP extends SocketClient

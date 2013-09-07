@@ -23,7 +23,6 @@ package it.sauronsoftware.ftp4j;
  * data transfer operations. You can supply an object implementing this
  * interface to any upload/download method of the client.
  * 
- * @author Carlo Pelliccia
  */
 public interface FTPDataTransferListener {
 

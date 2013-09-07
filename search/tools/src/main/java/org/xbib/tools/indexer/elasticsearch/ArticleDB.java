@@ -50,7 +50,7 @@ import org.xbib.importer.Importer;
 import org.xbib.importer.ImporterFactory;
 import org.xbib.io.file.Finder;
 import org.xbib.io.file.TextFileConnectionFactory;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -88,7 +88,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Index article DB into Elasticsearch
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ArticleDB extends AbstractImporter<Long, AtomicLong> {
 

@@ -45,7 +45,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Write RDF resources as Elasticsearch bulk format
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  *
  * @param <C>
  * @param <R>

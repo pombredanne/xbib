@@ -41,7 +41,6 @@ import java.util.Properties;
  * Atom feed controller for Elasticsearch. The results are wrapped up in an Atom
  * feed format.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ElasticsearchAtomFeedFactory implements AtomFeedFactory {
 

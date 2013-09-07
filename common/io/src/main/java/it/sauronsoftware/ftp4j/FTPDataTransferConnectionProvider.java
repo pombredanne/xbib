@@ -21,11 +21,10 @@ package it.sauronsoftware.ftp4j;
 import java.net.Socket;
 
 /**
- * A package reserved {@link FTPConnection} provider, used internally by the
+ * A package reserved FTPConnection provider, used internally by the
  * client to obtain connections for data transfer purposes.
  * 
- * @author cpelliccia
- * 
+ *
  */
 interface FTPDataTransferConnectionProvider {
 

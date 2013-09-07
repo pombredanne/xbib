@@ -50,7 +50,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
  *
  * Does evaluate namespaces and does not validate or import external entities or document type definitions.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class XMLFilterReader extends XMLFilterImpl {
 

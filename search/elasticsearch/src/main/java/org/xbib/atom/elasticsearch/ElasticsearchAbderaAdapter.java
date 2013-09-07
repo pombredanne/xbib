@@ -27,7 +27,6 @@ import org.xbib.atom.AtomFeedFactory;
 /**
  * An Abdera managed collection service for ElasticSearch DSL query language.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ElasticsearchAbderaAdapter extends AbstractAbderaAdapter {
 

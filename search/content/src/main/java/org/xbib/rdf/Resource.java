@@ -43,8 +43,6 @@ import org.xbib.rdf.context.ResourceContext;
  * A Resource is an iterable over statements of subjects, predicates, and
  * objects, based upon Literal. It has predicate multimaps for associated
  * resources and local properties.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Resource<S extends Identifier, P extends Property, O extends Node>
         extends Identifier, Node, Iterable<Triple<S,P,O>> {

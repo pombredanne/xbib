@@ -41,7 +41,6 @@ import org.xbib.query.cql.SyntaxException;
 /**
  * Build ES query from abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class QueryGenerator implements Visitor {
 

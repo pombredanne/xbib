@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 /**
  * This parser can handle NetWare list responses.
  * 
- * @author Carlo Pelliccia
  */
 public class NetWareListParser implements FTPListParser {
 

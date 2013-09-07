@@ -34,9 +34,8 @@ package org.xbib.io.http;
 import org.xbib.io.Packet;
 
 /**
- * A dummy HTTP packet
+ * A HTTP packet
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class HttpPacket implements Packet {
 

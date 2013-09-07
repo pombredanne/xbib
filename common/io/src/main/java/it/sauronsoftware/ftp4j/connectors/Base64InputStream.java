@@ -33,7 +33,6 @@ import java.io.InputStream;
  * caller.
  * </p>
  * 
- * @author Carlo Pelliccia
  */
 class Base64InputStream extends InputStream {
 

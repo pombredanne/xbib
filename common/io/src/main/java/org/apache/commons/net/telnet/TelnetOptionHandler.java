@@ -25,7 +25,6 @@ package org.apache.commons.net.telnet;
  * functionality and defines abstract methods that must be
  * implemented to define subnegotiation behaviour.
  * <p>
- * @author Bruno D'Avanzo
  ***/
 public abstract class TelnetOptionHandler
 {

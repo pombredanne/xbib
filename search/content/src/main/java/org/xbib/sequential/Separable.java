@@ -41,7 +41,6 @@ package org.xbib.sequential;
  * tape. Trailing blanks on tape could be saved by using separator characters
  * instead.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Separable extends Comparable<String> {
 

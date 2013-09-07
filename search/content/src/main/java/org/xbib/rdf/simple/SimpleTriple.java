@@ -39,7 +39,6 @@ import org.xbib.rdf.Triple;
 /**
  * A simple triple
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleTriple<S extends Identifier, P extends Property, O extends Node>
         implements Triple, Comparable<Triple> {

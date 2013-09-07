@@ -54,7 +54,6 @@ import java.util.Map;
 /**
  * Query operator for SQL sessions
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Query {
 

@@ -35,14 +35,11 @@ import org.xbib.io.Session;
 import org.xbib.io.http.HttpSession;
 import org.xbib.io.http.netty.DefaultHttpSession;
 import org.xbib.io.http.HttpRequest;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;
-import org.xbib.sru.Diagnostics;
 import org.xbib.sru.SRUConstants;
-import org.xbib.sru.SRURequest;
-import org.xbib.sru.SRUResponse;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 

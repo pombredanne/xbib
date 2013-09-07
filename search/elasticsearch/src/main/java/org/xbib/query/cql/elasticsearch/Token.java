@@ -44,7 +44,6 @@ import org.xbib.strings.encode.UnterminatedQuotedStringException;
 /**
  * Elasticsearch query tokens
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Token implements Node {
 

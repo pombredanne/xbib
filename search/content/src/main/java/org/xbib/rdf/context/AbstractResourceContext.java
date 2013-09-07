@@ -36,8 +36,6 @@ import org.xbib.rdf.Resource;
 /**
  * An abstract resource context.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  * @param <R>
  */
 public abstract class AbstractResourceContext<R extends Resource> implements ResourceContext<R> {

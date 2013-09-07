@@ -38,8 +38,6 @@ import java.io.IOException;
 /**
  * Resource indexer interface for index and delete operations on document level
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
-
  * @param <R>
  */
 public interface ResourceIndexer<R extends Resource> {

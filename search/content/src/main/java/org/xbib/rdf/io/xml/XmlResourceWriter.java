@@ -53,7 +53,6 @@ import org.xbib.rdf.context.IRINamespaceContext;
 /**
  * Write resource to XML stream
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class XmlResourceWriter<S extends Identifier, P extends Property, O extends Node> {
 

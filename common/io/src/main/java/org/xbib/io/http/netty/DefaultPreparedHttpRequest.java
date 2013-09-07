@@ -49,7 +49,6 @@ import java.io.IOException;
 
 /**
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultPreparedHttpRequest implements PreparedHttpRequest {
 

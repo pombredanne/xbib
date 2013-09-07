@@ -11,8 +11,7 @@ import org.xbib.rdf.jsonld.utils.Obj;
  * Base class for constructing the list of statements used by JSONLDProcessorImpl.fromRDF to
  * generate JSON-LD. 
  * 
- * @author tristan
- * 
+ *
  */
 public abstract class JSONLDSerializer {
 

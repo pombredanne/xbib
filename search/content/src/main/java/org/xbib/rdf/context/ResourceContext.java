@@ -45,7 +45,6 @@ import org.xbib.rdf.xcontent.ContentBuilder;
  * of the provenance of your data, or you want addressing resources to
  * different targets.
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ResourceContext<R extends Resource> extends ResourceFactory<R> {
 

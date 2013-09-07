@@ -42,7 +42,6 @@ import java.util.StringTokenizer;
  * to plug a ParametricTextualExtensionRecognizer instance in the client.
  * </p>
  * 
- * @author Carlo Pelliccia
  */
 public class DefaultTextualExtensionRecognizer extends
 		ParametricTextualExtensionRecognizer {
@@ -75,28 +74,21 @@ public class DefaultTextualExtensionRecognizer extends
 	 * It builds the instance.
 	 */
 	private DefaultTextualExtensionRecognizer() {
-		BufferedReader r = null;
-		try {
-			r = new BufferedReader(new InputStreamReader(getClass()
-					.getResourceAsStream("textualexts")));
-			String line;
-			while ((line = r.readLine()) != null) {
-				StringTokenizer st = new StringTokenizer(line);
-				while (st.hasMoreTokens()) {
-					addExtension(st.nextToken());
-				}
-			}
-		} catch (Exception e) {
-			;
-		} finally {
-			if (r != null) {
-				try {
-					r.close();
-				} catch (Throwable t) {
-					;
-				}
-			}
-		}
+        String[] exts = new String [] {
+                "abc", "acgi", "aip", "asm", "asp",
+                "c",  "cc", "com", "conf", "cpp",
+                "csh", "css", "cxx", "def", "el", "etx", "f", "f77", "f90", "flx",
+                "for", "g", "h", "hh", "hlb", "htc", "htm", "html", "htmls",
+                "htt", "htx", "idc", "jav", "java", "js", "ksh", "list",
+                "log", "lsp", "lst", "lsx", "m", "mar", "mcf", "p", "pas", "php", "pl",
+                "pm", "py", "rexx", "rt", "rtf", "rtx", "s", "scm", "sdml", "sgm",
+                "sgm", "sgml", "sh", "shtml", "spc", "ssi", "talk",
+                "tcl", "tcsh", "text", "tsv", "txt", "uil", "uni", "unis", "uri", "uris",
+                "uu", "uue", "vcs", "wml", "wmls", "wsc", "xml", "zsh"
+        };
+        for (String s :exts) {
+            addExtension(s);
+        }
 	}
 
 }

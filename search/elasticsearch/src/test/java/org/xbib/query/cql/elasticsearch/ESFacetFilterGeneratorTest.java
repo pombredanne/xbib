@@ -37,14 +37,10 @@ import org.xbib.elasticsearch.support.CQLSearchRequest;
 import org.xbib.elasticsearch.support.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.query.cql.CQLParser;
-
-import java.io.StringReader;
 
 /**
  *  Elasticsearch filter generation
 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESFacetFilterGeneratorTest extends Assert {
 

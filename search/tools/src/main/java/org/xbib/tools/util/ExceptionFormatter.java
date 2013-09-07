@@ -1,4 +1,3 @@
-
 /*
  * Licensed to Jörg Prante and xbib under one or more contributor
  * license agreements. See the NOTICE.txt file distributed with this work
@@ -39,7 +38,6 @@ import java.lang.reflect.Method;
 /**
  * Format java exception messages and stack traces.
  *
- * @author <a href="mailto:joergprante@gmail.com;rg Prante</a>
  */
 public final class ExceptionFormatter {
 

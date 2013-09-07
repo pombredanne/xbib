@@ -43,8 +43,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
 import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.ElementOutput;
 import org.xbib.importer.AbstractImporter;
 import org.xbib.importer.ImportService;

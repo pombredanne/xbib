@@ -18,9 +18,6 @@ package org.xbib.classloader;
 
 import java.net.URL;
 
-/**
- * @version $Rev: 476049 $ $Date: 2006-11-17 12:35:17 +0800 (Fri, 17 Nov 2006) $
- */
 public abstract class AbstractUrlResourceLocation implements ResourceLocation {
 
     private final URL codeSource;

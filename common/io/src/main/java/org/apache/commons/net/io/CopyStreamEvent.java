@@ -29,11 +29,9 @@ import java.util.EventObject;
  * @see CopyStreamListener
  * @see CopyStreamAdapter
  * @see org.apache.commons.net.io.Util
- * @version $Id: CopyStreamEvent.java 1299238 2012-03-10 17:12:28Z sebb $
  */
 public class CopyStreamEvent extends EventObject
 {
-    private static final long serialVersionUID = -964927635655051867L;
 
     /**
      * Constant used to indicate the stream size is unknown.

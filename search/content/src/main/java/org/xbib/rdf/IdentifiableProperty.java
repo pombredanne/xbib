@@ -37,8 +37,6 @@ import org.xbib.iri.IRI;
 /**
  * An identifiable property 
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- * 
  */
 public class IdentifiableProperty extends IRI implements Identifier, Property {
 

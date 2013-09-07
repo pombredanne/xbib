@@ -1,31 +1,35 @@
-/**
- * Copyright 2003-2010 Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland
- * www.source-code.biz, www.inventec.ch/chdh
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
  *
- * This module is multi-licensed and may be used under the terms
- * of any of the following licenses:
+ * Copyright (C) 2012 Jörg Prante and xbib
  *
- *  EPL, Eclipse Public License, V1.0 or later, http://www.eclipse.org/legal
- *  LGPL, GNU Lesser General Public License, V2.1 or later, http://www.gnu.org/licenses/lgpl.html
- *  GPL, GNU General Public License, V2 or later, http://www.gnu.org/licenses/gpl.html
- *  AL, Apache License, V2.0 or later, http://www.apache.org/licenses
- *  BSD, BSD License, http://www.opensource.org/licenses/bsd-license.php
- *  MIT, MIT License, http://www.opensource.org/licenses/MIT
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
  *
- * Please contact the author if you need another license.
- * This module is provided "as is", without warranties of any kind.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * A Base64 encoder/decoder.
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
  *
- * <p> This class is used to encode and decode data in Base64 format as
- * described in RFC 1521.
- *
- * <p> Project home page: <a
- * href="http://www.source-code.biz/base64coder/java/">www.source-code.biz/base64coder/java</a><br>
- * Author: Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland<br>
- * Multi-licensed: EPL / LGPL / GPL / AL / BSD / MIT.
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
  */
-package org.xbib.io.util;
+package org.xbib.util;
 
 public class Base64 {
 

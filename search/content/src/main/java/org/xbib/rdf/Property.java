@@ -36,8 +36,6 @@ import org.xbib.iri.IRI;
 /**
  * An RDF property
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- * 
  */
 public interface Property extends Node {
 

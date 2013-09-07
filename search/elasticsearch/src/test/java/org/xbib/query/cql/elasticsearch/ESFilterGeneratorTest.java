@@ -41,8 +41,6 @@ import java.io.StringReader;
 
 /**
  *  Elasticsearch filter generation
-
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESFilterGeneratorTest extends Assert {
 

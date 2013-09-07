@@ -38,7 +38,6 @@ import java.sql.SQLException;
 /**
  *  SQL result set processor with delayed close() method
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class NotclosedSQLResultSetListener implements ResultSetListener {
 

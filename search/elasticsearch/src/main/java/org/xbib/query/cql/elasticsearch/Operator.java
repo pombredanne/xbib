@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * ElasticSearch operators
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public enum Operator implements Node {
     EQUALS(2),

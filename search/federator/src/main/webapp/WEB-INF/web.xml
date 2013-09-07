@@ -61,7 +61,7 @@
     </servlet>
     <servlet>
         <display-name>JAX-RS REST</display-name>
-        <servlet-name>REST</servlet-name>
+        <servlet-name>federator</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
@@ -231,8 +231,8 @@
         <url-pattern>*.html</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>REST</servlet-name>
-        <url-pattern>/service/*</url-pattern>
+        <servlet-name>federator</servlet-name>
+        <url-pattern>/federator/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SRUServlet</servlet-name>

@@ -12,7 +12,6 @@ import java.util.Map;
  * A helper class which still stores all the values in a map
  * but gives member variables easily access certain keys
  *
- * @author tristan
  */
 public class ActiveContext extends HashMap<String, Object> implements JsonLd {
     public Map<String, Object> mappings;

@@ -37,7 +37,6 @@ import java.util.concurrent.TimeoutException;
 
 /**
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface HttpFuture {
 

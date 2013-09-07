@@ -50,7 +50,6 @@ import org.apache.commons.net.ftp.FTPFileEntryParserImpl;
  * The parser requires that the leading space from the MLST entry is removed.
  * MLSD entries can begin with a single space if there are no facts.
  * 
- * @since 3.0
  */
 public class MLSxEntryParser extends FTPFileEntryParserImpl
 {

@@ -34,7 +34,7 @@ package org.xbib.io.jdbc;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.xbib.io.Connection;
 import org.xbib.io.ConnectionFactory;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
@@ -51,7 +51,6 @@ import java.util.Properties;
 /**
  * A connection factory for JDBC DataSources
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class SQLConnectionFactory implements ConnectionFactory<SQLSession> {
 

@@ -35,7 +35,6 @@ import org.xbib.io.Session;
 
 /**
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface HttpSession extends Session<HttpPacket> {
 

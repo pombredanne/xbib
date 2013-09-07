@@ -20,15 +20,12 @@ package it.sauronsoftware.ftp4j.extrecognizers;
 
 import java.util.ArrayList;
 
-import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPTextualExtensionRecognizer;
 
 /**
  * A textual extension recognizer with parametric extensions, which can be added
  * or removed at runtime.
  * 
- * @author Carlo Pelliccia
- * @see FTPClient#setTextualExtensionRecognizer(FTPTextualExtensionRecognizer)
  */
 public class ParametricTextualExtensionRecognizer implements
 		FTPTextualExtensionRecognizer {

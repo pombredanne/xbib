@@ -40,9 +40,6 @@ import java.util.concurrent.TimeoutException;
 import org.xbib.query.cql.SyntaxException;
 import org.xbib.sru.SRUConstants;
 import org.xbib.sru.SRUProfile;
-import org.xbib.sru.SRURequest;
-import org.xbib.sru.SRUResponse;
-import org.xbib.sru.searchretrieve.SearchRetrieveListener;
 import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 

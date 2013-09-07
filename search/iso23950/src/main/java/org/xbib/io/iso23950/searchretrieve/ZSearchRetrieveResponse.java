@@ -57,8 +57,6 @@ import java.util.Arrays;
 public class ZSearchRetrieveResponse extends SearchRetrieveResponse
         implements ZResponse, RecordIdentifierSetter {
 
-    private final Logger logger = LoggerFactory.getLogger(ZSearchRetrieveResponse.class.getName());
-
     private SearchRetrieveRequest request;
 
     private ZSession session;

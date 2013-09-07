@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * This node class is the base class for the Elasticsearch Query Lange abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Node {
 

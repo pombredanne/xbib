@@ -35,7 +35,6 @@ package org.xbib.sequential;
  *
  * Char stream listener interface
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface CharStreamListener {
 

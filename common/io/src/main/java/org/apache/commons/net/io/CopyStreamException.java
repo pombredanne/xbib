@@ -25,11 +25,9 @@ import java.io.IOException;
  * have been transferred before an I/O error as well as the IOException
  * responsible for the failure of a copy operation.
  * @see org.apache.commons.net.io.Util
- * @version $Id: CopyStreamException.java 1299238 2012-03-10 17:12:28Z sebb $
  */
 public class CopyStreamException extends IOException
 {
-    private static final long serialVersionUID = -2602899129433221532L;
 
     private final long totalBytesTransferred;
 

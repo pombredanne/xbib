@@ -34,10 +34,6 @@ package org.xbib.io.http;
 import java.io.IOException;
 import java.net.URI;
 
-/**
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
 public class FatalException extends IOException {
 
     public FatalException(URI uri) {

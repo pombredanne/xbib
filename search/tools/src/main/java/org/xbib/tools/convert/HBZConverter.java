@@ -1,4 +1,3 @@
-
 /*
  * Licensed to Jörg Prante and xbib under one or more contributor
  * license agreements. See the NOTICE.txt file distributed with this work
@@ -65,7 +64,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Converter tool for Hochschulbibliothekszentrum (HBZ) MAB data in MarcXml TAR clobs
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public final class HBZConverter extends AbstractImporter<Long, AtomicLong> {
 

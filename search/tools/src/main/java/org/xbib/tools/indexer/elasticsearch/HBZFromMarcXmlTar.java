@@ -69,7 +69,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Elasticsearch indexer tool for Hochschulbibliothekszentrum (HBZ) MAB data in MarcXml TAR clobs
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public final class HBZFromMarcXmlTar extends AbstractImporter<Long, AtomicLong> {
 

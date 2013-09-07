@@ -57,7 +57,6 @@ import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
  * beside the configFile property, which points to a resource which
  * is also a property file, but for guiding our AtomFeedController.
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class AbderaProvider extends ManagedProvider {
 

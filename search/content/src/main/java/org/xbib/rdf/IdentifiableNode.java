@@ -36,8 +36,6 @@ import org.xbib.iri.IRI;
 
 /**
  * An identifiable node (including blank nodes)
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class IdentifiableNode implements Identifier, Node {
     

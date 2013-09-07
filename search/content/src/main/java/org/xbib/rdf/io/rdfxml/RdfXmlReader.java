@@ -1,39 +1,33 @@
-/**
- * *****************************************************************************
- * University of Illinois/NCSA Open Source License
+/*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
  *
- * Copyright (c) 2010, NCSA. All rights reserved.
+ * Copyright (C) 2012 Jörg Prante and xbib
  *
- * Developed by: Cyberenvironments and Technologies (CET)
- * http://cet.ncsa.illinois.edu/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
  *
- * National Center for Supercomputing Applications (NCSA)
- * http://www.ncsa.illinois.edu/
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * with the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
  *
- * - Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimers. - Redistributions in binary
- * form must reproduce the above copyright notice, this list of conditions and
- * the following disclaimers in the documentation and/or other materials
- * provided with the distribution. - Neither the names of CET, University of
- * Illinois/NCSA, nor the names of its contributors may be used to endorse or
- * promote products derived from this Software without specific prior written
- * permission.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH
- * THE SOFTWARE.
- * *****************************************************************************
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
  */
 package org.xbib.rdf.io.rdfxml;
 
@@ -83,7 +77,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * Note that the XMLLiteral datatype is not fully supported.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfXmlReader<S extends Identifier, P extends Property, O extends Node>
         implements RDF, XmlTriplifier<S,P,O> {

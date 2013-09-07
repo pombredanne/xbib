@@ -14,10 +14,6 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.Resource;
 import org.xbib.rdf.Triple;
 
-/**
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
 public class SimpleResourceTest<S extends Identifier, P extends Property, O extends Node>
         extends Assert {
 

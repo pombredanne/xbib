@@ -43,8 +43,6 @@ import org.xbib.query.cql.CQLParser;
 
 /**
  * BulkIndexerTest Elasticsearch query language generation
-
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESQueryGeneratorTest extends Assert {
 

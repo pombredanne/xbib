@@ -31,7 +31,7 @@
  */
 package org.xbib.strings.encode;
 
-import org.xbib.io.util.MessageDigestUtil;
+import org.xbib.util.MessageDigestUtil;
 
 public class BaseformDigestEncoder extends BaseformEncoder {
 

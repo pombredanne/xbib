@@ -24,7 +24,6 @@ package it.sauronsoftware.ftp4j;
  * method. You can add a custom parser to your instance of FTPClient calling on
  * it the method addListParser.
  * 
- * @author Carlo Pelliccia
  * @see FTPClient#addListParser(FTPListParser)
  */
 public interface FTPListParser {

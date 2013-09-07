@@ -24,9 +24,6 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * Implementation of FTPFileEntryParser and FTPFileListParser for OS2 Systems.
  *
- * @author <a href="Winston.Ojeda@qg.com">Winston Ojeda</a>
- * @author <a href="mailto:scohen@apache.org">Steve Cohen</a>
- * @version $Id: OS2FTPEntryParser.java 1299238 2012-03-10 17:12:28Z sebb $
  * @see org.apache.commons.net.ftp.FTPFileEntryParser FTPFileEntryParser (for usage instructions)
  */
 public class OS2FTPEntryParser extends ConfigurableFTPFileEntryParserImpl

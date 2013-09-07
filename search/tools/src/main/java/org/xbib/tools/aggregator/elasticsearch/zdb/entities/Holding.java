@@ -113,6 +113,10 @@ public class Holding extends MapBasedAnyObject {
 
     protected void findMediaType() {
         this.mediaType = "unmediated";
+        if ("EZB".equals(getString("license.origin"))) {
+            this.mediaType = "computer";
+            return;
+        }
         Object o = map().get("textualholdings");
         if (!(o instanceof List)) {
             o = Arrays.asList(o);
@@ -120,7 +124,6 @@ public class Holding extends MapBasedAnyObject {
         for (String s : (List<String>) o) {
             if (s != null && s.indexOf("Microfiche") >= 0) {
                 this.mediaType = "microform";
-                //this.parent = this.parent() + "_microform";
                 return;
             }
             if (s != null && (s.indexOf("CD-ROM") >= 0 || s.indexOf("CD-Rom") >= 0)) {
@@ -128,14 +131,10 @@ public class Holding extends MapBasedAnyObject {
                 return;
             }
         }
-        // rare
         String s = getString("SourceOfAcquisition.accessionNumber");
-        if (s != null) {
-            if (s.indexOf("Microfiche") >= 0) {
-                this.mediaType = "microform";
-                //this.parent = this.parent() + "_microform";
-                return;
-            }
+        if (s != null && s.indexOf("Microfiche") >= 0) {
+            this.mediaType = "microform";
+            return;
         }
     }
 
@@ -146,31 +145,7 @@ public class Holding extends MapBasedAnyObject {
         m.put("service", map().get("service"));
         m.put("textualholdings", map().get("textualholdings"));
         m.put("holdings", map().get("holdings"));
-        /**
-         * [
-         {
-         "uri": "http://www.bibliothek.uni-regensburg.de/ezeit/?2002503&bibid=FHBKA",
-         "nonpublicnote": "EZB"
-         },
-         {
-         "uri": "http://search.ebscohost.com/direct.asp?db=afh&jid=EHM&scope=site",
-         "nonpublicnote": "Volltext"
-         }
-         ]
-         */
         m.put("links", map().get("ElectronicLocationAndAccess"));
-        /**
-         *  "license": {
-         "originSource": "a",
-         "origin": "EZB",
-         "typeSource": "c",
-         "type": "self-hosted",
-         "scopeSource": "b",
-         "scope": "consortia",
-         "chargeSource": "c",
-         "charge": "yes"
-         },
-         */
         m.put("license", map().get("license"));
         return m;
     }

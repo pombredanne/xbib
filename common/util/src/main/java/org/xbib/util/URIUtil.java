@@ -29,7 +29,7 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.io.util;
+package org.xbib.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -45,7 +45,6 @@ import java.util.StringTokenizer;
 /**
  * URI utilities
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class URIUtil {
 

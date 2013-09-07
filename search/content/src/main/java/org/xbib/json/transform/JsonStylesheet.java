@@ -53,7 +53,6 @@ import java.util.Arrays;
 /**
  *  Transform JSON with stylesheets
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class JsonStylesheet {
 

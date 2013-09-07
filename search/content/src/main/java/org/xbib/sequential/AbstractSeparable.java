@@ -32,14 +32,13 @@
 package org.xbib.sequential;
 
 /**
- * ASCII-1967, also known as control characters group 0 ("C0"),  defines units,
+ * ASCII-1967, also known as control characters group 0 ("C0"), defines units,
  * records, groups and files as separable hierarchically organized data
  * structures. The structures are separeted not by protocol, but by embedded
  * separator codes. Originally, these codes were used to simulate punch card
  * data on magnetic tape. Trailing blanks on tape could be saved by using
  * separator characters instead.
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractSeparable implements Separable {
 

@@ -54,9 +54,6 @@ import org.xbib.xml.XMLUtil;
  * based on RDFXMLWriter Copyright Aduna (http://www.aduna-software.com/) (c)
  * 1997-2006.
  *
- * Licensed under the Aduna BSD-style license.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfXmlWriter<S extends Resource<?, ?, ?>, P extends Property, O extends Literal<?>>
         implements RDF {

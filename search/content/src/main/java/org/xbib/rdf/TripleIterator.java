@@ -34,17 +34,11 @@ package org.xbib.rdf;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import org.xbib.rdf.Identifier;
-import org.xbib.rdf.Node;
-import org.xbib.rdf.Property;
-import org.xbib.rdf.Resource;
-import org.xbib.rdf.Triple;
 import org.xbib.rdf.simple.SimpleTriple;
 
 /**
  * Iterate over a resource and generate statements 
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TripleIterator<S extends Identifier, P extends Property, O extends Node>
         implements Iterator<Triple> {

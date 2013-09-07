@@ -39,7 +39,6 @@ import org.xbib.rdf.Visitor;
 /**
  * A simple Literal is a value of object type
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleLiteral<O extends Object>
         implements Literal<O>, Comparable<Literal<O>> {

@@ -72,7 +72,6 @@ import org.xml.sax.InputSource;
  *
  * Index bib addresses into Elasticsearch
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class BibdatZDB extends AbstractImporter<Long, AtomicLong> {
 

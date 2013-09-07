@@ -68,7 +68,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Push Springer citations to Elasticsearch
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public class SpringerCitations extends AbstractImporter<Long, AtomicLong> {
 

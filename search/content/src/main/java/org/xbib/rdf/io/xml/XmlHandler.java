@@ -41,7 +41,6 @@ import org.xml.sax.ErrorHandler;
 /**
  * XML handler with triple listener
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface XmlHandler
      extends EntityResolver, DTDHandler, ContentHandler, ErrorHandler {

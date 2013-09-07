@@ -39,7 +39,6 @@ import java.util.logging.StreamHandler;
 /**
  * <p>Custom console handler for setting custom formatter classes</p>
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CustomConsoleHandler extends StreamHandler {
 

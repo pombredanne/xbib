@@ -33,9 +33,5 @@ package org.xbib.io.http;
 
 import org.xbib.io.Connection;
 
-/**
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
 public interface HttpConnection extends Connection<HttpSession> {
 }

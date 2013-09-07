@@ -28,7 +28,6 @@ import it.sauronsoftware.ftp4j.FTPListParser;
 /**
  * This parser can handle the EPLF format.
  * 
- * @author Carlo Pelliccia
  */
 public class EPLFListParser implements FTPListParser {
 

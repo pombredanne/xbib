@@ -133,7 +133,6 @@ import java.util.TreeMap;
  *    FTPFile[] files = listFiles(directory);
  * </pre>
  * 
- * @since 1.4
  * @see Configurable
  * @see FTPClient
  * @see org.apache.commons.net.ftp.parser.FTPTimestampParserImpl#configure(org.apache.commons.net.ftp.FTPClientConfig)

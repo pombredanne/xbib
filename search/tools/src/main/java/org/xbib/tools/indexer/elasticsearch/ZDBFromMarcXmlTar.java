@@ -33,8 +33,6 @@ package org.xbib.tools.indexer.elasticsearch;
 
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.ElasticsearchResourceSink;
-//import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-//import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
 import org.xbib.elements.ElementOutput;
@@ -95,10 +93,6 @@ public final class ZDBFromMarcXmlTar extends AbstractImporter<Long, AtomicLong> 
     private ElementOutput output;
 
     private boolean done;
-
-    private final Charset UTF8 = Charset.forName("UTF-8");
-
-    private final Charset ISO88591 = Charset.forName("ISO-8859-1");
 
     public static void main(String[] args) {
         try {

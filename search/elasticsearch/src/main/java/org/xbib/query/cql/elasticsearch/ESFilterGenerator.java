@@ -63,7 +63,6 @@ import java.util.Stack;
 /**
  * Generate Elasticsearch filter from CQL abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESFilterGenerator implements Visitor {
 

@@ -22,7 +22,6 @@ package it.sauronsoftware.ftp4j;
  * This interface is a constants container, each one representing a common FTP
  * response code.
  * 
- * @author Carlo Pelliccia
  */
 public interface FTPCodes {
 

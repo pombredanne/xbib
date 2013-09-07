@@ -33,7 +33,6 @@ import java.net.Socket;
  * The connector's default value for the
  * <em>useSuggestedAddressForDataConnections</em> flag is <em>true</em>.
  * 
- * @author Carlo Pelliccia
  */
 public class FTPProxyConnector extends FTPConnector {
 

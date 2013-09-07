@@ -41,9 +41,7 @@ import org.xbib.io.InputStreamFactory;
 import org.xbib.io.StreamCodecService;
 
 /**
- * <p>A file connection service</p>
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante
+ * A file connection service
  */
 public final class TextFileConnectionFactory
         implements ConnectionFactory<TextFileSession>, InputStreamFactory<InputStream> {

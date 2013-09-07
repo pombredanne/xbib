@@ -29,7 +29,6 @@ import java.util.StringTokenizer;
  * This class implements a local server to make data transfer with the remote
  * FTP server.
  * 
- * @author Carlo Pelliccia
  */
 class FTPDataTransferServer implements FTPDataTransferConnectionProvider,
 		Runnable {

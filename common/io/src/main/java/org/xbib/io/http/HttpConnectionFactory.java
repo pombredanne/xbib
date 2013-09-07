@@ -40,7 +40,6 @@ import java.net.URI;
 /**
  * HTTP connection factory
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class HttpConnectionFactory implements ConnectionFactory<HttpSession> {
 

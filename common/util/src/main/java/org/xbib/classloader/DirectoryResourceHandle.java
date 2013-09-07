@@ -26,9 +26,6 @@ import java.security.cert.Certificate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-/**
- * @version $Rev: 476049 $ $Date: 2006-11-17 12:35:17 +0800 (Fri, 17 Nov 2006) $
- */
 public class DirectoryResourceHandle extends AbstractResourceHandle {
 
     private final String name;

@@ -27,8 +27,6 @@ import java.util.StringTokenizer;
 /**
  * This is an NVT-ASCII character stream writer.
  * 
- * @author Carlo Pelliccia
- * @version 1.1
  */
 class NVTASCIIWriter extends Writer {
 

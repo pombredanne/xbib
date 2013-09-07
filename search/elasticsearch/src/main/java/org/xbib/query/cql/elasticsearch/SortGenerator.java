@@ -40,7 +40,6 @@ import org.xbib.query.cql.SyntaxException;
 /**
  * Build sort in JSON syntax from abstract syntax tree
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SortGenerator implements Visitor {
 

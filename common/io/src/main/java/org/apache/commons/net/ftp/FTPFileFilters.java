@@ -20,7 +20,6 @@ package org.apache.commons.net.ftp;
 
 /**
  * Implements some simple FTPFileFilter classes.
- * @since 2.2
  */
 public class FTPFileFilters {
 

@@ -46,7 +46,6 @@ import java.util.Stack;
 /**
  * Generate Elasticsearch QueryModel DSL from CQL abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESQueryGenerator implements Visitor {
 

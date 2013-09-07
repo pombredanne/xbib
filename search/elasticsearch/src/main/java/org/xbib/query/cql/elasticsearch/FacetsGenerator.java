@@ -40,7 +40,6 @@ import java.io.IOException;
 /**
  * Build facet in JSON syntax from abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class FacetsGenerator implements Visitor {
 

@@ -45,7 +45,7 @@ import org.elasticsearch.search.SearchHits;
 import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
 import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -85,8 +85,6 @@ import static org.xbib.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Merge ZDB with citation database
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  *
  */
 public class MergeWithCitations {

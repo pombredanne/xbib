@@ -43,7 +43,6 @@ import java.io.Serializable;
  * tape. Trailing blanks on tape could be saved by using separator characters
  * instead.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class FileSeparable extends AbstractSeparable implements Separable {
 

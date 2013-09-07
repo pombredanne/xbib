@@ -62,7 +62,6 @@ import java.util.zip.GZIPOutputStream;
  * Freebase converter. The Freebase files are in Turtle RDF.
  * This conversion generates NTriples or Turtle format.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class FreebaseConverter extends AbstractImporter<Long, AtomicLong> {
 

@@ -23,7 +23,6 @@ package it.sauronsoftware.ftp4j;
  * which can be plugged into a FTPClient object calling its
  * setTextualExtensionsRecognizer() method.
  * 
- * @author Carlo Pelliccia
  * @see FTPClient#setTextualExtensionRecognizer(FTPTextualExtensionRecognizer)
  */
 public interface FTPTextualExtensionRecognizer {

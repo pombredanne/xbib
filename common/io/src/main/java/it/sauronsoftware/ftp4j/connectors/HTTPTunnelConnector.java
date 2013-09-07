@@ -35,7 +35,6 @@ import java.util.ArrayList;
  * The connector's default value for the
  * <em>useSuggestedAddressForDataConnections</em> flag is <em>false</em>.
  * 
- * @author Carlo Pelliccia
  */
 public class HTTPTunnelConnector extends FTPConnector {
 

@@ -69,29 +69,24 @@ import javax.net.ssl.SSLSocketFactory;
  * disconnected a FTPClient object you can use it again to connect another FTP
  * server.
  * 
- * @author Carlo Pelliccia
- * @version 1.7.1
  */
 public class FTPClient {
 
 	/**
 	 * The constant for the FTP security level.
 	 * 
-	 * @since 1.4
 	 */
 	public static final int SECURITY_FTP = 0;
 
 	/**
 	 * The constant for the FTPS (FTP over implicit TLS/SSL) security level.
 	 * 
-	 * @since 1.4
 	 */
 	public static final int SECURITY_FTPS = 1;
 
 	/**
 	 * The constant for the FTPES (FTP over explicit TLS/SSL) security level.
 	 * 
-	 * @since 1.4
 	 */
 	public static final int SECURITY_FTPES = 2;
 
@@ -121,7 +116,6 @@ public class FTPClient {
 	 * command instead of LIST, but only if the MLSD command is explicitly
 	 * supported by the server (the support is tested with the FEAT command).
 	 * 
-	 * @since 1.5
 	 */
 	public static final int MLSD_IF_SUPPORTED = 0;
 
@@ -130,7 +124,6 @@ public class FTPClient {
 	 * MLSD command instead of LIST, also if the MLSD command is not explicitly
 	 * supported by the server (the support is tested with the FEAT command).
 	 * 
-	 * @since 1.5
 	 */
 	public static final int MLSD_ALWAYS = 1;
 
@@ -139,14 +132,12 @@ public class FTPClient {
 	 * LIST command, also if the MLSD command is explicitly supported by the
 	 * server (the support is tested with the FEAT command).
 	 * 
-	 * @since 1.5
 	 */
 	public static final int MLSD_NEVER = 2;
 
 	/**
 	 * The size of the buffer used when sending or receiving data.
 	 * 
-	 * @since 1.6
 	 */
 	private static final int SEND_AND_RECEIVE_BUFFER_SIZE = 64 * 1024;
 
@@ -415,7 +406,6 @@ public class FTPClient {
 	 * @param sslSocketFactory
 	 *            The SSL socket factory used to negotiate SSL connections.
 	 * 
-	 * @since 1.4
 	 */
 	public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
 		synchronized (lock) {
@@ -428,7 +418,6 @@ public class FTPClient {
 	 * 
 	 * @return The SSL socket factory used to negotiate SSL connections.
 	 * 
-	 * @since 1.4
 	 */
 	public SSLSocketFactory getSSLSocketFactory() {
 		synchronized (lock) {
@@ -457,7 +446,6 @@ public class FTPClient {
 	 *             If the client is already connected to a server.
 	 * @throws IllegalArgumentException
 	 *             If the supplied security level is not valid.
-	 * @since 1.4
 	 */
 	public void setSecurity(int security) throws IllegalStateException,
 			IllegalArgumentException {
@@ -480,7 +468,6 @@ public class FTPClient {
 	 * @return The security level, which could be one of the SECURITY_FTP,
 	 *         SECURITY_FTPS and SECURITY_FTPES costants.
 	 * 
-	 * @since 1.4
 	 */
 	public int getSecurity() {
 		return security;
@@ -590,7 +577,6 @@ public class FTPClient {
 	 *            The MLSD policy.
 	 * @throws IllegalArgumentException
 	 *             If the supplied MLSD policy value is not valid.
-	 * @since 1.5
 	 */
 	public void setMLSDPolicy(int mlsdPolicy) throws IllegalArgumentException {
 		if (type != MLSD_IF_SUPPORTED && type != MLSD_ALWAYS && type != MLSD_NEVER) {
@@ -609,7 +595,6 @@ public class FTPClient {
 	 * @return The MLSD policy as a numeric value. The value could be compared
 	 *         to the constants {@link FTPClient#MLSD_IF_SUPPORTED},
 	 *         {@link FTPClient#MLSD_ALWAYS} and {@link FTPClient#MLSD_NEVER}.
-	 * @since 1.5
 	 */
 	public int getMLSDPolicy() {
 		synchronized (lock) {
@@ -624,7 +609,6 @@ public class FTPClient {
 	 * client will use the machine current charset.
 	 * 
 	 * @return The name of the charset used to establish textual communications.
-	 * @since 1.1
 	 */
 	public String getCharset() {
 		synchronized (lock) {
@@ -641,7 +625,6 @@ public class FTPClient {
 	 * @param charset
 	 *            The name of the charset used to establish textual
 	 *            communications.
-	 * @since 1.1
 	 */
 	public void setCharset(String charset) {
 		synchronized (lock) {
@@ -661,7 +644,6 @@ public class FTPClient {
 	 * broken data transfers.
 	 * 
 	 * @return true if the server supports resuming, false otherwise.
-	 * @since 1.5.1
 	 */
 	public boolean isResumeSupported() {
 		synchronized (lock) {
@@ -682,7 +664,6 @@ public class FTPClient {
 	 * @return <em>true</em> if compression of data transfers is supported on
 	 *         the server-side, <em>false</em> otherwise.
 	 * @see FTPClient#isCompressionEnabled()
-	 * @since 1.5
 	 */
 	public boolean isCompressionSupported() {
 		return modezSupported;
@@ -701,7 +682,6 @@ public class FTPClient {
 	 *            subsequent file transfer, <em>false</em> to disable the
 	 *            feature.
 	 * @see FTPClient#isCompressionSupported()
-	 * @since 1.5
 	 */
 	public void setCompressionEnabled(boolean compressionEnabled) {
 		this.compressionEnabled = compressionEnabled;
@@ -717,7 +697,6 @@ public class FTPClient {
 	 * @return <em>true</em> if compression is enabled, <em>false</em>
 	 *         otherwise.
 	 * @see FTPClient#isCompressionSupported()
-	 * @since 1.5
 	 */
 	public boolean isCompressionEnabled() {
 		return compressionEnabled;
@@ -851,7 +830,6 @@ public class FTPClient {
 	 *            The duration of the auto-noop timeout, in milliseconds. If 0
 	 *            or less, the auto-noop feature is disabled.
 	 * 
-	 * @since 1.5
 	 */
 	public void setAutoNoopTimeout(long autoNoopTimeout) {
 		synchronized (lock) {
@@ -877,7 +855,6 @@ public class FTPClient {
 	 * @return The duration of the auto-noop timeout, in milliseconds. If 0 or
 	 *         less, the auto-noop feature is disabled.
 	 * 
-	 * @since 1.5
 	 */
 	public long getAutoNoopTimeout() {
 		synchronized (lock) {
@@ -1088,7 +1065,6 @@ public class FTPClient {
 	 * thread while the client is blocked in a <em>connect()</em> call. The
 	 * connect() method will exit with an {@link IOException}.
 	 * 
-	 * @since 1.7
 	 */
 	public void abortCurrentConnectionAttempt() {
 		connector.abortConnectForCommunicationChannel();
@@ -2052,7 +2028,6 @@ public class FTPClient {
 	 * @see FTPClient#getListParsers()
 	 * @see FTPClient#abortCurrentDataTransfer(boolean)
 	 * @see FTPClient#listNames()
-	 * @since 1.2
 	 */
 	public FTPFile[] list(String fileSpec) throws IllegalStateException,
 			IOException, FTPIllegalReplyException, FTPException,
@@ -2841,7 +2816,6 @@ public class FTPClient {
 	 * @throws FTPAbortedException
 	 *             If operation is aborted by another thread.
 	 * @see FTPClient#abortCurrentDataTransfer(boolean)
-	 * @since 1.6
 	 */
 	public void append(File file) throws IllegalStateException,
 			FileNotFoundException, IOException, FTPIllegalReplyException,
@@ -2880,7 +2854,6 @@ public class FTPClient {
 	 * @throws FTPAbortedException
 	 *             If operation is aborted by another thread.
 	 * @see FTPClient#abortCurrentDataTransfer(boolean)
-	 * @since 1.6
 	 */
 	public void append(File file, FTPDataTransferListener listener)
 			throws IllegalStateException, FileNotFoundException, IOException,
@@ -2952,7 +2925,6 @@ public class FTPClient {
 	 * @throws FTPAbortedException
 	 *             If operation is aborted by another thread.
 	 * @see FTPClient#abortCurrentDataTransfer(boolean)
-	 * @since 1.6
 	 */
 	public void append(String fileName, InputStream inputStream,
 			long streamOffset, FTPDataTransferListener listener)
@@ -3914,7 +3886,6 @@ public class FTPClient {
 	/**
 	 * Stops the auto-noop timer thread.
 	 * 
-	 * @since 1.5
 	 */
 	private void stopAutoNoopTimer() {
 		if (autoNoopTimer != null) {

@@ -51,60 +51,37 @@ import org.xbib.iri.CompactingNamespaceContext;
 /**
  * A Builder for building XContent from a resource
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  * @param <C>
  * @param <R>
  */
 public class DefaultContentBuilder<C extends ResourceContext, R extends Resource>
     implements ContentBuilder<C,R> {
 
-    private Date timestamp;
-
-    private String message;
-
-    private String source;
-
-    private String sourceHost;
-
-    private String sourcePath;
-
-    private String[] type;
-
-    private String[] tags;
-
-    public DefaultContentBuilder timestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public DefaultContentBuilder<C,R> timestamp(Date timestamp) {
         return this;
     }
 
-    public DefaultContentBuilder message(String message) {
-        this.message = message;
+    public DefaultContentBuilder<C,R> message(String message) {
         return this;
     }
 
-    public DefaultContentBuilder source(String source) {
-        this.source = source;
+    public DefaultContentBuilder<C,R> source(String source) {
         return this;
     }
 
-    public DefaultContentBuilder sourceHost(String sourceHost) {
-        this.sourceHost = sourceHost;
+    public DefaultContentBuilder<C,R> sourceHost(String sourceHost) {
         return this;
     }
 
-    public DefaultContentBuilder sourcePath(String sorucePath) {
-        this.sourcePath = sourcePath;
+    public DefaultContentBuilder<C,R> sourcePath(String sorucePath) {
         return this;
     }
 
-    public DefaultContentBuilder type(String... type) {
-        this.type = type;
+    public DefaultContentBuilder<C,R> type(String... type) {
         return this;
     }
 
-    public DefaultContentBuilder tags(String... tags) {
-        this.tags = tags;
+    public DefaultContentBuilder<C,R> tags(String... tags) {
         return this;
     }
 
@@ -112,30 +89,8 @@ public class DefaultContentBuilder<C extends ResourceContext, R extends Resource
             throws IOException {
         XContentBuilder builder = jsonBuilder();
         builder.startObject();
-        if (timestamp != null) {
-            builder.field("@timestamp", timestamp);
-        }
-        if (message != null) {
-            builder.array("@message", message);
-        }
-        if (type != null) {
-            builder.array("@type", type);
-        }
-        if (tags != null) {
-            builder.array("@tags", tags);
-        }
-        if (source != null) {
-            builder.field("@source", source);
-        }
-        if (sourceHost != null) {
-            builder.field("@source_host", sourceHost);
-        }
-        if (sourcePath != null) {
-            builder.field("@source_path", sourcePath);
-        }
-        builder.startObject("@fields");
         build(builder, context, resource);
-        builder.endObject().endObject();
+        builder.endObject();
         return builder.string();
     }
 

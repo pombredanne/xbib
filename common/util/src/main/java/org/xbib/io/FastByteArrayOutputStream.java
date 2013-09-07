@@ -1,22 +1,34 @@
 /*
- * Licensed to ElasticSearch and Shay Banon under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. ElasticSearch licenses this
- * file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * Copyright (C) 2012 Jörg Prante and xbib
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
  */
-
 package org.xbib.io;
 
 import java.io.IOException;
@@ -42,9 +54,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
     /**
      * Creates a new byte array output stream. The buffer capacity is
      * initially 1024 bytes, though its size increases if necessary.
-     * <p/>
-     * ES: We use 1024 bytes since we mainly use this to build json/smile
-     * content in memory, and rarely does the 32 byte default in ByteArrayOutputStream fits...
      */
     public FastByteArrayOutputStream() {
         this(1024);
@@ -165,7 +174,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
      * required.
      *
      * @return String decoded from the buffer's contents.
-     * @since JDK1.1
      */
     public String toString() {
         return new String(buf, 0, count);
@@ -187,7 +195,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
      * @return String decoded from the buffer's contents.
      * @throws java.io.UnsupportedEncodingException
      *          If the named charset is not supported
-     * @since JDK1.1
      */
     public String toString(String charsetName)
             throws UnsupportedEncodingException {
@@ -198,7 +205,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
      * Closing a <tt>ByteArrayOutputStream</tt> has no effect. The methods in
      * this class can be called after the stream has been closed without
      * generating an <tt>IOException</tt>.
-     * <p/>
      */
     public void close() throws IOException {
     }

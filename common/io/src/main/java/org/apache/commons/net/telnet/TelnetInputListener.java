@@ -22,7 +22,6 @@ package org.apache.commons.net.telnet;
  * available to be read.
  *
  * @see org.apache.commons.net.telnet.TelnetClient
- * @since 3.0
  ***/
 public interface TelnetInputListener
 {

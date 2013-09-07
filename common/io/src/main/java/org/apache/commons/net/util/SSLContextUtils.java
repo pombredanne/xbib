@@ -26,7 +26,6 @@ import javax.net.ssl.TrustManager;
 
 /**
  * General utilities for SSLContext.
- * @since 3.0
  */
 public class SSLContextUtils {
 

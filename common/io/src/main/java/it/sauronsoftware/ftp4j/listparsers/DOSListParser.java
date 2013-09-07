@@ -32,7 +32,6 @@ import it.sauronsoftware.ftp4j.FTPListParser;
 /**
  * This parser can handle the MSDOS-style LIST responses.
  * 
- * @author Carlo Pelliccia
  */
 public class DOSListParser implements FTPListParser {
 

@@ -21,7 +21,6 @@ package it.sauronsoftware.ftp4j;
 /**
  * Exception thrown if any I/O error occurs during a data transfer attempt.
  * 
- * @author Carlo Pelliccia
  */
 public class FTPDataTransferException extends Exception {
 

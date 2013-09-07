@@ -38,8 +38,6 @@ import org.apache.commons.net.util.TrustManagerUtils;
  * FTP over SSL processing. If desired, the JVM property -Djavax.net.debug=all can be used to
  * see wire-level SSL details.
  *
- * @version $Id: FTPSClient.java 1407341 2012-11-09 01:31:00Z ggregory $
- * @since 2.0
  */
 public class FTPSClient extends FTPClient {
 

@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * This is a modifier node for ElasticSearch
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESModifier implements Node {
 

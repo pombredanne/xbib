@@ -31,8 +31,6 @@
  */
 package org.xbib.sequential;
 
-import java.io.Serializable;
-
 /**
  * A separable group for structured data.
  * Also known as control characters group 0 ("C0"), ASCII-1967
@@ -43,7 +41,6 @@ import java.io.Serializable;
  * tape. Trailing blanks on tape could be saved by using separator characters
  * instead.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class GroupSeparable extends AbstractSeparable {
 

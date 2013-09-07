@@ -26,7 +26,6 @@ import java.net.Socket;
  * This abstract class is the base for creating a connector. Connectors are used
  * by the client to establish connections with remote servers.
  * 
- * @author Carlo Pelliccia
  */
 public abstract class FTPConnector {
 

@@ -66,7 +66,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Elasticsearch Freebase indexer
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Freebase extends AbstractImporter<Long, AtomicLong> {
 

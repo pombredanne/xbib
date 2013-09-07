@@ -39,8 +39,6 @@ import java.util.ServiceLoader;
 
 /**
  * The Connection service
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class ConnectionService<F extends ConnectionFactory> {
 

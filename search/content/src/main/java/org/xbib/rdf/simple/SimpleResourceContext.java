@@ -41,10 +41,15 @@ public class SimpleResourceContext
     extends AbstractResourceContext<Resource>
     implements ResourceContext<Resource> {
 
-    private final ContentBuilder contentBuilder = new DefaultContentBuilder();
+    private ContentBuilder contentBuilder = new DefaultContentBuilder();
 
     @Override
     public ResourceContext<Resource> prepareForOutput() {
+        return this;
+    }
+
+    public ResourceContext<Resource> contentBuilder(ContentBuilder contentBuilder) {
+        this.contentBuilder = contentBuilder;
         return this;
     }
 

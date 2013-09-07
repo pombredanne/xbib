@@ -36,11 +36,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
  * This class also implements the {@link Configurable Configurable}
  * interface to allow the parser to be configured from the outside.
  * </p>
- * @since 1.4
- */
-/**
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates - Comments
  */
 public abstract class ConfigurableFTPFileEntryParserImpl
 extends RegexFTPFileEntryParserImpl

@@ -23,7 +23,6 @@ import java.util.Calendar;
 /**
  * This interface specifies the concept of parsing an FTP server's
  * timestamp.
- * @since 1.4
  */
 public interface FTPTimestampParser {
 

@@ -67,7 +67,6 @@ import org.xbib.query.cql.SyntaxException;
 /**
  * Elasticsearch OAI service. Not yet complete.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class OAIService implements org.xbib.oai.service.OAIService {
 

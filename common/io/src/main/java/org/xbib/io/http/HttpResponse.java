@@ -36,7 +36,6 @@ import java.util.Map;
 
 /**
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface HttpResponse {
 

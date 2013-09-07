@@ -18,11 +18,9 @@
  */
 package it.sauronsoftware.ftp4j;
 
-
 /**
  * This class helps in represent FTP error codes and messages.
  * 
- * @author Carlo Pelliccia
  */
 public class FTPException extends Exception {
 

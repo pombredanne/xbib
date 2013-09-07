@@ -34,7 +34,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
  * interface to allow the parsing to be configured from the outside.
  *
  * @see ConfigurableFTPFileEntryParserImpl
- * @since 1.4
  */
 public class FTPTimestampParserImpl implements
         FTPTimestampParser, Configurable

@@ -55,7 +55,7 @@ public class License extends Holding {
         super(m);
         this.id = getString("ezb:license_entry_id");
         this.parent = getString("ezb:zdbid");
-        this.isil = getString("ezb:getISIL");
+        this.isil = getString("ezb:isil");
         this.dates = buildDateArray();
         this.info = buildInfo();
     }
@@ -114,11 +114,14 @@ public class License extends Holding {
         period.put("firstdate", getString("ezb:license_period.ezb:first_date"));
         period.put("lastvolume", getString("ezb:license_period.ezb:last_volume"));
         period.put("lastdate", getString("ezb:license_period.ezb:last_date"));
-        period.put("available", getString("ezb:license_period.ezb:available"));
+        // ezb:available is map or string?
+        Object o = getAnyObject("ezb:license_period.ezb:available");
+        String avail = o != null ? o.toString() : null;
+        period.put("available", avail);
         m.put("period", period);
         m.put("type", map().get("ezb:type_id"));
-        m.put("license", map().get("ezb:license_type_id"));
-        m.put("price", map().get("ezb:price_type_id"));
+        m.put("licensetype", map().get("ezb:license_type_id"));
+        m.put("pricetype", map().get("ezb:price_type_id"));
         m.put("url", map().get("ezb:reference_url"));
         m.put("readme", map().get("ezb:readme_url"));
         Map<String, Object> service = new LinkedHashMap();

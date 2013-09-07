@@ -44,7 +44,6 @@ import org.xbib.rdf.simple.SimpleFactory;
 /**
  * The XML resource handler can create nested RDF resources from arbitrary XML.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractXmlResourceHandler
         extends AbstractXmlHandler implements XmlResourceHandler {

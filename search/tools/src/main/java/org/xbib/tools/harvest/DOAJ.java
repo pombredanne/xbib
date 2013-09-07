@@ -70,7 +70,6 @@ import static org.xbib.tools.opt.util.DateConverter.datePattern;
  *
  * OAI harvester, write documents to RDF
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public class DOAJ {
 

@@ -49,7 +49,6 @@ import org.xbib.query.cql.model.CQLQueryModel;
 /**
  * Elasticsearch query model
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class QueryModel {
 

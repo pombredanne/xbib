@@ -53,7 +53,6 @@ public class SplitWriter extends Writer {
     private Writer out;
     private char cb[];
     private int nChars, nextChar;
-    private static int defaultCharBufferSize = 8192;
 
     /**
      * Creates a buffered character-output stream that uses a default-sized
@@ -62,7 +61,7 @@ public class SplitWriter extends Writer {
      * @param out A Writer
      */
     public SplitWriter(Writer out) {
-        this(out, defaultCharBufferSize);
+        this(out, 8192);
     }
 
     /**

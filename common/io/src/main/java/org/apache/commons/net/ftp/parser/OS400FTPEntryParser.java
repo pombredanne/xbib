@@ -22,10 +22,6 @@ import java.text.ParseException;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 
-/**
- * @version $Id: OS400FTPEntryParser.java 1299238 2012-03-10 17:12:28Z sebb $
- */
-
 public class OS400FTPEntryParser extends ConfigurableFTPFileEntryParserImpl
 {
     private static final String DEFAULT_DATE_FORMAT

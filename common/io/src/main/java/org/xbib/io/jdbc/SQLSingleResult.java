@@ -39,7 +39,6 @@ import java.sql.Types;
 /**
  * A single SQL result primitive
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SQLSingleResult implements ResultSetListener {
 

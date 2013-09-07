@@ -55,7 +55,6 @@ import org.xbib.rdf.simple.SimpleResource;
 /**
  * NTriple writer
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class NTripleWriter<S extends Identifier, P extends Property, O extends Node>
     implements ResourceSerializer<S,P,O>, TripleListener<S,P,O> {

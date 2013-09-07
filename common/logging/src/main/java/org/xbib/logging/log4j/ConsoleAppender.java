@@ -42,11 +42,6 @@ import org.xbib.logging.Loggers;
  * ConsoleAppender appends log events to <code>System.out</code> or
  * <code>System.err</code> using a layout specified by the user. The
  * default target is <code>System.out</code>.
- * <p/>
- * <p>xbib: Adapter from log4j to allow to disable console logging...</p>
- *
- * @author Ceki G&uuml;lc&uuml;
- * @author Curt Arnold
  */
 public class ConsoleAppender extends WriterAppender {
 
@@ -121,7 +116,6 @@ public class ConsoleAppender extends WriterAppender {
      *
      * @param newValue if true, appender will use value of System.out or
      *                 System.err in force at the time when logging events are appended.
-     * @since 1.2.13
      */
     public final void setFollow(final boolean newValue) {
         follow = newValue;
@@ -133,7 +127,6 @@ public class ConsoleAppender extends WriterAppender {
      *
      * @return true if appender will use value of System.out or
      *         System.err in force at the time when logging events are appended.
-     * @since 1.2.13
      */
     public final boolean getFollow() {
         return follow;

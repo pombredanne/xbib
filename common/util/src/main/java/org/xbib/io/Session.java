@@ -35,14 +35,13 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
- *  The Session interface is a serializable object for being opened,
+ *  The Session interface is an object for being opened,
  *  receive operations, and being closed.
  *  Sessions must be opened before the first operation
  *  and closed after the last operation.
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-public interface Session<P extends Packet> extends Serializable {
+public interface Session<P extends Packet> {
 
 
     enum Mode {

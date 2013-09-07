@@ -47,8 +47,6 @@ import org.xbib.io.StringPacket;
 
 /**
  * A File session
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TextFileSession<P extends StringPacket> implements Session<P> {
 

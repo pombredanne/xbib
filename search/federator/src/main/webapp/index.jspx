@@ -36,36 +36,35 @@ input.textarea { border: 1px solid grey; width: 80em; margin: .5em }
         </head>
         <body>
           <div id="container">
-            <h2>MarcXchange Federator Service</h2>
+            <h2>MarcXchange Search</h2>
             <div id="main">
-                <form enctype="application/x-www-form-urlencoded; charset=UTF-8"
+                <form enctype="application/x-www-form-urlencoded"
                       accept-charset="UTF-8"
-                      action="${pageContext.request.contextPath}/service/" 
-                      method="get">
+                      action="${pageContext.request.contextPath}/search/"
+                      method="post">
                     <fieldset>
-                        <div class="searchbox">                             
-                        <textarea name="q" id="q" cols="120" rows="15">
+                        <div class="searchbox">
+                        <select name="source">
+                            <option value="DE-600">DE-600 - ZDB</option>
+                            <option value="DE-601">DE-601 - GBV</option>
+                            <option value="DE-602">DE-602 - KOBV</option>
+                            <option value="DE-603">DE-603 - HEBIS</option>
+                            <option value="DE-604">DE-604 - BVB</option>
+                            <option value="DE-605">DE-605 - HEBIS</option>
+                            <option value="DE-576">DE-576 - BSZ</option>
+                        </select>
+                        <textarea name="q" id="q" cols="120" rows="5">
 <![CDATA[
-[
-  {"type":"z3950", "name":"DE-600", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"sru",   "name":"DE-600", "query":"pica.title = test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-601", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"sru",   "name":"DE-601", "query":"pica.title = test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-602", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-603", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-604", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-605", "query":"@attr 1=4 test", "from": 1, "size": 10 },
-  {"type":"z3950", "name":"DE-576", "query":"@attr 1=4 test", "from": 1, "size": 10 }
-]
+@attr 1=4 test
 ]]>
                         </textarea>
-                        <input value="Suche" name="searchbutton" type="submit"/>
+                        <input value="Search" name="searchbutton" type="submit"/>
                         </div>
                     </fieldset>
                 </form>
             </div>
             <div id="footer">
-                Realisierung 2012 J&amp;ouml;rg Prante, Hochschulbibliothekszentrum Nordrhein Westfalen
+                by J&amp;ouml;rg Prante, Hochschulbibliothekszentrum Nordrhein Westfalen
  <jsp:scriptlet> <![CDATA[out.write(Version.VERSION);]]></jsp:scriptlet>                
             </div>
           </div>

@@ -74,8 +74,6 @@ import java.util.List;
  * For an alternative approach, see the {@link FTPListParseEngine} class
  * which provides iterative access.
  *
- * @author <a href="mailto:scohen@apache.org">Steve Cohen</a>
- * @version $Id: FTPFileEntryParser.java 1299238 2012-03-10 17:12:28Z sebb $
  * @see FTPFile
  * @see FTPClient#listFiles()
  */

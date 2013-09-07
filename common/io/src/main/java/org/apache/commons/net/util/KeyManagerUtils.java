@@ -60,7 +60,6 @@ import org.apache.commons.net.io.Util;
  * cl.connect(...);
  * </pre>
  *
- * @since 3.0
  */
 public final class KeyManagerUtils {
 

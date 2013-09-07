@@ -31,7 +31,6 @@ import java.net.Socket;
  * The connector's default value for the
  * <em>useSuggestedAddressForDataConnections</em> flag is <em>false</em>.
  * 
- * @author Carlo Pelliccia
  */
 public class SOCKS5Connector extends FTPConnector {
 

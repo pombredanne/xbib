@@ -36,6 +36,7 @@ import org.xbib.grouping.bibliographic.endeavor.PublishedJournal;
 import org.xbib.map.MapBasedAnyObject;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,6 +54,8 @@ public class Manifestation extends MapBasedAnyObject {
     private final String title;
 
     private final String publisher;
+
+    private final String publisherPlace;
 
     private final String language;
 
@@ -91,6 +94,7 @@ public class Manifestation extends MapBasedAnyObject {
         this.targetID = getString("IdentifierZDB.identifierZDB");
         this.title = getString("TitleStatement.titleMain");
         this.publisher = getString("PublicationStatement.publisherName");
+        this.publisherPlace = getString("PublicationStatement.placeOfPublication");
         this.language = getString("Language.value", "unknown");
         this.fromDate = getString("date1");
         this.toDate = getString("date2");
@@ -117,9 +121,16 @@ public class Manifestation extends MapBasedAnyObject {
         this.key = computeKey();
         this.identifiers = makeIdentifiers();
         // unique identifier
+        StringBuilder p = new StringBuilder();
+        if (publisher != null) {
+            p.append(publisher);
+        }
+        if (publisherPlace != null && !publisherPlace.isEmpty()) {
+            p.append('-').append(publisherPlace);
+        }
         this.unique = new PublishedJournal()
                 .journalName(title)
-                .publisherName(publisher)
+                .publisherName(p.toString())
                 .createIdentifier();
     }
 
@@ -130,6 +141,7 @@ public class Manifestation extends MapBasedAnyObject {
         this.targetID = targetID;
         this.title = m.title();
         this.publisher = m.publisher();
+        this.publisherPlace = m.publisherPlace();
         this.language = m.language();
         this.fromDate = m.fromDate();
         this.toDate = m.toDate();
@@ -188,6 +200,10 @@ public class Manifestation extends MapBasedAnyObject {
 
     public String publisher() {
         return publisher;
+    }
+
+    public String publisherPlace() {
+        return publisherPlace;
     }
 
     public String language() {
@@ -371,8 +387,23 @@ public class Manifestation extends MapBasedAnyObject {
 
     private Map<String,Object> makeIdentifiers() {
         Map<String,Object> m = new HashMap();
-        // get all ISSN
-        m.put("issn", map().get("IdentifierISSN"));
+        // get and convert all ISSN
+        Object o = map().get("IdentifierISSN");
+        if (o == null) {
+            return m;
+        }
+        if (!(o instanceof List)) {
+            o = Arrays.asList(o);
+        }
+        List<String> issns = new ArrayList();
+        List<Map<String,Object>> l = (List<Map<String,Object>>)o;
+        for (int i = 0; i < l.size(); i++) {
+            String s = (String)l.get(i).get("value");
+            if (s != null) {
+                issns.add(s.replaceAll("\\-", "").toLowerCase());
+            }
+        }
+        m.put("issn", issns);
         return m;
     }
 

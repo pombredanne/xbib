@@ -21,7 +21,6 @@ package it.sauronsoftware.ftp4j;
 /**
  * This class represents FTP server replies in a manageable object oriented way.
  * 
- * @author Carlo Pelliccia
  */
 public class FTPReply {
 
@@ -40,7 +39,7 @@ public class FTPReply {
 	 * 
 	 * @param code
 	 *            The code of the reply.
-	 * @param message
+	 * @param messages
 	 *            The textual message(s) in the reply.
 	 */
 	FTPReply(int code, String[] messages) {

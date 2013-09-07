@@ -29,7 +29,6 @@ import javax.net.ssl.SSLContext;
  *
  * Implementation of org.apache.commons.net.SocketFactory
  *
- * @since 2.0
  */
 public class FTPSSocketFactory extends SocketFactory {
 

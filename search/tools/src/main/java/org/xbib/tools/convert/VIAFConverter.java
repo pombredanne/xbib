@@ -71,8 +71,6 @@ import java.util.zip.GZIPOutputStream;
 /**
  * VIAF converter. The original VIAF files are one RDF/XML per line.
  * This converion generates NTriples or Turtle format.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class VIAFConverter extends AbstractImporter<Long, AtomicLong> {
 

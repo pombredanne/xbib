@@ -41,7 +41,6 @@ import java.util.logging.LogRecord;
 /**
  * A custom log formatter
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class CustomFormatter extends Formatter {
 

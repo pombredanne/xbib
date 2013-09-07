@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
  * This parser can handle the result of a list ftp command as it is a UNIX "ls
  * -l" command response.
  * 
- * @author Carlo Pelliccia
  */
 public class UnixListParser implements FTPListParser {
 

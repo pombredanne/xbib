@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * A name for Elasticsearch queries
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESName implements Node {
 

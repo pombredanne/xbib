@@ -59,7 +59,6 @@ import org.xml.sax.XMLReader;
 /**
  * Style sheet transformer
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class StylesheetTransformer {
 

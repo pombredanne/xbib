@@ -40,11 +40,11 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.date.DateUtil;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
-import org.xbib.io.util.URIUtil;
+import org.xbib.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.tools.aggregator.elasticsearch.WrappedSearchHit;
@@ -57,7 +57,6 @@ import org.xbib.tools.opt.OptionParser;
 import org.xbib.tools.opt.OptionSet;
 import org.xbib.tools.util.ExceptionFormatter;
 import org.xbib.tools.util.FormatUtil;
-import org.xbib.util.Strings;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -83,6 +82,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -94,7 +94,6 @@ import static org.xbib.common.xcontent.XContentFactory.jsonBuilder;
 /**
  * Merge ZDB and EZB
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MergeWithLicenses {
 
@@ -112,7 +111,7 @@ public class MergeWithLicenses {
     private Set<MergePump> pumps;
 
     private Client client;
-    private IngestClient ingest;
+    private BulkClient ingest;
 
     // Elasticsearch source index/types
     private String sourceTitleIndex;
@@ -127,7 +126,7 @@ public class MergeWithLicenses {
     private String targetWorksType;
     private String targetExpressionsType;
     private String targetManifestationsType;
-    private String targetItemsType;
+    private String targetHoldingsType;
 
     private int size;
     private long millis;
@@ -150,7 +149,7 @@ public class MergeWithLicenses {
                 {
                     accepts("source").withRequiredArg().ofType(String.class).required();
                     accepts("target").withRequiredArg().ofType(String.class).required();
-                    accepts("shards").withOptionalArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("shards").withOptionalArg().ofType(Integer.class).defaultsTo(4);
                     accepts("replica").withOptionalArg().ofType(Integer.class).defaultsTo(0);
                     accepts("mock").withOptionalArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE);
                     accepts("maxbulkactions").withRequiredArg().ofType(Integer.class).defaultsTo(1000);
@@ -189,20 +188,25 @@ public class MergeWithLicenses {
             Long millis = (Long) options.valueOf("millis");
             String identifier = (String) options.valueOf("id");
 
+            logger.info("connecting to search source {}...", sourceURI);
+
             SearchClientSupport search = new SearchClientSupport()
                     .newClient(sourceURI);
 
-            IngestClient ingest = new IngestClient()
+            logger.info("connecting to target index {} ...", targetURI);
+
+            BulkClient ingest = new BulkClient()
                     .maxBulkActions(maxBulkActions)
                     .maxConcurrentBulkRequests(maxConcurrentBulkRequests)
-                    .newClient(targetURI);
+                    .newClient(targetURI)
+                    .waitForCluster();
 
+            logger.info("starting aggregation: pumps={} size={}, millis={}", pumps, size, millis);
             long t0 = System.currentTimeMillis();
-
             new MergeWithLicenses(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier)
                     .aggregate();
-
             long t1 = System.currentTimeMillis();
+
             long d = countWrites.get(); //number of documents written
             long bytes = ingest.getVolumeInBytes();
             double dps = d * 1000.0 / (double)(t1 - t0);
@@ -244,7 +248,7 @@ public class MergeWithLicenses {
         System.exit(0);
     }
 
-    private MergeWithLicenses(SearchClientSupport search, IngestClient ingest,
+    private MergeWithLicenses(SearchClientSupport search, BulkClient ingest,
                              URI sourceURI, URI targetURI,
                              int numPumps, int size, long millis, String identifier)
             throws UnsupportedEncodingException {
@@ -253,13 +257,13 @@ public class MergeWithLicenses {
 
         Map<String,String> params = URIUtil.parseQueryString(sourceURI);
 
-        // ZDB Titel
-        this.sourceTitleIndex = params.get("titleIndex");
-        this.sourceTitleType = params.get("titleType");
-        // ZDB Lokal
-        this.sourceHoldingsIndex = params.get("holdingsIndex");
-        this.sourceHoldingsType = params.get("holdingsType");
-        // EZB
+        // ZDB BIB
+        this.sourceTitleIndex = params.get("bibIndex");
+        this.sourceTitleType = params.get("bibType");
+        // ZDB HOL
+        this.sourceHoldingsIndex = params.get("holIndex");
+        this.sourceHoldingsType = params.get("holType");
+        // EZB licenses
         this.sourceLicenseIndex = params.get("licenseIndex");
         this.sourceLicenseType = params.get("licenseType");
 
@@ -267,24 +271,12 @@ public class MergeWithLicenses {
 
         this.targetIndex = params.get("index");
         if (targetIndex == null) {
-            targetIndex = sourceTitleIndex + "frbr";
+            targetIndex = sourceTitleIndex + "merge";
         }
-        this.targetWorksType = params.get("worksType");
-        if (Strings.isNullOrEmpty(targetWorksType)) {
-            this.targetWorksType = "works";
-        }
-        this.targetExpressionsType = params.get("expressionsType");
-        if (Strings.isNullOrEmpty(targetExpressionsType)) {
-            this.targetExpressionsType = "expressions";
-        }
-        this.targetManifestationsType = params.get("manifestationsType");
-        if (Strings.isNullOrEmpty(targetManifestationsType)) {
-            this.targetManifestationsType = "manifestations";
-        }
-        this.targetItemsType = params.get("itemsType");
-        if (Strings.isNullOrEmpty(targetItemsType)) {
-            this.targetItemsType = "items";
-        }
+        this.targetWorksType = "works";
+        this.targetExpressionsType = "expressions";
+        this.targetManifestationsType = "manifestations";
+        this.targetHoldingsType = "holdings";
 
         this.size = size;
         this.millis = millis;
@@ -296,20 +288,18 @@ public class MergeWithLicenses {
         this.pumpQueue = new SynchronousQueue(true);
         this.pumpService = Executors.newFixedThreadPool(numPumps);
         this.pumpLatch = new CountDownLatch(numPumps);
-
-        this.identifier = identifier;
-    }
-
-    private MergeWithLicenses aggregate() {
-        logger.info("starting aggregation");
-
-        boolean failure = false;
-
         for (int i = 0; i < numPumps; i++) {
             MergePump mergePump = new MergePump(i);
             pumps.add(mergePump);
             pumpService.submit(mergePump);
         }
+
+        this.identifier = identifier;
+    }
+
+    private MergeWithLicenses aggregate() {
+
+        boolean failure = false;
 
         SearchRequestBuilder searchRequest = client.prepareSearch()
                 .setSize(size)
@@ -335,11 +325,16 @@ public class MergeWithLicenses {
             }
             for (SearchHit hit : hits) {
                 try {
-                    pumpQueue.put(new WrappedSearchHit(hit));
+                    WrappedSearchHit w = new WrappedSearchHit(hit);
+                    pumpQueue.put(w);
                 } catch (InterruptedException e) {
                     logger.error("interrupted");
                     Thread.currentThread().interrupt();
                     failure = true;
+                } catch (Throwable e) {
+                    logger.error("error while pumping, exiting", e);
+                    logger.error(ExceptionFormatter.format(e));
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -372,13 +367,12 @@ public class MergeWithLicenses {
         private final Logger logger;
         private final ObjectMapper mapper;
         private final Queue<ClusterBuildContinuation> buildQueue;
-
         private Set<String> visited;
         private Set<Manifestation> cluster;
 
         public MergePump(int i) {
             this.buildQueue = new ConcurrentLinkedQueue();
-            this.logger = LoggerFactory.getLogger("pump" + i);
+            this.logger = LoggerFactory.getLogger(MergeWithLicenses.class.getName() + "-pump-" + i);
             this.mapper = new ObjectMapper();
             this.visited = Collections.synchronizedSet(new HashSet());
             this.cluster = Collections.synchronizedSet(new HashSet());
@@ -423,15 +417,16 @@ public class MergeWithLicenses {
                     }
                 }
             } catch (InterruptedException e) {
-                logger.warn("pump interrupted");
+                logger.warn("pump processing interrupted");
                 Thread.currentThread().interrupt();
             } catch (Throwable e) {
-                logger.error("error while pumping {}, exiting", m.targetID(), e);
+                logger.error("error while processing pump {}, exiting", m.targetID(), e);
                 logger.error(ExceptionFormatter.format(e));
                 Thread.currentThread().interrupt();
             } finally {
                 pumpLatch.countDown();
             }
+            logger.info("pump processing terminating");
             return true;
         }
 
@@ -738,6 +733,12 @@ public class MergeWithLicenses {
         }
     }
 
+    /**
+     * TODO split manifestion if there is a sub-manifestation
+     * @param manifestation
+     * @return
+     */
+
     private List<Manifestation> splitManifestation(Manifestation manifestation) {
         List<Manifestation> list = new ArrayList();
         // microform-based split required?
@@ -897,9 +898,7 @@ public class MergeWithLicenses {
                     o = Arrays.asList(o);
                 }
                 dates = new ArrayList();
-                for (String s : (List<String>)o) {
-                    dates.add(Integer.parseInt(s));
-                }
+                dates.addAll((List<Integer>)o);
             } else {
                 o = holding.map().get("FormattedEnumerationAndChronology");
                 if (o != null) {
@@ -914,7 +913,6 @@ public class MergeWithLicenses {
                             o = Arrays.asList(o);
                         }
                         dates = parseDates((List<Map<String, Object>>) o);
-                    } else {
                     }
                 }
             }
@@ -1066,6 +1064,7 @@ public class MergeWithLicenses {
                     .field("expressionID", expr.targetID())
                     .field("expressionKey", expr.getKey())
                     .field("fromDate", expr.fromDate())
+                    .field("toDate", expr.toDate())
                     .field("manifestationCount", expr.getManifestations().size())
                     .startArray("manifestations");
             for (Manifestation manifestation : expr.getManifestations()) {
@@ -1074,6 +1073,7 @@ public class MergeWithLicenses {
                         .field("title", getTitle(manifestation))
                         .field("publisher", manifestation.publisher())
                         .field("fromDate", manifestation.fromDate())
+                        .field("toDate", manifestation.toDate())
                         .field("contentType", manifestation.contentType())
                         .field("mediaType", manifestation.mediaType())
                         .field("carrierType", manifestation.carrierType())
@@ -1120,7 +1120,7 @@ public class MergeWithLicenses {
                     .field("title", getTitle(manifestation))
                     .field("publisher", manifestation.publisher())
                     .field("fromDate", manifestation.fromDate())
-                    .field("toDate", manifestation.fromDate())
+                    .field("toDate", manifestation.toDate())
                     .field("contentType", manifestation.contentType())
                     .field("mediaType", manifestation.mediaType())
                     .field("carrierType", manifestation.carrierType())
@@ -1153,6 +1153,10 @@ public class MergeWithLicenses {
         // add up all the dates from holdings and licenses
         Set<Integer> dates = new HashSet(holdingsByDate.keySet());
         dates.addAll(licensesByDate.keySet());
+        if (dates.isEmpty()) {
+            logger.warn("only unspecified dates for manifestation {}", manifestation.targetID());
+            return;
+        }
         for (Integer date : dates) {
             // filter out holdings for this date
             Set<Holding> dateHoldings = new HashSet();
@@ -1186,12 +1190,7 @@ public class MergeWithLicenses {
         if (work == null) {
             return;
         }
-        if (holdings.isEmpty() && licenses.isEmpty()) {
-            // nothing to do
-            return;
-        }
         XContentBuilder builder = jsonBuilder();
-
         builder.startObject()
                 .field("preferredTitle", manifestation.title())
                 .field("hasWork", work.targetID())
@@ -1211,7 +1210,6 @@ public class MergeWithLicenses {
             builder.field("isSupplement", manifestation.isSupplement())
                     .field("supplementID", manifestation.supplementTargetID());
         }
-
         Map<String,List<Holding>> services = new HashMap();
         for (License license : licenses) {
             if (license.getISIL() == null) {
@@ -1270,7 +1268,7 @@ public class MergeWithLicenses {
                 .field("info", holding.info())
                 .endObject();
         ingest.indexDocument(targetIndex,
-                targetItemsType,
+                targetHoldingsType,
                 holding.id(),
                 builder.string());
         countWrites.incrementAndGet();

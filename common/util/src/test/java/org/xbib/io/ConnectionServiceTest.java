@@ -39,7 +39,6 @@ import org.testng.annotations.Test;
 /**
  * Test connection manager
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ConnectionServiceTest {
 

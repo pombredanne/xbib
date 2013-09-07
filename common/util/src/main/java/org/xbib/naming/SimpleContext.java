@@ -49,11 +49,9 @@ import javax.naming.NamingException;
 import javax.naming.NotContextException;
 import javax.naming.OperationNotSupportedException;
 
-
 /**
  * A simple context that implements a flat context in memory.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleContext implements Context {
     /** the name parser is a flat name parser */

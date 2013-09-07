@@ -65,7 +65,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Elasticsearch indexer tool for Medline XML files
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class Medline extends AbstractImporter<Long, AtomicLong> {
 

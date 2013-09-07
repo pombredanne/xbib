@@ -33,8 +33,6 @@ package org.xbib.rdf;
 
 /**
  *  A triple is a group of a subject, a predicate, and an object.
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Triple<S,P,O> {
 

@@ -22,7 +22,6 @@ package org.apache.commons.net.ftp;
  * the meaning of the codes, familiarity with RFC 959 is assumed.
  * The mnemonic constant names are transcriptions from the code descriptions
  * of RFC 959.
- * <p>
  * TODO replace with an enum
  ***/
 

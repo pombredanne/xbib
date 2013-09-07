@@ -37,7 +37,6 @@ import org.xbib.query.QueryOption;
 /**
  * Options for Elasticsearch query language
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * @param <V> the value class parameter
  */
 public class Option<V> implements QueryOption<V> {

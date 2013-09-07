@@ -64,7 +64,6 @@ import static org.xbib.tools.util.FormatUtil.formatMillis;
 /**
  * Convert GND from RDF/XML to Turtle or Ntriples
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class GNDConverter extends AbstractImporter<Long, AtomicLong> {
 

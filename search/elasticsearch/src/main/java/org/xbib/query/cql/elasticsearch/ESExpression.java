@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * Elasticsearch expression
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ESExpression implements Node {
 

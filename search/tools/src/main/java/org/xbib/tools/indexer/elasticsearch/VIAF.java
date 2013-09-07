@@ -76,7 +76,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * VIAF indexer to Elasticsearch
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class VIAF extends AbstractImporter<Long, AtomicLong> {
 

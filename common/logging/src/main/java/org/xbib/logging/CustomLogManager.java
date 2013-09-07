@@ -110,7 +110,7 @@ import java.util.logging.Logger;
  *      <li>The root logger can define its set of handlers using  a
  *      .handlers property.</li>
  *      <li>System property replacement for property values which start
- *      with ${sytstemPropertyName}.</li>
+ *      with ${systemPropertyName}.</li>
  *  </ul>
  */
 public class CustomLogManager extends LogManager {

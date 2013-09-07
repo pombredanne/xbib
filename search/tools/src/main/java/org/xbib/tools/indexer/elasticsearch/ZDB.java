@@ -44,8 +44,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.elasticsearch.common.unit.TimeValue;
 import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.support.bulk.transport.MockBulkClient;
-import org.xbib.elasticsearch.support.ingest.transport.IngestClient;
-import org.xbib.elasticsearch.support.ingest.transport.MockIngestClient;
 import org.xbib.elements.marc.MARCElementBuilder;
 import org.xbib.elements.marc.MARCElementBuilderFactory;
 import org.xbib.elements.marc.MARCElementMapper;
@@ -73,7 +71,6 @@ import org.xml.sax.InputSource;
 /**
  * Elasticsearch indexer tool for Zeitschriftendatenbank (ZDB) MARC ISO2709 files
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public final class ZDB extends AbstractImporter<Long, AtomicLong> {
 
@@ -114,7 +111,7 @@ public final class ZDB extends AbstractImporter<Long, AtomicLong> {
                     accepts("elasticsearch").withRequiredArg().ofType(String.class).required();
                     accepts("index").withRequiredArg().ofType(String.class).required();
                     accepts("type").withRequiredArg().ofType(String.class).required();
-                    accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+                    accepts("shards").withRequiredArg().ofType(Integer.class).defaultsTo(4);
                     accepts("path").withRequiredArg().ofType(String.class).required();
                     accepts("pattern").withRequiredArg().ofType(String.class).required().defaultsTo("1208zdblokutf8.mrc");
                     accepts("threads").withRequiredArg().ofType(Integer.class).defaultsTo(1);

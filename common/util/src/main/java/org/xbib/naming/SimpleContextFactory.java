@@ -71,7 +71,6 @@ import javax.naming.spi.InitialContextFactory;
  * defines methods for examining and updating bindings within a naming
  * service.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleContextFactory implements InitialContextFactory {
     /**

@@ -34,7 +34,6 @@ package org.xbib.query.cql.elasticsearch;
 /**
  * Elasticsearch query language token types
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public enum TokenType {
 

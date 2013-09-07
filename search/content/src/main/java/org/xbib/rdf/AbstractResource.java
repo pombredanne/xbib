@@ -46,12 +46,9 @@ import java.util.Set;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
-import org.xbib.rdf.context.ResourceContext;
 
 /**
  * An abstract resource
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractResource<S extends Identifier, P extends Property, O extends Node>
         extends IdentifiableNode

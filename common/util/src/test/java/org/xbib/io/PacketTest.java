@@ -40,7 +40,6 @@ import org.testng.Assert;
 /**
  * Test packet write
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PacketTest extends Assert {
 

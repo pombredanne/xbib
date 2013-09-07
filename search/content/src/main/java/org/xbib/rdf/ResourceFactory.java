@@ -33,8 +33,6 @@ package org.xbib.rdf;
 
 /**
  * A Resource factory.
- * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ResourceFactory<R extends Resource> {
 

@@ -50,7 +50,6 @@ import org.xbib.rdf.context.ResourceContext;
 /**
  * A simple resource is a sequence of properties and of associated resources.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleResource<S extends Identifier, P extends Property, O extends Node>
         extends AbstractResource<S, P, O> {

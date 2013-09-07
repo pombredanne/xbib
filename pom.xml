@@ -497,4 +497,35 @@
 -->
     </modules>
 
+
+    <profiles>
+        <profile>
+            <id>es019</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.xbib.elasticsearch</groupId>
+                        <artifactId>elasticsearch-support</artifactId>
+                        <version>0.19.11</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>es090</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.xbib.elasticsearch</groupId>
+                        <artifactId>elasticsearch-support</artifactId>
+                        <version>0.90.2</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
+
 </project>

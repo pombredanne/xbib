@@ -23,7 +23,6 @@ import java.util.Date;
 /**
  * The instances of this class represents the files in a remote FTP directory.
  * 
- * @author Carlo Pelliccia
  */
 public class FTPFile {
 

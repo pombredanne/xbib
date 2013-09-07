@@ -41,7 +41,6 @@ import org.xbib.io.Session;
 /**
  * File connection
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TextFileConnection implements Connection<TextFileSession> {
 

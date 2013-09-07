@@ -34,9 +34,6 @@ import java.io.UnsupportedEncodingException;
  * informations.
  * </p>
  * 
- * @author Carlo Pelliccia
- * @since 1.1
- * @version 1.3
  */
 class Base64 {
 

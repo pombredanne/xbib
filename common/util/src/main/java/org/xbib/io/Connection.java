@@ -38,7 +38,6 @@ import java.net.URI;
  *  A Connection is an access to a resource via a scheme or a protocol.
  *  Each connection can serve multiple sessions in parallel.
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Connection<S extends Session> {
 

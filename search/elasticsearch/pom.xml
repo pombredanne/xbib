@@ -14,12 +14,6 @@
     <description>Elasticsearch</description>
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <xbib.version>1.0-SNAPSHOT</xbib.version>
-        <elasticsearch.version>0.19.11</elasticsearch.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -49,7 +43,6 @@
         <dependency>
             <groupId>org.xbib.elasticsearch</groupId>
             <artifactId>elasticsearch-support</artifactId>
-            <version>${elasticsearch.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -98,4 +91,5 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+
 </project>

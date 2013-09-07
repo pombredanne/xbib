@@ -31,7 +31,6 @@
  */
 package org.xbib.federator;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,17 +45,20 @@ import javax.xml.stream.events.XMLEvent;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.SRUConstants;
-import org.xbib.xml.transform.StylesheetTransformer;
 
-public class FederatorResult {
+public class FederatorResponse {
 
-    private final static Logger logger = LoggerFactory.getLogger(FederatorResult.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(FederatorResponse.class.getName());
+
     private final static XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+
     private final static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+
     private long count;
+
     private LinkedList<XMLEvent> events;
 
-    FederatorResult(long count, LinkedList<XMLEvent> events) {
+    FederatorResponse(long count, LinkedList<XMLEvent> events) {
         this.count = count;
         this.events = events;
     }

@@ -44,9 +44,6 @@ import java.math.BigInteger;
  * </p>
  *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
- * @author Apache Software Foundation
- * @since 2.2
- * @version $Id: Base64.java 1407341 2012-11-09 01:31:00Z ggregory $
  */
 public class Base64 {
     private static final int DEFAULT_BUFFER_RESIZE_FACTOR = 2;

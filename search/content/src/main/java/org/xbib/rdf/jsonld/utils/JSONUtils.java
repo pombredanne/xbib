@@ -11,8 +11,7 @@ import java.util.Map;
 /**
  * A bunch of functions to make loading JSON easy
  * 
- * @author tristan
- * 
+ *
  */
 public class JSONUtils {
     public static Object fromString(String jsonString) throws JsonParseException, JsonMappingException {

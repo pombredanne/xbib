@@ -56,7 +56,6 @@ import java.net.URI;
 /**
  * Elasticsearch GND indexer
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class GND {
 
