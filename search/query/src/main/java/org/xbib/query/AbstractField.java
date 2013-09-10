@@ -34,7 +34,6 @@ package org.xbib.query;
 /**
  * Abstract search field
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 abstract class AbstractField implements Field {
     

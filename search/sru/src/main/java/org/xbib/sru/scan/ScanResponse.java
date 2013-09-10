@@ -41,7 +41,6 @@ import org.xbib.sru.DefaultSRUResponse;
 /**
  * Scan response (not yet implemented)
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ScanResponse extends DefaultSRUResponse {
 

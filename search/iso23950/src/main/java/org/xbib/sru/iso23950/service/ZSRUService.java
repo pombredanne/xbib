@@ -55,8 +55,6 @@ import org.xbib.xml.transform.StylesheetTransformer;
 
 /**
  *  A SRU service on a Z service
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ZSRUService extends PropertiesSRUService implements ZService, ZConstants, SRUConstants {
 

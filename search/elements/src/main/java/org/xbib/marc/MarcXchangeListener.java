@@ -50,7 +50,6 @@ package org.xbib.marc;
  * Field data is carried only in the end events, where begin events carry
  * information about field indicators and subfield identifiers.
  * 
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public interface MarcXchangeListener {
 

@@ -33,11 +33,6 @@ package org.xbib.marc;
 
 /**
  * Record label of ISO 2709 records
- *
- * Pattern:
- * "\d{5}\p{IsBasicLatin}\p{IsBasicLatin}{4}\d\d\d{5}\p{IsBasicLatin}{3}\d\d\d\p{IsBasicLatin}"
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RecordLabel {
 
@@ -59,7 +54,6 @@ public class RecordLabel {
     /**
      * Construct a record label
      *
-     * @param label the label
      */
     public RecordLabel() {
     }

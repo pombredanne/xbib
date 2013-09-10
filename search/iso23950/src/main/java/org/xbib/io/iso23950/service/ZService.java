@@ -38,8 +38,6 @@ import java.net.URI;
 
 /**
  * A Z service
- * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ZService {
     

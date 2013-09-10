@@ -66,7 +66,6 @@ public class FastByteArrayInputStream extends InputStream {
      * If no mark has been set, then the value of mark is the offset
      * passed to the constructor (or 0 if the offset was not supplied).
      *
-     * @since JDK1.1
      */
     protected int mark = 0;
 
@@ -232,7 +231,6 @@ public class FastByteArrayInputStream extends InputStream {
      * <code>markSupported</code> method of <code>ByteArrayInputStream</code>
      * always returns <code>true</code>.
      *
-     * @since JDK1.1
      */
     public boolean markSupported() {
         return true;
@@ -251,7 +249,6 @@ public class FastByteArrayInputStream extends InputStream {
      * <p> Note: The <code>readAheadLimit</code> for this class
      * has no meaning.
      *
-     * @since JDK1.1
      */
     public void mark(int readAheadLimit) {
         mark = pos;

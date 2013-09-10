@@ -47,7 +47,6 @@ import org.xml.sax.XMLReader;
 /**
  * ISO 2709 reader behaving like a SaX XMLReader
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Iso2709Reader implements XMLReader {
 

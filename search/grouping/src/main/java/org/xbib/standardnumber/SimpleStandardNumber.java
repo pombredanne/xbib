@@ -32,9 +32,8 @@
 package org.xbib.standardnumber;
 
 /**
- * A simple standard number base class
+ * Abstract standard number class
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class SimpleStandardNumber<T extends Comparable> implements StandardNumber<T> {
 

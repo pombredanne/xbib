@@ -42,7 +42,6 @@ import org.testng.Assert;
 /**
  * Generator test
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class ParserTest extends Assert {
 

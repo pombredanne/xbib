@@ -40,8 +40,6 @@ import org.xbib.sru.SRUConstants;
 
 /**
  * Elasticseach SRU service
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SRUService implements org.xbib.sru.service.SRUService {
 
@@ -76,7 +74,7 @@ public class SRUService implements org.xbib.sru.service.SRUService {
 
     @Override
     public String getEncoding() {
-        return "UTF-8"; // always UTF-8
+        return "UTF-8";
     }
 
     @Override

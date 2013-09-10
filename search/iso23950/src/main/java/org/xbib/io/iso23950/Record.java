@@ -34,7 +34,6 @@ package org.xbib.io.iso23950;
 /**
  *  A record for Z39.50 presentations
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Record {
 

@@ -36,7 +36,6 @@ import java.util.LinkedList;
 /**
  * Simple component
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SimpleComponent extends LinkedList<String>
         implements GroupKeyComponent<String> {

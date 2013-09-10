@@ -34,10 +34,9 @@ package org.xbib.elements;
 import java.util.Map;
 
 /**
- *  Element interface.
+ * Element interface.
  * Elements are constructed from a key/value stream by key/value builders.
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  * @param <K> the key class
  * @param <V> the value class
  * @param <B> th builder class

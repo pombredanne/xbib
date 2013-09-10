@@ -40,7 +40,6 @@ import org.xbib.rdf.xcontent.DefaultContentBuilder;
 /**
  * A MARC builder builds Elements from MARC field collections. It uses a MARC context.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MARCContext extends LiaContext {
 

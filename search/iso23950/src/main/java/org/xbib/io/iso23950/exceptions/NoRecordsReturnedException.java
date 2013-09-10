@@ -36,11 +36,4 @@ public class NoRecordsReturnedException extends ZException {
         super(message);
     }
 
-    public NoRecordsReturnedException(Throwable throwable) {
-        super(throwable);
-    }
-
-    public NoRecordsReturnedException(String message, Throwable throwable) {
-        super(message, throwable);
-    }
 }

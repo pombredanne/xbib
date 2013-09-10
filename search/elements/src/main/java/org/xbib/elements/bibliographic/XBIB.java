@@ -34,7 +34,6 @@ package org.xbib.elements.bibliographic;
 /**
  * XBIB name space
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface XBIB {
     /** The prefix of this name space */

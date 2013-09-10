@@ -1,19 +1,33 @@
 /*
+ * Licensed to Jörg Prante and xbib under one or more contributor
+ * license agreements. See the NOTICE.txt file distributed with this work
+ * for additional information regarding copyright ownership.
  *
- *  Copyright 2011 Rajendra Patil
+ * Copyright (C) 2012 Jörg Prante and xbib
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses
+ * or write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * The interactive user interfaces in modified source and object code
+ * versions of this program must display Appropriate Legal Notices,
+ * as required under Section 5 of the GNU Affero General Public License.
  *
+ * In accordance with Section 7(b) of the GNU Affero General Public
+ * License, these Appropriate Legal Notices must retain the display of the
+ * "Powered by xbib" logo. If the display of the logo is not reasonably
+ * feasible for technical reasons, the Appropriate Legal Notices must display
+ * the words "Powered by xbib".
  */
 package org.xbib.servlet.filter;
 
@@ -25,15 +39,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.xbib.logging.Logger;
+import org.xbib.logging.LoggerFactory;
 import org.xbib.servlet.filter.common.AbstractFilter;
 import org.xbib.servlet.filter.common.Constants;
 import static org.xbib.servlet.filter.common.Constants.CONTENT_ENCODING_IDENTITY;
 import static org.xbib.servlet.filter.common.Constants.DEFAULT_COMPRESSION_SIZE_THRESHOLD;
 import static org.xbib.servlet.filter.common.Constants.HTTP_ACCEPT_ENCODING_HEADER;
 import static org.xbib.servlet.filter.common.Constants.HTTP_CONTENT_ENCODING_HEADER;
-import static org.xbib.servlet.filter.common.Utils.*;
 import org.xbib.servlet.filter.compression.CompressedHttpServletRequestWrapper;
 import org.xbib.servlet.filter.compression.CompressedHttpServletResponseWrapper;
 import org.xbib.servlet.filter.compression.EncodedStreamsFactory;
@@ -43,16 +57,14 @@ import org.xbib.servlet.filter.compression.EncodedStreamsFactory;
  * Servlet Filter implementation class CompressionFilter to handle compressed requests
  * and also respond with compressed contents supporting gzip, compress or
  * deflate compression encoding.
- * Visit http://code.google.com/p/webutilities/wiki/CompressionFilter for more details.
  *
- * @author rpatil
  */
 public class CompressionFilter extends AbstractFilter {
 
     /**
      * Logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompressionFilter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CompressionFilter.class.getName());
 
     /**
      * The threshold number of bytes) to compress
@@ -77,11 +89,16 @@ public class CompressionFilter extends AbstractFilter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
-        int compressionMinSize = readInt(filterConfig.getInitParameter(INIT_PARAM_COMPRESSION_THRESHOLD), this.compressionThreshold);
+        int compressionMinSize;
+        try {
+            compressionMinSize = Integer.parseInt(filterConfig.getInitParameter(INIT_PARAM_COMPRESSION_THRESHOLD));
+        } catch (Exception e) {
+            compressionMinSize = this.compressionThreshold;
+        }
         if (compressionMinSize > 0) { // priority given to configured value
             this.compressionThreshold = compressionMinSize;
         }
-        LOGGER.trace("Filter initialized with: {}:{}", new Object[]{
+        logger.trace("Filter initialized with: {}:{}", new Object[]{
             INIT_PARAM_COMPRESSION_THRESHOLD, String.valueOf(this.compressionThreshold)});
     }
 
@@ -97,7 +114,7 @@ public class CompressionFilter extends AbstractFilter {
             try {
                 compressedResponseWrapper.close();  //so that stream is finished and closed.
             } catch (IOException ex) {
-                LOGGER.error("Response was already closed: ", ex.toString());
+                logger.error("Response was already closed: ", ex.toString());
             }
             if (compressedResponseWrapper.isCompressed()) {
                 req.setAttribute(COMPRESSED_ATTR, Boolean.TRUE);
@@ -107,20 +124,20 @@ public class CompressionFilter extends AbstractFilter {
 
     private ServletRequest getRequest(ServletRequest request) {
         if (!(request instanceof HttpServletRequest)) {
-            LOGGER.trace("No Compression: non http request");
+            logger.trace("No Compression: non http request");
             return request;
         }
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String contentEncoding = httpRequest.getHeader(HTTP_CONTENT_ENCODING_HEADER);
         if (contentEncoding == null) {
-            LOGGER.trace("No Compression: Request content encoding is: {}", contentEncoding);
+            logger.trace("No Compression: Request content encoding is: {}", contentEncoding);
             return request;
         }
         if (!EncodedStreamsFactory.isRequestContentEncodingSupported(contentEncoding)) {
-            LOGGER.trace("No Compression: unsupported request content encoding: {}", contentEncoding);
+            logger.trace("No Compression: unsupported request content encoding: {}", contentEncoding);
             return request;
         }
-        LOGGER.debug("Decompressing request: content encoding : {}", contentEncoding);
+        logger.debug("Decompressing request: content encoding : {}", contentEncoding);
         return new CompressedHttpServletRequestWrapper(httpRequest, EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding));
     }
 
@@ -146,11 +163,11 @@ public class CompressionFilter extends AbstractFilter {
 
     private ServletResponse getResponse(ServletRequest request, ServletResponse response) {
         if (response.isCommitted() || request.getAttribute(PROCESSED_ATTR) != null) {
-            LOGGER.trace("No Compression: Response committed or filter has already been applied");
+            logger.trace("No Compression: Response committed or filter has already been applied");
             return response;
         }
         if (!(response instanceof HttpServletResponse) || !(request instanceof HttpServletRequest)) {
-            LOGGER.trace("No Compression: non http request/response");
+            logger.trace("No Compression: non http request/response");
             return response;
         }
         HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -158,21 +175,21 @@ public class CompressionFilter extends AbstractFilter {
         String acceptEncoding = httpRequest.getHeader(HTTP_ACCEPT_ENCODING_HEADER);
         String contentEncoding = getAppropriateContentEncoding(acceptEncoding);
         if (contentEncoding == null) {
-            LOGGER.trace("No Compression: Accept encoding is : {}", acceptEncoding);
+            logger.trace("No Compression: Accept encoding is : {}", acceptEncoding);
             return response;
         }
         String requestURI = httpRequest.getRequestURI();
         if (!isURLAccepted(requestURI)) {
-            LOGGER.trace("No Compression: For path: ", requestURI);
+            logger.trace("No Compression: For path: ", requestURI);
             return response;
         }
         String userAgent = httpRequest.getHeader(Constants.HTTP_USER_AGENT_HEADER);
         if (!isUserAgentAccepted(userAgent)) {
-            LOGGER.trace("No Compression: For User-Agent: {}", userAgent);
+            logger.trace("No Compression: For User-Agent: {}", userAgent);
             return response;
         }
         EncodedStreamsFactory encodedStreamsFactory = EncodedStreamsFactory.getFactoryForContentEncoding(contentEncoding);
-        LOGGER.debug("Compressing response: content encoding : {}", contentEncoding);
+        logger.debug("Compressing response: content encoding : {}", contentEncoding);
         return new CompressedHttpServletResponseWrapper(httpResponse, encodedStreamsFactory, contentEncoding, compressionThreshold, this);
     }
 

@@ -52,7 +52,6 @@ import z3950.v3.PDU;
 /**
  * A Z39.50 connection
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ZConnection implements Connection<ZSession> {
 

@@ -38,15 +38,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
-/**
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
 public class OAIServiceFactory {
 
     private final static Logger logger = LoggerFactory.getLogger(OAIServiceFactory.class.getName());

@@ -37,7 +37,6 @@ import java.util.ResourceBundle;
 /**
  * Diagnostics for Z server
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Diagnostics extends IOException {
 

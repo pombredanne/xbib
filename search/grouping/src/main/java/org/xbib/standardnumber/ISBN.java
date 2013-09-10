@@ -42,15 +42,6 @@ package org.xbib.standardnumber;
  * Lesser General Public License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
  *
- * @author Eric Hellman Formatter based upon the Python script found at
- *         http://c0re.23.nu/c0de/misc/isbn.py Module for formating and checking ISBNs. Based con
- *         code from Nelson H. F. Beebe included in bibclean which seems to have some relation to ISBNs.
- *         See http://blogs.23.nu/c0re/stories/1416/ for further details. ISBN checking
- *         code is based on code snippet from Nikita Borisov at
- *         http://www.csclub.uwaterloo.ca/u/nborisov/projects/isbn.html
- * @author Maximillian Dornseif md@hudora.de
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  * @see <a href="http://www.s.org/standards/home/s/international/html/usm12.htm">The ISBN Users' Manual</a>
  * @see <a href="http://www.ietf.org/html.charters/OLD/urn-charter.html">The IETF URN Charter</a>
  * @see <a href="http://www.iana.org/assignments/urn-namespaces">The IANA URN assignments</a>

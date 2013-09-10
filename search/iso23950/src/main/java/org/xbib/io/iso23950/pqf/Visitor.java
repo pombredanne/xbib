@@ -34,7 +34,6 @@ package org.xbib.io.iso23950.pqf;
 /**
  *  PQF abstract syntax tree visitor
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface Visitor {
     /**

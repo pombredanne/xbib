@@ -150,7 +150,6 @@ public class FastCharArrayWriter extends Writer {
      *            <tt>null</tt>, then the four characters <tt>"null"</tt> are
      *            appended to this writer.
      * @return This writer
-     * @since 1.5
      */
     public FastCharArrayWriter append(CharSequence csq) {
         String s = (csq == null ? "null" : csq.toString());
@@ -179,7 +178,6 @@ public class FastCharArrayWriter extends Writer {
      * @throws IndexOutOfBoundsException If <tt>start</tt> or <tt>end</tt> are negative, <tt>start</tt>
      *                                   is greater than <tt>end</tt>, or <tt>end</tt> is greater than
      *                                   <tt>csq.length()</tt>
-     * @since 1.5
      */
     public FastCharArrayWriter append(CharSequence csq, int start, int end) {
         String s = (csq == null ? "null" : csq).subSequence(start, end).toString();
@@ -198,7 +196,6 @@ public class FastCharArrayWriter extends Writer {
      *
      * @param c The 16-bit character to append
      * @return This writer
-     * @since 1.5
      */
     public FastCharArrayWriter append(char c) {
         write(c);

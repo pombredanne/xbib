@@ -31,7 +31,6 @@
  */
 package org.xbib.oai.client;
 
-import org.testng.annotations.Test;
 import org.xbib.date.DateUtil;
 import org.xbib.io.Connection;
 import org.xbib.io.Packet;
@@ -52,7 +51,6 @@ import java.net.URI;
 /**
  * NatLiz client test
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class NatLizClientTest {
 

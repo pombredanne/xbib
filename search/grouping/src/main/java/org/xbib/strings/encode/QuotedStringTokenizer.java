@@ -38,10 +38,7 @@ import java.util.StringTokenizer;
 /**
  * A string tokenizer that understands quotes and escape characters.
  *
- * This file is part of the Polyglot extensible compiler framework.
  *
- * Copyright (c) 2000-2006 Polyglot project group, Cornell University
- * @author Igor Peshansky, IBM Corporation
  */
 public class QuotedStringTokenizer extends StringTokenizer implements Iterator<String> {
     /* Have to keep copies because StringTokenizer makes everything private */

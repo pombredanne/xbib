@@ -39,9 +39,8 @@ import org.xbib.sequential.Separable;
 
 /**
  * "MAB-Diskette" is an ISO2709 format derivative with custom padding symbold and field delimiters
- * suited originally for diskette distribution to PC systems with MS-DOS.
+ * created originally for diskette distribution to PC systems with MS-DOS.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MABDisketteReader extends FilterReader {
 

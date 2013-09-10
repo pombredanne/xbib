@@ -49,7 +49,6 @@ import org.xbib.sru.searchretrieve.SearchRetrieveRequest;
 /**
  * Init / Search / Present operation with result processing
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class ZSearchRetrieveRequest extends SearchRetrieveRequest {
 

@@ -37,11 +37,4 @@ public class MessageSizeTooSmallException extends ZException {
         super(message);
     }
 
-    public MessageSizeTooSmallException(Throwable throwable) {
-        super(throwable);
-    }
-
-    public MessageSizeTooSmallException(String message, Throwable throwable) {
-        super(message, throwable);
-    }
 }

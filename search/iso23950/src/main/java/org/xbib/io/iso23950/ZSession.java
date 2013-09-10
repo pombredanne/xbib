@@ -44,7 +44,6 @@ import org.xbib.io.iso23950.service.ZService;
 /**
  * Z Session
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ZSession implements Session<ZPacket>, ZService {
 

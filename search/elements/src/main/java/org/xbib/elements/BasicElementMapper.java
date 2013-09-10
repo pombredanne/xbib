@@ -56,9 +56,6 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * Basic element mapper
  *
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
-
  * @param <K>
  * @param <V>
  * @param <E>

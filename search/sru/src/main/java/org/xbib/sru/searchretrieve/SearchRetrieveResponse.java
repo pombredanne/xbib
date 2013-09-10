@@ -56,7 +56,6 @@ import org.xml.sax.InputSource;
 /**
  * SearchRetrieve response
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SearchRetrieveResponse extends DefaultSRUResponse
         implements SRUResponse, SearchRetrieveListener, HttpResponseListener {
@@ -81,7 +80,6 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
     }
 
     public int httpStatus() {
-        //return httpResponse != null ? httpResponse.getStatusCode() : 200;
         return httpResponse.getStatusCode();
     }
 

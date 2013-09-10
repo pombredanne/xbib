@@ -31,7 +31,6 @@
  */
 package org.xbib.oai.service;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
@@ -54,7 +53,6 @@ import org.xbib.oai.set.ListSetsResponse;
 /**
  *  OAI service
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface OAIService {
 

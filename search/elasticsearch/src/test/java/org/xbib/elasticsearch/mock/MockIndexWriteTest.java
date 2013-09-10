@@ -45,7 +45,6 @@ import org.xbib.rdf.simple.SimpleResourceContext;
 /**
  * Elasticsearch Index mock test
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MockIndexWriteTest<S extends Resource<S, P, O>, P extends Property, O extends Literal<O>> {
 

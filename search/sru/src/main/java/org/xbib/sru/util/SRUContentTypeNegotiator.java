@@ -38,7 +38,6 @@ import org.xbib.io.negotiate.ContentTypeNegotiator;
  * Content negiotiator. If agents want XML, serve XML (especially browsers).
  * Consider also application/sru+xml
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SRUContentTypeNegotiator extends ContentTypeNegotiator {
 

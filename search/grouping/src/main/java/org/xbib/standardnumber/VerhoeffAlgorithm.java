@@ -34,9 +34,7 @@ package org.xbib.standardnumber;
 /**
  * @see <a href="http://en.wikipedia.org/wiki/Verhoeff_algorithm/">More Info</a>
  * @see <a href="http://en.wikipedia.org/wiki/Dihedral_group">Dihedral Group</a>
- * @see <a href="http://mathworld.wolfram.com/DihedralGroupD5.html">Dihedral
- * Group Order 10</a>
- * @author Colm Rice
+ * @see <a href="http://mathworld.wolfram.com/DihedralGroupD5.html">Dihedral Group Order 10</a>
  */
 public class VerhoeffAlgorithm {
 

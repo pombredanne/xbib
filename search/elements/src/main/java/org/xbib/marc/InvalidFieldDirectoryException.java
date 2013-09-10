@@ -36,7 +36,6 @@ import java.io.IOException;
 /**
  * Exception for broken field directories
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class InvalidFieldDirectoryException extends IOException {
 

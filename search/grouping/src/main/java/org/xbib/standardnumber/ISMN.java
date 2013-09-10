@@ -53,7 +53,6 @@ package org.xbib.standardnumber;
  *
  * The thirteen-digit number allows a billion items each to carry a different number.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ISMN implements StandardNumber {
 

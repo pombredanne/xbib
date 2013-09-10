@@ -34,7 +34,6 @@ package org.xbib.strings.encode;
 /**
  * Interface for string encoding
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface StringEncoder {
 

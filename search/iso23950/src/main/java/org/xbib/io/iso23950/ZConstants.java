@@ -34,7 +34,6 @@ package org.xbib.io.iso23950;
 /**
  *  Z constants
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ZConstants {
 

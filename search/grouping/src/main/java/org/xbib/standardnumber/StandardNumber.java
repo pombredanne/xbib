@@ -35,8 +35,6 @@ import java.io.Serializable;
 
 /**
  * Standard number interface
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface StandardNumber<T> extends Comparable<T>, Serializable {
 

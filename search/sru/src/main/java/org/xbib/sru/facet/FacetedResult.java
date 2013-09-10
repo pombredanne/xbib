@@ -43,7 +43,6 @@ import java.util.List;
  *
  * TODO need better XML handling here
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class FacetedResult {
 

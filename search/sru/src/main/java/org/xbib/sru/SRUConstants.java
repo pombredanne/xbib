@@ -38,7 +38,6 @@ import java.util.Map;
 /**
  * Constants for SRU
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface SRUConstants {
     
@@ -267,7 +266,7 @@ public interface SRUConstants {
      * The facetLimit parameter can specify a limit on a per field basis,
      * and/or a global limit applying to all fields.
      *
-     * @since SRU 2.0
+     * (SRU 2.0)
      *
      */
     String FACET_LIMIT_PARAMETER = "facetLimit";
@@ -277,7 +276,7 @@ public interface SRUConstants {
      * value is 1 (meaning start with the first count). This parameter can be
      * specified on a per field basis.
      *
-     * @since SRU 2.0
+     * (SRU 2.0)
      */
 
     String FACET_START_PARAMETER = "facetStart";
@@ -295,7 +294,7 @@ public interface SRUConstants {
      *    ‘caseSensitive’
      *    ‘caseInsensitive’ (default)
      *
-     * @since SRU 2.0
+     *  (SRU 2.0)
      */
 
     String FACET_SORT_PARAMETER = "facetSort";
@@ -306,7 +305,7 @@ public interface SRUConstants {
      * The parameter may be repeated, but should not be used in conjunction
      * with any other facet parameter.
      *
-     * @since SRU 2.0
+     *  (SRU 2.0)
      */
 
     String FACET_COUNT_PARAMETER = "facetCount";

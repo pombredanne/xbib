@@ -39,9 +39,6 @@ package org.xbib.strings.encode;
  * "Hanging on the Metaphone" by Lawrence Philips <i>Computer Language </i> of
  * Dec. 1990, p 39
  *
- * @author <a href="mailto:wbrogden@bga.com">wbrogden</a>
- * @author <a href="mailto:bayard@generationjava.com">bayard</a>
- * @author Tim O'Brien
  */
 public class MetaphoneEncoder implements StringEncoder {
 

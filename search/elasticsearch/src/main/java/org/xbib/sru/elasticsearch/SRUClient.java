@@ -48,8 +48,6 @@ import java.net.URI;
 
 /**
  * SearchRetrieve by URL for Elasticseach
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SRUClient implements org.xbib.sru.client.SRUClient {
 

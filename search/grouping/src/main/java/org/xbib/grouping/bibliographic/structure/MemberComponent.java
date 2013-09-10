@@ -53,7 +53,6 @@ import java.util.LinkedHashSet;
  * For accomplishing this mor easily, a domain parameter has been added.
  * The default domain is "G" for generic member.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MemberComponent extends LinkedHashSet<String>
         implements GroupKeyComponent<String> {

@@ -1,5 +1,7 @@
 package org.xbib.strings.encode;
 
+import org.xbib.util.Filter;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;

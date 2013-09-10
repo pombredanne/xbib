@@ -56,7 +56,6 @@ import z3950.v3.SearchResponse;
 /**
  *  Base class for Z39.50 Search operation
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractSearchOperation {
 

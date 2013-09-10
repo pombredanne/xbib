@@ -34,8 +34,6 @@ package org.xbib.standardnumber;
 /**
  * European Article Number (EAN)
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  */
 public class EAN extends AbstractStandardBookNumber {
 

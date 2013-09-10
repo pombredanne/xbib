@@ -180,7 +180,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
      * required.
      *
      * @return String decoded from the buffer's contents.
-     * @since JDK1.1
      */
     public String toString() {
         return new String(buf, 0, count);
@@ -202,7 +201,6 @@ public class FastByteArrayOutputStream extends OutputStream implements BytesStre
      * @return String decoded from the buffer's contents.
      * @throws java.io.UnsupportedEncodingException
      *          If the named charset is not supported
-     * @since JDK1.1
      */
     public String toString(String charsetName)
             throws UnsupportedEncodingException {

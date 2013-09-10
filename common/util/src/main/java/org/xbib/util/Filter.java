@@ -1,5 +1,5 @@
 /*
- * Licensed to Jörg Prante and xbib under one or more contributor 
+ * Licensed to Jörg Prante and xbib under one or more contributor
  * license agreements. See the NOTICE.txt file distributed with this work
  * for additional information regarding copyright ownership.
  *
@@ -29,32 +29,43 @@
  * feasible for technical reasons, the Appropriate Legal Notices must display
  * the words "Powered by xbib".
  */
-package org.xbib.query;
+package org.xbib.util;
 
-/**
- * Query exception
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
-public class QueryException extends Exception {
-    /**
-     * Creates a new QueryException object.
-     */
-    public QueryException(String msg) {
-        super(msg);
+import java.util.Collection;
+import java.util.Iterator;
+
+public class Filter<S, T> {
+
+    public interface Predicate<S, T> {
+
+        T apply(S s);
+    }    
+    
+    public static <S,T> void filter(Iterator<S> source, Collection<T> target, Predicate<S, T> p) {
+        while (source.hasNext()) {
+            T t = p.apply(source.next());
+            if (t != null) {
+                target.add(t);
+            }
+        }
     }
 
-    /**
-     * Creates a new QueryException object.
-     */
-    public QueryException(Throwable t) {
-        super(t);
+    public static <S,T> void filter(Iterable<S> source, Collection<T> target, Predicate<S, T> p) {
+        for (S s : source) {
+            T t = p.apply(s);
+            if (t != null) {
+                target.add(t);
+            }
+        }
     }
 
-    /**
-     * Creates a new QueryException object.
-     */
-    public QueryException(String msg, Throwable t) {
-        super(msg, t);
+    public static <S,T> void filter(S[] source, Collection<T> target, Predicate<S, T> p) {
+        for (S s : source) {
+            T t = p.apply(s);
+            if (t != null) {
+                target.add(t);
+            }
+        }        
     }
+    
 }

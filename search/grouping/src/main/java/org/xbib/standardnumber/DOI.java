@@ -34,7 +34,6 @@ package org.xbib.standardnumber;
 /**
  * A DOI as a standard number
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DOI extends SimpleStandardNumber {
 

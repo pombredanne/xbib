@@ -34,7 +34,6 @@ package org.xbib.standardnumber;
 /**
  * International Standard Identifier for Libraries (ISIL)
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ISIL extends SimpleStandardNumber {
 

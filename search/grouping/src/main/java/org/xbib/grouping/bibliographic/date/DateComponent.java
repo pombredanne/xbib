@@ -43,7 +43,6 @@ import java.util.LinkedList;
 /**
  * Bibliographic edition identifier
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DateComponent extends LinkedList<String> implements GroupKeyComponent<String> {
 

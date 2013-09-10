@@ -42,8 +42,6 @@ package org.xbib.strings.encode;
  * ftp://ftp.cuj.com/pub/2000/1806/philips.zip </a></li>
  * </ul>
  *
- * @author <a href="mailto:ben@walstrum.com">Benjamin Walstrum </a>
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DoubleMetaphoneEncoder implements StringEncoder {
 

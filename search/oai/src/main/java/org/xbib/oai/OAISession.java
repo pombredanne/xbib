@@ -39,7 +39,6 @@ import java.io.IOException;
 /**
  *  OAI session
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface OAISession extends HttpSession {
 

@@ -39,7 +39,6 @@ import java.util.Date;
 /**
  *  OAI request API
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface OAIRequest<R extends OAIRequest> extends HttpRequest, OAIConstants {
 

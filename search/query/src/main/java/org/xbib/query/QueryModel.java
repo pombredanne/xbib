@@ -40,7 +40,6 @@ package org.xbib.query;
  * The query model interface provides methods for processing
  * the query forms in search engine middleware.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface QueryModel {
 

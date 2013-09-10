@@ -53,7 +53,6 @@ import java.util.regex.Pattern;
  * It performs the heavy lifting by looking up the structured information in the Element Map
  * and processes the MARC fields.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MARCPipeline
         extends KeyValuePipeline<FieldCollection, String, MARCElement, MARCContext> {

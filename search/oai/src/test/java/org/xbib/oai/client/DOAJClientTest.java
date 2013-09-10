@@ -54,7 +54,6 @@ import java.io.StringWriter;
 /**
  * DOAJ client test
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DOAJClientTest {
 

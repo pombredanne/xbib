@@ -53,9 +53,8 @@ import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 /**
- * Element Map
+ * Abstract specification
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class AbstractSpecification {
 

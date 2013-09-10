@@ -45,7 +45,6 @@ import java.util.ServiceLoader;
 /**
  * A SRU service factory.
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class SRUServiceFactory {
 

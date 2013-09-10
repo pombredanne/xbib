@@ -49,7 +49,6 @@ import org.xbib.oai.util.ResumptionToken;
 /**
  * Default OAI client
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
 

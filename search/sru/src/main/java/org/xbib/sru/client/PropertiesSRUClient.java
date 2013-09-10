@@ -41,7 +41,6 @@ import java.util.Properties;
 /**
  * A SRU client with initialization from properties
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PropertiesSRUClient extends DefaultSRUClient implements SRUConstants {
 

@@ -40,8 +40,6 @@ import java.net.URI;
 
 /**
  *  SRU service
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface SRUService extends SRUProfile, Closeable {
 

@@ -45,8 +45,6 @@ import org.xbib.sru.searchretrieve.SearchRetrieveResponse;
 
 /**
  * SRU client
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface SRUClient
         extends SRUProfile, SRUConstants, Closeable {

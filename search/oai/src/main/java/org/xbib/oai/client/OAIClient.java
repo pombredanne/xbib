@@ -31,29 +31,21 @@
  */
 package org.xbib.oai.client;
 
-import java.io.IOException;
 import java.net.URI;
 
 import org.xbib.oai.OAIConstants;
 import org.xbib.oai.OAISession;
-import org.xbib.oai.identify.ListIdentifiersResponse;
-import org.xbib.oai.metadata.ListMetadataFormatsResponse;
 import org.xbib.oai.record.GetRecordRequest;
 import org.xbib.oai.identify.IdentifyRequest;
-import org.xbib.oai.identify.IdentifyResponse;
 import org.xbib.oai.identify.ListIdentifiersRequest;
 import org.xbib.oai.metadata.ListMetadataFormatsRequest;
-import org.xbib.oai.record.GetRecordResponse;
 import org.xbib.oai.record.ListRecordsRequest;
-import org.xbib.oai.record.ListRecordsResponse;
 import org.xbib.oai.set.ListSetsRequest;
-import org.xbib.oai.set.ListSetsResponse;
 import org.xbib.oai.util.ResumptionToken;
 
 /**
  * OAI client API
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface OAIClient extends OAISession, OAIConstants {
 

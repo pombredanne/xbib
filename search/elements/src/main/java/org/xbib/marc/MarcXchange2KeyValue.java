@@ -39,7 +39,6 @@ import org.xbib.keyvalue.KeyValueStreamListener;
  * Convert a MarcXchange stream to a key/value stream. With optional value
  * string transformation.
  *
- * @author Jörg Prante <joergprante@gmail.com>
  */
 public class MarcXchange2KeyValue implements
         MarcXchangeListener,

@@ -34,15 +34,8 @@ package org.xbib.grouping.bibliographic;
 /**
  * Invalid cluster domain exception
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class InvalidGroupDomainException extends Exception {
-    /**
-     * Creates a new exception object.
-     */
-    public InvalidGroupDomainException() {
-        super();
-    }
 
     /**
      * Creates a new exception object.
@@ -53,22 +46,5 @@ public class InvalidGroupDomainException extends Exception {
         super(msg);
     }
 
-    /**
-     * Creates a new InvalidStandardNumberException object.
-     *
-     * @param t
-     */
-    public InvalidGroupDomainException(Throwable t) {
-        super(t);
-    }
 
-    /**
-     * Creates a new InvalidStandardNumberException object.
-     *
-     * @param msg
-     * @param t
-     */
-    public InvalidGroupDomainException(String msg, Throwable t) {
-        super(msg, t);
-    }
 }

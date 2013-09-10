@@ -39,7 +39,6 @@ import java.util.TreeMap;
  * Query formatter interface. Enables filter, facet, and option management
  * in a query language.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface QueryFormatter {
 

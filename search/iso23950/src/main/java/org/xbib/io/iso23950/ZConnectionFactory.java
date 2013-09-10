@@ -38,7 +38,6 @@ import org.xbib.io.ConnectionFactory;
 /**
  * A Z39.50 connection factory
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class ZConnectionFactory implements ConnectionFactory<ZSession> {
 

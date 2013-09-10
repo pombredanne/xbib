@@ -45,8 +45,6 @@ import java.io.IOException;
 
 /**
  *  RDF metadata handler
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfMetadataHandler extends MetadataHandler implements OAIConstants {
 

@@ -34,7 +34,6 @@ package org.xbib.query;
 /**
  * A Filter
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface QueryFilter<V> extends QueryOption<V> {
 }

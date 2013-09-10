@@ -40,7 +40,6 @@ import java.util.LinkedList;
 /**
  * A segmented cluster key
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SegmentedGroupKey extends LinkedList<GroupKeyComponent>
         implements GroupKey {

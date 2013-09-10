@@ -33,8 +33,6 @@ package org.xbib.io.iso23950.pqf;
 
 /**
  * Syntax exception
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SyntaxException extends RuntimeException {
     /**
@@ -46,22 +44,4 @@ public class SyntaxException extends RuntimeException {
         super(msg);
     }
 
-    /**
-     * Creates a new SyntaxException object.
-     *
-     * @param t the throwable for this syntax exception
-     */
-    public SyntaxException(Throwable t) {
-        super(t);
-    }
-
-    /**
-     * Creates a new SyntaxException object.
-     *
-     * @param msg the message for this syntax exception
-     * @param t the throwable for this syntax exception
-     */
-    public SyntaxException(String msg, Throwable t) {
-        super(msg, t);
-    }
 }

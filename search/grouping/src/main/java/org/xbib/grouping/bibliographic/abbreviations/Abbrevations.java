@@ -37,10 +37,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-/**
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- */
 public class Abbrevations {
 
     private static ResourceBundle forBibliographicRules(String ruleName) {

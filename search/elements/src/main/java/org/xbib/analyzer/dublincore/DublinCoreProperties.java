@@ -37,7 +37,7 @@ import org.xbib.rdf.Property;
 import org.xbib.rdf.simple.SimpleFactory;
 
 /**
- * THe Dublin Core Elements as RDF Properties
+ *  Dublin Core Elements as RDF Properties
  */
 public interface DublinCoreProperties extends DC {
 

@@ -34,7 +34,6 @@ package org.xbib.query;
 /**
  * String search field
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class StringField extends AbstractField {
 

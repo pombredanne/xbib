@@ -33,8 +33,6 @@ package org.xbib.strings.encode;
 
 /**
  * String encoding exception
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class EncoderException extends Exception {
     /**

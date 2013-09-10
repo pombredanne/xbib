@@ -23,9 +23,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test book number recognition
+ * Test international book number recognition
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ISBNTest extends Assert {
 

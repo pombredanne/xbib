@@ -33,7 +33,6 @@ package org.xbib.analyzer.dublincore;
 
 /**
  * The Dublin Core terms as strings with namespace
- * @author joerg
  */
 public interface DublinCoreTerms extends DCTERMS {
 

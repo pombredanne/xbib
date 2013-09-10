@@ -33,7 +33,6 @@ package org.xbib.io.iso23950.searchretrieve;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 
 import org.xbib.io.iso23950.cql.RPNGenerator;
 import org.xbib.query.cql.CQLParser;

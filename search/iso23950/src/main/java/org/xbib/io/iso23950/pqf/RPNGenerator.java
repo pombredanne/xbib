@@ -51,7 +51,6 @@ import z3950.v3.RPNStructure_rpnRpnOp;
 /**
  * PQF abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RPNGenerator implements Visitor {
 

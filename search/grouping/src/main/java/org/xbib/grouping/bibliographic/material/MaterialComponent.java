@@ -40,7 +40,6 @@ import java.util.LinkedList;
 /**
  * Material cluster key component.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MaterialComponent extends LinkedList<BibliographicMaterial>
         implements GroupKeyComponent<BibliographicMaterial> {

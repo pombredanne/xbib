@@ -36,8 +36,6 @@ import org.xbib.rdf.context.ResourceContext;
 /**
  * Element Builder
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
-
  * @param <K>
  * @param <V>
  * @param <E>

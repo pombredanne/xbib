@@ -48,8 +48,8 @@ public class ISBNRangeMessageConfigurator {
 
     private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     private static final String ISBN_RANGE_MESSAGE_RESOURCE = "/org/xbib/standardnumber/RangeMessage.xml";
-    private Stack<StringBuilder> content = new Stack<StringBuilder>();
-    private List<String> ranges = new ArrayList<String>();
+    private Stack<StringBuilder> content = new Stack();
+    private List<String> ranges = new ArrayList();
     private String messageDate;
     private String prefix = null;
     private String rangeBegin = null;

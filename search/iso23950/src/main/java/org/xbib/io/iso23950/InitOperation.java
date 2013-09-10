@@ -48,7 +48,6 @@ import z3950.v3.ProtocolVersion;
 /**
  *  A Z39.50 Init operation
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class InitOperation {
 
@@ -58,9 +57,6 @@ public class InitOperation {
     private String password;
     private String group;
     private boolean rejected;
-
-    public InitOperation() {
-    }
 
     public InitOperation(String user, String password, String group) {
         this.user = user;

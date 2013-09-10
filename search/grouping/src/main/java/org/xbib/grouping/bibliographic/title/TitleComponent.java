@@ -42,7 +42,6 @@ import java.util.LinkedList;
 /**
  * Title component for cluster key construction
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class TitleComponent extends LinkedList<String>
         implements GroupKeyComponent<String> {

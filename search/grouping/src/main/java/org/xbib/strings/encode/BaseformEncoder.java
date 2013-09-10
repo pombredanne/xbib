@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 /**
  * A base form encoder
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class BaseformEncoder {
 

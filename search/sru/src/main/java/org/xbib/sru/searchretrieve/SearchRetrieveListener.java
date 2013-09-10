@@ -38,7 +38,6 @@ import org.xbib.sru.SRUResponseListener;
 /**
  * Listener for SearchRetrieve responses
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface SearchRetrieveListener extends SRUResponseListener {
        

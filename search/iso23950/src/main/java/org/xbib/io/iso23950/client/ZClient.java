@@ -43,7 +43,6 @@ import java.util.List;
 /**
  * Z client API
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ZClient {
 

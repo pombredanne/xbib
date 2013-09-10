@@ -41,7 +41,6 @@ import java.util.LinkedList;
 /**
  * Standard number as cluster key component
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class StandardNumberComponent extends LinkedList<StandardNumber>
         implements GroupKeyComponent<StandardNumber> {

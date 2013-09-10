@@ -49,7 +49,6 @@ import org.xbib.rdf.Resource;
 /**
  * A MARC element
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public abstract class MARCElement
         implements Element<FieldCollection, String, MARCElementBuilder>,

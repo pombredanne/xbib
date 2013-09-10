@@ -55,7 +55,6 @@ import z3950.v3.ResultSetId;
 /**
  *  Present operation for Z39.50
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PresentOperation {
 

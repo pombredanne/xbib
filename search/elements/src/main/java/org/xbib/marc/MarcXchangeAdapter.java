@@ -34,7 +34,6 @@ package org.xbib.marc;
 /**
  * MarcXchange adapter
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MarcXchangeAdapter implements MarcXchangeListener {
 

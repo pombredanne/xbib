@@ -40,7 +40,6 @@ import org.xbib.sequential.Separable;
 /**
  * SISIS EXPORT is a derivative of ISO2709, with field iteration counter placed into indicator positions.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SisisExportReader extends FilterReader {
 

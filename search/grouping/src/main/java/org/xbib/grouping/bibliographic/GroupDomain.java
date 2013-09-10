@@ -36,7 +36,6 @@ import java.util.HashMap;
 /**
  * Cluster domains
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public enum GroupDomain {
 

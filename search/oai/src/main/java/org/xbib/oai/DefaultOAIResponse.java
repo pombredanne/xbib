@@ -57,7 +57,6 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Default OAI response
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultOAIResponse<R extends DefaultOAIResponse>
         extends DefaultHttpResponse

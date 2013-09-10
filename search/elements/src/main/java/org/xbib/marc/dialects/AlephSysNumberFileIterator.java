@@ -41,7 +41,6 @@ import org.xbib.logging.LoggerFactory;
 
 /**
  * Iterate over Aleph Records with sys numbers from file
- * 
  */
 public class AlephSysNumberFileIterator implements Closeable, Iterator<Integer> {
 

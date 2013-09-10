@@ -42,7 +42,6 @@ import java.util.regex.Pattern;
  * An ordered part title is a title component that can be naturally ordered in sequence,
  * where it may consist of any alphanumerical content
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class OrdinalComponent extends TitleComponent {
 

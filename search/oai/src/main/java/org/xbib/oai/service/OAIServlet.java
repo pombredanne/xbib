@@ -70,7 +70,6 @@ import org.xbib.oai.exceptions.OAIException;
 /**
  *  OAI servlet
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class OAIServlet extends HttpServlet implements OAIConstants {
 

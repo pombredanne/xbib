@@ -40,13 +40,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ResumptionToken<T> {
     
-    //private final static int DEFAULT_CAPACITY = 1000;
-    
-    //private final static long DEFAULT_TTL = 1000L;
-    
-    //private final static LruCache<UUID,ResumptionToken> cache
-    //        = new SynchronizedLruCache(DEFAULT_CAPACITY, DEFAULT_TTL, DEFAULT_CAPACITY / 100);
-
     private final static int DEFAULT_INTERVAL_SIZE = 1000;
 
     private final static Cache<UUID,ResumptionToken> cache

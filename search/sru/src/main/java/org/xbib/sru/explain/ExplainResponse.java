@@ -42,7 +42,6 @@ import org.xbib.sru.SRUResponse;
 /**
  * SRU response for Explain
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ExplainResponse extends DefaultSRUResponse implements SRUResponse {
 

@@ -34,7 +34,6 @@ package org.xbib.standardnumber;
 /**
  * Pica Production Number
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PPN implements StandardNumber {
 

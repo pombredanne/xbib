@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 /**
  * Test serial number recognition
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ISSNTest extends Assert {
 

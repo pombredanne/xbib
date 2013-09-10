@@ -36,7 +36,6 @@ import java.util.LinkedList;
 /**
  * PQF abstract syntax tree
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class Query extends Node {
 

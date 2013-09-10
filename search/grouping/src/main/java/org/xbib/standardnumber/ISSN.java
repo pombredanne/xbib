@@ -80,7 +80,6 @@ import java.util.regex.Pattern;
  *  These particularities themselves necessitated the introduction
  *  of the ISSN.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ISSN implements StandardNumber {
 

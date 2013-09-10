@@ -35,8 +35,6 @@ import static java.util.Collections.singletonList;
 
 /**
  * <p>Thrown when the option parser encounters an unrecognized option.</p>
- *
- * @author <a href="mailto:pholser@alumni.rice.edu">Paul Holser</a>
  */
 class UnrecognizedOptionException extends OptionException {
 

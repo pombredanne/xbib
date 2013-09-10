@@ -41,7 +41,6 @@ import org.xbib.marc.FieldCollection;
  * A MARC element builder builds semantic elements from MARC field collections.
  * It uses a MARC context and outputs the element to an element output.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MARCElementBuilder
     extends AbstractElementBuilder<FieldCollection, String, MARCElement, MARCContext>

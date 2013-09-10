@@ -40,8 +40,6 @@ import java.io.IOException;
 
 /**
  * RDF output
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfOutput implements TripleListener {
 

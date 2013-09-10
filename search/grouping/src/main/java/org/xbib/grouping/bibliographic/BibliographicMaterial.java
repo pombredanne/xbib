@@ -37,7 +37,6 @@ import java.util.Map;
 /**
  * An enumeration of bibliographic materials
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public enum BibliographicMaterial implements Comparable<BibliographicMaterial> {
 

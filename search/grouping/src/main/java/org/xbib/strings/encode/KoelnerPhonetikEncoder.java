@@ -46,11 +46,8 @@ import java.util.regex.Pattern;
  * H.J. Postel, Die K&ouml;lner Phonetik. Ein Verfahren zu Identifizierung
  * von Personennamen auf der Grundlage der Gestaltanalyse. IBM-Nachrichten 19 (1969), 925-931
  * <p/>
- * ge&auml;nderter Algorithmus aus der Matching Toolbox von Rainer Schnell
- * Java-Programmierung von J&ouml;rg Reiher
+ * ge&auml;nderter Algorithmus aus der Matching Toolbox von Rainer Schnell und J&ouml;rg Reiher
  *
- * @author <a href="mailto:prante@hbz-nrw.de">J&ouml;rg Reiher</a>
- * @author modified by <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class KoelnerPhonetikEncoder implements StringEncoder {
 
@@ -58,14 +55,10 @@ public class KoelnerPhonetikEncoder implements StringEncoder {
     private static final String[] POSTEL_VARIATIONS_REPLACEMENTS = {"OWN", "AUN", "RW", "RB", "RSK", "WSK"};
     private Pattern[] variationsPatterns;
     private boolean primary = false;
-    private final Set<Character> csz = new HashSet(Arrays.asList(
-            'C', 'S', 'Z'));
-    private final Set<Character> ckq = new HashSet(Arrays.asList(
-            'C', 'K', 'Q'));
-    private final Set<Character> aouhkxq = new HashSet(Arrays.asList(
-            'A', 'O', 'U', 'H', 'K', 'X', 'Q'));
-    private final Set<Character> ahkloqrux = new HashSet(Arrays.asList(
-            'A', 'H', 'K', 'L', 'O', 'Q', 'R', 'U', 'X'));
+    private final Set<Character> csz = new HashSet<>(Arrays.asList('C', 'S', 'Z'));
+    private final Set<Character> ckq = new HashSet<>(Arrays.asList('C', 'K', 'Q'));
+    private final Set<Character> aouhkxq = new HashSet<>(Arrays.asList('A', 'O', 'U', 'H', 'K', 'X', 'Q'));
+    private final Set<Character> ahkloqrux = new HashSet<>(Arrays.asList('A', 'H', 'K', 'L', 'O', 'Q', 'R', 'U', 'X'));
 
     /**
      *

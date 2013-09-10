@@ -33,11 +33,10 @@ package org.xbib.sru.explain;
 
 /**
  * ZEEREX namespace
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ZEEREX {
 
     String NS_URI = "http://explain.z3950.org/dtd/2.1/";
+
     String NS_PREFIX = "zr";
 }

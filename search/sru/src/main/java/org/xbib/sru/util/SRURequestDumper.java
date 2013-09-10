@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Request dumper
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SRURequestDumper {
 

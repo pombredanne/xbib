@@ -46,9 +46,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * A key/value pipeline for parallel processing of elements
+ * A key/value pipeline for threaded processing of elements
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  *
  * @param <K>
  * @param <V>

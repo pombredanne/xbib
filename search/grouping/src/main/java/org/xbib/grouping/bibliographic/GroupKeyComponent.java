@@ -42,7 +42,6 @@ import java.util.Collection;
  * After adding, all elements are encoded for being
  * combined with other components into a cluster key.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface GroupKeyComponent<T> extends Collection<T> {
 

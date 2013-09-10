@@ -51,7 +51,6 @@ import org.xml.sax.SAXException;
 /**
  * SearchRetrieve filter reader
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SearchRetrieveFilterReader extends XMLFilterReader {
 

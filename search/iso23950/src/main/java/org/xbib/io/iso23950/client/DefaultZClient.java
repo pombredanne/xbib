@@ -44,7 +44,6 @@ import java.util.List;
 /**
  * Default Z client
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultZClient implements ZClient {
 

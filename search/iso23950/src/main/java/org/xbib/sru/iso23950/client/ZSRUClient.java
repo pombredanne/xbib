@@ -49,8 +49,6 @@ import java.util.concurrent.TimeoutException;
 
 /**
  *  A SRU client for Z services
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ZSRUClient extends DefaultSRUClient {
 

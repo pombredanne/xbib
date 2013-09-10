@@ -36,7 +36,6 @@ import org.xbib.io.Request;
 /**
  * Z request interface
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface ZRequest extends Request {
 

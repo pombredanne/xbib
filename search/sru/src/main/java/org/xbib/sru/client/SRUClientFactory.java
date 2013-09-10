@@ -45,8 +45,6 @@ import java.util.WeakHashMap;
 
 /**
  *  A factory for SRU clients
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class SRUClientFactory {
 

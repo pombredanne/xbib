@@ -42,8 +42,6 @@ import org.xbib.rdf.context.ResourceContext;
 /**
  *
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
- *
  * @param <K>
  * @param <V>
  * @param <E>

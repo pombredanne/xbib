@@ -38,7 +38,6 @@ import org.xbib.marc.Field;
 /**
  * A subfield mapper is a helper class to decode MARC subfield IDs to declarative names.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SubfieldValueMapper {
 

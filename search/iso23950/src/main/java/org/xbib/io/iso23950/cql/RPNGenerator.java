@@ -74,7 +74,6 @@ import z3950.v3.RPNStructure_rpnRpnOp;
  *
  * @see http://www.loc.gov/z3950/agency/markup/09.html
  * 
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public final class RPNGenerator implements Visitor {
 

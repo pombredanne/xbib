@@ -40,7 +40,6 @@ import org.xbib.sequential.Separable;
 /**
  * Aleph sequential format reader. This format is a derivative of MARC.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class AlephSequentialReader extends FilterReader {
 

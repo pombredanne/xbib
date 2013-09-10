@@ -36,9 +36,6 @@ import java.io.Serializable;
 /**
  * A bread crumb interface. If an object implements Breadcrumb,
  * it can participate in a breadcrumb trail.
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
-
 public interface Breadcrumb extends Comparable<Breadcrumb>, Serializable {
 }

@@ -40,8 +40,6 @@ import javax.xml.namespace.QName;
 
 /**
  * A default RDF resource handler for OAI.
- *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class RdfResourceHandler extends AbstractXmlResourceHandler implements OAIConstants {
 

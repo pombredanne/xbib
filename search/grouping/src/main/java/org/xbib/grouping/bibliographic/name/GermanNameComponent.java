@@ -42,7 +42,6 @@ import java.util.TreeSet;
 /**
  * German name cluster key component
  *
- * @author <a href="mailto:prante@hbz-nrw.de">J&ouml;rg Prante</a>
  */
 public class GermanNameComponent extends TreeSet<String> implements GroupKeyComponent<String> {
 

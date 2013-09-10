@@ -39,7 +39,6 @@ import org.xbib.rdf.simple.SimpleFactory;
 /**
  * The Dublin Core Terms as RDF properties 
  * 
- * @author joerg
  */
 public interface DublinCoreTermsProperties extends DCTERMS {
 

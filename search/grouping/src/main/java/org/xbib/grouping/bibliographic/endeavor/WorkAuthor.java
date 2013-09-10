@@ -42,7 +42,6 @@ import java.util.regex.Pattern;
 /**
  * An identifiable endeavor for a work created by an author
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class WorkAuthor implements IdentifiableEndeavor {
 

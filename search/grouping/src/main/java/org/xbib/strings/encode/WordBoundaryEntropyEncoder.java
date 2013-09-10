@@ -55,7 +55,6 @@ import java.util.LinkedHashMap;
  * Yannakoudakis, E. J. Derived search keys for bibliographic
  * retrieval. SIGIR Forum 17, 4 (Jun. 1983), 220-237.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class WordBoundaryEntropyEncoder implements StringEncoder {
 

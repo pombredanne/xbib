@@ -32,9 +32,8 @@
 package org.xbib.query;
 
 /**
- * Facet model
+ * Query facet
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface QueryFacet<V> extends QueryOption<V> {
     /**

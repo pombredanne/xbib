@@ -51,8 +51,6 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * A default SRU client
- *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultSRUClient implements SRUClient {
 

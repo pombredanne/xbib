@@ -34,7 +34,6 @@ package org.xbib.marc;
 /**
  * ISO/DIS 25577 MarcXchange constants
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface MarcXchangeConstants {
 

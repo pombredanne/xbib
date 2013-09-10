@@ -47,7 +47,6 @@ import java.util.List;
  * <p/>
  * A component can be updated or removed.
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface GroupKey extends List<GroupKeyComponent> {
 

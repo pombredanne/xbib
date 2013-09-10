@@ -36,10 +36,6 @@ package org.xbib.strings.encode;
  * similar names, but can also be used as a general purpose scheme to find word
  * with similar phonemes.
  *
- * @author <a href="mailto:bayard@generationjava.com">bayard</a>
- * @author <a href="mailto:ggregory@seagullsw.com">ggregory</a>
- * @author Tim O'Brien
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SoundexEncoder implements StringEncoder {
 

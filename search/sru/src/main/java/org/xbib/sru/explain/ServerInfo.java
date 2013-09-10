@@ -34,7 +34,6 @@ package org.xbib.sru.explain;
 /**
  * Server info
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class ServerInfo {
 

@@ -54,7 +54,6 @@ import org.xml.sax.helpers.AttributesImpl;
  *
  * A Sax adapter for MarcXchange
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class MarcXchangeSaxAdapter implements MarcXchangeConstants, MarcXchangeListener {
 

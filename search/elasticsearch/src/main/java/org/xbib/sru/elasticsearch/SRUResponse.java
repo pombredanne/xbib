@@ -61,15 +61,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Elasticsearch SRU response.
+ * Elasticsearch SRU response
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SRUResponse extends SearchRetrieveResponse {
 
     private final Logger logger = LoggerFactory.getLogger(SRUResponse.class.getName());
 
-    // javax.xml.parsers.DocumentBuilderFactory
     private final static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     private final static QName root = new QName(ES.NS_URI, "result", ES.NS_PREFIX);

@@ -40,7 +40,6 @@ import org.xbib.logging.LoggerFactory;
 /**
  * PQF parser test
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class PQFParserTest extends ParserTest {
 

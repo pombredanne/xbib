@@ -34,7 +34,6 @@ package org.xbib.grouping.bibliographic.endeavor;
 /**
  * An interface for an identifiable endeavor, a text, article, monograph, serial, artwork, ...
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public interface IdentifiableEndeavor {
 

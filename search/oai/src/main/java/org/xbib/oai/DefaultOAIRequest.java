@@ -42,7 +42,6 @@ import java.util.Date;
 /**
  * Default OAI request
  *
- *  @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class DefaultOAIRequest<R extends DefaultOAIRequest>
         extends DefaultHttpRequest

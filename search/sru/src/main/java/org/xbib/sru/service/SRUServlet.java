@@ -59,7 +59,6 @@ import org.xbib.xml.transform.StylesheetTransformer;
 /**
  * SRU servlet
  *
- * @author <a href="mailto:joergprante@gmail.com"> Jörg Prante</a>
  */
 public class SRUServlet extends HttpServlet implements SRUConstants {
 

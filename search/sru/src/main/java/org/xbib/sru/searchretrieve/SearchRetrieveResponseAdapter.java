@@ -39,7 +39,6 @@ import org.xbib.io.http.HttpResponse;
 /**
  *  An adapter class for SearchRetrieve responses
  *
- * @author <a href="mailto:joergprante@gmail.com">J&ouml;rg Prante</a>
  */
 public class SearchRetrieveResponseAdapter implements SearchRetrieveListener {
 
