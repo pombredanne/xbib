@@ -54,6 +54,10 @@
         </dependency>
         <dependency>
             <groupId>org.xbib</groupId>
+            <artifactId>jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xbib</groupId>
             <artifactId>oai</artifactId>
         </dependency>
         <dependency>
@@ -67,10 +71,6 @@
         <dependency>
             <groupId>org.xbib</groupId>
             <artifactId>logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.xbib</groupId>
-            <artifactId>io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

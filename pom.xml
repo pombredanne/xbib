@@ -165,7 +165,11 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.8</version>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>javacc-maven-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -235,7 +239,12 @@
             </dependency>
             <dependency>
                 <groupId>org.xbib</groupId>
-                <artifactId>io</artifactId>
+                <artifactId>http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xbib</groupId>
+                <artifactId>jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

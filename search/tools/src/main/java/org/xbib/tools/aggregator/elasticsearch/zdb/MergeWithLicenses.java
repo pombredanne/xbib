@@ -44,6 +44,7 @@ import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
 import org.xbib.elasticsearch.support.search.transport.SearchClientSupport;
 import org.xbib.common.xcontent.XContentBuilder;
 import org.xbib.date.DateUtil;
+import org.xbib.io.Streams;
 import org.xbib.util.URIUtil;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -59,6 +60,9 @@ import org.xbib.tools.util.ExceptionFormatter;
 import org.xbib.tools.util.FormatUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.text.NumberFormat;
@@ -82,7 +86,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -201,6 +204,12 @@ public class MergeWithLicenses {
                     .newClient(targetURI)
                     .waitForCluster();
 
+            InputStream in = MergeWithLicenses.class.getResourceAsStream("mapping.json");
+            StringWriter sw = new StringWriter();
+            Streams.copy(new InputStreamReader(in), sw);
+            ingest.mapping(sw.toString())
+                    .newIndex(true);
+
             logger.info("starting aggregation: pumps={} size={}, millis={}", pumps, size, millis);
             long t0 = System.currentTimeMillis();
             new MergeWithLicenses(search, ingest, sourceURI, targetURI, pumps, size, millis, identifier)
@@ -250,7 +259,8 @@ public class MergeWithLicenses {
 
     private MergeWithLicenses(SearchClientSupport search, BulkClient ingest,
                              URI sourceURI, URI targetURI,
-                             int numPumps, int size, long millis, String identifier)
+                             int numPumps, int size, long millis,
+                             String identifier)
             throws UnsupportedEncodingException {
         this.client = search.client();
         this.ingest = ingest;
@@ -311,11 +321,12 @@ public class MergeWithLicenses {
         }
         if (identifier != null) {
             // ZDB-ID
-            QueryBuilder queryBuilder = termQuery("IdentifierZDB.identifierZDB", identifier);
-            searchRequest.setQuery(queryBuilder);
+            logger.debug("adding term query for {}", identifier);
+            searchRequest.setQuery(termQuery("IdentifierZDB.identifierZDB", identifier));
         }
         SearchResponse searchResponse = searchRequest.execute().actionGet();
-        while (!failure) {
+        logger.debug("hits={}", searchResponse.getHits().getTotalHits());
+        while (!failure && searchResponse.getScrollId() != null) {
             searchResponse = client.prepareSearchScroll(searchResponse.getScrollId())
                     .setScroll(TimeValue.timeValueMillis(millis))
                     .execute().actionGet();
@@ -404,6 +415,8 @@ public class MergeWithLicenses {
                     m = new Manifestation(mapper.readValue(t.hit().source(), Map.class));
                     if (filterForProcess(m)) {
                         process(m);
+                    } else {
+                        logger.debug("not processed: {}", m.targetID());
                     }
                     count++;
                     if (count % size == 0) {
@@ -433,8 +446,8 @@ public class MergeWithLicenses {
         private boolean filterForProcess(Manifestation manifestation) {
             return manifestation.isHead()
                     && !manifestation.isSupplement()
-                    && !manifestation.isPart()
-                    && !manifestation.hasPrintEdition(); // "print before online" rule
+                    && !manifestation.isPart();
+                    //&& !manifestation.hasPrintEdition(); // "print before online" rule
         }
 
         private void process(Manifestation manifestation) throws IOException {
@@ -505,9 +518,19 @@ public class MergeWithLicenses {
                 if (logger.isDebugEnabled()) {
                     logger.debug("writing {} title '{}' with {} expressions", work.targetID(), work.title(), work.getExpressions().size());
                 }
-                writeWork(work, holdings, licenses);
                 Map<Integer, Set<Holding>> holdingsByDate = reorderHoldingsByDate(holdings);
                 Map<Integer, Set<License>> licensesByDate = reorderLicensesByDate(licenses);
+                // compute static boost for work
+                Set<Integer> dates = new HashSet(holdingsByDate.keySet());
+                dates.addAll(licensesByDate.keySet());
+                double dateWeight = 1.0;
+                for (Integer d : dates) {
+                      dateWeight += d * 100.0;
+                }
+                dateWeight /= dates.size() / 100.0;
+                int holdingsCount = holdingsByDate.values().size() + licensesByDate.values().size();
+                double boost = 1.0 + dateWeight + holdingsCount;
+                writeWork(work, holdings, licenses, boost);
                 for (Expression expression : work.getExpressions().values()) {
                     writeExpression(work, expression);
                     for (Manifestation m : expression.getManifestations()) {
@@ -804,7 +827,7 @@ public class MergeWithLicenses {
     private Set<Work> electLeaders(Set<Manifestation> cluster) {
         Set<Work> leaders = new TreeSet(leaderComparator);
         // bring manifestations into order
-        for (Manifestation manifestation : new HashSet<Manifestation>(cluster)) {
+        for (Manifestation manifestation : new HashSet<>(cluster)) {
             Iterator<Work> it = leaders.iterator();
             Work first = it.hasNext() ? it.next() : null;
             Work work = new Work(manifestation);
@@ -1016,7 +1039,8 @@ public class MergeWithLicenses {
         return licensesByDate;
     }
 
-    private void writeWork(Work work, Set<Holding> holdings, Set<License> licenses) throws IOException {
+    private void writeWork(Work work, Set<Holding> holdings, Set<License> licenses, double boost)
+            throws IOException {
         if (work == null) {
             return;
         }
@@ -1038,12 +1062,17 @@ public class MergeWithLicenses {
         // ISIL
         Set<String> isils = new HashSet();
         for (Holding holding : holdings) {
-            isils.add(holding.getISIL());
+            if (holding.getISIL() != null) {
+                isils.add(holding.getISIL());
+            }
         }
         for (License license : licenses) {
-            isils.add(license.getISIL());
+            if (license.getISIL() != null) {
+                isils.add(license.getISIL());
+            }
         }
         builder.startObject()
+                .field("_boost", boost)
                 .field("preferredWorkTitle", work.title())
                 .field("workCount", work.getNeighbors().size())
                 .field("hasWorks", workIDs)
@@ -1092,9 +1121,14 @@ public class MergeWithLicenses {
             builder.endObject();
         }
         builder.endArray();
-        builder.field("firstDate", Integer.parseInt(date));
+        if (!"9999".equals(date)) {
+            builder.field("firstDate", Integer.parseInt(date));
+        }
         builder.field("key", work.getUniqueIdentifier());
         builder.endObject();
+        if (logger.isDebugEnabled()) {
+            logger.debug("writing work {}", builder.string());
+        }
         ingest.indexDocument(targetIndex,
                 targetWorksType,
                 work.targetID(),
@@ -1136,9 +1170,14 @@ public class MergeWithLicenses {
             }
         }
         builder.endArray();
-        builder.field("firstDate", Integer.parseInt(firstDate));
+        if (!"9999".equals(firstDate)) {
+            builder.field("firstDate", Integer.parseInt(firstDate));
+        }
         builder.field("key", work.getUniqueIdentifier());
         builder.endObject();
+        if (logger.isDebugEnabled()) {
+            logger.debug("writing expression {}", builder.string());
+        }
         ingest.indexDocument(targetIndex,
                 targetExpressionsType,
                 expression.targetID(),
@@ -1251,6 +1290,9 @@ public class MergeWithLicenses {
         String id = new StringBuilder()
                 .append(manifestation.getUniqueIdentifier()).append('-').append(date)
                 .toString();
+        if (logger.isDebugEnabled()) {
+            logger.debug("writing volume {}", builder.string());
+        }
         ingest.indexDocument(targetIndex,
                 targetManifestationsType,
                 id,
@@ -1258,7 +1300,7 @@ public class MergeWithLicenses {
         countWrites.incrementAndGet();
     }
 
-    public void writeHolding(Holding holding) throws IOException {
+    private void writeHolding(Holding holding) throws IOException {
         XContentBuilder builder = jsonBuilder();
         builder.startObject()
                 .field("isil", holding.getISIL())
@@ -1267,6 +1309,9 @@ public class MergeWithLicenses {
                 .field("mediaType", holding.mediaType())
                 .field("info", holding.info())
                 .endObject();
+        if (logger.isDebugEnabled()) {
+            logger.debug("writing holding {}", builder.string());
+        }
         ingest.indexDocument(targetIndex,
                 targetHoldingsType,
                 holding.id(),

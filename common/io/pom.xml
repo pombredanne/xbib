@@ -12,7 +12,7 @@
     <artifactId>io</artifactId>
     <name>io</name>
     <description>xbib - Input/Output</description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
@@ -30,17 +30,11 @@
             <artifactId>logging</artifactId>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <!-- NOTE: take care of a netty jar that does not contain jboss-beans.xml
-                or you can not deploy xbib war's on JBoss -->
-            <groupId>io.netty</groupId>
-            <artifactId>netty</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.ning</groupId>
-            <artifactId>async-http-client</artifactId>
-            <type>jar</type>
-        </dependency>
     </dependencies>
+
+    <modules>
+        <module>http</module>
+        <module>ftp</module>
+        <module>jdbc</module>
+    </modules>
 </project>
