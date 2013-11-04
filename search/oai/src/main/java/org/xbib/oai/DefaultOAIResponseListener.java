@@ -32,16 +32,17 @@
 package org.xbib.oai;
 
 import org.xbib.io.Request;
-import org.xbib.io.http.netty.DefaultHttpResponseListener;
+import org.xbib.io.http.netty.NettyHttpResponseListener;
 import org.xbib.io.http.HttpResponse;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 
 public class DefaultOAIResponseListener<Response extends OAIResponse>
-        extends DefaultHttpResponseListener implements OAIResponseListener<Response> {
+        extends NettyHttpResponseListener implements OAIResponseListener<Response> {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultOAIResponseListener.class.getName());
 
@@ -49,14 +50,17 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
 
     private Response response;
 
+    private StringBuilder sb;
+
     private boolean failure;
 
     public DefaultOAIResponseListener() {
-        this.failure = false;
+        this(null);
     }
 
     protected DefaultOAIResponseListener(OAIRequest request) {
         this.request = request;
+        this.sb = new StringBuilder();
         this.failure = false;
     }
 
@@ -64,12 +68,16 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
         return failure;
     }
 
+    public Response getResponse() {
+        return response;
+    }
+
     @Override
     public void receivedResponse(HttpResponse result) throws IOException {
         super.receivedResponse(result);
         this.response = (Response)new DefaultOAIResponse(request);
         if (!result.ok()) {
-            String msg = "HTTP error " + result.getStatusCode() + " " + result.getBody();
+            String msg = "HTTP error " + result.getStatusCode();
             if (result.getThrowable() == null) {
                 Throwable t = new IOException(msg);
                 result.setThrowable(t);
@@ -81,34 +89,23 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
             throw new IOException(result.getThrowable());
         }
         logger.info("got status = {}, content type = {}", result.getStatusCode(), result.getContentType());
-        if (result.getBody() == null || result.getBody().isEmpty() ) {
-            logger.error("no response");
-            return;
-        }
         if (!result.getContentType().endsWith("xml")) {
-            logger.warn("got non-XML body {}", result.getBody());
-        } else {
-            response.setReader(new StringReader(result.getBody()));
+            logger.warn("got non-XML body {}", result);
         }
-    }
-
-    public Response getResponse() {
-        return response;
+        response.setReader(getBodyReader());
     }
 
     @Override
     public void onConnect(Request request) throws IOException {
-        // ignore newSession
     }
 
     @Override
     public void onDisconnect(Request request) throws IOException {
-         // ignore disposeSession
     }
 
     @Override
     public void onReceive(Request request, CharSequence message) throws IOException {
-        // ignore chunk receive
+       sb.append(message);
     }
 
     @Override
@@ -116,6 +113,10 @@ public class DefaultOAIResponseListener<Response extends OAIResponse>
         logger.error("received error {}", errorMessage);
         this.failure = true;
         this.response.setThrowable(new IOException(errorMessage.toString()));
+    }
+
+    protected Reader getBodyReader() {
+        return new StringReader(sb.toString());
     }
 
 }

@@ -46,13 +46,13 @@ public class HttpSessionTest {
     
     @Test
     public void testGet() throws Exception {
-        DefaultHttpSession session = new DefaultHttpSession();
+        NettyHttpSession session = new NettyHttpSession();
         session.open(Session.Mode.READ);
         HttpRequest request = session.newRequest()
                 .setMethod("GET")
                 .setURL(URI.create("http://www.google.com/search"))
                 .addParameter("q", "köln");
-        request.prepare().execute(new DefaultHttpResponseListener() {
+        request.prepare().execute(new NettyHttpResponseListener() {
             @Override
             public void receivedResponse(HttpResponse result) {
                 logger.info("result = {}", result);
@@ -63,14 +63,14 @@ public class HttpSessionTest {
     
     @Test
     public void testPost() throws Exception {
-        DefaultHttpSession session = new DefaultHttpSession();
+        NettyHttpSession session = new NettyHttpSession();
         session.open(Session.Mode.READ);
         HttpRequest request = session.newRequest()
                 .setMethod("POST")
                 .setURL(URI.create("http://www.google.com/search"))
                 .addHeader("Content-Length", "0")
                 .addParameter("q", "köln");        
-        request.prepare().execute(new DefaultHttpResponseListener() {
+        request.prepare().execute(new NettyHttpResponseListener() {
 
             @Override
             public void receivedResponse(HttpResponse result) {

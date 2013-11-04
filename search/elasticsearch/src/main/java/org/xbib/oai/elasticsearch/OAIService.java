@@ -42,7 +42,7 @@ import java.util.ResourceBundle;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
 import org.xbib.date.DateUtil;
-import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.elasticsearch.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.client.DefaultOAIClient;

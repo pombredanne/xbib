@@ -32,9 +32,10 @@
 package org.xbib.objectstorage.action;
 
 import org.xbib.date.DateUtil;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.objectstorage.adapter.container.rows.ContainerRow;
+import org.xbib.objectstorage.Action;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
+import org.xbib.objectstorage.container.rows.ContainerRow;
 import org.xbib.standardnumber.InvalidStandardNumberException;
 import org.xbib.util.ILL;
 
@@ -54,8 +55,8 @@ public class ContainerGetAction extends AbstractQueryAction {
     }
 
     @Override
-    public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
-        super.execute(request, response);
+    public Action execute(Request request, Response response) throws Exception {
+        return super.execute(request, response);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ContainerGetAction extends AbstractQueryAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
         params.put(STATE_PARAMETER, request.getStringParameter(STATE_PARAMETER, "PENDING"));
@@ -77,7 +78,7 @@ public class ContainerGetAction extends AbstractQueryAction {
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException {
+    protected int buildResponse(ResultSet result, Request request, Response response) throws SQLException {
         List<ContainerRow> rows = new ArrayList<>();
         while (result.next()) {
             ContainerRow row = new ContainerRow();

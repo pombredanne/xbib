@@ -31,8 +31,10 @@
  */
 package org.xbib.elements.marc;
 
+import org.xbib.elements.bibliographic.XBIB;
 import org.xbib.elements.items.LiaContext;
 import org.xbib.rdf.Resource;
+import org.xbib.rdf.context.ResourceContext;
 import org.xbib.rdf.simple.SimpleResource;
 import org.xbib.rdf.xcontent.ContentBuilder;
 import org.xbib.rdf.xcontent.DefaultContentBuilder;
@@ -45,6 +47,8 @@ public class MARCContext extends LiaContext {
 
     private final ContentBuilder contentBuilder = new DefaultContentBuilder();
 
+    private String label;
+
     @Override
     public Resource newResource() {
         return new SimpleResource();
@@ -53,5 +57,19 @@ public class MARCContext extends LiaContext {
     @Override
     public ContentBuilder contentBuilder() {
         return contentBuilder;
+    }
+
+    public ResourceContext<Resource> label(String label) {
+        this.label = label;
+        return this;
+    }
+
+    @Override
+    public ResourceContext<Resource> prepareForOutput() {
+        if (resource() == null) {
+            return this;
+        }
+        resource().add(XBIB.NS_URI + "label", label);
+        return this;
     }
 }

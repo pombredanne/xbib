@@ -32,8 +32,8 @@
 package org.xbib.objectstorage.action;
 
 import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
 import org.xbib.objectstorage.action.sql.SQLService;
 import org.xbib.objectstorage.adapter.AbstractAdapter;
 
@@ -54,18 +54,18 @@ public abstract class AbstractQueryAction extends AbstractAction {
 
     protected abstract String[] createBindKeys();
 
-    protected abstract Map<String, Object> createParams(ObjectStorageRequest request) throws IOException;
+    protected abstract Map<String, Object> createParams(Request request) throws IOException;
 
     protected abstract int buildResponse(ResultSet result,
-                                         ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException;
+                                         Request request, Response response) throws SQLException;
 
     @Override
-    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(Request request, Response response) throws Exception {
         if (request.getAdapter() instanceof AbstractAdapter) {
             long t0 = System.currentTimeMillis();
             int rows = -1;
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
-            SQLService service = SQLService.getInstance(a);
+            SQLService service = new SQLService();
             try (PreparedStatement p = service.getConnection().prepareStatement(sql);
                 ResultSet result = service.executeQuery(service.bind(p, createBindKeys(), createParams(request)))) {
                 SQLWarning warning = result.getWarnings();

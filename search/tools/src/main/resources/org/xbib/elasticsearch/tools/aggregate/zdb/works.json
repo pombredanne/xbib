@@ -1,0 +1,120 @@
+{
+    "works" : {
+      "_boost" : { "name" : "_boost", "null_value" : 1.0 },
+      "properties" : {
+        "editionCount" : {
+          "type" : "long"
+        },
+        "editions" : {
+          "properties" : {
+            "country" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "id" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "manifestationCount" : {
+              "type" : "long"
+            },
+            "manifestations" : {
+              "properties" : {
+                "carrierType" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "contentType" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "country" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "firstDate" : {
+                  "type" : "long"
+                },
+                "hasSupplement" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "id" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "identifiers" : {
+                  "properties" : {
+                    "issn" : {
+                      "type" : "string", "analyzer" : "keyword"
+                    }
+                  }
+                },
+                "language" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "lastDate" : {
+                  "type" : "long"
+                },
+                "mediaType" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "publisher" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "title" : {
+                  "properties" : {
+                    "titleMain" : {
+                      "type" : "string"
+                    },
+                    "titleMedium" : {
+                      "type" : "string"
+                    },
+                    "titlePartName" : {
+                      "type" : "string"
+                    },
+                    "titlePartNumber" : {
+                      "type" : "string"
+                    },
+                    "titleRemainder" : {
+                      "type" : "string"
+                    },
+                    "titleStatement" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "firstDate" : {
+          "type" : "long"
+        },
+        "hasEditions" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "hasISIL" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "hasManifestation" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "hasSupplement" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "id" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "isilCount" : {
+          "type" : "long"
+        },
+        "key" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "lastDate" : {
+          "type" : "long"
+        },
+        "manifestationCount" : {
+          "type" : "long"
+        },
+        "preferredWorkTitle" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

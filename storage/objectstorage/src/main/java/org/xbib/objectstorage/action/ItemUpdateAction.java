@@ -31,7 +31,7 @@
  */
 package org.xbib.objectstorage.action;
 
-import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.Request;
 import org.xbib.util.ILL;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class ItemUpdateAction extends AbstractUpdateAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");

@@ -33,8 +33,8 @@ package org.xbib.query.cql.elasticsearch;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.support.CQLSearchRequest;
-import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.elasticsearch.CQLSearchRequest;
+import org.xbib.elasticsearch.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 

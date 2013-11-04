@@ -32,8 +32,8 @@
 package org.xbib.objectstorage.action;
 
 import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
 import org.xbib.objectstorage.action.sql.SQLService;
 import org.xbib.objectstorage.adapter.AbstractAdapter;
 
@@ -49,11 +49,11 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
     }
 
     @Override
-    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(Request request, Response response) throws Exception {
         if (request.getAdapter() instanceof AbstractAdapter) {
             long t0 = System.currentTimeMillis();
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
-            SQLService service = SQLService.getInstance(a);
+            SQLService service = new SQLService();
             try (PreparedStatement p = service.getConnection().prepareStatement(sql)) {
                 boolean success = service.execute(service.bind(p, createBindKeys(), createParams(request)));
                 response.builder().status(success ? 200 : 500);
@@ -70,7 +70,7 @@ public abstract class AbstractInsertAction extends AbstractQueryAction {
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException {
+    protected int buildResponse(ResultSet result, Request request, Response response) throws SQLException {
         return -1;
     }
 

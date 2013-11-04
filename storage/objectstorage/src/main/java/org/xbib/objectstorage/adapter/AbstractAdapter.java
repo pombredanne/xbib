@@ -39,7 +39,7 @@ import java.io.IOException;
 
 public abstract class AbstractAdapter implements Adapter {
 
-
+/*
     @Override
     public Action getContainerGetAction(String container) throws IOException {
         ensureContainer(container);
@@ -74,18 +74,6 @@ public abstract class AbstractAdapter implements Adapter {
     public boolean canUploadTo(String mimeType, String container) {
         return containers.get(container).canUpload(mimeType);
     }
-
-
-    /*public abstract String getDriverClassName();
-
-    public abstract String getUser();
-
-    public abstract String getPassword();
-
-    public abstract String getConnectionSpec();
-
-    public abstract String getBundleName();
-
-    public abstract DirContext getDirContext() throws NamingException;
     */
+
 }

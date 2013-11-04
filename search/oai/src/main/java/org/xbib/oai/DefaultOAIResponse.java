@@ -32,7 +32,8 @@
 package org.xbib.oai;
 
 import org.xbib.io.OutputFormat;
-import org.xbib.io.http.netty.DefaultHttpResponse;
+import org.xbib.io.http.netty.NettyHttpResponse;
+import org.xbib.io.http.netty.NettyHttpResponse;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.xml.XMLFilterReader;
@@ -59,7 +60,7 @@ import javax.xml.transform.stream.StreamResult;
  *
  */
 public class DefaultOAIResponse<R extends DefaultOAIResponse>
-        extends DefaultHttpResponse
+        extends NettyHttpResponse
         implements OAIResponse<R>, XMLEventConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultOAIResponse.class.getName());
@@ -70,22 +71,15 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
 
     private Reader reader;
 
-    private XMLEventWriter eventWriter;
+    private StringBuilder sb;
 
     private String errorCode;
 
-    private Date responseDate;
-
-    private long expire;
-
     private StylesheetTransformer transformer;
-
-    private String[] stylesheets;
-
-    private OutputFormat format;
 
     public DefaultOAIResponse(OAIRequest request) {
         this.request = request;
+        this.sb = new StringBuilder();
         this.transformer = new StylesheetTransformer("/xsl");
     }
 
@@ -107,7 +101,7 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
 
     @Override
     public R setStylesheets(String... stylesheets) {
-        this.stylesheets = stylesheets;
+        String[] stylesheets1 = stylesheets;
         return (R)this;
     }
 
@@ -117,25 +111,15 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
 
     @Override
     public R setOutputFormat(OutputFormat format) {
-        this.format = format;
+        OutputFormat format1 = format;
         return (R)this;
     }
 
     public void flush() throws IOException {
-        try {
-            if (eventWriter != null) {
-                eventWriter.flush();
-            }
-        } catch (XMLStreamException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     @Override
     public void add(XMLEvent xmle) throws XMLStreamException {
-        if (eventWriter != null) {
-            eventWriter.add(xmle);
-        }
     }
 
     public void setError(String errorCode) {
@@ -147,11 +131,9 @@ public class DefaultOAIResponse<R extends DefaultOAIResponse>
     }
 
     public void setResponseDate(Date date) {
-        this.responseDate = date;
     }
 
     public void setExpire(long millis) {
-        this.expire = millis;
     }
 
     @Override

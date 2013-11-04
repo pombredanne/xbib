@@ -2,7 +2,7 @@
 
 java \
     -cp bin:lib/xbib-tools-1.0-SNAPSHOT-elasticsearch.jar \
-    org.xbib.tools.indexer.elasticsearch.HBZ \
+    org.xbib.elasticsearch.tools.elasticsearch.HBZ \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --mock true \
     --detect true \

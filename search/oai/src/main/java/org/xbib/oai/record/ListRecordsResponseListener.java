@@ -61,13 +61,14 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
 
     private ListRecordsResponse response;
 
-    private List<MetadataHandler> metadataHandlers = new ArrayList();
+    private List<MetadataHandler> metadataHandlers;
 
     private ResumptionToken token;
 
     public ListRecordsResponseListener(ListRecordsRequest request) {
         super(request);
         this.request = request;
+        this.metadataHandlers = new ArrayList();
     }
 
     public ListRecordsResponseListener register(MetadataHandler metadataHandler) {
@@ -108,16 +109,12 @@ public class ListRecordsResponseListener extends DefaultOAIResponseListener {
         if (!result.ok()) {
             throw new IOException(status + " " + result.getThrowable());
         }
-        // XML content type?
-        if (!result.getContentType().endsWith("xml")) {
-            throw new IOException("answer to " + request
-                    + " does not have XML content type: "
-                    + result.getContentType());
+        // activate XSLT only if XML content type
+        if (result.getContentType().endsWith("xml")) {
+            XMLFilterReader reader = new ListRecordsFilterReader(response);
+            InputSource source = new InputSource(getBodyReader());
+            response.getTransformer().setSource(reader, source);
         }
-        Reader r = new StringReader(result.getBody());
-        XMLFilterReader reader = new ListRecordsFilterReader(response);
-        InputSource source = new InputSource(r);
-        response.getTransformer().setSource(reader, source);
     }
 
     private boolean isDigits(String str) {

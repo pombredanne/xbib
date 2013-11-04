@@ -33,7 +33,7 @@ package org.xbib.objectstorage.action;
 
 import org.xbib.objectstorage.Container;
 import org.xbib.objectstorage.ItemInfo;
-import org.xbib.objectstorage.ObjectStorageRequest;
+import org.xbib.objectstorage.Request;
 import org.xbib.util.ILL;
 
 import java.io.IOException;
@@ -43,12 +43,10 @@ import java.util.Map;
 public class UploadItemJournalAction extends AbstractInsertAction {
 
     private final ItemInfo itemInfo;
-    private final Container container;
 
     public UploadItemJournalAction(String sql, ItemInfo itemInfo, Container container) {
         super(sql);
         this.itemInfo = itemInfo;
-        this.container = container;
     }
 
     @Override
@@ -57,7 +55,7 @@ public class UploadItemJournalAction extends AbstractInsertAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");
@@ -68,11 +66,9 @@ public class UploadItemJournalAction extends AbstractInsertAction {
         params.put(NAME_PARAMETER, request.getUserAttributes().getName());
         params.put("message", itemInfo.isWrittenSuccessfully() ?
                 "Datei " + itemInfo.getKey().getName()
-                        + ", Ordner '" + container.getDescription()
                         + "', Client " + request.getUser()
                         + ", " + itemInfo.getOctets() + " bytes, SHA1 " + itemInfo.getChecksum()
                 : "Ein Fehler ist aufgetreten beim Schreiben der Datei " + itemInfo.getKey().getName()
-                + " in den Ordner " + container.getDescription()
         );
         params.put("msgcode", itemInfo.isWrittenSuccessfully() ? "UPLOAD" : "IOERROR");
         logger.debug("upload item journal action = {} params = {}", sql, params);

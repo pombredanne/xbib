@@ -43,7 +43,7 @@ public interface Container {
 
     Principal getPrincipal(SecurityContext context);
 
-    ObjectStorageRequest newRequest() throws IOException;
+    Request newRequest() throws IOException;
 
     Action getContainerHeadAction();
 

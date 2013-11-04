@@ -32,7 +32,8 @@
 package org.xbib.oai;
 
 import org.xbib.date.DateUtil;
-import org.xbib.io.http.netty.DefaultHttpRequest;
+import org.xbib.io.http.netty.NettyHttpRequest;
+import org.xbib.io.http.netty.NettyHttpRequest;
 import org.xbib.oai.client.OAIClient;
 import org.xbib.oai.util.ResumptionToken;
 
@@ -44,7 +45,7 @@ import java.util.Date;
  *
  */
 public class DefaultOAIRequest<R extends DefaultOAIRequest>
-        extends DefaultHttpRequest
+        extends NettyHttpRequest
         implements OAIRequest<R> {
 
     private ResumptionToken token;

@@ -47,9 +47,9 @@ import org.xbib.elasticsearch.xml.ES;
 import org.xbib.elasticsearch.support.facet.FacetSupport;
 import org.xbib.facet.Facet;
 import org.xbib.facet.FacetListener;
+import org.xbib.io.chunk.ChunkedStream;
 import org.xbib.io.OutputFormat;
-import org.xbib.io.StreamByteBuffer;
-import org.xbib.io.Streams;
+import org.xbib.io.StreamUtil;
 import org.xbib.json.transform.JsonStylesheet;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
@@ -74,7 +74,7 @@ public class SRUResponse extends SearchRetrieveResponse {
 
     private SearchRetrieveRequest request;
 
-    private StreamByteBuffer buffer;
+    private ChunkedStream buffer;
 
     private Facets facets;
 
@@ -83,7 +83,7 @@ public class SRUResponse extends SearchRetrieveResponse {
         this.request = request;
     }
 
-    public SRUResponse setBuffer(StreamByteBuffer buffer) {
+    public SRUResponse setBuffer(ChunkedStream buffer) {
         this.buffer = buffer;
         return this;
     }
@@ -143,7 +143,7 @@ public class SRUResponse extends SearchRetrieveResponse {
 
         OutputFormat format = getOutputFormat();
         if (format == null || format.equals(OutputFormat.JSON)) {
-            Streams.copy(new InputStreamReader(buffer.getInputStream(), "UTF-8"), writer);
+            StreamUtil.copy(new InputStreamReader(buffer.getInputStream(), "UTF-8"), writer);
         } else if (format.equals(OutputFormat.XML)) {
             JsonStylesheet js = new JsonStylesheet().root(root);
             js.toXML(buffer.getInputStream(), writer);

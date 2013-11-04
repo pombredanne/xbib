@@ -36,7 +36,7 @@
                 <include>log4j:log4j</include>
                 <!-- add-ons for elasticsearch -->
                 <include>org.xbib:elasticsearch</include>
-                <include>org.xbib.elasticsearch:elasticsearch-support</include>
+                <include>org.xbib.elasticsearch.plugin:elasticsearch-support</include>
                 <include>org.elasticsearch:elasticsearch</include>
                 <include>org.apache.lucene:lucene-core</include>
             </includes>

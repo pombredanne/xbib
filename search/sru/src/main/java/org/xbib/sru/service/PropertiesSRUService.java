@@ -33,7 +33,7 @@ package org.xbib.sru.service;
 
 import org.xbib.io.Session;
 import org.xbib.io.http.HttpSession;
-import org.xbib.io.http.netty.DefaultHttpSession;
+import org.xbib.io.http.netty.NettyHttpSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.sru.client.SRUClient;
@@ -56,7 +56,7 @@ public class PropertiesSRUService implements SRUService {
 
     public PropertiesSRUService(Properties properties) throws IOException {
         this.properties = properties;
-        this.session = new DefaultHttpSession();
+        this.session = new NettyHttpSession();
         session.open(Session.Mode.READ);
     }
     

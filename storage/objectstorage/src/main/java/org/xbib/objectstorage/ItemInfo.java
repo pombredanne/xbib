@@ -31,43 +31,41 @@
  */
 package org.xbib.objectstorage;
 
-import org.xbib.objectstorage.adapter.container.rows.ItemInfoRow;
+import org.xbib.objectstorage.container.rows.ItemInfoRow;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 public class ItemInfo {
 
+    private final Container container;
+
     private ItemKey key;
+
     private InputStream in;
+
     private ItemMessage message;
+
     private String mimeType;
+
     private long octets;
+
     private String checksum;
+
     private Date creationDate;
+
     private Date modificationDate;
+
     private boolean written;
+
     private URL url;
 
     public ItemInfo(Container container, String item) throws IOException {
+        this.container = container;
         this.key = new ItemKey(item);
         this.url = URI.create(container.getBaseURI() + URLEncoder.encode(item, "UTF-8")).toURL();
     }
@@ -165,54 +163,6 @@ public class ItemInfo {
         return message;
     }
 
-    /*public synchronized boolean writeToFile(ObjectStorageAdapter service) throws IOException, NoSuchAlgorithmException {
-        if (in == null) {
-            return false;
-        }
-        written = false;
-        String s = container.createPath(service, key.getName());
-        File file = new File(s);
-        boolean exists = file.exists();
-        if (!exists) {
-            file.getParentFile().mkdirs();
-        }
-        MessageDigest md = service.getMessageDigest();
-        md.reset();
-        long total;
-        // write File to file system
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            final byte[] buf = new byte[BUFFER_SIZE];
-            total = 0L;
-            int n;
-            while ((n = in.read(buf)) != -1) {
-                out.write(buf, 0, n);
-                md.update(buf, 0, n);
-                total += n;
-            }
-            out.flush();
-        }
-        setOctets(total);
-        setChecksum(new BigInteger(1, md.digest()).toString(16));
-        if (!exists) {
-            setCreationDate(new Date());
-        } else {
-            setModificationDate(new Date());
-        }
-        // set mime type if not explicitly given
-        if (getMimeType() == null) {
-            setMimeType(new MimetypesFileTypeMap().getContentType(file));
-        }
-        // write attributes
-        try {
-            Path path = FileSystems.getDefault().getPath(file.getPath(), file.getName());
-            UserDefinedFileAttributeView view =
-                    Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
-            view.write("user.checksum", Charset.defaultCharset().encode(getChecksum()));
-        } catch (Exception e) {
-        }
-        written = true;
-        return exists;
-    }*/
 
     public ItemInfoRow entity() {
         ItemInfoRow row = new ItemInfoRow();

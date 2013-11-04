@@ -41,7 +41,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.xbib.elasticsearch</groupId>
+            <groupId>org.xbib.elasticsearch.plugin</groupId>
             <artifactId>elasticsearch-support</artifactId>
             <type>jar</type>
         </dependency>

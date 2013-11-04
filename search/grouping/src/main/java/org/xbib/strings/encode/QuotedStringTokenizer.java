@@ -37,8 +37,6 @@ import java.util.StringTokenizer;
 
 /**
  * A string tokenizer that understands quotes and escape characters.
- *
- *
  */
 public class QuotedStringTokenizer extends StringTokenizer implements Iterator<String> {
     /* Have to keep copies because StringTokenizer makes everything private */

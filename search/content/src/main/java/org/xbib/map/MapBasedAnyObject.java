@@ -108,21 +108,24 @@ public class MapBasedAnyObject implements AnyObject {
         return get(key);
     }
 
-    @Override
-    public Integer getInteger(String key) {
-        return get(key);
-    }
-
     public String getString(String key) {
         return get(key);
     }
 
+    @Override
+    public Integer getInteger(String key) {
+        Object o = get(key);
+        return o == null ? null : o instanceof Integer ? (Integer) o : Integer.parseInt(o.toString());
+    }
+
     public Double getDouble(String key) {
-        return get(key);
+        Object o = get(key);
+        return o == null ? null : o instanceof Double ? (Double) o : Double.parseDouble(o.toString());
     }
 
     public Float getFloat(String key) {
-        return get(key);
+        Object o = get(key);
+        return o == null ? null : o instanceof Float ? (Float) o : Float.parseFloat(o.toString());
     }
 
     public Boolean getBoolean(String key) {

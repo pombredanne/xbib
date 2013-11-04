@@ -39,7 +39,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -48,11 +47,11 @@ import org.testng.annotations.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class MarcTest {
+public class MARCTest {
 
     @Test
     public void testProperMarc() throws IOException, SAXException,
-            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+            ParserConfigurationException, TransformerException {
         for (String s : new String[]{
                     "brkrtest.mrc", "makrtest.mrc", "chabon-loc.mrc", "chabon.mrc", "diacritic4.mrc",
                     "summerland.mrc"
@@ -73,7 +72,7 @@ public class MarcTest {
 
     @Test
     public void testFaultyMarc() throws IOException, SAXException,
-            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+            ParserConfigurationException, TransformerException {
         for (String s : new String[]{
                      "error.mrc"
                 }) {
@@ -93,7 +92,7 @@ public class MarcTest {
 
     
     public void testAMS() throws IOException, SAXException,
-            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+            ParserConfigurationException, TransformerException {
         InputStream in = getClass().getResourceAsStream("amstransactions.mrc");
         try (InputStreamReader r = new InputStreamReader(in, "ANSEL")) {
             Iso2709Reader reader = new Iso2709Reader();
@@ -109,7 +108,7 @@ public class MarcTest {
     
     @Test
     public void testZDB() throws IOException, SAXException,
-            ParserConfigurationException, TransformerConfigurationException, TransformerException {
+            ParserConfigurationException, TransformerException {
         InputStream in = getClass().getResourceAsStream("zdblokutf8.mrc");
         try (InputStreamReader r = new InputStreamReader(in, "UTF-8")) {
             Iso2709Reader reader = new Iso2709Reader();

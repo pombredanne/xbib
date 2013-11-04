@@ -27,15 +27,8 @@
                 </executions>
                 <configuration>
                     <tasks>
-                        <property name="src.dir" value="${project.build.directory}/generated-sources/java/" />
-                        <property name="package.dir" value="org/xbib/util" />
-                        <property name="package.name" value="org.xbib.util" />
-                        <property name="buildtime" value="${maven.build.timestamp}" />
-                        <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
-                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
-                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message=" public static String VERSION=&quot;${buildtime}&quot;;${line.separator}" />
-                        <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="}${line.separator}" />
-                        <echo message="BUILD ${buildtime}" />
+                        <echo file="${project.build.directory}/generated-sources/java/org/xbib/util/Version.java"
+                              message="package org.xbib.util;${line.separator}public final class Version {${line.separator} public static String VERSION=&quot;${maven.build.timestamp}&quot;;${line.separator}}${line.separator}" />
                     </tasks>
                 </configuration>
             </plugin>

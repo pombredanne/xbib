@@ -38,7 +38,6 @@ import org.xbib.logging.LoggerFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
 
 public class CharStreamTest {

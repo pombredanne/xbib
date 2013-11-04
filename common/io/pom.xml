@@ -14,27 +14,10 @@
     <description>xbib - Input/Output</description>
     <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.xbib</groupId>
-            <artifactId>util</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.xbib</groupId>
-            <artifactId>logging</artifactId>
-            <type>jar</type>
-        </dependency>
-    </dependencies>
-
     <modules>
         <module>http</module>
         <module>ftp</module>
         <module>jdbc</module>
+        <module>rsync</module>
     </modules>
 </project>

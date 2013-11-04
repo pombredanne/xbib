@@ -2,7 +2,7 @@
 
 java \
     -cp bin:lib/xbib-tools-1.0-SNAPSHOT-elasticsearch.jar \
-    org.xbib.tools.indexer.elasticsearch.Medline \
+    org.xbib.elasticsearch.tools.elasticsearch.Medline \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --index "medline" \
     --type "medline" \

@@ -32,7 +32,7 @@
 package org.xbib.io.http;
 
 import org.xbib.io.ConnectionFactory;
-import org.xbib.io.http.netty.DefaultHttpConnection;
+import org.xbib.io.http.netty.NettyHttpConnection;
 
 import java.io.IOException;
 import java.net.URI;
@@ -51,7 +51,7 @@ public final class HttpConnectionFactory implements ConnectionFactory<HttpSessio
      */
     @Override
     public HttpConnection getConnection(final URI uri) throws IOException {
-        DefaultHttpConnection connection = new DefaultHttpConnection();
+        NettyHttpConnection connection = new NettyHttpConnection();
         connection.setURI(uri);
         return connection;
     }

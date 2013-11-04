@@ -2,7 +2,7 @@
 
 java \
     -cp bin:lib/xbib-tools-1.0-SNAPSHOT-elasticsearch.jar \
-    org.xbib.tools.indexer.elasticsearch.ArticleDB \
+    org.xbib.elasticsearch.tools.elasticsearch.ArticleDB \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --mock false \
     --threads 1 \

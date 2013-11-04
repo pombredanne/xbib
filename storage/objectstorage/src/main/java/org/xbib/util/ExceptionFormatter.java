@@ -31,8 +31,6 @@
  */
 package org.xbib.util;
 
-import org.xbib.xml.XMLUtil;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -101,9 +99,4 @@ public final class ExceptionFormatter {
         return sb.toString();
     }
 
-    public static String toXML(Throwable t) {
-        StringBuilder sb = new StringBuilder();
-        append(sb, t, 0, true);
-        return "<error><![CDATA[" + XMLUtil.escape(sb.toString()) + "]]></error>";
-    }
 }

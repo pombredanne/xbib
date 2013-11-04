@@ -31,8 +31,9 @@
  */
 package org.xbib.objectstorage.action;
 
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Action;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
 import org.xbib.objectstorage.action.sql.SQLService;
 import org.xbib.objectstorage.adapter.AbstractAdapter;
 
@@ -48,12 +49,12 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
     }
 
     @Override
-    public Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(Request request, Response response) throws Exception {
         long t0 = System.currentTimeMillis();
         SQLService service;
         if (request.getAdapter() instanceof AbstractAdapter) {
             AbstractAdapter a = (AbstractAdapter) request.getAdapter();
-            service = SQLService.getInstance(a);
+            service = new SQLService();
             int rows = -1;
             try (PreparedStatement p = service.getConnection().prepareStatement(sql)) {
                 rows = service.executeUpdate(service.bind(p, createBindKeys(), createParams(request)));
@@ -76,11 +77,11 @@ public abstract class AbstractUpdateAction extends AbstractQueryAction {
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException {
+    protected int buildResponse(ResultSet result, Request request, Response response) throws SQLException {
         return -1;
     }
 
-    protected void buildResponse(int rows, ObjectStorageRequest request, ObjectStorageResponse response) throws SQLException {
+    protected void buildResponse(int rows, Request request, Response response) throws SQLException {
         response.builder().header("X-ILL-update-rows-affected", rows);
     }
 }

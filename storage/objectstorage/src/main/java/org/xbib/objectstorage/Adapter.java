@@ -43,6 +43,8 @@ public interface Adapter {
 
     URI getAdapterURI();
 
+    Adapter init();
+
     Container connect(String containerName, PasswordSecurityContext context, URI baseURI) throws IOException;
 
     void disconnect(Container container) throws IOException;

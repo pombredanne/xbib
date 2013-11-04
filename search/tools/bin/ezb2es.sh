@@ -8,7 +8,7 @@
 
 java \
     -cp bin:lib/xbib-tools-1.0-SNAPSHOT-elasticsearch.jar \
-    org.xbib.tools.indexer.elasticsearch.EZB \
+    org.xbib.elasticsearch.tools.elasticsearch.EZB \
     --elasticsearch "es://hostname:9300?es.cluster.name=joerg" \
     --threads 1 \
     --maxbulkactions 1000 \

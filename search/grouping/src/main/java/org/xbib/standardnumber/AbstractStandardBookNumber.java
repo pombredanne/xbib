@@ -56,12 +56,17 @@ import java.util.regex.Pattern;
 public abstract class AbstractStandardBookNumber implements StandardNumber {
 
     private static final String NUMVALUES = "0123456789X- ";
+
     private String original;
-    private String lexicalForm;
+
     private String value;
+
     private String eanvalue;
+
     private boolean createWithChecksum;
+
     private boolean eanPreferred;
+
     private static List<String> ranges;
 
     static {
@@ -83,8 +88,7 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
         this.original = value;
         this.eanPreferred = asEAN;
         this.createWithChecksum = createWithChecksum;
-        this.lexicalForm = purify(value);
-        parse(lexicalForm);
+        parse(purify(value));
     }
 
     @Override
@@ -169,14 +173,13 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
         if (pos2 <= 0) {
             return null;
         }
-        String r = code.substring(0, pos1 + pos2 + 5);
-        return r;
+        return code.substring(0, pos1 + pos2 + 5);
     }
 
     /**
      * Returns a ISBN check digit for the first 9 digits in a string
      *
-     * @param s the ISBN
+     * @param isbn the ISBN
      * @return check digit
      *
      * @throws InvalidStandardNumberException
@@ -206,7 +209,7 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
     /**
      * Returns an ISBN check digit for the first 12 digits in a string
      *
-     * @param isbn
+     * @param isbn ISBN
      * @return check digit
      *
      * @throws InvalidStandardNumberException
@@ -278,7 +281,7 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
 
     /**
      * Check if ISBN is within a given value range
-     * @param the ISBN
+     * @param isbn ISBN
      * @param begin
      * @param end
      * @return
@@ -300,8 +303,7 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
     }
 
     private void parse(String value) throws InvalidStandardNumberException {
-        String s = value;
-        char[] theChars = s.toUpperCase().toCharArray();
+        char[] theChars = value.toUpperCase().toCharArray();
         int i;
         int val = 0;
         if (value.length() < 9) {
@@ -325,20 +327,20 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
             }
             if ((checksum % 11) != 0) {
                 if (createWithChecksum) {
-                    this.value = s.substring(0, 9) + createCheckDigit10(s.substring(0, 9));
+                    this.value = value.substring(0, 9) + createCheckDigit10(value.substring(0, 9));
                 } else {
                     throw new InvalidStandardNumberException("bad checksum"); // bad checksum
                 }
             } else {
-                this.value = s;
+                this.value = value;
             }
             if (eanPreferred) {
                 this.eanvalue = "978" + value.substring(0, 9) + createCheckDigit13("978" + value.substring(0, 9));
             }
-
         } else if (theChars.length == 13) {
-            if (!s.startsWith("978") && !s.startsWith("979")) {
-                throw new InvalidStandardNumberException("bad prefix, must be 978 or 979: " + s);
+            // ISBN-13
+            if (!value.startsWith("978") && !value.startsWith("979")) {
+                throw new InvalidStandardNumberException("bad prefix, must be 978 or 979: " + value);
             }
             int checksum13 = 0;
             int weight13 = 1;
@@ -346,7 +348,7 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
                 val = NUMVALUES.indexOf(theChars[i]);
                 if (val >= 0) {
                     if (val == 10) {
-                        throw new InvalidStandardNumberException("bad symbol: " + s);
+                        throw new InvalidStandardNumberException("bad symbol: " + value);
                     }
                     checksum13 += (weight13 * val);
                     weight13 = (weight13 + 2) % 4;
@@ -358,13 +360,13 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
             if ((checksum13 % 10) != 0) {
                 if (eanPreferred && createWithChecksum) {
                     // with checksum
-                    this.eanvalue = s.substring(0, 12) + createCheckDigit13(s.substring(0, 12));
+                    this.eanvalue = value.substring(0, 12) + createCheckDigit13(value.substring(0, 12));
                 } else {
                     throw new InvalidStandardNumberException("bad checksum"); // bad checksum
                 }
             } else {
                 // correct checksum
-                this.eanvalue = s;
+                this.eanvalue = value;
             }
             if (!eanPreferred && (eanvalue.startsWith("978") || eanvalue.startsWith("979"))) {
                 // create 10-digit from 13-digit
@@ -378,19 +380,19 @@ public abstract class AbstractStandardBookNumber implements StandardNumber {
             if (createWithChecksum && value != null) {
                 // create 978 from 10-digit without checksum
                 this.eanvalue = "978" + value.substring(0, 9) + createCheckDigit13("978" + value.substring(0, 9));
-                this.value = s.substring(0, 9) + createCheckDigit10(s.substring(0, 9));
+                this.value = value.substring(0, 9) + createCheckDigit10(value.substring(0, 9));
             } else {
                 throw new InvalidStandardNumberException("invalid"); // 9-digit
             }
         } else if (theChars.length == 12) {
             // repair ISBN-13 ?
-            if (!s.startsWith("978") && !s.startsWith("979")) {
+            if (!value.startsWith("978") && !value.startsWith("979")) {
                 throw new InvalidStandardNumberException("bad prefix");
             }
             if (createWithChecksum && value != null) {
                 // create 978 from 10-digit
                 this.eanvalue = "978" + value.substring(0, 9) + createCheckDigit13("978" + value.substring(0, 9));
-                this.value = s.substring(3, 12) + createCheckDigit10(s.substring(3, 12));
+                this.value = value.substring(3, 12) + createCheckDigit10(value.substring(3, 12));
             } else {
                 throw new InvalidStandardNumberException("invalid"); // 12-digit
             }

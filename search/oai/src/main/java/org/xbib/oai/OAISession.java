@@ -31,7 +31,7 @@
  */
 package org.xbib.oai;
 
-import org.xbib.io.http.netty.DefaultHttpSession;
+import org.xbib.io.http.netty.NettyHttpSession;
 import org.xbib.io.http.HttpSession;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ import java.io.IOException;
  */
 public interface OAISession extends HttpSession {
 
-    DefaultHttpSession getSession();
+    NettyHttpSession getSession();
 
     OAISession setProxy(String host, int port);
 

@@ -45,8 +45,6 @@ public interface HttpResponse {
 
     Map<String, List<String>> getHeaders();
 
-    String getBody();
-
     void setThrowable(Throwable t);
 
     Throwable getThrowable();

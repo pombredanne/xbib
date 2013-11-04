@@ -33,7 +33,7 @@ package org.xbib.sru.client;
 
 import org.xbib.io.Session;
 import org.xbib.io.http.HttpSession;
-import org.xbib.io.http.netty.DefaultHttpSession;
+import org.xbib.io.http.netty.NettyHttpSession;
 import org.xbib.io.http.HttpRequest;
 import org.xbib.util.URIUtil;
 import org.xbib.logging.Logger;
@@ -65,7 +65,7 @@ public class DefaultSRUClient implements SRUClient {
     }
 
     public DefaultSRUClient(URI uri) throws IOException {
-        this.session = new DefaultHttpSession();
+        this.session = new NettyHttpSession();
         session.open(Session.Mode.READ);
         this.uri = uri;
     }

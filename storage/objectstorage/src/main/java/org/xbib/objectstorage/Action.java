@@ -34,9 +34,9 @@ package org.xbib.objectstorage;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public interface Action extends ObjectStorageParameter, ObjectStorageMimeTypes {
+public interface Action extends Parameter, MimeTypes {
 
-    Action execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception;
+    Action execute(Request request, Response response) throws Exception;
 
     Action waitFor(long l, TimeUnit tu) throws IOException;
 

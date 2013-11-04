@@ -31,12 +31,12 @@
  */
 package org.xbib.objectstorage.action;
 
-import org.xbib.io.util.URIUtil;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
+import org.xbib.util.URIUtil;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -54,24 +54,21 @@ public class ResponseCodeHeadAction extends ContainerHeadAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
         logger.debug("response code head action = {} params = {}", sql, params);
         return params;
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
+    protected int buildResponse(ResultSet result, Request request, Response response)
             throws SQLException {
         int rows = 0;
         while (result.next()) {
-            try {
-                response.builder().header("X-response-code",
-                        result.getString(1) + "=" +
-                                URIUtil.encode(result.getString(2), "UTF-8"));
-                rows++;
-            } catch (UnsupportedEncodingException ex) {
-            }
+            response.builder().header("X-response-code",
+                    result.getString(1) + "=" +
+                            URIUtil.encode(result.getString(2), Charset.forName("UTF-8")));
+            rows++;
         }
         return rows;
     }

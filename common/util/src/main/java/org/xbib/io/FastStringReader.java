@@ -206,7 +206,6 @@ public class FastStringReader extends CharSequenceReader {
         length = -1;
     }
 
-    
     public String toString() {
         return str;
     }

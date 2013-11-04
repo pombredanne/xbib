@@ -31,12 +31,48 @@
  */
 package org.xbib.analyzer.marc.holdings;
 
+import org.xbib.elements.ElementBuilder;
+import org.xbib.elements.marc.MARCContext;
 import org.xbib.elements.marc.MARCElement;
+import org.xbib.marc.FieldCollection;
+
+import java.util.Map;
 
 public class RecordLeader extends MARCElement {
     private final static RecordLeader instance = new RecordLeader();
 
     public static MARCElement getInstance() {
         return instance;
+    }
+
+    private Map<String,Object> codes;
+
+    private String predicate;
+
+    @Override
+    public MARCElement setSettings(Map params) {
+        super.setSettings(params);
+        this.codes= (Map<String,Object>)params.get("codes");
+        this.predicate = params.containsKey("_predicate") ?
+                (String)params.get("_predicate") : "leader";
+        return this;
+    }
+
+    @Override
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
+        builder.context().label(value);
+        if (codes == null) {
+            return;
+        }
+        for (String k : codes.keySet()) {
+            int pos = Integer.parseInt(k);
+            Map<String,String> v = (Map<String,String>)codes.get(k);
+            String code = value.length() > pos ? value.substring(pos,pos+1) : "";
+            if (v.containsKey(code)) {
+                builder.context().resource().add(predicate, v.get(code));
+            }
+        }
+
     }
 }

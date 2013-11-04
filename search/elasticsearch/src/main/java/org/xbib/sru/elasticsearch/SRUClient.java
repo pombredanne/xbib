@@ -33,9 +33,9 @@ package org.xbib.sru.elasticsearch;
 
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.indices.IndexMissingException;
-import org.xbib.elasticsearch.support.CQLSearchRequest;
-import org.xbib.elasticsearch.support.CQLSearchResponse;
-import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.elasticsearch.CQLSearchRequest;
+import org.xbib.elasticsearch.CQLSearchResponse;
+import org.xbib.elasticsearch.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.query.cql.SyntaxException;

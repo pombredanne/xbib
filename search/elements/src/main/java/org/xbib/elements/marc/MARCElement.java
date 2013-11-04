@@ -60,6 +60,7 @@ public abstract class MARCElement
         MarcXchangeConstants {
 
     protected static final Logger logger = LoggerFactory.getLogger(MARCElement.class.getName());
+
     protected Map params;
 
     @Override

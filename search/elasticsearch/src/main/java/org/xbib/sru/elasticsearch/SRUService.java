@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ResourceBundle;
 
-import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.elasticsearch.CQLSearchSupport;
 import org.xbib.sru.SRUConstants;
 
 /**

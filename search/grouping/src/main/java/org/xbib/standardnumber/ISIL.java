@@ -35,7 +35,7 @@ package org.xbib.standardnumber;
  * International Standard Identifier for Libraries (ISIL)
  *
  */
-public class ISIL extends SimpleStandardNumber {
+public class ISIL extends AbstractStandardNumber {
 
     public ISIL(Comparable number) throws InvalidStandardNumberException {
         super(number);

@@ -34,7 +34,7 @@ package org.xbib.oai.client;
 import java.io.IOException;
 import java.net.URI;
 
-import org.xbib.io.http.netty.DefaultHttpSession;
+import org.xbib.io.http.netty.NettyHttpSession;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 import org.xbib.oai.OAIConstants;
@@ -50,7 +50,7 @@ import org.xbib.oai.util.ResumptionToken;
  * Default OAI client
  *
  */
-public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
+public class DefaultOAIClient extends NettyHttpSession implements OAIClient {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultOAIClient.class.getName());
 
@@ -74,7 +74,7 @@ public class DefaultOAIClient extends DefaultHttpSession implements OAIClient {
     }
 
     @Override
-    public DefaultHttpSession getSession() {
+    public NettyHttpSession getSession() {
         return this;
     }
 

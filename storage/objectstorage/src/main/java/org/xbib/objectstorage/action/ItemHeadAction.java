@@ -31,8 +31,8 @@
  */
 package org.xbib.objectstorage.action;
 
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
 import org.xbib.util.ILL;
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class ItemHeadAction extends AbstractQueryAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
             throw new IllegalArgumentException("invalid item");
@@ -68,7 +68,7 @@ public class ItemHeadAction extends AbstractQueryAction {
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
+    protected int buildResponse(ResultSet result, Request request, Response response)
             throws SQLException {
         ResultSetMetaData m = result.getMetaData();
         for (int i = 1; i <= m.getColumnCount(); i++) {

@@ -59,7 +59,8 @@ public class RecordLeader extends MARCElement {
     }
 
     @Override
-    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder, FieldCollection fields, String value) {
+    public void fields(ElementBuilder<FieldCollection, String, MARCElement, MARCContext> builder,
+                       FieldCollection fields, String value) {
         if (codes == null) {
             return;
         }
@@ -71,6 +72,9 @@ public class RecordLeader extends MARCElement {
                 builder.context().resource().add(predicate, v.get(code));
             }
         }
+        // deleted record?
+
+
         char ch6 = value.charAt(6);
         char ch7 = value.charAt(7);
 

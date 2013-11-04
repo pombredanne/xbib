@@ -31,9 +31,9 @@
  */
 package org.xbib.objectstorage.action;
 
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
-import org.xbib.objectstorage.adapter.container.rows.ItemRow;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
+import org.xbib.objectstorage.container.rows.ItemRow;
 import org.xbib.util.ILL;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class ItemGetAction extends AbstractQueryAction {
     }
 
     @Override
-    protected Map<String, Object> createParams(ObjectStorageRequest request) throws IOException {
+    protected Map<String, Object> createParams(Request request) throws IOException {
         final Map<String, Object> params = new HashMap<>();
         ILL ill = new ILL(request.getItem());
         if (!ill.isValid()) {
@@ -70,7 +70,7 @@ public class ItemGetAction extends AbstractQueryAction {
     }
 
     @Override
-    protected int buildResponse(ResultSet result, ObjectStorageRequest request, ObjectStorageResponse response)
+    protected int buildResponse(ResultSet result, Request request, Response response)
             throws SQLException {
         List<ItemRow> rows = new ArrayList<>();
         while (result.next()) {

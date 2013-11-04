@@ -1,0 +1,255 @@
+{
+    "manifestations" : {
+      "properties" : {
+        "contentType" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "date" : {
+          "type" : "long"
+        },
+        "hasSupplement" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "id" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "identifiers" : {
+          "properties" : {
+            "issn" : {
+              "type" : "string", "analyzer" : "keyword"
+            }
+          }
+        },
+        "key" : {
+          "type" : "string", "analyzer" : "keyword"
+        },
+        "libraries" : {
+          "properties" : {
+            "isil" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "service" : {
+              "properties" : {
+                "carrierType" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "id" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "info" : {
+                  "properties" : {
+                    "holdings" : {
+                      "properties" : {
+                        "available" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "firstdate" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "firstvolume" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "group" : {
+                          "properties" : {
+                            "begindate" : {
+                              "type" : "long"
+                            },
+                            "beginvolume" : {
+                              "type" : "string", "analyzer" : "keyword"
+                            },
+                            "enddate" : {
+                              "type" : "long"
+                            },
+                            "endvolume" : {
+                              "type" : "string", "analyzer" : "keyword"
+                            },
+                            "open" : {
+                              "type" : "string", "analyzer" : "keyword"
+                            }
+                          }
+                        },
+                        "lastdate" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "lastvolume" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        }
+                      }
+                    },
+                    "license" : {
+                      "properties" : {
+                        "access" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "accessSource" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "charge" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "licensetype" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "origin" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "pricetype" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "readme" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "scope" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "type" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        }
+                      }
+                    },
+                    "links" : {
+                      "properties" : {
+                        "accessmode" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "e" : {
+                          "type" : "string"
+                        },
+                        "nonpublicnote" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "publicnote" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "relatedto" : {
+                          "type" : "string"
+                        },
+                        "uri" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        }
+                      }
+                    },
+                    "service" : {
+                      "properties" : {
+                        "funding" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "fundingSource" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "organization" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "region" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "servicecomment" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "servicedistribution" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "servicemode" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "servicetype" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "ssgnotation" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "ssgnumber" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        },
+                        "zdbprio" : {
+                          "type" : "string", "analyzer" : "keyword"
+                        }
+                      }
+                    },
+                    "textualholdings" : {
+                      "type" : "string", "analyzer" : "keyword"
+                    }
+                  }
+                },
+                "mediaType" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "parent" : {
+                  "type" : "string", "analyzer" : "keyword"
+                },
+                "serviceisil" : {
+                  "type" : "string", "analyzer" : "keyword"
+                }
+              }
+            },
+            "serviceCount" : {
+              "type" : "long"
+            }
+          }
+        },
+        "libraryCount" : {
+          "type" : "long"
+        },
+        "links" : {
+          "properties" : {
+            "contact" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "format" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "hostname" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "locationofhost" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "nonpublicnote" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "port" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "publicnote" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "relatedto" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "size" : {
+              "type" : "string", "analyzer" : "keyword"
+            },
+            "uri" : {
+              "type" : "string", "analyzer" : "keyword"
+            }
+          }
+        },
+        "preferredTitle" : {
+          "type" : "string"
+        },
+        "title" : {
+          "properties" : {
+            "titleMain" : {
+              "type" : "string"
+            },
+            "titleMedium" : {
+              "type" : "string"
+            },
+            "titlePartName" : {
+              "type" : "string"
+            },
+            "titlePartNumber" : {
+              "type" : "string"
+            },
+            "titleRemainder" : {
+              "type" : "string"
+            },
+            "titleStatement" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+
+}

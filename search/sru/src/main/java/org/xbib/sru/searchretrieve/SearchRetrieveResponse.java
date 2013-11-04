@@ -70,8 +70,11 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
     private HttpResponse httpResponse;
 
+    private StringBuilder sb;
+
     public SearchRetrieveResponse(SearchRetrieveRequest request) {
         this.request = request;
+        this.sb = new StringBuilder();
     }
 
     @Override
@@ -106,6 +109,7 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
 
     @Override
     public void onReceive(Request request, CharSequence message) throws IOException {
+        sb.append(message);
         for (SearchRetrieveListener listener : this.request.getListeners()) {
             listener.onReceive(request, message);
         }
@@ -228,7 +232,8 @@ public class SearchRetrieveResponse extends DefaultSRUResponse
         try {
             XMLFilterReader reader = new SearchRetrieveFilterReader(request);
             // TODO normalization should be configurable
-            InputSource source = new InputSource(new StringReader(Normalizer.normalize(httpResponse.getBody(), Normalizer.Form.C)));
+            String s = sb.toString();
+            InputSource source = new InputSource(new StringReader(Normalizer.normalize(s, Normalizer.Form.C)));
             getTransformer().setSource(reader, source).setResult(writer);
             SRUVersion version = SRUVersion.fromString(request.getVersion());
             String[] stylesheets = getStylesheets(version);

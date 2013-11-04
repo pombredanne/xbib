@@ -67,9 +67,10 @@ import java.util.Map;
  */
 public class SQLService {
 
-    private final static Logger logger = LoggerFactory.getLogger(SQLService.class.getName());
     private Connection connection;
+
     private int rounding;
+
     private int scale = -1;
 
     public SQLService() {

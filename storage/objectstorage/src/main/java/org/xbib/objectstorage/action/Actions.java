@@ -32,8 +32,8 @@
 package org.xbib.objectstorage.action;
 
 import org.xbib.objectstorage.Action;
-import org.xbib.objectstorage.ObjectStorageRequest;
-import org.xbib.objectstorage.ObjectStorageResponse;
+import org.xbib.objectstorage.Request;
+import org.xbib.objectstorage.Response;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -47,10 +47,11 @@ public class Actions implements Action {
     }
 
     @Override
-    public void execute(ObjectStorageRequest request, ObjectStorageResponse response) throws Exception {
+    public Action execute(Request request, Response response) throws Exception {
         for (Action a : actions) {
             a.execute(request, response);
         }
+        return this;
     }
 
     @Override

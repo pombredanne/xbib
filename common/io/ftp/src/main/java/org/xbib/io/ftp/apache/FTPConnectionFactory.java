@@ -45,7 +45,7 @@ public final class FTPConnectionFactory  implements ConnectionFactory<FTPSession
 
     @Override
     public boolean canOpen(URI uri) {
-        return"ftp".equals(uri.getScheme());
+        return "ftp".equals(uri.getScheme());
     }
     
 }

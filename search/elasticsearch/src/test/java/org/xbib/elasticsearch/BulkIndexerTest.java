@@ -2,8 +2,8 @@ package org.xbib.elasticsearch;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.xbib.elasticsearch.support.CQLSearchSupport;
-import org.xbib.elasticsearch.support.bulk.transport.BulkClient;
+import org.xbib.elasticsearch.support.client.Ingest;
+import org.xbib.elasticsearch.support.client.IngestClient;
 import org.xbib.elasticsearch.xml.ES;
 import org.xbib.iri.IRI;
 import org.xbib.logging.Logger;
@@ -26,14 +26,14 @@ public class BulkIndexerTest extends Assert {
     @Test
     public void testBulkIndexerWithSingleResourceAndCQLSearch() throws Exception {
         try {
-            final BulkClient es = new BulkClient()
+            final Ingest es = new IngestClient()
                     .newClient(URI.create("es://localhost:9300?es.cluster.name=test"))
                     .setIndex("document")
                     .setType("test");
 
             es.deleteIndex();
             ResourceContext context = createContext();
-            new ElasticsearchResourceSink(es).output(context, context.contentBuilder());
+            new ResourceSink(es).output(context, context.contentBuilder());
             es.flush();
             Thread.sleep(2000);
             Logger queryLogger = LoggerFactory.getLogger("test", BulkIndexerTest.class.getName());

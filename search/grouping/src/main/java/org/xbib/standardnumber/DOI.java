@@ -35,7 +35,9 @@ package org.xbib.standardnumber;
  * A DOI as a standard number
  *
  */
-public class DOI extends SimpleStandardNumber {
+public class DOI extends AbstractStandardNumber {
+
+    // TODO
 
     public DOI(Comparable number) throws InvalidStandardNumberException {
         super(number);

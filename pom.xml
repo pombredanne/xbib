@@ -5,16 +5,53 @@
 
     <groupId>org.xbib</groupId>
     <artifactId>xbib</artifactId>
-    <name>xbib</name>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+
+    <name>xbib</name>
+    <description>Extensible bibliographic data management</description>
+
+    <url>http://xbib.org</url>
+
+    <inceptionYear>2011</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Affero GPL3</name>
+            <url>http://www.gnu.org/licenses/agpl.html</url>
+            <distribution>repo</distribution>
+            <comments>
+                The GNU Affero General Public License is a free, copyleft license for software and
+                other kinds of works, specifically designed to ensure cooperation with the community
+                in the case of network server software.
+            </comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>jprante</id>
+            <name>Jörg Prante</name>
+            <url>https://github.com/jprante</url>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>xbib</name>
+        <url>http://xbib.org</url>
+    </organization>
 
     <scm>
         <connection>scm:git:git@github.com:xbib/xbib.git</connection>
         <developerConnection>scm:git:git@github.com:xbib/xbib.git</developerConnection>
         <url>http://github.com/xbib/xbib</url>
     </scm>
+
+    <issueManagement>
+        <system>Github Issue Tracker</system>
+        <url>https://github.com/xbib/xbib/issues</url>
+    </issueManagement>
 
     <distributionManagement>
         <repository>
@@ -29,6 +66,16 @@
 
     <repositories>
         <repository>
+            <id>bintray-elasticsearch-plugins</id>
+            <url>http://dl.bintray.com/jprante/elasticsearch-plugins</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>github-release-repo</id>
             <url>https://github.com/xbib/maven-repo/raw/master/releases</url>
         </repository>
@@ -39,6 +86,7 @@
     </repositories>
 
     <properties>
+        <github.global.server>github</github.global.server>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>dd.MM.yyyy HH:mm</maven.build.timestamp.format>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -47,18 +95,16 @@
 
     <build>
 
-        <!-- declare maven plugin versions -->
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <version>3.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
-                        <fork>true</fork>
-                        <maxmem>256m</maxmem>
+                        <encoding>UTF-8</encoding>
                         <optimize>true</optimize>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
@@ -66,8 +112,37 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.4.1</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>logs</directory>
+                            </fileset>
+                            <fileset>
+                                <directory>lib</directory>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.15</version>
+                    <configuration>
+                        <skip>false</skip>
+                        <systemPropertyVariables>
+                            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                        </systemPropertyVariables>
+                        <reportFormat>plain</reportFormat>
+                        <disableXmlReport>false</disableXmlReport>
+                        <forkMode>once</forkMode>
+                        <useSystemClassLoader>false</useSystemClassLoader>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.6</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
@@ -85,38 +160,8 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <!-- we need >=2.12 for testing custom TransformerFactory.newInstance (StylesheetTransformer)-->
-                    <version>2.12.4</version>
-                    <configuration>
-                        <skip>false</skip>
-                        <!-- systemPropertyVariables only work with forkMode none -->
-                        <systemPropertyVariables>
-                            <file.encoding>UTF-8</file.encoding>
-                            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-                        </systemPropertyVariables>
-                        <reportFormat>plain</reportFormat>
-                        <disableXmlReport>false</disableXmlReport>
-                        <forkMode>once</forkMode>
-                        <!-- no custom char sets by default-->
-                        <useSystemClassLoader>false</useSystemClassLoader>
-                        <!-- we fork, so we need system properties on argLine. Override Mac OSX JVM default encoding and override logging -->
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>logs</directory>
-                            </fileset>
-                            <fileset>
-                                <directory>lib</directory>
-                            </fileset>
-                        </filesets>
-                    </configuration>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -137,6 +182,31 @@
                         <aggregate>true</aggregate>
                         <excludePackageNames>asn1.*,z3950.*</excludePackageNames>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <locales>en</locales>
+                        <inputEncoding>UTF-8</inputEncoding>
+                        <outputEncoding>UTF-8</outputEncoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.9</version>
+                    <configuration>
+                        <message>Building site for ${project.version}</message>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>site</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
@@ -188,11 +258,40 @@
                 <artifactId>maven-clean-plugin</artifactId>
             </plugin>
             <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
             </plugin>
         </plugins>
 
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <locale>en</locale>
+                    <linksource>true</linksource>
+                    <validateLinks>true</validateLinks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.15</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <!-- declare dependency versions -->
     <dependencyManagement>
@@ -318,21 +417,14 @@
                 <version>4.1.4</version>
             </dependency>
             <dependency>
-                <!-- NOTE: take care of a netty jar that does not contain jboss-beans.xml
-                or you can not deploy xbib war's on JBoss -->
                 <groupId>io.netty</groupId>
-                <artifactId>netty</artifactId>
-                <version>3.5.11.Final</version>
+                <artifactId>netty-all</artifactId>
+                <version>4.0.10.Final</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ning</groupId>
-                <artifactId>async-http-client</artifactId>
-                <version>1.7.17</version>
             </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
@@ -402,7 +494,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.8.5</version>
+                <version>6.8.7</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>
@@ -470,6 +562,36 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>es-090</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.xbib.elasticsearch.plugin</groupId>
+                        <artifactId>elasticsearch-support</artifactId>
+                        <version>0.90.5.4</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>es-019</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.xbib.elasticsearch.plugin</groupId>
+                        <artifactId>elasticsearch-support</artifactId>
+                        <version>0.19.11.1</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
+
     <modules>
         <module>common/logging</module>
         <module>common/charset</module>
@@ -477,7 +599,8 @@
         <module>common/util</module>
         <module>common/jacc</module>
         <module>common/io</module>
-        
+        <module>common/dict</module>
+
         <module>search/grouping</module>
         <module>search/content</module>
         <module>search/elements</module>
@@ -490,51 +613,7 @@
         <module>search/federator</module>
         <module>search/tools</module>
 
-<!--
-   storage - slowly evolving
-        <module>storage/berkeleydb</module>
-        <module>storage/objectstorage</module>
-        <module>storage/sessionstorage</module>
-        <module>storage/swingx</module>
-        <module>storage/printclient</module>
--->
-<!-- 
-   text mining not ready at all for build
-        <module>textmining/crf</module>
-        <module>textmining/citparse</module>
-        <module>textmining/pdf2xml</module>        
--->
     </modules>
 
-
-    <profiles>
-        <profile>
-            <id>es019</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.xbib.elasticsearch</groupId>
-                        <artifactId>elasticsearch-support</artifactId>
-                        <version>0.19.11</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-        <profile>
-            <id>es090</id>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.xbib.elasticsearch</groupId>
-                        <artifactId>elasticsearch-support</artifactId>
-                        <version>0.90.2</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-    </profiles>
 
 </project>

@@ -84,6 +84,7 @@ public class MARCPipeline
             element.fields(builder(), fields, value);
             Map<String, Object> tags = (Map<String, Object>) element.getSettings().get("tags");
             Map<String, Object> subfields = (Map<String, Object>) element.getSettings().get("subfields");
+
             if (subfields != null) {
                 Map<String, Object> defaultSubfields = subfields;
                 // optional indicator configuration

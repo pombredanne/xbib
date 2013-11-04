@@ -26,9 +26,9 @@ import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.xbib.atom.AbderaFeedBuilder;
 import org.xbib.atom.AtomFeedFactory;
 import org.xbib.atom.AtomFeedProperties;
-import org.xbib.elasticsearch.support.CQLSearchRequest;
-import org.xbib.elasticsearch.support.CQLSearchResponse;
-import org.xbib.elasticsearch.support.CQLSearchSupport;
+import org.xbib.elasticsearch.CQLSearchRequest;
+import org.xbib.elasticsearch.CQLSearchResponse;
+import org.xbib.elasticsearch.CQLSearchSupport;
 import org.xbib.logging.Logger;
 import org.xbib.logging.LoggerFactory;
 

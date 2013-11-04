@@ -49,7 +49,9 @@ public class LDAPUserAttributes implements UserAttributes {
     private final static Logger logger = LoggerFactory.getLogger(LDAPUserAttributes.class.getName());
 
     private final DirContext context;
+
     private final String user;
+
     private final Map<String, String> attributes;
 
     public LDAPUserAttributes(DirContext context, String user) throws NamingException {
